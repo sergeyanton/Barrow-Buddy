@@ -13,7 +13,7 @@ public class Garden {
     private Long id;
 
     @Column(nullable = false)
-    private String name;
+    private String gardenName;
 
 //    @Column(nullable = false)
 //    private String language;
@@ -28,7 +28,7 @@ public class Garden {
      * @param name name of garden
      */
     public Garden(String name) {
-        this.name = name;
+        this.gardenName = name;
     }
 
     public Long getId() {
@@ -36,14 +36,14 @@ public class Garden {
     }
 
     public String getName() {
-        return name;
+        return gardenName;
     }
 
     @Override
     public String toString() {
         return "Garden{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", name='" + gardenName + '\'' +
                 '}';
     }
 }

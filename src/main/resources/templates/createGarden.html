@@ -13,9 +13,9 @@
     <div>
         <div>
             <form th:action="@{gardenform}" method="post">
-                <label for="name"> Name: </label>
-                <input type="text" class="form-control" id="name" placeholder="Name"
-                       th:name="name" th:value="*{name}" data-cy="name" required autofocus>
+                <label for="gardenName"> Name: </label>
+                <input type="text" class="form-control" id="gardenName" placeholder="Your garden's name"
+                       th:name="gardenName" th:value="*{gardenName}" data-cy="gardenName" required autofocus>
                 <br/>
 <!--                <label for="favouriteLanguage"> Your favourite programming language: </label>-->
 <!--                <input type="text" class="form-control" id="favouriteLanguage" placeholder="Java?"-->

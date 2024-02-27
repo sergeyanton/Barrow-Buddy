@@ -32,10 +32,10 @@ public class GardensController {
     }
 
     @GetMapping("/gardens/gardenform")
-    public String form(@RequestParam(name="gardenName", required = false, defaultValue = "") String displayName,
+    public String form(@RequestParam(name="gardenName", required = false, defaultValue = "") String gardenName,
                        Model model) {
 //        logger.info("GET /form");
-        model.addAttribute("displayName", displayName);
+        model.addAttribute("gardenName", gardenName);
 //        model.addAttribute("isJava", displayLanguage.equalsIgnoreCase("java"));
         return "createGarden";
     }
@@ -48,11 +48,11 @@ public class GardensController {
      * @return thymeleaf demoFormTemplate
      */
     @PostMapping("/gardens/gardenform")
-    public String submitForm( @RequestParam(name="name") String name,
+    public String submitForm( @RequestParam(name="gardenName") String gardenName,
                               Model model) {
 //        logger.info("POST /form");
-        gardenService.addFormResult(new Garden(name));
-        model.addAttribute("displayName", name);
+        gardenService.addFormResult(new Garden(gardenName));
+        model.addAttribute("gardenName", gardenName);
         return "gardenform";
     }
 }
