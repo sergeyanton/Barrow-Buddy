@@ -31,7 +31,8 @@ public class GardenServiceTest {
 
             @Override
             public <S extends Garden> S save(S entity) {
-                // assume there is some modification at the service layer that we check here instead of just the same values
+                // assume there is some modification at the service layer that we check here
+                // instead of just the same values
                 Assertions.assertEquals(entity.getName(), "John");
                 return entity;
             }
@@ -86,11 +87,11 @@ public class GardenServiceTest {
 
             }
         });
-        gardenService.addFormResult(new Garden("John"));
+        gardenService.addFormResult(new Garden("My Garden", "My House", 9000));
     }
 
-//    @Autowired
-//    private GardenService formService;
+    // @Autowired
+    // private GardenService formService;
 
     @Autowired
     private GardenRepository gardenRepository;
@@ -98,7 +99,7 @@ public class GardenServiceTest {
     @Test
     public void simpleTest2() {
         GardenService gardenService = new GardenService(gardenRepository);
-        Garden result = gardenService.addFormResult(new Garden("John"));
-        Assertions.assertEquals(result.getName(), "John");
+        Garden result = gardenService.addFormResult(new Garden("My Garden", "My House", 9000));
+        Assertions.assertEquals(result.getName(), "My Garden");
     }
 }
