@@ -3,54 +3,49 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity;
 import jakarta.persistence.*;
 
 /**
- * Entity class reflecting an entry of name, and favourite programming language
+ * Entity class reflecting an entry of name, location, and size of a garden
  * Note the @link{Entity} annotation required for declaring this as a persistence entity
  */
 @Entity
-public class FormResult {
+public class Garden {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
     private String name;
-
     @Column(nullable = false)
-    private String language;
+    private String location;
+    @Column(nullable = false)
+    private double size;
 
     /**
      * JPA required no-args constructor
      */
-    protected FormResult() {}
+    protected Garden() {}
 
     /**
-     * Creates a new FormResult object
-     * @param name name of user
-     * @param language user's favourite programming language
+     * Creates a new Garden object
+     * @param name name of garden
      */
-    public FormResult(String name, String language) {
+    public Garden(String name, String location, double size) {
         this.name = name;
-        this.language = language;
+        this.location = location;
+        this.size = size;
     }
 
     public Long getId() {
         return id;
     }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getLanguage() {
-        return language;
-    }
+    public String getName() { return name; }
+    public String getLocation() { return location; }
+    public double getSize() { return size; }
 
     @Override
     public String toString() {
-        return "FormResult{" +
+        return "Garden{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", language='" + language + '\'' +
                 '}';
     }
 }
