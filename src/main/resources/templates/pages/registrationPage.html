@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>registration</title>
+</head>
+
+<body>
+<div>
+<div>
+    <form method="post">
+        <label for="fName"> First Name: </label>
+        <input type="text" class="form-control" id="fName" placeholder="Fabian"
+               th:name="fName" data-cy="name" required autofocus>
+        <br/>
+        <label for="lName"> Last Name: </label>
+        <input type="text" class="form-control" id="lName" placeholder="Gilson"
+               th:name="lName" data-cy="lName" required
+               autofocus>
+        <br/>
+        <input type="checkbox" lass="form-control" id="noSurnameCheckBox"
+               th:name="noSurnameCheckBox" data-cy="noSurnameCheckBox"
+               autofocus>
+        <label for="noSurnameCheckBox"> No last name </label>
+        <br/>
+        <label for="email"> Email: </label>
+        <input type="email" class="form-control" id="email" placeholder="fabian.gilson@canterbury.ac.nz"
+               th:name="email" data-cy="email" size="40" required autofocus>
+        <br/>
+        <label for="address"> Address: </label>
+        <input type="text" class="form-control" id="address" placeholder="20 Kirkwood Avenue, Upper Riccarton, Christchurch 8041"
+               th:name="address" data-cy="address" size="50" required autofocus>
+        <br/>
+        <label for="password"> Password: </label>
+        <input type="password" class="form-control" id="password"
+               th:name="password" data-cy="password" required autofocus>
+        <br/>
+        <label for="retypePassword"> Re-type Password: </label>
+        <input type="password" class="form-control" id="retypePassword"
+               th:name="retypePassword" data-cy="retypePassword" required autofocus>
+        <br/>
+        <label for="dob"> Date Of Birth: </label>
+        <input type="date" class="form-control" id="dob"
+               th:name="dob" data-cy="dob" required autofocus>
+        <br/>
+        <button type="submit">Sign Up</button>
+    </form>
+</div>
+
+<div>
+    <a th:href="@{welcome}">Cancel</a>
+</div>
+</div>
+
+</body>
+</html>
