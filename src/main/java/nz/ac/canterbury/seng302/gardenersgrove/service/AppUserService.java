@@ -1,7 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
-import nz.ac.canterbury.seng302.gardenersgrove.entity.FormResult;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.FormRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.AppUser;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.AppUserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,19 +10,18 @@ import java.util.List;
 public class AppUserService {
     private AppUserRepository appUserRepository;
 
-    public AppUserService(FormRepository formRepository) {
+    public AppUserService(AppUserRepository appUserRepository) {
         this.appUserRepository = appUserRepository;
     }
 
-    //Gets all FormResults from persistence
-    public List<FormResult> getFormResults() {
+    // Gets all AppUsers
+    public List<AppUser> getFormResults() {
         return appUserRepository.findAll();
     }
 
-    // Adds a formResult to persistence
-    public FormResult addFormResult(FormResult formResult) {
-        return appUserRepository.save(formResult);
+    // Adds a AppUser
+    public AppUser addFormResult(AppUser appUser) {
+        return appUserRepository.save(appUser);
     }
-
 
 }
