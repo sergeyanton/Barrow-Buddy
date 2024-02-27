@@ -1,8 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove;
 
-import nz.ac.canterbury.seng302.gardenersgrove.entity.FormResult;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.FormRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.service.FormService;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,37 +13,36 @@ import java.util.List;
 import java.util.Optional;
 
 @DataJpaTest
-@Import(FormService.class)
-public class FormServiceTest {
+@Import(GardenService.class)
+public class GardenServiceTest {
 
     @Test
     public void simpleTest() {
-        FormService formService = new FormService(new FormRepository() {
+        GardenService gardenService = new GardenService(new GardenRepository() {
             @Override
-            public Optional<FormResult> findById(long id) {
+            public Optional<Garden> findById(long id) {
                 return Optional.empty();
             }
 
             @Override
-            public List<FormResult> findAll() {
+            public List<Garden> findAll() {
                 return null;
             }
 
             @Override
-            public <S extends FormResult> S save(S entity) {
+            public <S extends Garden> S save(S entity) {
                 // assume there is some modification at the service layer that we check here instead of just the same values
                 Assertions.assertEquals(entity.getName(), "John");
-                Assertions.assertEquals(entity.getLanguage(), "Python");
                 return entity;
             }
 
             @Override
-            public <S extends FormResult> Iterable<S> saveAll(Iterable<S> entities) {
+            public <S extends Garden> Iterable<S> saveAll(Iterable<S> entities) {
                 return null;
             }
 
             @Override
-            public Optional<FormResult> findById(Long aLong) {
+            public Optional<Garden> findById(Long aLong) {
                 return Optional.empty();
             }
 
@@ -53,7 +52,7 @@ public class FormServiceTest {
             }
 
             @Override
-            public Iterable<FormResult> findAllById(Iterable<Long> longs) {
+            public Iterable<Garden> findAllById(Iterable<Long> longs) {
                 return null;
             }
 
@@ -68,7 +67,7 @@ public class FormServiceTest {
             }
 
             @Override
-            public void delete(FormResult entity) {
+            public void delete(Garden entity) {
 
             }
 
@@ -78,7 +77,7 @@ public class FormServiceTest {
             }
 
             @Override
-            public void deleteAll(Iterable<? extends FormResult> entities) {
+            public void deleteAll(Iterable<? extends Garden> entities) {
 
             }
 
@@ -87,20 +86,19 @@ public class FormServiceTest {
 
             }
         });
-        formService.addFormResult(new FormResult("John", "Python"));
+        gardenService.addFormResult(new Garden("John"));
     }
 
 //    @Autowired
-//    private FormService formService;
+//    private GardenService formService;
 
     @Autowired
-    private FormRepository formRepository;
+    private GardenRepository gardenRepository;
 
     @Test
     public void simpleTest2() {
-        FormService formService = new FormService(formRepository);
-        FormResult result = formService.addFormResult(new FormResult("John", "Python"));
+        GardenService gardenService = new GardenService(gardenRepository);
+        Garden result = gardenService.addFormResult(new Garden("John"));
         Assertions.assertEquals(result.getName(), "John");
-        Assertions.assertEquals(result.getLanguage(), "Python");
     }
 }
