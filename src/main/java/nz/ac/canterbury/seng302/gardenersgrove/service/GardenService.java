@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,10 +15,11 @@ import java.util.List;
 public class GardenService {
     private GardenRepository gardenRepository;
 
-//    @Autowired
+    @Autowired
     public GardenService(GardenRepository gardenRepository) {
         this.gardenRepository = gardenRepository;
     }
+
     /**
      * Gets all FormResults from persistence
      * @return all FormResults currently saved in persistence

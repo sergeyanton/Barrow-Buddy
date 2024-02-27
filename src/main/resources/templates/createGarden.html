@@ -12,7 +12,7 @@
 
     <div>
         <div>
-            <form th:action="@{gardenForm}" method="post">
+            <form th:action="@{/gardens/create}" method="post">
                 <label for="gardenName"> Name: </label>
                 <input type="text" class="form-control" id="gardenName" placeholder="Your garden's name"
                        th:name="gardenName" th:value="*{gardenName}" data-cy="gardenName" required autofocus>
@@ -36,7 +36,7 @@
             <h4 th:text="'Size: ' + ${gardenSize}"></h4>
         </div>
         <div>
-            <a th:href="@{createdGardens}">View responses</a>
+            <a th:href="@{/gardens}">View responses</a>
             <a th:href="@{/}">Back to home</a>
         </div>
     </div>

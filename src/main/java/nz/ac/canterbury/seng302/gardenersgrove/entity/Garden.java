@@ -3,7 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity;
 import jakarta.persistence.*;
 
 /**
- * Entity class reflecting an entry of name, TODO and other attributes that a garden has
+ * Entity class reflecting an entry of name, location, and size of a garden
  * Note the @link{Entity} annotation required for declaring this as a persistence entity
  */
 @Entity
@@ -18,7 +18,6 @@ public class Garden {
     private String location;
     @Column(nullable = false)
     private double size;
-
 
     /**
      * JPA required no-args constructor

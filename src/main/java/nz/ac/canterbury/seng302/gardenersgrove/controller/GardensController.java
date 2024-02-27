@@ -31,33 +31,22 @@ public class GardensController {
         return "createGarden";
     }
 
-    @GetMapping("/gardens/gardenForm")
-    public String form(@RequestParam(name="gardenName", required = false, defaultValue = "") String gardenName,
-                       @RequestParam(name="gardenLocation", required = false, defaultValue = "") String gardenLocation,
-                       @RequestParam(name="gardenSize", required = false, defaultValue = "") double gardenSize,
-                       Model model) {
-//        logger.info("GET /form");
-        model.addAttribute("gardenName", gardenName);
-        model.addAttribute("gardenLocation", gardenLocation);
-        model.addAttribute("gardenSize", gardenSize);
-        return "createGarden";
-    }
-
     /**
-     * Posts a form response with name
+     * Posts a form response with name, location, and size of the garden
      * @param gardenName name of garden
      * @param gardenLocation location of garden
      * @param gardenSize size of garden
      * @param model (map-like) representation of name for use in thymeleaf,
      *              with values being set to relevant parameters provided
      * @return thymeleaf demoFormTemplate
+     *
      */
-    @PostMapping("/gardens/gardenForm")
+    @PostMapping("/gardens/create")
     public String submitForm( @RequestParam(name="gardenName") String gardenName,
                               @RequestParam(name="gardenLocation") String gardenLocation,
                               @RequestParam(name="gardenSize") double gardenSize,
                               Model model) {
-//        logger.info("POST /form");
+        logger.info("POST /gardens/create");
         gardenService.addFormResult(new Garden(gardenName, gardenLocation, gardenSize));
         model.addAttribute("gardenName", gardenName);
         model.addAttribute("gardenLocation", gardenLocation);
@@ -66,13 +55,13 @@ public class GardensController {
     }
 
     /**
-     * Gets all form responses
+     * Gets all form responses (gardens)
      * @param model (map-like) representation of results to be used by thymeleaf
      * @return thymeleaf demoResponseTemplate
      */
-    @GetMapping("/gardens/createdGardens") //TODO improve pathnames
+    @GetMapping("/gardens")
     public String responses(Model model) {
-//        logger.info("GET /form/responses"); //TODO logging
+        logger.info("GET /gardens/createdGardens");
         model.addAttribute("gardens", gardenService.getGardens());
         return "createdGardens";
     }
