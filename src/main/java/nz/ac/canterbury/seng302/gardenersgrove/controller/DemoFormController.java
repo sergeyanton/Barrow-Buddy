@@ -61,6 +61,8 @@ public class DemoFormController {
 //        return "demoFormTemplate";
 //    }
 
+
+    // Will be useful for displaying gardens
 //    /**
 //     * Gets all form responses
 //     * @param model (map-like) representation of results to be used by thymeleaf

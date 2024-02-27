@@ -3,7 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity;
 import jakarta.persistence.*;
 
 /**
- * Entity class reflecting an entry of name, and favourite programming language
+ * Entity class reflecting an entry of name, TODO and other attributes that a garden has
  * Note the @link{Entity} annotation required for declaring this as a persistence entity
  */
 @Entity
@@ -13,10 +13,10 @@ public class Garden {
     private Long id;
 
     @Column(nullable = false)
-    private String gardenName;
+    private String name;
 
 //    @Column(nullable = false)
-//    private String language;
+//    private String size;
 
     /**
      * JPA required no-args constructor
@@ -28,7 +28,7 @@ public class Garden {
      * @param name name of garden
      */
     public Garden(String name) {
-        this.gardenName = name;
+        this.name = name;
     }
 
     public Long getId() {
@@ -36,14 +36,14 @@ public class Garden {
     }
 
     public String getName() {
-        return gardenName;
+        return name;
     }
 
     @Override
     public String toString() {
         return "Garden{" +
                 "id=" + id +
-                ", name='" + gardenName + '\'' +
+                ", name='" + name + '\'' +
                 '}';
     }
 }

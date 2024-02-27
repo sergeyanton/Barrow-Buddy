@@ -53,6 +53,6 @@ public class GardensController {
 //        logger.info("POST /form");
         gardenService.addFormResult(new Garden(gardenName));
         model.addAttribute("gardenName", gardenName);
-        return "gardenform";
+        return "createGarden";
     }
 }
