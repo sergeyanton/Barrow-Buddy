@@ -20,7 +20,6 @@ public class User {
     @Column(nullable = false)
     private String email;
 
-    //make false and add constructor
     @Column(nullable = true)
     private String dateOfBirth;
 
