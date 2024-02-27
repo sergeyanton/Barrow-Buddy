@@ -3,7 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity;
 import jakarta.persistence.*;
 
 @Entity
-public class AppUser {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,9 +25,9 @@ public class AppUser {
     @Column(nullable = false)
     private String dateOfBirth;
 
-    protected AppUser() {}
+    protected User() {}
 
-    public AppUser(String fname, String lname, String password, String email, String dateOfBirth) {
+    public User(String fname, String lname, String password, String email, String dateOfBirth) {
         this.fname = fname;
         this.lname = lname;
         this.password = password;
