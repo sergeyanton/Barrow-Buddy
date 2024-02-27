@@ -15,9 +15,6 @@ public class User {
     private String lname;
 
     @Column(nullable = false)
-    private boolean lnameCheckbox;
-
-    @Column(nullable = false)
     private String password;
 
     @Column(nullable = false)
@@ -30,10 +27,9 @@ public class User {
 
     protected User() {}
 
-    public User(String fname, String lname,boolean lnameCheckbox, String password, String email, String dateOfBirth) {
+    public User(String fname, String lname, String password, String email, String dateOfBirth) {
         this.fname = fname;
         this.lname = lname;
-        this.lnameCheckbox= lnameCheckbox;
         this.password = password;
         this.email = email;
         this.dateOfBirth = dateOfBirth;
@@ -49,10 +45,6 @@ public class User {
 
     public String getLname() {
         return lname;
-    }
-
-    public Boolean getLnameCheckbox() {
-        return lnameCheckbox;
     }
 
     public String getPassword() {
