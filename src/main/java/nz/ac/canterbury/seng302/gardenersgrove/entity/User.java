@@ -11,9 +11,11 @@ public class User {
     @Column(nullable = false)
     private String fname;
 
-    //make false and add constructor
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String lname;
+
+    @Column(nullable = false)
+    private boolean lnameCheckbox;
 
     @Column(nullable = false)
     private String password;
@@ -22,14 +24,16 @@ public class User {
     private String email;
 
     //make false and add constructor
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String dateOfBirth;
+
 
     protected User() {}
 
-    public User(String fname, String lname, String password, String email, String dateOfBirth) {
+    public User(String fname, String lname,boolean lnameCheckbox, String password, String email, String dateOfBirth) {
         this.fname = fname;
         this.lname = lname;
+        this.lnameCheckbox= lnameCheckbox;
         this.password = password;
         this.email = email;
         this.dateOfBirth = dateOfBirth;
@@ -47,6 +51,10 @@ public class User {
         return lname;
     }
 
+    public Boolean getLnameCheckbox() {
+        return lnameCheckbox;
+    }
+
     public String getPassword() {
         return password;
     }
@@ -58,5 +66,4 @@ public class User {
     public String getDateOfBirth() {
         return dateOfBirth;
     }
-
 }
