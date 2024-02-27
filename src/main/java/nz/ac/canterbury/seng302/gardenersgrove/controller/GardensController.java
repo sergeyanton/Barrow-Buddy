@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
  * This is the controller for the home page.
  */
 @Controller
-public class GardenController {
-    Logger logger = LoggerFactory.getLogger(GardenController.class);
+public class GardensController {
+    Logger logger = LoggerFactory.getLogger(GardensController.class);
 
     /**
      * Renders the template.
