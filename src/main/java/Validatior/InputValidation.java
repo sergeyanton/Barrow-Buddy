@@ -6,4 +6,10 @@ public class InputValidation {
     public String checkInut(User userToCheck) {
         return null;
     }
+
+    private String checkFname(String userName) {
+        if (userName.isEmpty()) {return "Name field is empty";};
+        if (userName.length() > 64){return "Name too long";};
+        return null;
+    }
 }
