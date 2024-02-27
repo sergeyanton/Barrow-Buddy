@@ -22,7 +22,7 @@ public class GardenService {
      * Gets all FormResults from persistence
      * @return all FormResults currently saved in persistence
      */
-    public List<Garden> getGarden() {
+    public List<Garden> getGardens() {
         return gardenRepository.findAll();
     }
 
