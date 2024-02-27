@@ -31,7 +31,7 @@ public class GardensController {
         return "createGarden";
     }
 
-    @GetMapping("/gardens/gardenform")
+    @GetMapping("/gardens/gardenForm")
     public String form(@RequestParam(name="gardenName", required = false, defaultValue = "") String gardenName,
                        @RequestParam(name="gardenLocation", required = false, defaultValue = "") String gardenLocation,
                        @RequestParam(name="gardenSize", required = false, defaultValue = "") double gardenSize,
@@ -52,7 +52,7 @@ public class GardensController {
      *              with values being set to relevant parameters provided
      * @return thymeleaf demoFormTemplate
      */
-    @PostMapping("/gardens/gardenform")
+    @PostMapping("/gardens/gardenForm")
     public String submitForm( @RequestParam(name="gardenName") String gardenName,
                               @RequestParam(name="gardenLocation") String gardenLocation,
                               @RequestParam(name="gardenSize") double gardenSize,
@@ -63,5 +63,17 @@ public class GardensController {
         model.addAttribute("gardenLocation", gardenLocation);
         model.addAttribute("gardenSize", gardenSize);
         return "createGarden";
+    }
+
+    /**
+     * Gets all form responses
+     * @param model (map-like) representation of results to be used by thymeleaf
+     * @return thymeleaf demoResponseTemplate
+     */
+    @GetMapping("/gardens/createdGardens") //TODO improve pathnames
+    public String responses(Model model) {
+//        logger.info("GET /form/responses"); //TODO logging
+        model.addAttribute("gardens", gardenService.getGardens());
+        return "createdGardens";
     }
 }
