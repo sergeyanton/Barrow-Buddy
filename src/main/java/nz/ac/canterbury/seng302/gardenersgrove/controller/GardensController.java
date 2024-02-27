@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
- * This is the controller for the home page.
+ * This is the controller for the gardens page.
  */
 @Controller
 public class GardensController {
