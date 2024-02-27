@@ -33,26 +33,35 @@ public class GardensController {
 
     @GetMapping("/gardens/gardenform")
     public String form(@RequestParam(name="gardenName", required = false, defaultValue = "") String gardenName,
+                       @RequestParam(name="gardenLocation", required = false, defaultValue = "") String gardenLocation,
+                       @RequestParam(name="gardenSize", required = false, defaultValue = "") double gardenSize,
                        Model model) {
 //        logger.info("GET /form");
         model.addAttribute("gardenName", gardenName);
-//        model.addAttribute("isJava", displayLanguage.equalsIgnoreCase("java"));
+        model.addAttribute("gardenLocation", gardenLocation);
+        model.addAttribute("gardenSize", gardenSize);
         return "createGarden";
     }
 
     /**
      * Posts a form response with name
-     * @param name name of garden
+     * @param gardenName name of garden
+     * @param gardenLocation location of garden
+     * @param gardenSize size of garden
      * @param model (map-like) representation of name for use in thymeleaf,
      *              with values being set to relevant parameters provided
      * @return thymeleaf demoFormTemplate
      */
     @PostMapping("/gardens/gardenform")
     public String submitForm( @RequestParam(name="gardenName") String gardenName,
+                              @RequestParam(name="gardenLocation") String gardenLocation,
+                              @RequestParam(name="gardenSize") double gardenSize,
                               Model model) {
 //        logger.info("POST /form");
-        gardenService.addFormResult(new Garden(gardenName));
+        gardenService.addFormResult(new Garden(gardenName, gardenLocation, gardenSize));
         model.addAttribute("gardenName", gardenName);
+        model.addAttribute("gardenLocation", gardenLocation);
+        model.addAttribute("gardenSize", gardenSize);
         return "createGarden";
     }
 }

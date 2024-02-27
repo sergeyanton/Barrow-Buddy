@@ -14,9 +14,11 @@ public class Garden {
 
     @Column(nullable = false)
     private String name;
+    @Column(nullable = false)
+    private String location;
+    @Column(nullable = false)
+    private double size;
 
-//    @Column(nullable = false)
-//    private String size;
 
     /**
      * JPA required no-args constructor
@@ -27,17 +29,18 @@ public class Garden {
      * Creates a new Garden object
      * @param name name of garden
      */
-    public Garden(String name) {
+    public Garden(String name, String location, double size) {
         this.name = name;
+        this.location = location;
+        this.size = size;
     }
 
     public Long getId() {
         return id;
     }
-
-    public String getName() {
-        return name;
-    }
+    public String getName() { return name; }
+    public String getLocation() { return location; }
+    public double getSize() { return size; }
 
     @Override
     public String toString() {
