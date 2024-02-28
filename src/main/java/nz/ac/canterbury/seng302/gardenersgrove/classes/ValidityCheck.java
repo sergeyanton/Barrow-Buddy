@@ -25,4 +25,14 @@ public class ValidityCheck {
     {
         return !location.isEmpty() && location.matches("[a-zA-Z0-9 ,.'-]+");
     }
+
+    /**
+     * This method checks if the entered garden size contains only numeric characters
+     * @param size the garden size string entered by user
+     * @return true if entered garden location is valid, otherwise false
+     */
+    public static boolean validGardenSize(String size)
+    {
+        return !size.isEmpty() && size.matches("[0-9,.]+");
+    }
 }

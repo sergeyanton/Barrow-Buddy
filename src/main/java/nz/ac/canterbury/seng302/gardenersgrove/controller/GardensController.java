@@ -45,15 +45,26 @@ public class GardensController {
     @PostMapping("/gardens/create")
     public String submitForm( @RequestParam(name="gardenName") String gardenName,
                               @RequestParam(name="gardenLocation") String gardenLocation,
-                              @RequestParam(name="gardenSize") double gardenSize,
+                              @RequestParam(name="gardenSize") String gardenSize,
                               Model model) {
         logger.info("POST /gardens/create");
-        if (ValidityCheck.validGardenName(gardenName) && ValidityCheck.validGardenLocation(gardenLocation)) {
-            gardenService.addFormResult(new Garden(gardenName, gardenLocation, gardenSize));
+        if (!ValidityCheck.validGardenName(gardenName)) {
+            logger.info("ERR: invalid name");
+            return "createGarden";
         }
+        if (!ValidityCheck.validGardenLocation(gardenLocation)) {
+            logger.info("ERR: invalid location");
+            return "createGarden";
+        }
+        if (!ValidityCheck.validGardenSize(gardenSize)) {
+            logger.info("ERR: invalid size");
+            return "createGarden";
+        }
+        double gardenSizeDouble = Double.parseDouble(gardenSize);
+        gardenService.addFormResult(new Garden(gardenName, gardenLocation, gardenSizeDouble));
         model.addAttribute("gardenName", gardenName);
         model.addAttribute("gardenLocation", gardenLocation);
-        model.addAttribute("gardenSize", gardenSize);
+        model.addAttribute("gardenSize", gardenSizeDouble);
         return "createGarden";
     }
 
