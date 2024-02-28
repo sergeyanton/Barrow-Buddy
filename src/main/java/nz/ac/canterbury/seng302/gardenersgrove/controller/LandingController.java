@@ -20,7 +20,7 @@ public class LandingController {
      * @return redirect to /welcome
      */
     @GetMapping("/")
-    public String home() {
+    public String landing() {
         logger.info("GET /");
         return "redirect:./welcome";
     }

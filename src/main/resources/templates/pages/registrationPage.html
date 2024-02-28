@@ -46,7 +46,10 @@
 
         <div th:insert="fragments/errorMessageFragment.html :: errorMessage(message=${errorMessage})"></div>
 
-        <button type="submit">Sign Up</button>
+        <a th:href="@{home}">
+            <button type="submit">Sign Up</button>
+        </a>
+
     </form>
 </div>
 
