@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class ProfileController {
 
-    Logger logger = LoggerFactory.getLogger(HomeController.class);
+    Logger logger = LoggerFactory.getLogger(ProfileController.class);
 
     /**
      * Gets the thymeleaf page representing the /profile page (displaying user's information)
