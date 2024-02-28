@@ -11,8 +11,8 @@ public class LoginController {
     Logger logger = LoggerFactory.getLogger(LandingController.class);
 
     /**
-     * Gets the thymeleaf page representing the /register page (a basic welcome screen with some links)
-     * @return thymeleaf registrationPage
+     * Gets the thymeleaf page representing the /login page (with an eamil and the password to log in)
+     * @return thymeleaf loginPage
      */
     @GetMapping("/login")
     public String login() {
