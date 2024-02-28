@@ -48,23 +48,12 @@ public class GardensController {
                               @RequestParam(name="gardenSize") String gardenSize,
                               Model model) {
         logger.info("POST /gardens/create");
-        if (!ValidityCheck.validGardenName(gardenName)) {
-            logger.info("ERR: invalid name");
-            return "createGarden";
+        if (ValidityCheck.validGardenName(gardenName) && ValidityCheck.validGardenLocation(gardenLocation) && ValidityCheck.validGardenSize(gardenSize)) {
+            gardenService.addFormResult(new Garden(gardenName, gardenLocation, Double.parseDouble(gardenSize)));
         }
-        if (!ValidityCheck.validGardenLocation(gardenLocation)) {
-            logger.info("ERR: invalid location");
-            return "createGarden";
-        }
-        if (!ValidityCheck.validGardenSize(gardenSize)) {
-            logger.info("ERR: invalid size");
-            return "createGarden";
-        }
-        double gardenSizeDouble = Double.parseDouble(gardenSize);
-        gardenService.addFormResult(new Garden(gardenName, gardenLocation, gardenSizeDouble));
         model.addAttribute("gardenName", gardenName);
         model.addAttribute("gardenLocation", gardenLocation);
-        model.addAttribute("gardenSize", gardenSizeDouble);
+        model.addAttribute("gardenSize", Double.parseDouble(gardenSize));
         return "createGarden";
     }
 

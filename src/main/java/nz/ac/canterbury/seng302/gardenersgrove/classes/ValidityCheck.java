@@ -33,6 +33,6 @@ public class ValidityCheck {
      */
     public static boolean validGardenSize(String size)
     {
-        return !size.isEmpty() && size.matches("[0-9,.]+");
+        return !size.isEmpty() && size.matches("[0-9]*[.,]?[0-9]+$");
     }
 }
