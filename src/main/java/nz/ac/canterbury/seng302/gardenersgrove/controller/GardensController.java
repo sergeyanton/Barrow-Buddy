@@ -25,12 +25,31 @@ public class GardensController {
     }
 
     /**
-     * Renders the template.
+     * Gets form to be displayed, includes the ability to display results of previous form when linked to from POST form
+     * @param gardenName previous garden name entered into form to be displayed
+     * @param gardenLocation previous garden location entered into form to be displayed
+     * @param gardenSize previous garden size entered into form to be displayed
+     * @param isValidName boolean for checking name is valid
+     * @param isValidLocation boolean for checking location is valid
+     * @param model (map-like) representation of gardenName, gardenLocation, garden Size and isValidName & isValidLocation boolean for use in thymeleaf
+     * @return thymeleaf demoFormTemplate
      */
     @GetMapping("/gardens/create")
-    public String gardenCreate() {
+    public String gardenCreate(@RequestParam(name="gardenName", required = false, defaultValue = "") String gardenName,
+                               @RequestParam(name="gardenLocation", required = false, defaultValue = "") String gardenLocation,
+                               @RequestParam(name="gardenSize", required = false, defaultValue = "") String gardenSize,
+                               @RequestParam(name="isValidName", required = false, defaultValue = "true") boolean isValidName,
+                               @RequestParam(name="isValidLocation", required = false, defaultValue = "true") boolean isValidLocation,
+                               Model model) {
+        logger.info("GET /gardens/create");
+        model.addAttribute("gardenName", gardenName);
+        model.addAttribute("gardenLocation", gardenLocation);
+        model.addAttribute("gardenSize", gardenSize);
+        model.addAttribute("isValidName", isValidName);
+        model.addAttribute("isValidLocation", isValidLocation);
         return "createGarden";
     }
+
 
     /**
      * Posts a form response with name, location, and size of the garden
@@ -48,9 +67,17 @@ public class GardensController {
                               @RequestParam(name="gardenSize") String gardenSize,
                               Model model) {
         logger.info("POST /gardens/create");
-        if (ValidityCheck.validGardenName(gardenName) && ValidityCheck.validGardenLocation(gardenLocation) && ValidityCheck.validGardenSize(gardenSize)) {
+
+        boolean isValidName = ValidityCheck.validGardenName(gardenName);
+        boolean isValidLocation = ValidityCheck.validGardenLocation(gardenLocation);
+
+        if (isValidName && isValidLocation) {
             gardenService.addFormResult(new Garden(gardenName, gardenLocation, Double.parseDouble(gardenSize)));
         }
+
+        model.addAttribute("isValidName", isValidName);
+        model.addAttribute("isValidLocation", isValidLocation);
+
         model.addAttribute("gardenName", gardenName);
         model.addAttribute("gardenLocation", gardenLocation);
         model.addAttribute("gardenSize", Double.parseDouble(gardenSize));

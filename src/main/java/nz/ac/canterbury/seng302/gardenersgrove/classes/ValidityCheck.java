@@ -13,6 +13,7 @@ public class ValidityCheck {
      */
     public static boolean validGardenName(String name) 
     {
+        name = name.trim();
         return name.matches("^[a-zA-Z0-9 ,.'-]+$");
     }
 
@@ -23,6 +24,7 @@ public class ValidityCheck {
      */
     public static boolean validGardenLocation(String location) 
     {
+        location = location.trim();
         return location.matches("^[a-zA-Z0-9 ,.'-]+$");
     }
 
