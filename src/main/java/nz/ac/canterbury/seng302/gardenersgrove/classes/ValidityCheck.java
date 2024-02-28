@@ -13,18 +13,16 @@ public class ValidityCheck {
      */
     public static boolean validGardenName(String name) 
     {
-        if (name == "" || !name.matches("[a-zA-Z0-9 ,.'-]+")) {return false;}
-        return true;
+        return !name.isEmpty() && name.matches("[a-zA-Z0-9 ,.'-]+");
     }
 
     /**
      * This method checks if the entered garden location contains only alphanumeric or valid characters
-     * @param name the garden location entered by user
+     * @param location the garden location entered by user
      * @return true if entered garden location is valid, otherwise false
      */
     public static boolean validGardenLocation(String location) 
     {
-        if (location == "" || !location.matches("[a-zA-Z0-9 ,.'-]+")) {return false;}
-        return true;
+        return !location.isEmpty() && location.matches("[a-zA-Z0-9 ,.'-]+");
     }
 }
