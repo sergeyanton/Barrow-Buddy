@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
+import nz.ac.canterbury.seng302.gardenersgrove.classes.ValidityCheck;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import org.slf4j.Logger;
@@ -47,7 +48,9 @@ public class GardensController {
                               @RequestParam(name="gardenSize") double gardenSize,
                               Model model) {
         logger.info("POST /gardens/create");
-        gardenService.addFormResult(new Garden(gardenName, gardenLocation, gardenSize));
+        if (ValidityCheck.validGardenName(gardenName) && ValidityCheck.validGardenLocation(gardenLocation)) {
+            gardenService.addFormResult(new Garden(gardenName, gardenLocation, gardenSize));
+        }
         model.addAttribute("gardenName", gardenName);
         model.addAttribute("gardenLocation", gardenLocation);
         model.addAttribute("gardenSize", gardenSize);
