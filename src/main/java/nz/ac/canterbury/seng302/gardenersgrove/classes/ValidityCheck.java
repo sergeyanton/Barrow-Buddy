@@ -13,7 +13,7 @@ public class ValidityCheck {
      */
     public static boolean validGardenName(String name) 
     {
-        return !name.isEmpty() && name.matches("[a-zA-Z0-9 ,.'-]+");
+        return name.matches("^[a-zA-Z0-9 ,.'-]+$");
     }
 
     /**
@@ -23,7 +23,7 @@ public class ValidityCheck {
      */
     public static boolean validGardenLocation(String location) 
     {
-        return !location.isEmpty() && location.matches("[a-zA-Z0-9 ,.'-]+");
+        return location.matches("^[a-zA-Z0-9 ,.'-]+$");
     }
 
     /**
@@ -33,6 +33,6 @@ public class ValidityCheck {
      */
     public static boolean validGardenSize(String size)
     {
-        return !size.isEmpty() && size.matches("[0-9]*[.,]?[0-9]+$");
+        return size.matches("^[0-9]*[.,]?[0-9]+$");
     }
 }
