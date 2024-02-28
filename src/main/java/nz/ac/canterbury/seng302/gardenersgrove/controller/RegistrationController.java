@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class RegistrationController {
-    Logger logger = LoggerFactory.getLogger(LandingController.class);
+    Logger logger = LoggerFactory.getLogger(RegistrationController.class);
 
     private String errorMessage = "";
 
@@ -26,5 +26,11 @@ public class RegistrationController {
         logger.info("GET /register");
         model.addAttribute("errorMessage", errorMessage);
         return "pages/registrationPage";
+    }
+
+    @PostMapping("/register")
+    public String submitRegistration() {
+        logger.info("POST /register");
+        return "redirect:./home";
     }
 }

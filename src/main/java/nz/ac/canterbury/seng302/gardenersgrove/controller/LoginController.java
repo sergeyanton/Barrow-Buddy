@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 public class LoginController {
@@ -18,5 +19,11 @@ public class LoginController {
     public String login() {
         logger.info("GET /login");
         return "pages/loginPage";
+    }
+
+    @PostMapping("/login")
+    public String submitLogin() {
+        logger.info("POST /login");
+        return "redirect:./home";
     }
 }
