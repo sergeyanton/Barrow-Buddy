@@ -1,6 +1,11 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "tab_user")
@@ -24,6 +29,10 @@ public class User {
     @Column(nullable = true)
     private String dateOfBirth;
 
+    @Column()
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private List<Authority> userRoles;
 
     protected User() {}
 
@@ -33,6 +42,18 @@ public class User {
         this.password = password;
         this.email = email;
         this.dateOfBirth = dateOfBirth;
+    }
+
+    public void grantAuthority(String authority) {
+        if ( userRoles == null )
+            userRoles = new ArrayList<>();
+
+        userRoles.add(new Authority(authority));
+    }
+    public List<GrantedAuthority> getAuthorities(){
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        this.userRoles.forEach(authority -> authorities.add(new SimpleGrantedAuthority(authority.getRole())));
+        return authorities;
     }
 
     public Long getId() {
