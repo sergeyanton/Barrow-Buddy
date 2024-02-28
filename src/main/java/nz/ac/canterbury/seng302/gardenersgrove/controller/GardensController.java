@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -39,11 +40,11 @@ public class GardensController {
      * @param gardenSize size of garden
      * @param model (map-like) representation of name for use in thymeleaf,
      *              with values being set to relevant parameters provided
-     * @return thymeleaf demoFormTemplate
+     * @return thymeleaf createGarden
      *
      */
     @PostMapping("/gardens/create")
-    public String submitForm( @RequestParam(name="gardenName") String gardenName,
+    public String createGarden( @RequestParam(name="gardenName") String gardenName,
                               @RequestParam(name="gardenLocation") String gardenLocation,
                               @RequestParam(name="gardenSize") double gardenSize,
                               Model model) {
@@ -60,12 +61,24 @@ public class GardensController {
     /**
      * Gets all form responses (gardens)
      * @param model (map-like) representation of results to be used by thymeleaf
-     * @return thymeleaf demoResponseTemplate
+     * @return thymeleaf createdGardens
      */
     @GetMapping("/gardens")
-    public String responses(Model model) {
+    public String viewGardens(Model model) {
         logger.info("GET /gardens/createdGardens");
         model.addAttribute("gardens", gardenService.getGardens());
         return "createdGardens";
+    }
+
+    /**
+     * Gets name of garden that was clicked on.
+     * @param model (map-like) representation of results to be used by thymeleaf
+     * @return thymeleaf demoResponseTemplate
+     */
+    @GetMapping("/gardens/{gardenId}")
+    public String viewGarden(@PathVariable("gardenId") Long gardenId, Model model) {
+        logger.info("GET /gardens/" + gardenId);
+        model.addAttribute("garden", gardenService.getGardenById(gardenId));
+        return "gardenProfile";
     }
 }

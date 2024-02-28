@@ -19,7 +19,7 @@ public class ValidityCheck {
 
     /**
      * This method checks if the entered garden location contains only alphanumeric or valid characters
-     * @param name the garden location entered by user
+     * @param location the garden location entered by user
      * @return true if entered garden location is valid, otherwise false
      */
     public static boolean validGardenLocation(String location) 

@@ -21,8 +21,17 @@ public class GardenService {
     }
 
     /**
-     * Gets all FormResults from persistence
-     * @return all FormResults currently saved in persistence
+     * Gets a garden from persistence by searching for the id
+     * @param id id to look for
+     * @return the appropriate garden
+     */
+    public Garden getGardenById(long id) {
+        return gardenRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid garden id: " + id));
+    }
+
+    /**
+     * Gets all gardens from persistence
+     * @return all gardens currently saved in persistence
      */
     public List<Garden> getGardens() {
         return gardenRepository.findAll();
