@@ -15,13 +15,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class RegistrationController {
     Logger logger = LoggerFactory.getLogger(LandingController.class);
 
+    private String errorMessage = "";
+
     /**
      * Gets the thymeleaf page representing the /register page (a basic welcome screen with some links)
      * @return thymeleaf registrationPage
      */
     @GetMapping("/register")
-    public String registration() {
+    public String registration(Model model) {
         logger.info("GET /register");
+        model.addAttribute("errorMessage", errorMessage);
         return "pages/registrationPage";
     }
 }
