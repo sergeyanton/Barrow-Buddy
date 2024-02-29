@@ -33,7 +33,7 @@ public class GardenServiceTest {
             public <S extends Garden> S save(S entity) {
                 // assume there is some modification at the service layer that we check here
                 // instead of just the same values
-                Assertions.assertEquals(entity.getName(), "John");
+                Assertions.assertEquals("My Garden", entity.getName());
                 return entity;
             }
 

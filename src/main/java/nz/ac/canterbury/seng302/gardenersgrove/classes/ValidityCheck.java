@@ -43,10 +43,10 @@ public class ValidityCheck {
      */
     public static Optional<String> validateGardenSize(String size) {
         Boolean isBlank = size.isBlank();
-        Boolean isNumber = size.matches("^[0-9]+(,[0-9]+)?$");
+        Boolean isNumber = size.matches("^[0-9]+((.|,)[0-9]+)?$");
         if (!isBlank && isNumber) {
             return Optional.empty();
         }
-        return Optional.of("Invalid garden size");
+        return Optional.of("Garden size must be a positive number");
     }
 }
