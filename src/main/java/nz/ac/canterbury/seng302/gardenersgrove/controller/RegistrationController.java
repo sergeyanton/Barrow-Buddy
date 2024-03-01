@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Objects;
 
@@ -31,39 +32,44 @@ public class RegistrationController {
     }
 
     @PostMapping("/register")
-    public String submitRegistration(RegistrationData newUser) {
+    public String submitRegistration(RegistrationData newUser, RedirectAttributes redirectAttributes) {
         logger.info("POST /register");
-        String errorMsg = dataCheck(newUser);
+        Validator error = dataCheck(newUser);
+        if (!error.getStatus()){
+            errorMessage = error.getMessage();
+            redirectAttributes.addFlashAttribute("errorMessage", errorMessage);
+            return "redirect:/register";
+
+        }
         return "redirect:./home";
     }
 
-    private String dataCheck(RegistrationData newUser){
+    private Validator dataCheck(RegistrationData newUser){
 
         Validator nameCheck = checkName(newUser.getfName());
-        if (!nameCheck.getStatus()){return nameCheck.getMessage();}
+        if (!nameCheck.getStatus()){return nameCheck;}
 
         if (newUser.getNoSurnameCheckBox() != null) {
             Validator surnameCheck = checkName(newUser.getlName());
-            if (!surnameCheck.getStatus()){return surnameCheck.getMessage();}
+            if (!surnameCheck.getStatus()){return surnameCheck;}
         }
 
         Validator emailCheck = checkEmail(newUser.getEmail());
-        if (!emailCheck.getStatus()){return emailCheck.getMessage();}
+        if (!emailCheck.getStatus()){return emailCheck;}
 
 //        Validator addressCheck = checkAddress(newUser.getAddress());
 
         if(!Objects.equals(newUser.getPassword(), newUser.getRetypePassword())){
-            return "Passwords do not match";
-        }
+            return new Validator(false, "Passwords do not match");
+                }
 
         Validator passwordCheck = checkPassword(newUser.getPassword());
-        if (!passwordCheck.getStatus()){return passwordCheck.getMessage();}
+        if (!passwordCheck.getStatus()){return passwordCheck;}
 
         Validator dobCheck = checkDob(newUser.getDob());
-        if (!dobCheck.getStatus()){return dobCheck.getMessage();}
+        if (!dobCheck.getStatus()){return dobCheck;}
 
-
-        return "Ok";
+        return new Validator(true, "");
     }
 
 }
