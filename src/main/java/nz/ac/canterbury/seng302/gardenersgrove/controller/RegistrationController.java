@@ -1,6 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
-import nz.ac.canterbury.seng302.gardenersgrove.dataCollection.RegistrationData;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection.RegistrationData;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.Objects;
 
-import static nz.ac.canterbury.seng302.gardenersgrove.entity.User.*;
+import static nz.ac.canterbury.seng302.gardenersgrove.Validation.InputValidation.*;
 
 @Controller
 public class RegistrationController {

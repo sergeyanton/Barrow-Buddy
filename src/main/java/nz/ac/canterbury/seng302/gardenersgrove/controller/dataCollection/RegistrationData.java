@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.gardenersgrove.dataCollection;
+package nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection;
 
 public class RegistrationData {
     public String fName;
