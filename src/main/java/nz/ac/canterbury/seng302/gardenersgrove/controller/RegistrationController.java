@@ -31,6 +31,6 @@ public class RegistrationController {
     @PostMapping("/register")
     public String submitRegistration() {
         logger.info("POST /register");
-        return "redirect:./home";
+        return "redirect:./profile";
     }
 }
