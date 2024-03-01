@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class UserService {
+public class UserService  {
     @Autowired
-    private UserRepository userRepository;
+    private static UserRepository userRepository;
 
     public User registerUser(User user) {
         return userRepository.save(user);
@@ -24,13 +24,13 @@ public class UserService {
     public User getUserByEmail(String email) {
         return userRepository.getUserByEmail(email);
     }
-
-    public User updateUser(User user) {
-        return userRepository.save(user);
+    public static Boolean checkEmail(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+        return user.isPresent();
     }
 
-//    public Boolean checkEmail(String email) {
+//    public User findEmail(String email) {
 //        Optional<User> user = UserRepository.findByEmail(email);
-//        return user.isPresent();
+//        return user.orElse(null);
 //    }
 }

@@ -27,6 +27,7 @@ import java.util.Objects;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.Validation.InputValidation.*;
 import static nz.ac.canterbury.seng302.gardenersgrove.Validation.InputValidation.checkDob;
+import static nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection.RegistrationData.createNewUser;
 
 @Controller
 public class AccountController {
@@ -45,17 +46,19 @@ public class AccountController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    @PostMapping("/register")
-    public String register(HttpServletRequest request,
-                           @RequestParam(name = "email") String email,
-                           @RequestParam(name = "fname") String fname,
-                           @RequestParam(name = "lname") String lname,
-                           @RequestParam(name = "dob") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateOfBirth,
-                           @RequestParam(name = "password") String password,
-                           @RequestParam(name = "password") String retypedPassword,
-                           @RequestParam(name = "noSurnameCheckBox", required = false) boolean noLastName, RedirectAttributes redirectAttributes) {
 
-        logger.info(String.format("Attempting to register new user '%s %s', with email '%s'.", fname, lname, email));
+    //                            HttpServletRequest request,
+//                           @RequestParam(name = "email") String email,
+//                           @RequestParam(name = "fname") String fname,
+//                           @RequestParam(name = "lname") String lname,
+//                           @RequestParam(name = "dob") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) String dateOfBirth,
+//                           @RequestParam(name = "password") String password,
+//                           @RequestParam(name = "password") String retypedPassword,
+//                           @RequestParam(name = "noSurnameCheckBox", required = false) boolean noLastName,
+    @PostMapping("/register")
+    public String register(RegistrationData newUser, RedirectAttributes redirectAttributes) {
+
+        logger.info(String.format("Attempting to register new user '%s %s', with email '%s'.", newUser.getfName(), newUser.getlName(), newUser.getEmail()));
 
         Validator error = dataCheck(newUser);
         if (!error.getStatus()){
@@ -64,7 +67,8 @@ public class AccountController {
             return "redirect:/register";
         }
 
-        User user = new User(fname, lname, password, email, dateOfBirth);
+//        User user = new User(fname, lname, password, email, dateOfBirth);
+        User user = createNewUser(newUser);
         user.grantAuthority("ROLE_USER");
         userService.registerUser(user);
 
@@ -72,10 +76,10 @@ public class AccountController {
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword(), user.getAuthorities());
         Authentication authentication = authenticationManager.authenticate(token);
 
-        if (authentication.isAuthenticated()) {
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
-        }
+//        if (authentication.isAuthenticated()) {
+//            SecurityContextHolder.getContext().setAuthentication(authentication);
+//            request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
+//        }
 
         return "redirect:/profile";
     }
@@ -109,17 +113,12 @@ public class AccountController {
             Validator surnameCheck = checkName(newUser.getlName());
             if (!surnameCheck.getStatus()){return surnameCheck;}
         }
-
         Validator emailCheck = checkEmail(newUser.getEmail(), false);
         if (!emailCheck.getStatus()){return emailCheck;}
-
-        Validator addressCheck = checkEmail(newUser.getAddress(), false);
-        if (!addressCheck.getStatus()){return addressCheck;}
 
         if(!Objects.equals(newUser.getPassword(), newUser.getRetypePassword())){
             return new Validator(false, "Passwords do not match");
         }
-
         Validator passwordCheck = checkPassword(newUser.getPassword());
         if (!passwordCheck.getStatus()){return passwordCheck;}
 

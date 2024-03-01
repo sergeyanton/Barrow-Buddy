@@ -1,31 +1,37 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection;
 
+import nz.ac.canterbury.seng302.gardenersgrove.entity.User;
+
 public class RegistrationData {
-    public String fName;
-    public String lName;
-    public Boolean noSurnameCheckBox;
-    public String email;
-    public String address;
-    public String password;
-    public String retypePassword;
-    public String dob;
-    private RegistrationData(String fName, String lName, Boolean noSurnameCheckBox, String email, String address, String password, String retypePassword, String dob) {
-        this.fName = fName;
-        this.lName = lName;
+    private final String fname;
+    private final String lname;
+    private final Boolean noSurnameCheckBox;
+    private final String email;
+    private final String password;
+    private final String retypePassword;
+    private final String dob;
+
+
+    public RegistrationData(String fname, String lname, Boolean noSurnameCheckBox, String email, String password, String retypePassword, String dob) {
+        this.fname = fname;
+        this.lname = lname;
         this.noSurnameCheckBox = noSurnameCheckBox;
         this.email = email;
-        this.address = address;
         this.password = password;
         this.retypePassword = retypePassword;
         this.dob = dob;
     }
 
+    public static User createNewUser(RegistrationData user) {
+        return new User(user.getfName(), user.getlName(), user.getEmail(), user.getPassword(), user.getPassword());
+    }
+
     public String getfName() {
-        return fName;
+        return fname;
     }
 
     public String getlName() {
-        return lName;
+        return lname;
     }
 
     public Boolean getNoSurnameCheckBox() {
@@ -34,10 +40,6 @@ public class RegistrationData {
 
     public String getEmail() {
         return email;
-    }
-
-    public String getAddress() {
-        return address;
     }
 
     public String getPassword() {

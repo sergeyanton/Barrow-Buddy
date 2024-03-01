@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
 @Entity
 @Table(name = "tab_user")
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,13 +27,10 @@ public class User {
     private String password;
 
     @Column(nullable = false)
-    private String address;
-
-    @Column(nullable = false)
     private String email;
 
     @Column(nullable = true)
-    private Date dateOfBirth;
+    private String dateOfBirth;
 
     @Column()
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -40,7 +39,7 @@ public class User {
 
     protected User() {}
 
-    public User(String fname, String lname, String email, String password, Date dateOfBirth) {
+    public User(String fname, String lname, String email, String password, String dateOfBirth) {
         this.fname = fname;
         this.lname = lname;
         this.email = email;
@@ -73,10 +72,6 @@ public class User {
         return lname;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
     public String getPassword() {
         return password;
     }
@@ -85,7 +80,7 @@ public class User {
         return email;
     }
 
-    public Date getDateOfBirth() {
+    public String getDateOfBirth() {
         return dateOfBirth;
     }
 
