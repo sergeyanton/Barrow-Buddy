@@ -5,6 +5,29 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 public class ValidityCheckTest {
+
+    @Test
+    void CheckName_WithValidName_ReturnsEmptyOptional() {
+        String name = "Valid Tree Name";
+        assertEquals(Optional.empty(), ValidityCheck.validGardenName(name));
+    }
+    @Test
+    void CheckName_WithEmptyName_ReturnsOptionalWithErrorMessage() {
+        String name = "";
+        assertEquals(Optional.of("Garden name must not be empty"), ValidityCheck.validGardenName(name));
+    }
+
+    @Test
+    void CheckName_WithWhiteSpaceName_ReturnsOptionalWithErrorMessage() {
+        String name = "             ";
+        assertEquals(Optional.of("Garden name must not be empty"), ValidityCheck.validGardenName(name));
+    }
+
+    @Test
+    void CheckName_WithInvalidName_ReturnsOptionalWithErrorMessage() {
+        String name = "Invalid Name Because Of The Dollar $ign ";
+        assertEquals(Optional.of("Garden name must only include letters, numbers, spaces, dots, hyphens or apostrophes"), ValidityCheck.validGardenName(name));
+    }
     @Test
     void ValidGardenSize_WithValidSizeSeperatedWithDot_ReturnsEmptyOptional() {
         String size = "10.5";
