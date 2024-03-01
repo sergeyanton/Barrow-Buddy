@@ -67,7 +67,7 @@ public class User {
         return dateOfBirth;
     }
 
-    private static Validator checkName(String userName) {
+    public static Validator checkName(String userName) {
         Validator isValid = new Validator(true, "Ok");
         if (userName.isBlank()) {isValid.setValid(false,"{First/Last} name cannot be empty and must only include letters, spaces, hyphens or apostrophes");}
         if (userName.length() > 64) {isValid.setValid(false,"{First/Last} name cannot be empty and must only include letters, spaces, hyphens or apostrophes");}
@@ -75,7 +75,7 @@ public class User {
         return isValid;
     }
 
-    private static Validator checkEmail(String userEmail) {
+    public static Validator checkEmail(String userEmail) {
         Validator isValid = new Validator(true, "Ok");
         if (userEmail.isBlank()) {isValid.setValid(false,"Email address must be in the form ‘jane@doe.nz’");}
         if (!userEmail.matches("^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$")) {isValid.setValid(false,"Email address must be in the form ‘jane@doe.nz’");}
@@ -83,7 +83,7 @@ public class User {
         return isValid;
     }
 
-    private static Validator checkDob(String userDob) {
+    public static Validator checkDob(String userDob) {
         //Format: DD/MM/YYYY
         Validator isValid = new Validator(true, "Ok");
         if (userDob.isBlank()) {isValid.setValid(false,"Date in not in valid format, DD/MM/YYYY)");}
@@ -102,7 +102,7 @@ public class User {
         return isValid;
     }
 
-    private static Validator checkPassword(String password) {
+    public static Validator checkPassword(String password) {
         Validator isValid = new Validator(true,"Ok");
         if (!password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^a-zA-Z\\d]).{8,}$\n")) {
             isValid.setValid(false,"Your password must be  at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.");
