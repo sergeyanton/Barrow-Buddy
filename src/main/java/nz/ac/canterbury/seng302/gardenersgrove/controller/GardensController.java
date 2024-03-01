@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Optional;
 
 /**
  * This is the controller for the gardens page.
@@ -106,7 +105,7 @@ public class GardensController {
 
         model.addAttribute("gardenName", gardenName);
         model.addAttribute("gardenLocation", gardenLocation);
-        model.addAttribute("gardenSize", Double.parseDouble(gardenSize));
+        model.addAttribute("gardenSize", gardenSize);
         return "createGarden";
     }
 
