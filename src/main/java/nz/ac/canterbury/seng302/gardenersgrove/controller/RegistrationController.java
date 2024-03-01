@@ -34,7 +34,6 @@ public class RegistrationController {
     @PostMapping("/register")
     public String submitRegistration(RegistrationData newUser, RedirectAttributes redirectAttributes) {
         logger.info("POST /register");
-        //dataCheck(newUser);
         Validator error = dataCheck(newUser);
         if (!error.getStatus()){
             errorMessage = error.getMessage();
@@ -58,7 +57,8 @@ public class RegistrationController {
         Validator emailCheck = checkEmail(newUser.getEmail());
         if (!emailCheck.getStatus()){return emailCheck;}
 
-//        Validator addressCheck = checkAddress(newUser.getAddress());
+        Validator addressCheck = checkEmail(newUser.getAddress());
+        if (!addressCheck.getStatus()){return addressCheck;}
 
         if(!Objects.equals(newUser.getPassword(), newUser.getRetypePassword())){
             return new Validator(false, "Passwords do not match");
