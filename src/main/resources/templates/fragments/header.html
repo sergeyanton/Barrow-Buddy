@@ -1,0 +1,20 @@
+<header th:fragment="header">
+    <nav>
+        <ul>
+            <li>
+                <a th:href="@{/}">Home</a>
+            </li>
+            <li>
+                <a th:href="@{/gardens/create}">New Garden</a>
+            </li>
+            <li>
+                <a th:href="@{/gardens}">My Gardens</a>
+                <ul>
+                    <li th:each="garden : ${allGardens}">
+                        <a th:href="@{/gardens/{id}(id=${garden.id})}" th:text="${garden.name}">Garden Name</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+</header>

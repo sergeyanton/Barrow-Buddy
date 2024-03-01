@@ -3,12 +3,15 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 import nz.ac.canterbury.seng302.gardenersgrove.classes.ValidityCheck;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import java.util.List;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -19,9 +22,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class GardensController {
     Logger logger = LoggerFactory.getLogger(GardensController.class);
     private final GardenService gardenService;
+
     @Autowired
     public GardensController(GardenService gardenService) {
         this.gardenService = gardenService;
+    }
+
+    @ModelAttribute("allGardens")
+    private List<Garden> getAllGardens() {
+        return gardenService.getGardens();
     }
 
     /**
@@ -53,26 +62,34 @@ public class GardensController {
 
     /**
      * Posts a form response with name, location, and size of the garden
+     * 
      * @param gardenName name of garden
      * @param gardenLocation location of garden
      * @param gardenSize size of garden
-     * @param model (map-like) representation of name for use in thymeleaf,
-     *              with values being set to relevant parameters provided
+     * @param model (map-like) representation of name for use in thymeleaf, with values being set to
+     *        relevant parameters provided
      * @return thymeleaf demoFormTemplate
      *
      */
     @PostMapping("/gardens/create")
-    public String submitForm( @RequestParam(name="gardenName") String gardenName,
-                              @RequestParam(name="gardenLocation") String gardenLocation,
-                              @RequestParam(name="gardenSize") String gardenSize,
-                              Model model) {
+    public String submitForm(@RequestParam(name = "gardenName") String gardenName,
+            @RequestParam(name = "gardenLocation") String gardenLocation,
+            @RequestParam(name = "gardenSize") String gardenSize, Model model) {
         logger.info("POST /gardens/create");
 
-        boolean isValidName = ValidityCheck.validGardenName(gardenName);
-        boolean isValidLocation = ValidityCheck.validGardenLocation(gardenLocation);
+        Optional<String> gardenSizeError = ValidityCheck.validateGardenSize(gardenSize);
 
-        if (isValidName && isValidLocation) {
-            gardenService.addFormResult(new Garden(gardenName, gardenLocation, Double.parseDouble(gardenSize)));
+        if (gardenSizeError.isPresent()) {
+            model.addAttribute("gardenSizeError", gardenSizeError.get());
+        } else {
+            // clear any previous error message
+            model.addAttribute("gardenSizeError", "");
+        }
+
+        if (ValidityCheck.validGardenName(gardenName)
+                && ValidityCheck.validGardenLocation(gardenLocation)
+                && !gardenSizeError.isPresent()) {
+            gardenService.addFormResult(new Garden(gardenName, gardenLocation, gardenSize));
         }
 
         model.addAttribute("isValidName", isValidName);
@@ -86,6 +103,7 @@ public class GardensController {
 
     /**
      * Gets all form responses (gardens)
+     * 
      * @param model (map-like) representation of results to be used by thymeleaf
      * @return thymeleaf demoResponseTemplate
      */
