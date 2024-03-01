@@ -93,8 +93,8 @@ public class GardenServiceTest {
     // @Autowired
     // private GardenService formService;
 
-    @Autowired
-    private GardenRepository gardenRepository;
+//    @Autowired
+//    private GardenRepository gardenRepository;
 
     @Test
     public void simpleTest2() {
