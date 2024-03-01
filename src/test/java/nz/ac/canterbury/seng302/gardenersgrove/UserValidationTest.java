@@ -43,6 +43,14 @@ public class UserValidationTest {
         assertTrue(emailValidator.getStatus());
     }
 
+    @Test
+    void dobValidCheck_noError() {
+        user = new User("Fabian","Gilson","fabian.gilson@canterbury.ac.nz","20 Kirkwood Ave, Ilam, Christchurch 8041",
+                "Fabian123!","01/01/2009");
+        Validator dobValidator = User.checkDob(user.getDateOfBirth());
+        assertTrue(dobValidator.getStatus());
+    }
+
     // Error cases
     @Test
     void firstNameValidCheck_error() {
@@ -66,15 +74,10 @@ public class UserValidationTest {
     void emailNameValidCheck_error() {
         user = new User("Fabian","Gilson","fabian"
                 , "20 Kirkwood Ave, Ilam, Christchurch 8041", "Fabian123!" ,"01/01/2009");
+        Validator emailValidator = User.checkEmail(user.getEmail());
+        assertFalse(emailValidator.getStatus());
     }
 
-    @Test
-    void dobValidCheck_noError() {
-        user = new User("Fabian","Gilson","fabian.gilson@canterbury.ac.nz","20 Kirkwood Ave, Ilam, Christchurch 8041",
-                "Fabian123!","01/01/2009");
-        Validator dobValidator = User.checkDob(user.getDateOfBirth());
-        assertTrue(dobValidator.getStatus());
-    }
 
     @Test
     void dobInvalidFormatCheck_error() {
@@ -99,10 +102,7 @@ public class UserValidationTest {
         User invalidUser = new User("Invalid","Person","fabian.gilson@canterbury.ac.nz","20 Kirkwood Ave, Ilam, Christchurch 8041",
                 "Fabian123!","09/09/2040");
         Validator dobValidator = User.checkDob(invalidUser.getDateOfBirth());
-
         assertFalse(dobValidator.getStatus());
-        Validator emailValidator = User.checkEmail(user.getEmail());
-        assertFalse(emailValidator.getStatus());
     }
 
 
