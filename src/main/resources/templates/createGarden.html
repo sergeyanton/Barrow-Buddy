@@ -40,21 +40,6 @@
             <a th:href="@{/gardens}">View responses</a>
             <a th:href="@{/}">Back to home</a>
         </div>
-    </div>
-
-            </div>
-            <div th:if="${gardenName!='' and gardenLocation!=''}">
-                <h4 th:text="'Garden: ' + ${gardenName}"></h4>
-                <h4 th:text="'Location: ' + ${gardenLocation}"></h4>
-                <h4 th:text="'Size: ' + ${gardenSize}"></h4>
-            </div>
-            <div th:if="${gardenName==''}">
-                <h4 th:text="'Garden name cannot be blank!'"></h4>
-            </div>
-            <div th:if="${gardenLocation==''}">
-                <h4 th:text="'Garden location cannot be blank!'"></h4>
-            </div>
-        </div>
     </main>
 </body>
 
