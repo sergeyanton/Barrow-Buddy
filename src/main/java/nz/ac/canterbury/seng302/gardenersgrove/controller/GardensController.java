@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 import nz.ac.canterbury.seng302.gardenersgrove.classes.ValidityCheck;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,15 +51,18 @@ public class GardensController {
             @RequestParam(name = "gardenSize") String gardenSize, Model model) {
         logger.info("POST /gardens/create");
 
-        if (ValidityCheck.validateGardenSize(gardenSize).isPresent()) {
-            model.addAttribute("gardenSizeError", "Garden size must be a positive number");
+        Optional<String> gardenSizeError = ValidityCheck.validateGardenSize(gardenSize);
+
+        if (gardenSizeError.isPresent()) {
+            model.addAttribute("gardenSizeError", gardenSizeError.get());
         } else {
             // clear any previous error message
             model.addAttribute("gardenSizeError", "");
         }
 
         if (ValidityCheck.validGardenName(gardenName)
-                && ValidityCheck.validGardenLocation(gardenLocation)) {
+                && ValidityCheck.validGardenLocation(gardenLocation)
+                && !gardenSizeError.isPresent()) {
             gardenService.addFormResult(new Garden(gardenName, gardenLocation, gardenSize));
         }
         model.addAttribute("gardenName", gardenName);
