@@ -16,10 +16,13 @@ public class User {
     private String lname;
 
     @Column(nullable = false)
-    private String password;
+    private String email;
 
     @Column(nullable = false)
-    private String email;
+    private String address;
+
+    @Column(nullable = false)
+    private String password;
 
     @Column(nullable = true)
     private String dateOfBirth;
@@ -27,11 +30,12 @@ public class User {
 
     protected User() {}
 
-    public User(String fname, String lname, String password, String email, String dateOfBirth) {
+    public User(String fname, String lname, String email, String address, String password, String dateOfBirth) {
         this.fname = fname;
         this.lname = lname;
-        this.password = password;
         this.email = email;
+        this.address = address;
+        this.password = password;
         this.dateOfBirth = dateOfBirth;
     }
 
@@ -47,12 +51,16 @@ public class User {
         return lname;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
     public String getEmail() {
         return email;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public String getDateOfBirth() {
