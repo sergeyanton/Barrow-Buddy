@@ -98,20 +98,20 @@ public class User {
         int currentDay = currentDate.getDayOfMonth();
         //Format: DD/MM/YYYY
         Validator isValid = new Validator(true, "Ok");
-        if (userDob.isBlank()) {isValid.setValid(false,"Date in not in valid format, DD/MM/YYYY)");}
+        if (userDob.isBlank()) {isValid.setValid(false,"Date is not in valid format, DD/MM/YYYY)");}
         int day = Integer.parseInt(userDob.substring(0, 2));
         int month = Integer.parseInt(userDob.substring(3, 5));
         int year = Integer.parseInt(userDob.substring(6));
 
-        if(day < 1){isValid.setValid(false,"Date in not in valid format, DD/MM/YYYY)");}
-        if (month %2 != 0 && day > 30) {isValid.setValid(false,"Date in not in valid format, DD/MM/YYYY)");}
-        if (month %2 == 0 && day > 31) {isValid.setValid(false,"Date in not in valid format, DD/MM/YYYY)");}
-        if (year %4 == 0 && month == 2 && day > 29){isValid.setValid(false,"Date in not in valid format, DD/MM/YYYY)");}
-        if (year %4 != 0 && month == 2 && day > 28){isValid.setValid(false,"Date in not in valid format, DD/MM/YYYY)");}
+        if(day < 1){isValid.setValid(false,"Date is not in valid format, DD/MM/YYYY)");}
+        if (month %2 != 0 && day > 30) {isValid.setValid(false,"Date is not in valid format, DD/MM/YYYY)");}
+        if (month %2 == 0 && day > 31) {isValid.setValid(false,"Date is not in valid format, DD/MM/YYYY)");}
+        if (year %4 == 0 && month == 2 && day > 29){isValid.setValid(false,"Date is not in valid format, DD/MM/YYYY)");}
+        if (year %4 != 0 && month == 2 && day > 28){isValid.setValid(false,"Date is not in valid format, DD/MM/YYYY)");}
 
 
-        if (year < currentYear - 13){isValid.setValid(false,"You must be 13 years or older to create an account");}
-        if (year > currentYear - 120){isValid.setValid(false,"The maximum age allowed is 120 years");}
+        if (year > currentYear - 13){isValid.setValid(false,"You must be 13 years or older to create an account");}
+        if (year < currentYear - 120){isValid.setValid(false,"The maximum age allowed is 120 years");}
 
         // checks that date given is not in the future
         if (year > currentYear) {
