@@ -11,7 +11,7 @@ public class ValidityCheck {
      * This method checks if the entered garden name contains only alphanumeric or valid characters
      * 
      * @param name the garden name entered by user
-     * @return true if entered garden name is valid, otherwise false
+     * @return Returns an error message string if the garden size is invalid, otherwise returns an empty optional
      */
     public static Optional<String> validGardenName(String name) {
         boolean isBlank = name.isBlank();
@@ -31,7 +31,7 @@ public class ValidityCheck {
      * 
      * @param location
      * the garden location entered by user
-     * @return true if entered garden location is valid, otherwise false
+     * @return Returns an error message string if the garden size is invalid, otherwise returns an empty optional
      */
     public static Optional<String> validGardenLocation(String location) {
         boolean isBlank = location.isBlank();
@@ -50,7 +50,7 @@ public class ValidityCheck {
      * accept a number with a comma as a decimal separator
      * 
      * @param size the garden size entered by user
-     * @return Returns a string if the garden size is invalid, otherwise returns an empty optional
+     * @return Returns an error message string if the garden size is invalid, otherwise returns an empty optional
      */
     public static Optional<String> validateGardenSize(String size) {
         boolean isBlank = size.isBlank();

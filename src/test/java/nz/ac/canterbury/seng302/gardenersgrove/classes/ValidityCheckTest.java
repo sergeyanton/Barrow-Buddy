@@ -6,11 +6,6 @@ import org.junit.jupiter.api.Test;
 
 public class ValidityCheckTest {
     @Test
-    void ValidGardenName_WithValidSizeSeperatedWithDot_ReturnsEmptyOptional() {
-        String size = "10.5";
-        assertEquals(Optional.empty(), ValidityCheck.validateGardenSize(size));
-    }
-    @Test
     void ValidGardenSize_WithValidSizeSeperatedWithDot_ReturnsEmptyOptional() {
         String size = "10.5";
         assertEquals(Optional.empty(), ValidityCheck.validateGardenSize(size));
