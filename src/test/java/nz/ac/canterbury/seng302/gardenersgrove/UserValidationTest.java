@@ -5,7 +5,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Validator;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static nz.ac.canterbury.seng302.gardenersgrove.Validation.InputValidation.*;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.InputValidation.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

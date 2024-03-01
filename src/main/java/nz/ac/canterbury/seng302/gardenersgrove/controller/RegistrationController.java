@@ -12,7 +12,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Objects;
 
-import static nz.ac.canterbury.seng302.gardenersgrove.Validation.InputValidation.*;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.InputValidation.*;
 
 @Controller
 public class RegistrationController {
