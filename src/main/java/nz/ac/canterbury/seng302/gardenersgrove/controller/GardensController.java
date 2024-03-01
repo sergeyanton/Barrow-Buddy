@@ -3,12 +3,15 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 import nz.ac.canterbury.seng302.gardenersgrove.classes.ValidityCheck;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
+import java.util.List;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -27,13 +30,37 @@ public class GardensController {
         this.gardenService = gardenService;
     }
 
+    @ModelAttribute("allGardens")
+    private List<Garden> getAllGardens() {
+        return gardenService.getGardens();
+    }
+
     /**
-     * Renders the template.
+     * Gets form to be displayed, includes the ability to display results of previous form when linked to from POST form
+     * @param gardenName previous garden name entered into form to be displayed
+     * @param gardenLocation previous garden location entered into form to be displayed
+     * @param gardenSize previous garden size entered into form to be displayed
+     * @param isValidName boolean for checking name is valid
+     * @param isValidLocation boolean for checking location is valid
+     * @param model (map-like) representation of gardenName, gardenLocation, garden Size and isValidName & isValidLocation boolean for use in thymeleaf
+     * @return thymeleaf demoFormTemplate
      */
     @GetMapping("/gardens/create")
-    public String gardenCreate() {
+    public String gardenCreate(@RequestParam(name="gardenName", required = false, defaultValue = "") String gardenName,
+                               @RequestParam(name="gardenLocation", required = false, defaultValue = "") String gardenLocation,
+                               @RequestParam(name="gardenSize", required = false, defaultValue = "") String gardenSize,
+                               @RequestParam(name="isValidName", required = false, defaultValue = "true") boolean isValidName,
+                               @RequestParam(name="isValidLocation", required = false, defaultValue = "true") boolean isValidLocation,
+                               Model model) {
+        logger.info("GET /gardens/create");
+        model.addAttribute("gardenName", gardenName);
+        model.addAttribute("gardenLocation", gardenLocation);
+        model.addAttribute("gardenSize", gardenSize);
+        model.addAttribute("isValidName", isValidName);
+        model.addAttribute("isValidLocation", isValidLocation);
         return "createGarden";
     }
+
 
     /**
      * Posts a form response with name, location, and size of the garden
@@ -79,7 +106,7 @@ public class GardensController {
 
         model.addAttribute("gardenName", gardenName);
         model.addAttribute("gardenLocation", gardenLocation);
-        model.addAttribute("gardenSize", gardenSize);
+        model.addAttribute("gardenSize", Double.parseDouble(gardenSize));
         return "createGarden";
     }
 
