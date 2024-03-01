@@ -50,7 +50,7 @@ public class GardenLocationTest {
 
     /** This test involves the user entering a garden name that contains only whitespace,
      * since the garden name cannot be empty, applying it to the ValidityCheck method
-     * validGardenName() should get it to return false as the method removes trailing
+     * validGardenName() should get it to return false as the method removes any trailing
      * whitespace */
     @Test
     public void UserEntersGardenLocation_LocationIsOnlyWhitespace_ReturnsFalse() {
