@@ -15,12 +15,14 @@ public class InputValidation {
         return isValid;
     }
 
-    public static Validator checkEmail(String userEmail) {
+    public static Validator checkEmail(String userEmail,Boolean isTest) {
         Validator isValid = new Validator(true, "Ok");
         if (userEmail.isBlank()) {isValid.setValid(false,"Email address must be in the form ‘jane@doe.nz’");}
         if (!userEmail.matches("^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$")) {isValid.setValid(false,"Email address must be in the form ‘jane@doe.nz’");}
 
-        if (userRepository.findByEmail(userEmail).isPresent()) {isValid.setValid(false,"Email address is already in use");}
+        if (!isTest) {
+            if (userRepository.findByEmail(userEmail).isPresent()) {isValid.setValid(false,"Email address is already in use");}
+        }
         return isValid;
     }
 

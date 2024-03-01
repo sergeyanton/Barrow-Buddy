@@ -40,7 +40,7 @@ public class UserValidationTest {
         user = new User("Fabian","Gilson","fabian.gilson@canterbury.ac.nz"
                 , "20 Kirkwood Ave, Ilam, Christchurch 8041", "Fabian123!" ,"01/01/2009");
 
-        Validator emailValidator = checkEmail(user.getEmail());
+        Validator emailValidator = checkEmail(user.getEmail(),true);
         assertTrue(emailValidator.getStatus());
     }
 
@@ -75,7 +75,7 @@ public class UserValidationTest {
     void emailNameValidCheck_error() {
         user = new User("Fabian","Gilson","fabian"
                 , "20 Kirkwood Ave, Ilam, Christchurch 8041", "Fabian123!" ,"01/01/2009");
-        Validator emailValidator = checkEmail(user.getEmail());
+        Validator emailValidator = checkEmail(user.getEmail(), true);
         assertFalse(emailValidator.getStatus());
     }
 

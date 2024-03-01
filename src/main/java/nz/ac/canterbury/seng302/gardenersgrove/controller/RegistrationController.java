@@ -54,10 +54,10 @@ public class RegistrationController {
             if (!surnameCheck.getStatus()){return surnameCheck;}
         }
 
-        Validator emailCheck = checkEmail(newUser.getEmail());
+        Validator emailCheck = checkEmail(newUser.getEmail(), false);
         if (!emailCheck.getStatus()){return emailCheck;}
 
-        Validator addressCheck = checkEmail(newUser.getAddress());
+        Validator addressCheck = checkEmail(newUser.getAddress(), false);
         if (!addressCheck.getStatus()){return addressCheck;}
 
         if(!Objects.equals(newUser.getPassword(), newUser.getRetypePassword())){
