@@ -51,4 +51,11 @@ public class ValidityCheckTest {
         assertEquals(Optional.of("Garden size must be a positive number"),
                 ValidityCheck.validateGardenSize(size));
     }
+
+    @Test
+    void ValidGardenSize_WithInvalidSizeBlankString_ReturnsOptionalWithErrorMessage() {
+        String size = "";
+        assertEquals(Optional.of("Garden size must be a positive number"),
+                ValidityCheck.validateGardenSize(size));
+    }
 }
