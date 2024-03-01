@@ -50,6 +50,7 @@ public class User {
 
         userRoles.add(new Authority(authority));
     }
+
     public List<GrantedAuthority> getAuthorities(){
         List<GrantedAuthority> authorities = new ArrayList<>();
         this.userRoles.forEach(authority -> authorities.add(new SimpleGrantedAuthority(authority.getRole())));

@@ -2,26 +2,27 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.User;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class UserService {
-    private UserRepository UserRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-    public UserService(UserRepository UserRepository) {
-        this.UserRepository = UserRepository;
+    public User registerUser(User user) {
+        return userRepository.save(user);
     }
 
-    // Gets all Users
-    public List<User> getUser() {
-        return UserRepository.findAll();
+    public User getUserByEmailAndPassword(String email, String password) {
+        return userRepository.getUserByEmailAndPassword(email, password);
     }
 
-    // Adds a User
-    public User addUser(User User) {
-        return UserRepository.save(User);
+    public User getUserByEmail(String email) {
+        return userRepository.getUserByEmail(email);
     }
 
+    public User updateUser(User user) {
+        return userRepository.save(user);
+    }
 }

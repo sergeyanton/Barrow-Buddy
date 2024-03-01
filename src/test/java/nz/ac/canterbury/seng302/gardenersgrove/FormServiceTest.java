@@ -1,8 +1,5 @@
 package nz.ac.canterbury.seng302.gardenersgrove;
 
-import nz.ac.canterbury.seng302.gardenersgrove.entity.FormResult;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.FormRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.service.FormService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

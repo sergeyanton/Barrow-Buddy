@@ -8,19 +8,12 @@
 <body>
 <h4>My Profile</h4>
 
-<div>
-    <form method="post">
-        <label> First Name: </label>
-        <br/>
-        <label> Last Name: </label>
-        <br/>
-        <label> Date of Birth: </label>
-        <br/>
-        <label> Email: </label>
-        <br/>
+<h1 th:text="'Welcome ' + ${fname} + ' it looks like you are authenticated!'"></h1>
+<h2 th:text="'Your email is ' + ${email} + ' and you have the following authorities: ' + ${authorities}"></h2>
 
-    </form>
-</div>
+<form th:action="@{logout}" method="post">
+    <button type="submit">Logout</button>
+</form>
 
 <div>
     <a th:href="@{home}">Home</a>

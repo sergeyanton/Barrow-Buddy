@@ -6,7 +6,6 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 
 /**
  * Gardener's Grove entry-point
- * Note @link{SpringBootApplication} annotation
  */
 @SpringBootApplication(exclude = { SecurityAutoConfiguration.class })
 public class GardenersGroveApplication {
