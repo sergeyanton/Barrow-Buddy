@@ -25,6 +25,12 @@
                 <input type="text" class="form-control" id="gardenSize" placeholder="Your garden's size"
                     th:name="gardenSize" th:value="*{gardenSize}" data-cy="gardenSize" autofocus>
                 <br>
+                <span th:if="${gardenNameError}" style="color: red;" th:text="${gardenNameError}" />
+                <br />
+                <br>
+                <span th:if="${gardenLocationError}" style="color: red;" th:text="${gardenLocationError}" />
+                <br />
+                <br>
                 <span th:if="${gardenSizeError}" style="color: red;" th:text="${gardenSizeError}" />
                 <br />
                 <button type="submit">Create Garden</button>

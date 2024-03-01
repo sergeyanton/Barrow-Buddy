@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Optional;
+
 /**
  * This is the controller for the gardens page.
  */
@@ -77,18 +79,28 @@ public class GardensController {
             @RequestParam(name = "gardenSize") String gardenSize, Model model) {
         logger.info("POST /gardens/create");
 
-        Optional<String> gardenSizeError = ValidityCheck.validateGardenSize(gardenSize);
+        Optional<String> validGardenSizeCheck = ValidityCheck.validateGardenSize(gardenSize);
+        Optional<String> validGardenNameCheck = ValidityCheck.validGardenName(gardenName);
+        Optional<String> validGardenLocationCheck = ValidityCheck.validGardenLocation(gardenLocation);
 
-        if (gardenSizeError.isPresent()) {
-            model.addAttribute("gardenSizeError", gardenSizeError.get());
+        if (validGardenNameCheck.isPresent()) {
+            model.addAttribute("gardenNameError", validGardenNameCheck.get());
         } else {
             // clear any previous error message
+            model.addAttribute("gardenNameError", "");
+        }
+        if (validGardenLocationCheck.isPresent()) {
+            model.addAttribute("gardenLocationError", validGardenLocationCheck.get());
+        } else {
+            model.addAttribute("gardenLocationError", "");
+        }
+        if (validGardenSizeCheck.isPresent()) {
+            model.addAttribute("gardenSizeError", validGardenSizeCheck.get());
+        } else {
             model.addAttribute("gardenSizeError", "");
         }
 
-        if (ValidityCheck.validGardenName(gardenName)
-                && ValidityCheck.validGardenLocation(gardenLocation)
-                && !gardenSizeError.isPresent()) {
+        if (ValidityCheck.validGardenForm(gardenName, gardenLocation, gardenSize)) {
             gardenService.addFormResult(new Garden(gardenName, gardenLocation, gardenSize));
         }
 

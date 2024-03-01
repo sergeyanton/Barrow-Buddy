@@ -11,33 +11,38 @@ public class ValidityCheck {
      * This method checks if the entered garden name contains only alphanumeric or valid characters
      * 
      * @param name the garden name entered by user
-     * @return true if entered garden name is valid, otherwise false
+     * @return Returns an error message string if the garden size is invalid, otherwise returns an empty optional
      */
-    public static boolean validGardenName(String name) 
-    {
-        name = name.trim();
-        return name.matches("^[a-zA-Z0-9 ,.'-]+$");
+    public static Optional<String> validGardenName(String name) {
+        boolean isBlank = name.isBlank();
+        boolean isValidName = name.matches("[a-zA-Z0-9 ,.'-]+");
+        if (isBlank) {
+            return Optional.of("Garden name must not be empty");
+        }
+        if (!isValidName) {
+            return Optional.of("Garden name must only include letters, numbers, spaces, dots, hyphens or apostrophes");
+        }
+        return Optional.empty();
     }
 
     /**
-     * This method checks if the entered garden location contains only alphanumeric or valid characters
-     * @param location the garden location entered by user
-     * @return true if entered garden location is valid, otherwise false
+     * This method checks if the entered garden location contains only alphanumeric or valid
+     * characters
+     * 
+     * @param location
+     * the garden location entered by user
+     * @return Returns an error message string if the garden size is invalid, otherwise returns an empty optional
      */
-    public static boolean validGardenLocation(String location) 
-    {
-        location = location.trim();
-        return location.matches("^[a-zA-Z0-9 ,.'-]+$");
-    }
-
-    /**
-     * This method checks if the entered garden size contains only numeric characters
-     * @param size the garden size string entered by user
-     * @return true if entered garden location is valid, otherwise false
-     */
-    public static boolean validGardenSize(String size)
-    {
-        return size.matches("^[0-9]*[.,]?[0-9]+$");
+    public static Optional<String> validGardenLocation(String location) {
+        boolean isBlank = location.isBlank();
+        boolean isValidName = location.matches("[a-zA-Z0-9 ,.'-]+");
+        if (isBlank) {
+            return Optional.of("Location cannot be empty");
+        }
+        if (!isValidName) {
+            return Optional.of("Location name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes");
+        }
+        return Optional.empty();
     }
 
     /**
@@ -45,14 +50,19 @@ public class ValidityCheck {
      * accept a number with a comma as a decimal separator
      * 
      * @param size the garden size entered by user
-     * @return Returns a string if the garden size is invalid, otherwise returns an empty optional
+     * @return Returns an error message string if the garden size is invalid, otherwise returns an empty optional
      */
     public static Optional<String> validateGardenSize(String size) {
-        Boolean isBlank = size.isBlank();
-        Boolean isNumber = size.matches("^[0-9]+((.|,)[0-9]+)?$");
+        boolean isBlank = size.isBlank();
+        boolean isNumber = size.matches("^[0-9]+((.|,)[0-9]+)?$");
         if (!isBlank && isNumber) {
             return Optional.empty();
         }
         return Optional.of("Garden size must be a positive number");
+    }
+
+    public static boolean validGardenForm(String name, String location, String size) {
+        return (validGardenName(name).isEmpty() && validGardenLocation(location).isEmpty() &&
+                validateGardenSize(size).isEmpty());
     }
 }
