@@ -1,6 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
 import jakarta.persistence.*;
+import nz.ac.canterbury.seng302.gardenersgrove.repository.UserRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.service.UserService;
 
 import java.time.Year;
 
@@ -61,6 +63,7 @@ public class User {
         return dateOfBirth;
     }
 
+
     public static Validator checkName(String userName) {
         Validator isValid = new Validator(true, "Ok");
         if (userName.isBlank()) {isValid.setValid(false,"{First/Last} name cannot be empty and must only include letters, spaces, hyphens or apostrophes");}
@@ -73,7 +76,10 @@ public class User {
         Validator isValid = new Validator(true, "Ok");
         if (userEmail.isBlank()) {isValid.setValid(false,"Email address must be in the form ‘jane@doe.nz’");}
         if (!userEmail.matches("^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$")) {isValid.setValid(false,"Email address must be in the form ‘jane@doe.nz’");}
-        //TODO check if email is in database
+
+        UserRepository userRepository = null;
+        if (userRepository.findByEmail(userEmail).isPresent()) {isValid.setValid(false,"Email address is already in use");}
+
         return isValid;
     }
 
