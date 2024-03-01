@@ -50,20 +50,16 @@ public class GardensController {
             @RequestParam(name = "gardenSize") String gardenSize, Model model) {
         logger.info("POST /gardens/create");
 
-        Double gardenSizeDouble = null;
-
         if (ValidityCheck.validateGardenSize(gardenSize).isPresent()) {
             model.addAttribute("gardenSizeError", "Garden size must be a positive number");
         } else {
             // clear any previous error message
             model.addAttribute("gardenSizeError", "");
-            // replace any commas with periods and parse the size
-            gardenSizeDouble = Double.parseDouble(gardenSize.replace(',', '.'));
         }
 
         if (ValidityCheck.validGardenName(gardenName)
-                && ValidityCheck.validGardenLocation(gardenLocation) && gardenSizeDouble != null) {
-            gardenService.addFormResult(new Garden(gardenName, gardenLocation, gardenSizeDouble));
+                && ValidityCheck.validGardenLocation(gardenLocation)) {
+            gardenService.addFormResult(new Garden(gardenName, gardenLocation, gardenSize));
         }
         model.addAttribute("gardenName", gardenName);
         model.addAttribute("gardenLocation", gardenLocation);
