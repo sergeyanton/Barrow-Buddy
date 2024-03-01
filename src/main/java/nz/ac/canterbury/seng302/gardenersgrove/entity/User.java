@@ -32,11 +32,10 @@ public class User {
 
     protected User() {}
 
-    public User(String fname, String lname, String email, String address, String password, String dateOfBirth) {
+    public User(String fname, String lname, String email, String password, String dateOfBirth) {
         this.fname = fname;
         this.lname = lname;
         this.email = email;
-        this.address = address;
         this.password = password;
         this.dateOfBirth = dateOfBirth;
     }
@@ -55,10 +54,6 @@ public class User {
 
     public String getEmail() {
         return email;
-    }
-
-    public String getAddress() {
-        return address;
     }
 
     public String getPassword() {
