@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
@@ -13,6 +14,7 @@ import static org.mockito.Mockito.mock;
 public class UserValidationTest {
     private User user;
 
+    // No Error cases
     @Test
     void firstNameValidCheck_noError() {
         user = new User("Fabian","Gilson","fabian.gilson@canterbury.ac.nz"
@@ -38,6 +40,34 @@ public class UserValidationTest {
 
         Validator emailValidator = User.checkEmail(user.getEmail());
         assertTrue(emailValidator.getStatus());
+    }
+
+    // Error cases
+    @Test
+    void firstNameValidCheck_error() {
+        user = new User("","Gilson","fabian.gilson@canterbury.ac.nz"
+                , "20 Kirkwood Ave, Ilam, Christchurch 8041", "Fabian123!" ,"01/01/2019");
+
+        Validator fnameValidator = User.checkName(user.getFname());
+        assertFalse(fnameValidator.getStatus());
+    }
+
+    @Test
+    void lastNameValidCheck_error() {
+        user = new User("Fabian","","fabian.gilson@canterbury.ac.nz"
+                , "20 Kirkwood Ave, Ilam, Christchurch 8041", "Fabian123!" ,"01/01/2019");
+
+        Validator lnameValidator = User.checkName(user.getLname());
+        assertFalse(lnameValidator.getStatus());
+    }
+
+    @Test
+    void emailNameValidCheck_error() {
+        user = new User("Fabian","Gilson","fabian"
+                , "20 Kirkwood Ave, Ilam, Christchurch 8041", "Fabian123!" ,"01/01/2019");
+
+        Validator emailValidator = User.checkEmail(user.getEmail());
+        assertFalse(emailValidator.getStatus());
     }
 
 
