@@ -9,6 +9,11 @@
             </li>
             <li>
                 <a th:href="@{/gardens}">My Gardens</a>
+                <ul>
+                    <li th:each="garden : ${allGardens}">
+                        <a th:href="@{/gardens/{id}(id=${garden.id})}" th:text="${garden.name}">Garden Name</a>
+                    </li>
+                </ul>
             </li>
         </ul>
     </nav>
