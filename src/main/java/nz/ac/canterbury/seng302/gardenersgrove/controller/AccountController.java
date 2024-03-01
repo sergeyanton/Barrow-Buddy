@@ -1,7 +1,9 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection.RegistrationData;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.User;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Validator;
 import nz.ac.canterbury.seng302.gardenersgrove.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,9 +19,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
+
+import static nz.ac.canterbury.seng302.gardenersgrove.Validation.InputValidation.*;
+import static nz.ac.canterbury.seng302.gardenersgrove.Validation.InputValidation.checkDob;
 
 @Controller
 public class AccountController {
@@ -29,8 +36,9 @@ public class AccountController {
     private UserService userService;
 
     @GetMapping("/register")
-    public String getRegisterPage() {
+    public String getRegisterPage(Model model) {
         logger.info("GET /register");
+        model.addAttribute("errorMessage", "");
         return "pages/registrationPage";
     }
 
@@ -45,11 +53,16 @@ public class AccountController {
                            @RequestParam(name = "dob") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateOfBirth,
                            @RequestParam(name = "password") String password,
                            @RequestParam(name = "password") String retypedPassword,
-                           @RequestParam(name = "noSurnameCheckBox", required = false) boolean noLastName) {
+                           @RequestParam(name = "noSurnameCheckBox", required = false) boolean noLastName, RedirectAttributes redirectAttributes) {
 
         logger.info(String.format("Attempting to register new user '%s %s', with email '%s'.", fname, lname, email));
 
-        // TODO: add validation here
+        Validator error = dataCheck(newUser);
+        if (!error.getStatus()){
+            String errorMessage = error.getMessage();
+            redirectAttributes.addFlashAttribute("errorMessage", errorMessage);
+            return "redirect:/register";
+        }
 
         User user = new User(fname, lname, password, email, dateOfBirth);
         user.grantAuthority("ROLE_USER");
@@ -84,5 +97,35 @@ public class AccountController {
         model.addAttribute("email", u.getEmail());
         model.addAttribute("dob", new SimpleDateFormat("yyyy/MM/dd").format(u.getDateOfBirth()));
         return "pages/profilePage";
+    }
+
+
+    private Validator dataCheck(RegistrationData newUser){
+
+        Validator nameCheck = checkName(newUser.getfName());
+        if (!nameCheck.getStatus()){return nameCheck;}
+
+        if (newUser.getNoSurnameCheckBox() != null) {
+            Validator surnameCheck = checkName(newUser.getlName());
+            if (!surnameCheck.getStatus()){return surnameCheck;}
+        }
+
+        Validator emailCheck = checkEmail(newUser.getEmail(), false);
+        if (!emailCheck.getStatus()){return emailCheck;}
+
+        Validator addressCheck = checkEmail(newUser.getAddress(), false);
+        if (!addressCheck.getStatus()){return addressCheck;}
+
+        if(!Objects.equals(newUser.getPassword(), newUser.getRetypePassword())){
+            return new Validator(false, "Passwords do not match");
+        }
+
+        Validator passwordCheck = checkPassword(newUser.getPassword());
+        if (!passwordCheck.getStatus()){return passwordCheck;}
+
+        Validator dobCheck = checkDob(newUser.getDob());
+        if (!dobCheck.getStatus()){return dobCheck;}
+
+        return new Validator(true, "");
     }
 }

@@ -28,9 +28,9 @@ public class UserService {
     public User updateUser(User user) {
         return userRepository.save(user);
     }
-    public Boolean checkEmail(String email) {
-        Optional<User> user = UserRepository.findByEmail(email);
-        return user.isPresent();
-    }
 
+//    public Boolean checkEmail(String email) {
+//        Optional<User> user = UserRepository.findByEmail(email);
+//        return user.isPresent();
+//    }
 }

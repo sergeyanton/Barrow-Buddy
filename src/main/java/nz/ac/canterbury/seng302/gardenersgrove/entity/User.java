@@ -25,6 +25,9 @@ public class User {
     private String password;
 
     @Column(nullable = false)
+    private String address;
+
+    @Column(nullable = false)
     private String email;
 
     @Column(nullable = true)
@@ -37,11 +40,10 @@ public class User {
 
     protected User() {}
 
-    public User(String fname, String lname, String email, String address, String password, Date dateOfBirth) {
+    public User(String fname, String lname, String email, String password, Date dateOfBirth) {
         this.fname = fname;
         this.lname = lname;
         this.email = email;
-        this.address = address;
         this.password = password;
         this.dateOfBirth = dateOfBirth;
     }
