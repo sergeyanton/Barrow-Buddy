@@ -13,25 +13,36 @@ public class ValidityCheck {
      * @param name the garden name entered by user
      * @return true if entered garden name is valid, otherwise false
      */
-    public static boolean validGardenName(String name) {
-        if (name == "" || !name.matches("[a-zA-Z0-9 ,.'-]+")) {
-            return false;
+    public static Optional<String> validGardenName(String name) {
+        boolean isBlank = name.isBlank();
+        boolean isValidName = name.matches("[a-zA-Z0-9 ,.'-]+");
+        if (isBlank) {
+            return Optional.of("Garden name must not be empty");
         }
-        return true;
+        if (!isValidName) {
+            return Optional.of("Garden name must only include letters, numbers, spaces, dots, hyphens or apostrophes");
+        }
+        return Optional.empty();
     }
 
     /**
      * This method checks if the entered garden location contains only alphanumeric or valid
      * characters
      * 
-     * @param name the garden location entered by user
+     * @param location
+     * the garden location entered by user
      * @return true if entered garden location is valid, otherwise false
      */
-    public static boolean validGardenLocation(String location) {
-        if (location == "" || !location.matches("[a-zA-Z0-9 ,.'-]+")) {
-            return false;
+    public static Optional<String> validGardenLocation(String location) {
+        boolean isBlank = location.isBlank();
+        boolean isValidName = location.matches("[a-zA-Z0-9 ,.'-]+");
+        if (isBlank) {
+            return Optional.of("Location cannot be empty");
         }
-        return true;
+        if (!isValidName) {
+            return Optional.of("Location name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes");
+        }
+        return Optional.empty();
     }
 
     /**
@@ -42,8 +53,8 @@ public class ValidityCheck {
      * @return Returns a string if the garden size is invalid, otherwise returns an empty optional
      */
     public static Optional<String> validateGardenSize(String size) {
-        Boolean isBlank = size.isBlank();
-        Boolean isNumber = size.matches("^[0-9]+((.|,)[0-9]+)?$");
+        boolean isBlank = size.isBlank();
+        boolean isNumber = size.matches("^[0-9]+((.|,)[0-9]+)?$");
         if (!isBlank && isNumber) {
             return Optional.empty();
         }
