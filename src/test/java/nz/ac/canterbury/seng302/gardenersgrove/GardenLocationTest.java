@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 public class GardenLocationTest {
 
-    /** This test involves the user entering a garden location that only contains letters,
+    /** This test involves the user entering a garden location that contains letters,
      * since letters are considered valid characters, applying it to the ValidityCheck
      * method validGardenLocation() should get the method to return true. */
     @Test
@@ -50,7 +50,7 @@ public class GardenLocationTest {
 
     /** This test involves the user entering a garden name that contains only whitespace,
      * since the garden name cannot be empty, applying it to the ValidityCheck method
-     * validGardenName() should get it to return false as the method removes trailing
+     * validGardenName() should get it to return false as the method removes any trailing
      * whitespace */
     @Test
     public void UserEntersGardenLocation_LocationIsOnlyWhitespace_ReturnsFalse() {
