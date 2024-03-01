@@ -3,7 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.Validation;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Validator;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.UserRepository;
 
-import java.time.Year;
+import java.time.LocalDate;
 
 public class InputValidation {
     private static UserRepository userRepository;
@@ -24,14 +24,24 @@ public class InputValidation {
         return isValid;
     }
 
+    /**
+     * Checks that the given date of birth is a valid format, valid age range, and not in the future.
+     * Returns an isValid object, containing a boolean date validity and an accompanying message.
+     * @param userDob the given date of birth entered by the user.
+     * @return isValid
+     */
     public static Validator checkDob(String userDob) {
+        LocalDate currentDate = LocalDate.now();
+        int currentYear = currentDate.getYear();
+        int currentMonth = currentDate.getMonthValue();
+        int currentDay = currentDate.getDayOfMonth();
+
         //Format: DD/MM/YYYY
         Validator isValid = new Validator(true, "Ok");
         if (userDob.isBlank()) {isValid.setValid(false,"Date in not in valid format, DD/MM/YYYY)");}
         int day = Integer.parseInt(userDob.substring(0, 2));
         int month = Integer.parseInt(userDob.substring(3, 5));
         int year = Integer.parseInt(userDob.substring(6));
-        int currentYear = Year.now().getValue();
 
         if(day < 1){isValid.setValid(false,"Date in not in valid format, DD/MM/YYYY)");}
         if (month %2 != 0 && day > 30) {isValid.setValid(false,"Date in not in valid format, DD/MM/YYYY)");}
@@ -39,9 +49,22 @@ public class InputValidation {
         if (year %4 == 0 && month == 2 && day > 29){isValid.setValid(false,"Date in not in valid format, DD/MM/YYYY)");}
         if (year %4 != 0 && month == 2 && day > 28){isValid.setValid(false,"Date in not in valid format, DD/MM/YYYY)");}
 
-
         if (year < currentYear - 13){isValid.setValid(false,"You must be 13 years or older to create an account");}
         if (year > currentYear - 120){isValid.setValid(false,"The maximum age allowed is 120 years");}
+
+        // checks that date given is not in the future
+        if (year > currentYear) {
+            // invalid year
+            isValid.setValid(false, "Date cannot be in the future");
+        } else if (year == currentYear && month > currentMonth) {
+            // invalid month
+            isValid.setValid(false, "Date cannot be in the future");
+        } else if (year == currentYear && month == currentMonth && day > currentDay) {
+            // invalid day
+            isValid.setValid(false, "Date cannot be in the future");
+        }
+
+
 
         return isValid;
     }
