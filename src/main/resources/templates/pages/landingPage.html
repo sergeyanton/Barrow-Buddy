@@ -2,11 +2,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/styles.css}">
     <title>Gardener's Grove</title>
 </head>
 <body>
+<div id="welcome">
     <h4>Welcome to Gardener's Grove</h4>
     <a th:href="@{register}">Register</a>
     <a th:href="@{login}">Sign In</a>
+</div>
 </body>
 </html>
