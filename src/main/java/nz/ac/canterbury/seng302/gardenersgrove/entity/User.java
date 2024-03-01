@@ -2,6 +2,8 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
 import jakarta.persistence.*;
 
+import java.time.Year;
+
 @Entity
 @Table(name = "tab_user")
 public class User {
@@ -82,14 +84,17 @@ public class User {
         int day = Integer.parseInt(userDob.substring(0, 2));
         int month = Integer.parseInt(userDob.substring(3, 5));
         int year = Integer.parseInt(userDob.substring(6));
+        int currentYear = Year.now().getValue();
 
         if(day < 1){isValid.setValid(false,"Date in not in valid format, DD/MM/YYYY)");}
         if (month %2 != 0 && day > 30) {isValid.setValid(false,"Date in not in valid format, DD/MM/YYYY)");}
         if (month %2 == 0 && day > 31) {isValid.setValid(false,"Date in not in valid format, DD/MM/YYYY)");}
-        if (year %4 == 0 && month == 2 && day > 28){isValid.setValid(false,"Date in not in valid format, DD/MM/YYYY)");}
+        if (year %4 == 0 && month == 2 && day > 29){isValid.setValid(false,"Date in not in valid format, DD/MM/YYYY)");}
+        if (year %4 != 0 && month == 2 && day > 28){isValid.setValid(false,"Date in not in valid format, DD/MM/YYYY)");}
 
-        if (year < 2011){isValid.setValid(false,"You must be 13 years or older to create an account");}
-        if (year > 2144){isValid.setValid(false,"The maximum age allowed is 120 years");}
+
+        if (year < currentYear - 13){isValid.setValid(false,"You must be 13 years or older to create an account");}
+        if (year > currentYear - 120){isValid.setValid(false,"The maximum age allowed is 120 years");}
 
         return isValid;
     }
