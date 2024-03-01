@@ -79,8 +79,8 @@ public class User {
 
     public static Validator checkEmail(String userEmail) {
         Validator isValid = new Validator(true, "Ok");
-        if (userEmail.isBlank()) {isValid.setValid(false,"Email address must be in the form ‘jane@doe.nz’");}
-        if (!userEmail.matches("^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$")) {isValid.setValid(false,"Email address must be in the form ‘jane@doe.nz’");}
+        if (userEmail.isBlank()) {isValid.setValid(false,"Email address must be in the form ‘fabian.gilson@canterbury.ac.nz’");}
+        if (!userEmail.matches("^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$")) {isValid.setValid(false,"Email address must be in the form ‘fabian.gilson@canterbury.ac.nz’");}
         //TODO check if email is in database
         return isValid;
     }

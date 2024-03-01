@@ -13,19 +13,34 @@ import static org.mockito.Mockito.mock;
 public class UserValidationTest {
     private User user;
 
-    @BeforeEach
-    void setUp() {
-        user = new User("Fabian","Gilson","Fabian123!","20 Kirkwood Ave, Ilam, Christchurch 8041",
-                "fabian.gilson@canterbury.ac.nz","01/01/2019");
+    @Test
+    void firstNameValidCheck_noError() {
+        user = new User("Fabian","Gilson","fabian.gilson@canterbury.ac.nz"
+                , "20 Kirkwood Ave, Ilam, Christchurch 8041", "Fabian123!" ,"01/01/2019");
+
+        Validator fnameValidator = User.checkName(user.getFname());
+        assertTrue(fnameValidator.getStatus());
     }
 
     @Test
-    void firstNameValidCheck_noError() {
-        Validator fnameValidator = User.checkName(user.getFname());
+    void lastNameValidCheck_noError() {
+        user = new User("Fabian","Gilson","fabian.gilson@canterbury.ac.nz"
+                , "20 Kirkwood Ave, Ilam, Christchurch 8041", "Fabian123!" ,"01/01/2019");
 
-        assertTrue(fnameValidator.getStatus());
-
+        Validator lnameValidator = User.checkName(user.getLname());
+        assertTrue(lnameValidator.getStatus());
     }
+
+    @Test
+    void emailNameValidCheck_noError() {
+        user = new User("Fabian","Gilson","fabian.gilson@canterbury.ac.nz"
+                , "20 Kirkwood Ave, Ilam, Christchurch 8041", "Fabian123!" ,"01/01/2019");
+
+        Validator emailValidator = User.checkEmail(user.getEmail());
+        assertTrue(emailValidator.getStatus());
+    }
+
+
 
 
 
