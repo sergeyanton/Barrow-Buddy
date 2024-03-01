@@ -77,8 +77,8 @@ public class User {
         if (userEmail.isBlank()) {isValid.setValid(false,"Email address must be in the form ‘jane@doe.nz’");}
         if (!userEmail.matches("^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$")) {isValid.setValid(false,"Email address must be in the form ‘jane@doe.nz’");}
 
-        UserRepository userRepository = null;
-        if (userRepository.findByEmail(userEmail).isPresent()) {isValid.setValid(false,"Email address is already in use");}
+//        UserRepository userRepository = null;
+//        if (userRepository.findByEmail(userEmail).isPresent()) {isValid.setValid(false,"Email address is already in use");}
 
         return isValid;
     }

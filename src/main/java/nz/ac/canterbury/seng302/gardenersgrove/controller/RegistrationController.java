@@ -9,6 +9,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.Objects;
+
 import static nz.ac.canterbury.seng302.gardenersgrove.entity.User.*;
 
 @Controller
@@ -31,19 +33,37 @@ public class RegistrationController {
     @PostMapping("/register")
     public String submitRegistration(RegistrationData newUser) {
         logger.info("POST /register");
-        //dataCheck(newUser);
+        String errorMsg = dataCheck(newUser);
         return "redirect:./home";
     }
 
     private String dataCheck(RegistrationData newUser){
+
         Validator nameCheck = checkName(newUser.getfName());
         if (!nameCheck.getStatus()){return nameCheck.getMessage();}
-        Validator surnameCheck = checkName(newUser.getlName());
-        if (!surnameCheck.getStatus()){return surnameCheck.getMessage();}
+
+        if (newUser.getNoSurnameCheckBox() != null) {
+            Validator surnameCheck = checkName(newUser.getlName());
+            if (!surnameCheck.getStatus()){return surnameCheck.getMessage();}
+        }
+
         Validator emailCheck = checkEmail(newUser.getEmail());
         if (!emailCheck.getStatus()){return emailCheck.getMessage();}
 
-        return "";
+//        Validator addressCheck = checkAddress(newUser.getAddress());
+
+        if(!Objects.equals(newUser.getPassword(), newUser.getRetypePassword())){
+            return "Passwords do not match";
+        }
+
+        Validator passwordCheck = checkPassword(newUser.getPassword());
+        if (!passwordCheck.getStatus()){return passwordCheck.getMessage();}
+
+        Validator dobCheck = checkDob(newUser.getDob());
+        if (!dobCheck.getStatus()){return dobCheck.getMessage();}
+
+
+        return "Ok";
     }
 
 }
