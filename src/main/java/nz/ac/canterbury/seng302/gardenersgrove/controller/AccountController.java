@@ -6,6 +6,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,6 +17,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Controller
 public class AccountController {
@@ -38,15 +42,14 @@ public class AccountController {
                            @RequestParam(name = "email") String email,
                            @RequestParam(name = "fname") String fname,
                            @RequestParam(name = "lname") String lname,
-                           //@RequestParam(name = "dob") String dateOfBirth,
-                           @RequestParam(name = "password") String password) {
+                           @RequestParam(name = "dob") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateOfBirth,
+                           @RequestParam(name = "password") String password,
+                           @RequestParam(name = "password") String retypedPassword,
+                           @RequestParam(name = "noSurnameCheckBox", required = false) boolean noLastName) {
 
-        logger.info("registering user");
+        logger.info(String.format("Attempting to register new user '%s %s', with email '%s'.", fname, lname, email));
 
         // TODO: add validation here
-
-        String dateOfBirth = "";
-
 
         User user = new User(fname, lname, password, email, dateOfBirth);
         user.grantAuthority("ROLE_USER");
@@ -76,9 +79,10 @@ public class AccountController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
         User u = userService.getUserByEmail(currentPrincipalName);
-        model.addAttribute("email", u.getEmail());
         model.addAttribute("fname", u.getFname());
-        model.addAttribute("authorities", u.getAuthorities());
+        model.addAttribute("lname", u.getLname());
+        model.addAttribute("email", u.getEmail());
+        model.addAttribute("dob", new SimpleDateFormat("yyyy/MM/dd").format(u.getDateOfBirth()));
         return "pages/profilePage";
     }
 }

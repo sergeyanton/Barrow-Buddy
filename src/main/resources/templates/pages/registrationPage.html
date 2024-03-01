@@ -15,14 +15,12 @@
         <br/>
         <label for="lname"> Last Name: </label>
         <input type="text" class="form-control" id="lname" placeholder="Gilson"
-               th:name="lname" th:value="*{lname}" data-cy="lname" required
-               autofocus>
+               th:name="lname" th:value="*{lname}" data-cy="lname" autofocus>
         <br/>
-        <!--<input type="checkbox" class="form-control" id="noSurnameCheckBox"
+        <input type="checkbox" class="form-control" id="noSurnameCheckBox"
                th:name="noSurnameCheckBox" data-cy="noSurnameCheckBox"
                autofocus>
         <label for="noSurnameCheckBox"> No last name </label>
-        -->
         <br/>
         <label for="email"> Email: </label>
         <input type="email" class="form-control" id="email" placeholder="fabian.gilson@canterbury.ac.nz"
@@ -36,18 +34,14 @@
         <input type="password" class="form-control" id="password"
                th:name="password" th:value="*{password}" data-cy="password" required autofocus>
         <br/>
-        <!--
         <label for="retypePassword"> Re-type Password: </label>
         <input type="password" class="form-control" id="retypePassword"
                th:name="retypePassword" th:value="*{retypePassword}" data-cy="retypePassword" required autofocus>
-        -->
         <br/>
-        <!--
         <label for="dob"> Date Of Birth: </label>
-        <input type="text" class="form-control" id="dob"
+        <input type="date" class="form-control" id="dob"
                th:name="dob" th:value="*{dob}" data-cy="dob" required autofocus>
         <br/>
-        -->
 
         <!--<div th:insert="fragments/errorMessageFragment.html :: errorMessage(message=${errorMessage})"></div>-->
 

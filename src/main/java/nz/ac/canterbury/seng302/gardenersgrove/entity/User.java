@@ -5,6 +5,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -27,7 +28,7 @@ public class User {
     private String email;
 
     @Column(nullable = true)
-    private String dateOfBirth;
+    private Date dateOfBirth;
 
     @Column()
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -36,7 +37,7 @@ public class User {
 
     protected User() {}
 
-    public User(String fname, String lname, String password, String email, String dateOfBirth) {
+    public User(String fname, String lname, String password, String email, Date dateOfBirth) {
         this.fname = fname;
         this.lname = lname;
         this.password = password;
@@ -77,7 +78,7 @@ public class User {
         return email;
     }
 
-    public String getDateOfBirth() {
+    public Date getDateOfBirth() {
         return dateOfBirth;
     }
 
