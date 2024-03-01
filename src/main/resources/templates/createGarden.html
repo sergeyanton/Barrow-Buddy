@@ -25,21 +25,16 @@
                 <input type="text" class="form-control" id="gardenSize" placeholder="Your garden's size"
                     th:name="gardenSize" th:value="*{gardenSize}" data-cy="gardenSize" autofocus>
                 <br>
+                <span th:if="${gardenNameError}" style="color: red;" th:text="${gardenNameError}" />
+                <br />
+                <br>
+                <span th:if="${gardenLocationError}" style="color: red;" th:text="${gardenLocationError}" />
+                <br />
+                <br>
                 <span th:if="${gardenSizeError}" style="color: red;" th:text="${gardenSizeError}" />
                 <br />
                 <button type="submit">Create Garden</button>
             </form>
-        </div>
-        <div th:if="${gardenName!='' and gardenLocation!=''}">
-            <h4 th:text="'Garden: ' + ${gardenName}"></h4>
-            <h4 th:text="'Location: ' + ${gardenLocation}"></h4>
-            <h4 th:text="'Size: ' + ${gardenSize}"></h4>
-        </div>
-        <div th:if="${gardenName==''}">
-            <h4 th:text="'Garden name cannot be blank!'"></h4>
-        </div>
-        <div th:if="${gardenLocation==''}">
-            <h4 th:text="'Garden location cannot be blank!'"></h4>
         </div>
         <div>
             <a th:href="@{/gardens}">View responses</a>

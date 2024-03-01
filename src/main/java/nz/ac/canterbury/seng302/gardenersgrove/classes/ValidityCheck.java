@@ -60,4 +60,9 @@ public class ValidityCheck {
         }
         return Optional.of("Garden size must be a positive number");
     }
+
+    public static boolean validGardenForm(String name, String location, String size) {
+        return (validGardenName(name).isEmpty() && validGardenLocation(location).isEmpty() &&
+                validateGardenSize(size).isEmpty());
+    }
 }
