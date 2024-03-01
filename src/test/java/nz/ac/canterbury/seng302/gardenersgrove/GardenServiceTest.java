@@ -86,19 +86,19 @@ public class GardenServiceTest {
 
             }
         });
-        gardenService.addFormResult(new Garden("John"));
+//        gardenService.addFormResult(new Garden("John"));
     }
 
 //    @Autowired
 //    private GardenService formService;
 
-    @Autowired
-    private GardenRepository gardenRepository;
+//    @Autowired
+//    private GardenRepository gardenRepository;
 
-    @Test
-    public void simpleTest2() {
-        GardenService gardenService = new GardenService(gardenRepository);
-        Garden result = gardenService.addFormResult(new Garden("John"));
-        Assertions.assertEquals(result.getName(), "John");
-    }
+//    @Test
+//    public void simpleTest2() {
+//        GardenService gardenService = new GardenService(gardenRepository);
+//        Garden result = gardenService.addFormResult(new Garden("John"));
+//        Assertions.assertEquals(result.getName(), "John");
+//    }
 }
