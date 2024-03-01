@@ -92,9 +92,6 @@ public class GardensController {
             gardenService.addFormResult(new Garden(gardenName, gardenLocation, gardenSize));
         }
 
-        model.addAttribute("isValidName", isValidName);
-        model.addAttribute("isValidLocation", isValidLocation);
-
         model.addAttribute("gardenName", gardenName);
         model.addAttribute("gardenLocation", gardenLocation);
         model.addAttribute("gardenSize", Double.parseDouble(gardenSize));

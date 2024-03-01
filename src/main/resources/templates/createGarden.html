@@ -30,17 +30,6 @@
                 <button type="submit">Create Garden</button>
             </form>
         </div>
-        <div th:if="${isValidName and isValidLocation}">
-            <h4 th:text="'Garden: ' + ${gardenName}"></h4>
-            <h4 th:text="'Location: ' + ${gardenLocation}"></h4>
-            <h4 th:text="'Size: ' + ${gardenSize}"></h4>
-        </div>
-        <div th:if="${not isValidName}">
-            <h4 th:text="'Garden name is invalid!'"></h4>
-        </div>
-        <div th:if="${not isValidLocation}">
-            <h4 th:text="'Garden location is invalid!'"></h4>
-        </div>
         <div>
             <a th:href="@{/gardens}">View responses</a>
             <a th:href="@{/}">Back to home</a>
