@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.gardenersgrove.dataCollection;
+package nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection;
 
 public class RegistrationData {
     public String fName;
@@ -9,7 +9,7 @@ public class RegistrationData {
     public String password;
     public String retypePassword;
     public String dob;
-    public RegistrationData(String fName, String lName, Boolean noSurnameCheckBox, String email, String address, String password, String retypePassword, String dob) {
+    private RegistrationData(String fName, String lName, Boolean noSurnameCheckBox, String email, String address, String password, String retypePassword, String dob) {
         this.fName = fName;
         this.lName = lName;
         this.noSurnameCheckBox = noSurnameCheckBox;
