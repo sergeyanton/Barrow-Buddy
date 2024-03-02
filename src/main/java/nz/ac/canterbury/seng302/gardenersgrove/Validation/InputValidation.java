@@ -39,13 +39,14 @@ public class InputValidation {
         int currentMonth = currentDate.getMonthValue();
         int currentDay = currentDate.getDayOfMonth();
 
-        //Format: DD/MM/YYYY
+//        //Format: DD/MM/YYYY
         Validator isValid = new Validator(true, "Ok");
         if (userDob.isBlank()) {isValid.setValid(false,"Date in not in valid format, DD/MM/YYYY)");}
-        userDob.replace('-','/');
-        int day = Integer.parseInt(userDob.substring(0, 2));
-        int month = Integer.parseInt(userDob.substring(3, 5));
-        int year = Integer.parseInt(userDob.substring(6));
+//        userDob.replace('-','/');
+        String[] dateParts = userDob.split("-");
+        int year = Integer.parseInt(dateParts[0]);
+        int month = Integer.parseInt(dateParts[1]);
+        int day = Integer.parseInt(dateParts[2]);
 
         if(day < 1){isValid.setValid(false,"Date in not in valid format, DD/MM/YYYY)");}
         if (month %2 != 0 && day > 30) {isValid.setValid(false,"Date in not in valid format, DD/MM/YYYY)");}

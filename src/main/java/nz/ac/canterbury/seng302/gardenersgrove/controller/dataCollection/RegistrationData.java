@@ -2,7 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.User;
 
-import java.util.Date;
+
 
 public class RegistrationData {
     private final String fname;
@@ -12,9 +12,7 @@ public class RegistrationData {
     private final String password;
     private final String retypePassword;
     private final String dob;
-
-
-    public RegistrationData(String fname, String lname, Boolean noSurnameCheckBox, String email, String password, String retypePassword, String dob) {
+    public RegistrationData(String fname, String lname, Boolean noSurnameCheckBox, String email, String password, String retypePassword, String dob)  {
         this.fname = fname;
         this.lname = lname;
         this.noSurnameCheckBox = noSurnameCheckBox;
@@ -23,6 +21,7 @@ public class RegistrationData {
         this.retypePassword = retypePassword;
         this.dob = dob;
     }
+
 
     public static User createNewUser(RegistrationData user) {
         return new User(user.getfName(), user.getlName(), user.getEmail(), user.getPassword(), user.getPassword());

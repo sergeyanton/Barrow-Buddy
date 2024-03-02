@@ -74,14 +74,14 @@ public class AccountController {
         user.grantAuthority("ROLE_USER");
         userService.registerUser(user);
 
-        // Auto-login when registering
+//         Auto-login when registering
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword(), user.getAuthorities());
         Authentication authentication = authenticationManager.authenticate(token);
 
-//        if (authentication.isAuthenticated()) {
-//            SecurityContextHolder.getContext().setAuthentication(authentication);
+        if (authentication.isAuthenticated()) {
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 //            request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
-//        }
+        }
 
         return "redirect:/profile";
     }
