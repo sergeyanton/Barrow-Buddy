@@ -8,7 +8,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Objects;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.Validation.InputValidation.*;
@@ -33,8 +31,12 @@ import static nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection.
 public class AccountController {
     Logger logger = LoggerFactory.getLogger(AccountController.class);
 
-    @Autowired
     private UserService userService;
+
+  @Autowired
+    public AccountController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping("/register")
     public String getRegisterPage(Model model) {
@@ -56,15 +58,15 @@ public class AccountController {
 //                           @RequestParam(name = "password") String retypedPassword,
 //                           @RequestParam(name = "noSurnameCheckBox", required = false) boolean noLastName,
     @PostMapping("/register")
-    public String register(RegistrationData newUser, RedirectAttributes redirectAttributes) {
+    public String register(RegistrationData newUser, Model model) {
 
         logger.info(String.format("Attempting to register new user '%s %s', with email '%s'.", newUser.getfName(), newUser.getlName(), newUser.getEmail()));
 
         Validator error = dataCheck(newUser);
         if (!error.getStatus()){
             String errorMessage = error.getMessage();
-            redirectAttributes.addFlashAttribute("errorMessage", errorMessage);
-            return "redirect:/register";
+            model.addAttribute("errorMessage", errorMessage);
+            return "pages/registrationPage";
         }
 
 //        User user = new User(fname, lname, password, email, dateOfBirth);
@@ -113,7 +115,7 @@ public class AccountController {
             Validator surnameCheck = checkName(newUser.getlName());
             if (!surnameCheck.getStatus()){return surnameCheck;}
         }
-        Validator emailCheck = checkEmail(newUser.getEmail(), false);
+        Validator emailCheck = checkEmail(newUser.getEmail(),  userService);
         if (!emailCheck.getStatus()){return emailCheck;}
 
         if(!Objects.equals(newUser.getPassword(), newUser.getRetypePassword())){

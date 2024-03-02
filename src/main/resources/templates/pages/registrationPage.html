@@ -40,10 +40,13 @@
         <br/>
         <label for="dob"> Date Of Birth: </label>
         <input type="date" class="form-control" id="dob"
-               th:name="dob" th:value="*{dob}" data-cy="dob" required autofocus>
+               th:name="dob" th:value="*{dob}" data-cy="dob" placeholder="dd-mm-yyyy" required autofocus>
         <br/>
 
-        <div th:insert="fragments/errorMessageFragment.html :: errorMessage(message=${errorMessage})"></div>
+        <div th:if="${errorMessage}">
+
+            <div th:replace="~{fragments/errorMessageFragment :: errorMessage(message=${errorMessage})}"></div>
+        </div>
 
        <button type="submit">Sign Up</button>
 

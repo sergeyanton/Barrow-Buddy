@@ -5,13 +5,15 @@ import nz.ac.canterbury.seng302.gardenersgrove.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
 public class UserService  {
+    private final UserRepository userRepository;
     @Autowired
-    private static UserRepository userRepository;
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     public User registerUser(User user) {
         return userRepository.save(user);
@@ -25,7 +27,7 @@ public class UserService  {
         return userRepository.getUserByEmail(email);
     }
 
-    public static Boolean checkEmail(String email) {
+    public Boolean checkEmail(String email) {
         Optional<User> user = userRepository.findByEmail(email);
         return user.isPresent();
     }

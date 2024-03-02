@@ -2,6 +2,8 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.User;
 
+import java.util.Date;
+
 public class RegistrationData {
     private final String fname;
     private final String lname;
