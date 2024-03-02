@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Registration</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/styles.css}">
 </head>
 
 <body>
-<div>
-<div>
+<div id="basic">
+    <h1>Register</h1>
     <form method="post">
         <label for="fName"> First Name: </label>
         <input type="text" class="form-control" id="fName" placeholder="Fabian"
@@ -46,15 +47,17 @@
 
         <div th:insert="fragments/errorMessageFragment.html :: errorMessage(message=${errorMessage})"></div>
 
-       <button type="submit">Sign Up</button>
+        <div id="next">
+            <button type="submit">Sign Up</button>
+        </div>
+
+        <div id="cancel">
+            <a th:href="@{welcome}">Cancel</a>
+        </div>
 
     </form>
 </div>
 
-<div>
-    <a th:href="@{welcome}">Cancel</a>
-</div>
-</div>
 
 </body>
 </html>
