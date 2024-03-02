@@ -24,6 +24,7 @@ public class UserService  {
     public User getUserByEmail(String email) {
         return userRepository.getUserByEmail(email);
     }
+
     public static Boolean checkEmail(String email) {
         Optional<User> user = userRepository.findByEmail(email);
         return user.isPresent();
