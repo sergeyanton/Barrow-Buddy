@@ -1,10 +1,12 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
+import java.util.Optional;
 import jakarta.persistence.*;
+import nz.ac.canterbury.seng302.gardenersgrove.classes.ValidityCheck;
 
 /**
- * Entity class reflecting an entry of name, location, and size of a garden
- * Note the @link{Entity} annotation required for declaring this as a persistence entity
+ * Entity class reflecting an entry of name, location, and size of a garden Note the @link{Entity}
+ * annotation required for declaring this as a persistence entity
  */
 @Entity
 public class Garden {
@@ -26,6 +28,7 @@ public class Garden {
 
     /**
      * Creates a new Garden object
+     * 
      * @param name name of garden
      */
     public Garden(String name, String location, double size) {
@@ -34,18 +37,44 @@ public class Garden {
         this.size = size;
     }
 
+    /**
+     * Creates a new garden but takes the size as a string that is then parsed to a double It can
+     * either use a , or a . as a decimal separator
+     * 
+     * @param name name of garden
+     * @param location location of garden
+     * @param size size of garden
+     */
+    public Garden(String name, String location, String size) {
+        this.name = name;
+        this.location = location;
+
+        Optional<String> validGardenSizeCheck = ValidityCheck.validateGardenSize(size);
+
+        if (validGardenSizeCheck.isPresent()) {
+            throw new IllegalArgumentException(validGardenSizeCheck.get());
+        }
+        this.size = Double.parseDouble(size.replace(",", "."));;
+    }
+
     public Long getId() {
         return id;
     }
-    public String getName() { return name; }
-    public String getLocation() { return location; }
-    public double getSize() { return size; }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public double getSize() {
+        return size;
+    }
 
     @Override
     public String toString() {
-        return "Garden{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
+        return "Garden{" + "id=" + id + ", name='" + name + '\'' + '}';
     }
 }
