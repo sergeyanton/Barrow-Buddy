@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
+    <title th:text="${garden.name}"></title>
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+<main>
+    <div>
+        <h2 th:text="${garden.name}"></h2>
+        <h4 th:text="'Location: ' + ${garden.location}"></h4>
+        <h4 th:text="'Size: ' + ${garden.size}"></h4>
+        <div>
+            <a th:href="@{/gardens}">Back to My Gardens</a>
+        </div>
+    </div>
+</main>
+</body>
+</html>

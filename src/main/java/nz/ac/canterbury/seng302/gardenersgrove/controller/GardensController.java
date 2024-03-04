@@ -11,11 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.servlet.http.HttpServletRequest;
-
 
 /**
  * This is the controller for the gardens page.
@@ -76,10 +76,9 @@ public class GardensController {
         return "createGarden";
     }
 
-
     /**
      * Posts a form response with name, location, and size of the garden
-     * 
+     *
      * @param gardenName name of garden
      * @param gardenLocation location of garden
      * @param gardenSize size of garden
@@ -125,9 +124,9 @@ public class GardensController {
         }
 
         if (ValidityCheck.validGardenForm(gardenName, gardenLocation, gardenSize)) {
-            Garden gardenSaved =
-                    gardenService.addFormResult(new Garden(gardenName, gardenLocation, gardenSize));
-            logger.info("Garden created: " + gardenSaved);
+            Garden addedGarden = gardenService.addGarden(new Garden(gardenName, gardenLocation, gardenSize));
+            logger.info("Garden created: " + addedGarden);
+            return "redirect:/gardens/" + addedGarden.getId();
         }
 
         return "createGarden";
@@ -135,14 +134,26 @@ public class GardensController {
 
     /**
      * Gets all form responses (gardens)
-     * 
+     *
      * @param model (map-like) representation of results to be used by thymeleaf
-     * @return thymeleaf demoResponseTemplate
+     * @return thymeleaf createdGardens
      */
     @GetMapping("/gardens")
-    public String responses(Model model) {
+    public String viewGardens(Model model) {
         logger.info("GET /gardens/createdGardens");
         model.addAttribute("gardens", gardenService.getGardens());
         return "createdGardens";
+    }
+
+    /**
+     * Gets name of garden that was clicked on.
+     * @param model (map-like) representation of results to be used by thymeleaf
+     * @return thymeleaf demoResponseTemplate
+     */
+    @GetMapping("/gardens/{gardenId}")
+    public String viewGarden(@PathVariable("gardenId") Long gardenId, Model model) {
+        logger.info("GET /gardens/" + gardenId);
+        model.addAttribute("garden", gardenService.getGardenById(gardenId));
+        return "gardenProfile";
     }
 }

@@ -87,7 +87,7 @@ public class GardenServiceTest {
 
             }
         });
-        gardenService.addFormResult(new Garden("My Garden", "My House", 9000));
+        gardenService.addGarden(new Garden("My Garden", "My House", 9000));
     }
 
     // @Autowired
@@ -99,7 +99,7 @@ public class GardenServiceTest {
     @Test
     public void simpleTest2() {
         GardenService gardenService = new GardenService(gardenRepository);
-        Garden result = gardenService.addFormResult(new Garden("My Garden", "My House", 9000));
+        Garden result = gardenService.addGarden(new Garden("My Garden", "My House", 9000));
         Assertions.assertEquals(result.getName(), "My Garden");
     }
 }

@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.gardenersgrove;
+package nz.ac.canterbury.seng302.gardenersgrove.controllers;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
