@@ -22,9 +22,9 @@ import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
-import static nz.ac.canterbury.seng302.gardenersgrove.Validation.InputValidation.*;
-import static nz.ac.canterbury.seng302.gardenersgrove.Validation.InputValidation.checkDob;
+
 import static nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection.RegistrationData.createNewUser;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.InputValidation.*;
 
 @Controller
 public class AccountController {
