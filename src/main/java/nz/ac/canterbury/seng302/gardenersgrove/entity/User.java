@@ -30,7 +30,7 @@ public class User {
     private String email;
 
     @Column(nullable = true)
-    private String dateOfBirth;
+    private Date dateOfBirth;
 
     @Column()
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -39,7 +39,7 @@ public class User {
 
     protected User() {}
 
-    public User(String fname, String lname, String email, String password, String dateOfBirth) {
+    public User(String fname, String lname, String email, String password, Date dateOfBirth) {
         this.fname = fname;
         this.lname = lname;
         this.email = email;
@@ -80,7 +80,7 @@ public class User {
         return email;
     }
 
-    public String getDateOfBirth() {
+    public Date getDateOfBirth() {
         return dateOfBirth;
     }
 

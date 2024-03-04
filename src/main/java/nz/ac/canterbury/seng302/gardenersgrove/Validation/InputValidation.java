@@ -33,7 +33,7 @@ public class InputValidation {
      * @param userDob the given date of birth entered by the user.
      * @return isValid
      */
-    public static Validator checkDob(String userDob) {
+    public static Validator checkDob(Date userDob) {
         LocalDate currentDate = LocalDate.now();
         int currentYear = currentDate.getYear();
         int currentMonth = currentDate.getMonthValue();
@@ -41,10 +41,13 @@ public class InputValidation {
 
 //        //Format: DD/MM/YYYY
         Validator isValid = new Validator(true, "Ok");
+        return isValid;
+
+        /*
         if (userDob.isBlank()) {isValid.setValid(false,"Date in not in valid format, DD/MM/YYYY)");}
 //        userDob.replace('-','/');
         String[] dateParts = userDob.split("-");
-        int year = Integer.parseInt(dateParts[0]);
+        int year = date.getYear();
         int month = Integer.parseInt(dateParts[1]);
         int day = Integer.parseInt(dateParts[2]);
 
@@ -70,6 +73,7 @@ public class InputValidation {
         }
 
         return isValid;
+        */
     }
 
     public static Validator checkPassword(String password) {

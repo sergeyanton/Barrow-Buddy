@@ -1,21 +1,33 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.User;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Date;
 
 
 public class RegistrationData {
-    private final String fname;
-    private final String lname;
+    private final String fName;
+    private final String lName;
     private final Boolean noSurnameCheckBox;
     private final String email;
     private final String password;
     private final String retypePassword;
-    private final String dob;
-    public RegistrationData(String fname, String lname, Boolean noSurnameCheckBox, String email, String password, String retypePassword, String dob)  {
-        this.fname = fname;
-        this.lname = lname;
-        this.noSurnameCheckBox = noSurnameCheckBox;
+    private final Date dob;
+
+    public RegistrationData(
+        @RequestParam(name = "email") String email,
+        @RequestParam(name = "fName") String fName,
+        @RequestParam(name = "lName") String lName,
+        @RequestParam(name = "dob") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dob,
+        @RequestParam(name = "password") String password,
+        @RequestParam(name = "password") String retypePassword,
+        @RequestParam(name = "noSurnameCheckBox", required = false) String noSurnameCheckBox
+    )  {
+        this.fName = fName;
+        this.lName = lName;
+        this.noSurnameCheckBox = noSurnameCheckBox != null;
         this.email = email;
         this.password = password;
         this.retypePassword = retypePassword;
@@ -24,15 +36,15 @@ public class RegistrationData {
 
 
     public static User createNewUser(RegistrationData user) {
-        return new User(user.getfName(), user.getlName(), user.getEmail(), user.getPassword(), user.getPassword());
+        return new User(user.getfName(), user.getlName(), user.getEmail(), user.getPassword(), user.getDob());
     }
 
     public String getfName() {
-        return fname;
+        return fName;
     }
 
     public String getlName() {
-        return lname;
+        return lName;
     }
 
     public Boolean getNoSurnameCheckBox() {
@@ -51,7 +63,7 @@ public class RegistrationData {
         return retypePassword;
     }
 
-    public String getDob() {
+    public Date getDob() {
         return dob;
     }
 }
