@@ -99,7 +99,9 @@ public class GardensController {
         }
 
         if (ValidityCheck.validGardenForm(gardenName, gardenLocation, gardenSize)) {
-            gardenService.addGarden(new Garden(gardenName, gardenLocation, gardenSize));
+            Garden addedGarden = gardenService.addGarden(new Garden(gardenName, gardenLocation, gardenSize));
+            model.addAttribute("garden", addedGarden);
+            return "redirect:/gardens/" + addedGarden.getId();
         }
 
         model.addAttribute("gardenName", gardenName);
