@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
     <title>Log in</title>
@@ -10,11 +10,11 @@
     <div>
         <form method="post">
             <label for="email"> Email: </label>
-            <input type="email" class="form-control" id="email"
-                   th:name="email" data-cy="email" size="40" required autofocus>
+            <input type="email" class="form-control" id="email" placeholder="Email"
+                   th:name="username" th:value="*{username}" data-cy="username" size="40" required autofocus>
             <br/>
             <label for="password"> Password: </label>
-            <input type="password" class="form-control" id="password"
+            <input type="password" class="form-control" id="password" placeholder="Password"
                    th:name="password" data-cy="password" required autofocus>
             <br/>
 
@@ -25,12 +25,13 @@
     </div>
 
     <div>
-        <a th:href="@{welcome}">Cancel</a>
+        <a th:href="@{.}">Cancel</a>
     </div>
 
     <div>
         <a th:href="@{register}">Not registered? Create an account! </a>
     </div>
+
 
 </body>
 </html>

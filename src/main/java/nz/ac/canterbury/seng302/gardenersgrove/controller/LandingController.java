@@ -16,25 +16,12 @@ public class LandingController {
     Logger logger = LoggerFactory.getLogger(LandingController.class);
 
     /**
-     * Redirects GET default url '/' to '/welcome'
-     * @return redirect to /welcome
+     * Gets the thymeleaf page representing the /welcome page
+     * @return thymeleaf landingPage
      */
     @GetMapping("/")
-    public String landing() {
-        logger.info("GET /");
-        return "redirect:./welcome";
-    }
-
-    /**
-     * Gets the thymeleaf page representing the /demo page (a basic welcome screen with some links)
-     * @param name url query parameter of user's name
-     * @param model (map-like) representation of data to be used in thymeleaf display
-     * @return thymeleaf demoTemplate
-     */
-    @GetMapping("/welcome")
     public String getTemplate() {
-        logger.info("GET /welcome");
+        logger.info("GET /");
         return "pages/landingPage";
     }
-
 }

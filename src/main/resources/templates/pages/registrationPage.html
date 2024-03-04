@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Registration</title>
@@ -8,43 +8,41 @@
 <body>
 <div>
 <div>
-    <form method="post">
+    <form th:action="@{register}" method="post">
         <label for="fName"> First Name: </label>
         <input type="text" class="form-control" id="fName" placeholder="Fabian"
-               th:name="fName" data-cy="name" required autofocus>
+               th:name="fName" th:value="*{fName}" data-cy="fName" required autofocus>
         <br/>
         <label for="lName"> Last Name: </label>
         <input type="text" class="form-control" id="lName" placeholder="Gilson"
-               th:name="lName" data-cy="lName" required
-               autofocus>
+               th:name="lName" th:value="*{lName}" data-cy="lName" autofocus>
         <br/>
-        <input type="checkbox" lass="form-control" id="noSurnameCheckBox"
+        <input type="checkbox" class="form-control" id="noSurnameCheckBox"
                th:name="noSurnameCheckBox" data-cy="noSurnameCheckBox"
                autofocus>
         <label for="noSurnameCheckBox"> No last name </label>
         <br/>
         <label for="email"> Email: </label>
         <input type="email" class="form-control" id="email" placeholder="fabian.gilson@canterbury.ac.nz"
-               th:name="email" data-cy="email" size="40" required autofocus>
+               th:name="email" th:value="*{email}" data-cy="email" size="40" required autofocus>
         <br/>
-        <label for="address"> Address: </label>
-        <input type="text" class="form-control" id="address" placeholder="20 Kirkwood Avenue, Upper Riccarton, Christchurch 8041"
-               th:name="address" data-cy="address" size="50" required autofocus>
-        <br/>
+
         <label for="password"> Password: </label>
         <input type="password" class="form-control" id="password"
-               th:name="password" data-cy="password" required autofocus>
+               th:name="password" th:value="*{password}" data-cy="password" required autofocus>
         <br/>
         <label for="retypePassword"> Re-type Password: </label>
         <input type="password" class="form-control" id="retypePassword"
-               th:name="retypePassword" data-cy="retypePassword" required autofocus>
+               th:name="retypePassword" th:value="*{retypePassword}" data-cy="retypePassword" required autofocus>
         <br/>
         <label for="dob"> Date Of Birth: </label>
         <input type="date" class="form-control" id="dob"
-               th:name="dob" data-cy="dob" required autofocus>
+               th:name="dob" th:value="*{dob}" data-cy="dob" required autofocus>
         <br/>
 
-        <div th:insert="fragments/errorMessageFragment.html :: errorMessage(message=${errorMessage})"></div>
+        <div th:if="${errorMessage}">
+            <div th:replace="~{fragments/errorMessageFragment :: errorMessage(message=${errorMessage})}"></div>
+        </div>
 
        <button type="submit">Sign Up</button>
 
@@ -52,7 +50,7 @@
 </div>
 
 <div>
-    <a th:href="@{welcome}">Cancel</a>
+    <a th:href="@{.}">Cancel</a>
 </div>
 </div>
 
