@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
+import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 
@@ -24,6 +25,15 @@ public class HomeController {
     @Autowired
     public HomeController(GardenService gardenService) {
         this.gardenService = gardenService;
+    }
+
+    @ModelAttribute("currentUrl")
+    private String getCurrentPath(HttpServletRequest request) {
+        // the url path including query parameters
+        if (request.getQueryString() == null) {
+            return request.getRequestURI();
+        }
+        return request.getRequestURI() + "?" + request.getQueryString();
     }
 
     @ModelAttribute("allGardens")
