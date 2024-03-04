@@ -5,7 +5,10 @@
                 <a th:href="@{/}">Home</a>
             </li>
             <li>
-                <a th:href="@{/gardens/create}">New Garden</a>
+                <!-- /* URL for garden create form, but passing in the next parameter making sure to prevent any loops */ -->
+                <a th:href="@{/gardens/create(next=${#strings.replace(currentUrl, '/gardens/create?next=', '')})}">New
+                    Garden
+                </a>
             </li>
             <li>
                 <a th:href="@{/gardens}">My Gardens</a>

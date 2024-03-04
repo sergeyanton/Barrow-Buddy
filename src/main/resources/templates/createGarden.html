@@ -34,11 +34,10 @@
                 <span th:if="${gardenSizeError}" style="color: red;" th:text="${gardenSizeError}" />
                 <br />
                 <button type="submit">Create Garden</button>
+                <a th:href="${nextDestination}">
+                    <button type="button">Cancel</button>
+                </a>
             </form>
-        </div>
-        <div>
-            <a th:href="@{/gardens}">View responses</a>
-            <a th:href="@{/}">Back to home</a>
         </div>
     </main>
 </body>
