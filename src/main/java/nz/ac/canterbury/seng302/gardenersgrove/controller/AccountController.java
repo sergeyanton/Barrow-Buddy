@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.Validation.InputValidation.*;
@@ -84,10 +85,10 @@ public class AccountController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
         User u = userService.getUserByEmail(currentPrincipalName);
-        model.addAttribute("fname", u.getFname());
-        model.addAttribute("lname", u.getLname());
+        model.addAttribute("fName", u.getFname());
+        model.addAttribute("lName", u.getLname());
         model.addAttribute("email", u.getEmail());
-        model.addAttribute("dob", new SimpleDateFormat("yyyy/MM/dd").format(u.getDateOfBirth()));
+        model.addAttribute("dob", u.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
         return "pages/profilePage";
     }
 

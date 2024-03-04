@@ -4,7 +4,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.User;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 
 public class RegistrationData {
@@ -14,13 +14,13 @@ public class RegistrationData {
     private final String email;
     private final String password;
     private final String retypePassword;
-    private final Date dob;
+    private final LocalDate dob;
 
     public RegistrationData(
         @RequestParam(name = "email") String email,
         @RequestParam(name = "fName") String fName,
         @RequestParam(name = "lName") String lName,
-        @RequestParam(name = "dob") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dob,
+        @RequestParam(name = "dob") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dob,
         @RequestParam(name = "password") String password,
         @RequestParam(name = "password") String retypePassword,
         @RequestParam(name = "noSurnameCheckBox", required = false) String noSurnameCheckBox
@@ -63,7 +63,7 @@ public class RegistrationData {
         return retypePassword;
     }
 
-    public Date getDob() {
+    public LocalDate getDob() {
         return dob;
     }
 }

@@ -9,13 +9,13 @@
 <div>
 <div>
     <form th:action="@{register}" method="post">
-        <label for="fname"> First Name: </label>
-        <input type="text" class="form-control" id="fname" placeholder="Fabian"
-               th:name="fname" th:value="*{fname}" data-cy="fname" required autofocus>
+        <label for="fName"> First Name: </label>
+        <input type="text" class="form-control" id="fName" placeholder="Fabian"
+               th:name="fName" th:value="*{fName}" data-cy="fName" required autofocus>
         <br/>
-        <label for="lname"> Last Name: </label>
-        <input type="text" class="form-control" id="lname" placeholder="Gilson"
-               th:name="lname" th:value="*{lname}" data-cy="lname" autofocus>
+        <label for="lName"> Last Name: </label>
+        <input type="text" class="form-control" id="lName" placeholder="Gilson"
+               th:name="lName" th:value="*{lName}" data-cy="lName" autofocus>
         <br/>
         <input type="checkbox" class="form-control" id="noSurnameCheckBox"
                th:name="noSurnameCheckBox" data-cy="noSurnameCheckBox"
@@ -41,7 +41,6 @@
         <br/>
 
         <div th:if="${errorMessage}">
-
             <div th:replace="~{fragments/errorMessageFragment :: errorMessage(message=${errorMessage})}"></div>
         </div>
 

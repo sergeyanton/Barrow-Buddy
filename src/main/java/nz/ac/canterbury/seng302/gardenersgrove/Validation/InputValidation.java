@@ -33,27 +33,19 @@ public class InputValidation {
      * @param userDob the given date of birth entered by the user.
      * @return isValid
      */
-    public static Validator checkDob(Date userDob) {
+    public static Validator checkDob(LocalDate userDob) {
         LocalDate currentDate = LocalDate.now();
         int currentYear = currentDate.getYear();
         int currentMonth = currentDate.getMonthValue();
         int currentDay = currentDate.getDayOfMonth();
 
-//        //Format: DD/MM/YYYY
         Validator isValid = new Validator(true, "Ok");
-        return isValid;
 
-        /*
-        if (userDob.isBlank()) {isValid.setValid(false,"Date in not in valid format, DD/MM/YYYY)");}
-//        userDob.replace('-','/');
-        String[] dateParts = userDob.split("-");
-        int year = date.getYear();
-        int month = Integer.parseInt(dateParts[1]);
-        int day = Integer.parseInt(dateParts[2]);
+        int year = userDob.getYear();
+        int month = userDob.getMonthValue();
+        int day = userDob.getDayOfMonth();
 
-        if(day < 1){isValid.setValid(false,"Date in not in valid format, DD/MM/YYYY)");}
         if (month %2 != 0 && day > 30) {isValid.setValid(false,"Date in not in valid format, DD/MM/YYYY)");}
-        if (month %2 == 0 && day > 31) {isValid.setValid(false,"Date in not in valid format, DD/MM/YYYY)");}
         if (year %4 == 0 && month == 2 && day > 29){isValid.setValid(false,"Date in not in valid format, DD/MM/YYYY)");}
         if (year %4 != 0 && month == 2 && day > 28){isValid.setValid(false,"Date in not in valid format, DD/MM/YYYY)");}
 
@@ -73,7 +65,6 @@ public class InputValidation {
         }
 
         return isValid;
-        */
     }
 
     public static Validator checkPassword(String password) {
