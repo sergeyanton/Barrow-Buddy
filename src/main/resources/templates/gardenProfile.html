@@ -8,7 +8,7 @@
 <div th:replace="fragments/header :: header"></div>
 <main>
     <div>
-        <h2 th:text="${garden.name} + ' id=' + ${garden.id}"></h2>
+        <h2 th:text="${garden.name}"></h2>
         <h4 th:text="'Location: ' + ${garden.location}"></h4>
         <h4 th:text="'Size: ' + ${garden.size}"></h4>
         <div>
