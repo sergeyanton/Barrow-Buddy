@@ -99,7 +99,7 @@ public class GardensController {
         }
 
         if (ValidityCheck.validGardenForm(gardenName, gardenLocation, gardenSize)) {
-            gardenService.addFormResult(new Garden(gardenName, gardenLocation, gardenSize));
+            gardenService.addGarden(new Garden(gardenName, gardenLocation, gardenSize));
         }
 
         model.addAttribute("gardenName", gardenName);

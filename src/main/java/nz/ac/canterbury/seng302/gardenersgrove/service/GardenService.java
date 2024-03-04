@@ -42,7 +42,7 @@ public class GardenService {
      * @param garden object to persist
      * @return the saved garden object
      */
-    public Garden addFormResult(Garden garden) {
+    public Garden addGarden(Garden garden) {
         return gardenRepository.save(garden);
     }
 }
