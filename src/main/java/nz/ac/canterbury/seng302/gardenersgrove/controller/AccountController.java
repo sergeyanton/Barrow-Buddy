@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import nz.ac.canterbury.seng302.gardenersgrove.Validation.InputValidation;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection.RegistrationData;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.User;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Validator;
@@ -17,8 +18,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
@@ -117,4 +118,20 @@ public class AccountController {
 
         return new Validator(true, "");
     }
+
+    @PostMapping(" /login")
+    public String login(
+            @RequestParam(name = "email") String email,
+            @RequestParam(name = "password") String password
+    ) {
+        RegistrationData.LoginData loginData = new RegistrationData.LoginData(email, password);
+        Validator emailValidation = InputValidation.checkEmail(loginData.email(), userService);
+        Validator passwordValidation = InputValidation.checkPassword(loginData.password());
+
+        if (emailValidation.getStatus() && passwordValidation.getStatus()) {
+            return "redirect:/profile";
+        } else {
+            return "pages/loginPage";
+        }
+    };
 }

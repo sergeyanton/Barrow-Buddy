@@ -32,6 +32,10 @@ public class RegistrationData {
         this.password = password;
         this.retypePassword = retypePassword;
         this.dob = dob;
+
+    }
+
+    public record LoginData(String email, String password) {
     }
 
 
