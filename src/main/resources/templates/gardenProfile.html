@@ -12,7 +12,7 @@
         <h4 th:text="'Location: ' + ${garden.location}"></h4>
         <h4 th:text="'Size: ' + ${garden.size}"></h4>
         <div>
-            <a th:href="@{/gardens/edit}">Edit Garden Details</a>
+            <a th:href="@{'/gardens/edit/' + ${garden.id}}">Edit Garden Details</a>
         </div>
         <div>
             <a th:href="@{/gardens}">Back to My Gardens</a>

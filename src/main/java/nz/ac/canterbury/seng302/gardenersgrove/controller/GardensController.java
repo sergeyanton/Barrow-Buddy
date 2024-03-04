@@ -160,31 +160,56 @@ public class GardensController {
      * Gets form to be displayed, includes the ability to display results of previous form when
      * linked to from POST form
      * 
-     * @param gardenName previously saved garden name entered into form to be displayed
-     * @param gardenLocation previously saved garden location entered into form to be displayed
-     * @param gardenSize previously svaed garden size entered into form to be displayed
-     * @param isValidName boolean for checking name is valid
-     * @param isValidLocation boolean for checking location is valid
-     * @param model (map-like) representation of gardenName, gardenLocation, gardenSize and
-     *        isValidName & isValidLocation boolean for use in thymeleaf
+     * @param model (map-like) representation of garden for use in thymeleaf
      * @return thymeleaf demoFormTemplate
      */
-    @GetMapping("/gardens/edit")
-    public String gardenEditGet(HttpServletRequest request,
-            @RequestParam(name = "gardenName", required = false,
-                    defaultValue = "") String gardenName,
-            @RequestParam(name = "gardenLocation", required = false,
-                    defaultValue = "") String gardenLocation,
-            @RequestParam(name = "gardenSize", required = false,
-                    defaultValue = "") String gardenSize,
+    @GetMapping("/gardens/edit/{gardenId}")
+    public String gardenEditGet(HttpServletRequest request, @PathVariable("gardenId") Long gardenId,
             Model model) {
-        logger.info("GET /gardens/create");
-        model.addAttribute("gardenName", gardenName);
-        model.addAttribute("gardenLocation", gardenLocation);
-        model.addAttribute("gardenSize", gardenSize);
+        logger.info("GET /gardens/edit/" + gardenId);
+        Garden garden = gardenService.getGardenById(gardenId);
+        model.addAttribute("garden", garden);
+        
         String nextDestination = Optional.ofNullable(request.getParameter("next")).orElse("/");
         model.addAttribute("nextDestination", nextDestination);
 
         return "editGarden";
+    } 
+
+    /**
+     * Posts a form response with name, location, and size of the garden
+     *
+     * @param gardenName name of garden
+     * @param gardenLocation location of garden
+     * @param gardenSize size of garden
+     * @param model (map-like) representation of name for use in thymeleaf, with values being set to
+     *        relevant parameters provided
+     * @return thymeleaf demoFormTemplate
+     *
+     */
+    @PostMapping("/gardens/edit/{gardenId}")
+    public String gardenEditPost(HttpServletRequest request,
+                                 @PathVariable("gardenId") Long gardenId,
+                                 @RequestParam(name = "gardenName") String gardenName,
+                                 @RequestParam(name = "gardenLocation") String gardenLocation,
+                                 @RequestParam(name = "gardenSize") String gardenSize, Model model) {
+        logger.info("POST /gardens/create");
+
+        model.addAttribute("gardenName", gardenName);
+        model.addAttribute("gardenLocation", gardenLocation);
+        model.addAttribute("gardenSize", gardenSize);
+
+        String nextDestination = Optional.ofNullable(request.getParameter("next")).orElse("/");
+        model.addAttribute("nextDestination", nextDestination);
+
+        Garden garden = gardenService.getGardenById(gardenId);
+        garden.setName(gardenName);
+        garden.setLocation(gardenLocation);
+        garden.setSize(Double.parseDouble(gardenSize));
+
+        gardenService.updateGarden(garden);
+
+        logger.info("Garden name changed to: " + gardenName);
+        return "redirect:/gardens/" + garden.getId();
     }
 }

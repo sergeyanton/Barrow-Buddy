@@ -45,4 +45,8 @@ public class GardenService {
     public Garden addGarden(Garden garden) {
         return gardenRepository.save(garden);
     }
+
+    public void updateGarden(Garden garden) {
+        gardenRepository.save(garden);
+    }
 }
