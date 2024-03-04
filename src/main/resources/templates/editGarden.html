@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gardener's Grove - Edit Garden</title>
+</head>
+
+<body>
+    <div th:replace="fragments/header :: header"></div>
+    <main>
+        <h1>th:text</h1>
+        <div>
+            <form th:action="@{/gardens/edit}" method="post">
+                <label for="gardenName"> Name: </label>
+                <input type="text" class="form-control" id="gardenName" placeholder="Your garden's name"
+                    th:name="gardenName" th:value="*{gardenName}" data-cy="gardenName" autofocus>
+                <br />
+                <label for="gardenLocation"> Location: </label>
+                <input type="text" class="form-control" id="gardenLocation" placeholder="Your garden's location"
+                    th:name="gardenLocation" th:value="*{gardenLocation}" data-cy="gardenLocation" autofocus>
+                <br />
+                <label for="gardenSize"> Size: </label>
+                <input type="text" class="form-control" id="gardenSize" placeholder="Your garden's size"
+                    th:name="gardenSize" th:value="*{gardenSize}" data-cy="gardenSize" autofocus>
+                <br>
+                <span th:if="${gardenNameError}" style="color: red;" th:text="${gardenNameError}" />
+                <br />
+                <br>
+                <span th:if="${gardenLocationError}" style="color: red;" th:text="${gardenLocationError}" />
+                <br />
+                <br>
+                <span th:if="${gardenSizeError}" style="color: red;" th:text="${gardenSizeError}" />
+                <br />
+                <button type="submit">Confirm Changes</button>
+                <a th:href="${nextDestination}">
+                    <button type="button">Cancel</button>
+                </a>
+            </form>
+        </div>
+    </main>
+</body>
+
+</html>
