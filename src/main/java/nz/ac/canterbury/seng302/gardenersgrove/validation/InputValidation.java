@@ -1,12 +1,14 @@
 package nz.ac.canterbury.seng302.gardenersgrove.validation;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Validator;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.UserRepository;
+import nz.ac.canterbury.seng302.gardenersgrove.service.UserService;
 
 import java.time.LocalDate;
+import java.util.Date;
 
 public class InputValidation {
-    private static UserRepository userRepository;
+
+
     public static Validator checkName(String userName) {
         Validator isValid = new Validator(true, "Ok");
         if (userName.isBlank()) {isValid.setValid(false,"{First/Last} name cannot be empty and must only include letters, spaces, hyphens or apostrophes");}
@@ -15,14 +17,13 @@ public class InputValidation {
         return isValid;
     }
 
-    public static Validator checkEmail(String userEmail,Boolean isTest) {
+    public static Validator checkEmail(String userEmail, UserService userService) {
         Validator isValid = new Validator(true, "Ok");
         if (userEmail.isBlank()) {isValid.setValid(false,"Email address must be in the form ‘jane@doe.nz’");}
         if (!userEmail.matches("^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$")) {isValid.setValid(false,"Email address must be in the form ‘jane@doe.nz’");}
 
-        if (!isTest) {
-            if (userRepository.findByEmail(userEmail).isPresent()) {isValid.setValid(false,"Email address is already in use");}
-        }
+        if (userService.checkEmail(userEmail)) {isValid.setValid(false,"Email address is already in use");}
+
         return isValid;
     }
 
@@ -32,22 +33,19 @@ public class InputValidation {
      * @param userDob the given date of birth entered by the user.
      * @return isValid
      */
-    public static Validator checkDob(String userDob) {
+    public static Validator checkDob(LocalDate userDob) {
         LocalDate currentDate = LocalDate.now();
         int currentYear = currentDate.getYear();
         int currentMonth = currentDate.getMonthValue();
         int currentDay = currentDate.getDayOfMonth();
 
-        //Format: DD/MM/YYYY
         Validator isValid = new Validator(true, "Ok");
-        if (userDob.isBlank()) {isValid.setValid(false,"Date in not in valid format, DD/MM/YYYY)");}
-        int day = Integer.parseInt(userDob.substring(0, 2));
-        int month = Integer.parseInt(userDob.substring(3, 5));
-        int year = Integer.parseInt(userDob.substring(6));
 
-        if(day < 1){isValid.setValid(false,"Date in not in valid format, DD/MM/YYYY)");}
+        int year = userDob.getYear();
+        int month = userDob.getMonthValue();
+        int day = userDob.getDayOfMonth();
+
         if (month %2 != 0 && day > 30) {isValid.setValid(false,"Date in not in valid format, DD/MM/YYYY)");}
-        if (month %2 == 0 && day > 31) {isValid.setValid(false,"Date in not in valid format, DD/MM/YYYY)");}
         if (year %4 == 0 && month == 2 && day > 29){isValid.setValid(false,"Date in not in valid format, DD/MM/YYYY)");}
         if (year %4 != 0 && month == 2 && day > 28){isValid.setValid(false,"Date in not in valid format, DD/MM/YYYY)");}
 
@@ -65,8 +63,6 @@ public class InputValidation {
             // invalid day
             isValid.setValid(false, "Date cannot be in the future");
         }
-
-
 
         return isValid;
     }

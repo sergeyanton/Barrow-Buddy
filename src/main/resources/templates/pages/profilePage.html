@@ -8,19 +8,14 @@
 <body>
 <h4>My Profile</h4>
 
-<div>
-    <form method="post">
-        <label> First Name: </label>
-        <br/>
-        <label> Last Name: </label>
-        <br/>
-        <label> Date of Birth: </label>
-        <br/>
-        <label> Email: </label>
-        <br/>
+<p th:text="'First Name: ' + ${fName}"></p>
+<p th:text="'Last Name: ' + ${lName}"></p>
+<p th:text="'Email: ' + ${email}"></p>
+<p th:text="'Date of birth: ' + ${dob}"></p>
 
-    </form>
-</div>
+<form th:action="@{logout}" method="post">
+    <button type="submit">Logout</button>
+</form>
 
 <div>
     <a th:href="@{home}">Home</a>
