@@ -58,15 +58,18 @@ public class AccountController {
         }
     }
 
+    private String pageWithError(String pagePath, Model model, String errorMessage) {
+        model.addAttribute("errorMessage", errorMessage);
+        return pagePath;
+    }
+
     @PostMapping("/register")
     public String register(HttpServletRequest request, RegistrationData newUser, Model model) {
         logger.info(String.format("Registering new user '%s %s'", newUser.getfName(), newUser.getlName()));
 
         Validator error = dataCheck(newUser);
-        if (!error.getStatus()){
-            String errorMessage = error.getMessage();
-            model.addAttribute("errorMessage", errorMessage);
-            return "pages/registrationPage";
+        if (!error.getStatus()) {
+            return pageWithError("pages/registrationPage", model, error.getMessage());
         }
 
         User user = createNewUser(newUser);
@@ -132,12 +135,12 @@ public class AccountController {
         User user = userService.findEmail(newUser.getEmail());
         if (user == null) {
             String errorMessage = String.format("No user with the email '%s' exists.", newUser.getEmail());
-            model.addAttribute("errorMessage", errorMessage);
-            return "pages/loginPage";
+            return pageWithError("pages/loginPage", model, errorMessage);
         }
 
         if (!newUser.getPassword().equals(user.getPassword())) {
-            return "pages/loginPage";
+            String errorMessage = "Wrong password.";
+            return pageWithError("pages/loginPage", model, errorMessage);
         }
 
         authenticateUser(user, request);

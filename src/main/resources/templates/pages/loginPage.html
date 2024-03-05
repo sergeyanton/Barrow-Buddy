@@ -18,6 +18,9 @@
                    th:name="password" data-cy="password" required autofocus>
             <br/>
 
+            <div th:if="${errorMessage}">
+                <div th:replace="~{fragments/errorMessageFragment :: errorMessage(message=${errorMessage})}"></div>
+            </div>
 
             <button type="submit">Sign In</button>
 
