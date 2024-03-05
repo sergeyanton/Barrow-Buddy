@@ -34,7 +34,7 @@
                 <span th:if="${gardenSizeError}" style="color: red;" th:text="${gardenSizeError}" />
                 <br />
                 <button type="submit">Confirm Changes</button>
-                <a th:href="${nextDestination}">
+                <a th:href="@{'/gardens/' + ${garden.id}}"> <!--ACs say that instead of returning to previous page, it always goes to the garden's profile-->
                     <button type="button">Cancel</button>
                 </a>
             </form>
