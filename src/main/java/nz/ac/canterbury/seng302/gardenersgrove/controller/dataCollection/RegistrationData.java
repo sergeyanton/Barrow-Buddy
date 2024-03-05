@@ -35,7 +35,11 @@ public class RegistrationData {
 
     }
 
-    public record LoginData(String email, String password) {
+    public record LoginData(
+            @RequestParam(name = "email") String email,
+            @RequestParam(name = "password") String password
+    ) {
+
     }
 
 
