@@ -163,10 +163,10 @@ public class GardensController {
      * @param model (map-like) representation of garden for use in thymeleaf
      * @return thymeleaf demoFormTemplate
      */
-    @GetMapping("/gardens/edit/{gardenId}")
+    @GetMapping("/gardens/{gardenId}/edit")
     public String gardenEditGet(HttpServletRequest request, @PathVariable("gardenId") Long gardenId,
             Model model) {
-        logger.info("GET /gardens/edit/" + gardenId);
+        logger.info("GET /gardens/" + gardenId + "/edit");
         Garden garden = gardenService.getGardenById(gardenId);
         model.addAttribute("garden", garden);
         
@@ -187,7 +187,7 @@ public class GardensController {
      * @return thymeleaf demoFormTemplate
      *
      */
-    @PostMapping("/gardens/edit/{gardenId}")
+    @PostMapping("/gardens/{gardenId}/edit")
     public String gardenEditPost(HttpServletRequest request,
                                  @PathVariable("gardenId") Long gardenId,
                                  @RequestParam(name = "gardenName") String gardenName,

@@ -12,7 +12,7 @@
     <main>
         <h1>Edit Garden Details</h1>
         <div>
-            <form th:action="@{'/gardens/edit/' + ${garden.id}}" method="post">
+            <form th:action="@{'/gardens/' + ${garden.id} + '/edit'}" method="post">
                 <label for="gardenName"> Name: </label>
                 <input type="text" class="form-control" id="gardenName" placeholder="Your garden's name"
                     th:name="gardenName" th:value="${garden.name}" data-cy="gardenName" autofocus>
