@@ -73,6 +73,18 @@ public class Garden {
         return size;
     }
 
+    public void setName(String newName) {
+        name = newName;
+    }
+
+    public void setLocation(String newLocation) {
+        location = newLocation;
+    }
+
+    public void setSize(double newSize) {
+        size = newSize;
+    }
+
     @Override
     public String toString() {
         return "Garden{" + "id=" + id + ", name='" + name + '\'' + '}';
