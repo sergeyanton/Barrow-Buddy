@@ -1,26 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
 <head>
-    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
-    <title>My Profile</title>
+    <meta charset="UTF-8">
+    <title>Edit Progile</title>
 </head>
 
 <body>
 <h4>My Profile</h4>
 
-<p th:text="'First Name: ' + ${fName}"></p>
-<p th:text="'Last Name: ' + ${lName}"></p>
-<p th:text="'Email: ' + ${email}"></p>
-<p th:text="'Date of birth: ' + ${dob}"></p>
+<label for="fName"> Last Name: </label>
+<input type="text" class="form-control" id="fName" placeholder="New Last Name"
+       th:name="fName" th:value="*{fName}" data-cy="fName" autofocus>
+<br/>
 
-<form th:action="@{logout}" method="post">
-    <button type="submit">Logout</button>
-</form>
+<label for="lName"> Last Name: </label>
+<input type="text" class="form-control" id="lName" placeholder="New Last Name"
+       th:name="lName" th:value="*{lName}" data-cy="lName" autofocus>
+<br/>
 
-<div>
-    <a th:href="@{home}">Home</a>
-    <a th:href="@{home}">Edit Profile</a>
-</div>
+<label for="password"> Password: </label>
+<input type="password" class="form-control" id="password"
+       th:name="password" th:value="*{password}" data-cy="password" required autofocus>
+<br/>
 
 </body>
 </html>
