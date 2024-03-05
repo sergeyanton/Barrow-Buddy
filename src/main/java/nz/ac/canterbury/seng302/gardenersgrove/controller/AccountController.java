@@ -48,6 +48,16 @@ public class AccountController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    private void authenticateUser(User user, HttpServletRequest request) {
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword(), user.getAuthorities());
+        Authentication authentication = authenticationManager.authenticate(token);
+
+        if (authentication.isAuthenticated()) {
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
+        }
+    }
+
     @PostMapping("/register")
     public String register(HttpServletRequest request, RegistrationData newUser, Model model) {
         logger.info(String.format("Registering new user '%s %s'", newUser.getfName(), newUser.getlName()));
@@ -64,13 +74,7 @@ public class AccountController {
         userService.registerUser(user);
 
         // Auto-login when registering
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword(), user.getAuthorities());
-        Authentication authentication = authenticationManager.authenticate(token);
-
-        if (authentication.isAuthenticated()) {
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
-        }
+        authenticateUser(user, request);
 
         return "redirect:/profile";
     }
@@ -125,17 +129,19 @@ public class AccountController {
     public String login(HttpServletRequest request, LogInData newUser, Model model) {
         logger.info("in here");
 
-        User checkUser = userService.findEmail(newUser.getEmail());
-        if (checkUser == null) {
+        User user = userService.findEmail(newUser.getEmail());
+        if (user == null) {
             String errorMessage = String.format("No user with the email '%s' exists.", newUser.getEmail());
             model.addAttribute("errorMessage", errorMessage);
             return "pages/loginPage";
         }
 
-        if (newUser.getPassword().equals(checkUser.getPassword())) {
-            return "redirect:/profile";
+        if (!newUser.getPassword().equals(user.getPassword())) {
+            return "pages/loginPage";
         }
 
-        return "pages/loginPage";
+        authenticateUser(user, request);
+
+        return "redirect:/profile";
     }
 }
