@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.Validation.InputValidation;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection.LogInData;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection.RegistrationData;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.User;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Validator;
@@ -82,7 +83,8 @@ public class AccountController {
 
 
     @GetMapping("/profile")
-    public String getUserPage(Model model) {
+    public String getProfilePage(Model model) {
+        logger.info("GET /profile");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
         User u = userService.getUserByEmail(currentPrincipalName);
@@ -119,44 +121,21 @@ public class AccountController {
         return new Validator(true, "");
     }
 
-    @PostMapping(" /login")
-    public String login(RegistrationData newUser, Model model) {
-        logger.info(String.format("in here"));
+    @PostMapping("/login")
+    public String login(HttpServletRequest request, LogInData newUser, Model model) {
+        logger.info("in here");
 
         User checkUser = userService.findEmail(newUser.getEmail());
+        if (checkUser == null) {
+            String errorMessage = String.format("No user with the email '%s' exists.", newUser.getEmail());
+            model.addAttribute("errorMessage", errorMessage);
+            return "pages/loginPage";
+        }
 
-
-        if (newUser.getPassword() == checkUser.getPassword()) {
+        if (newUser.getPassword().equals(checkUser.getPassword())) {
             return "redirect:/profile";
         }
 
         return "pages/loginPage";
     }
-
-//    private Validator emailExist(RegistrationData newUser) {
-//        // Still need to check if the email is valid form
-//        Validator emailCheck = checkEmail(newUser.getEmail(), userService);
-//        if (emailCheck.getStatus()) {
-//            //if the email exist in the database,
-//            // now check it the password matches
-//
-//            return new Validator(true, "email exist in the database");
-//        } else {
-//            // display error message - does this get handle by different class?
-//        }
-//
-//        return new Validator(false, "email does not exist in the database");
-//    }
-//
-//    private Validator passwordMatch(RegistrationData newUser, String password) {
-//        // Do not need to check if the password is in the right format - ex) One uppercase etc.
-//        //Validator passwordCheck = checkPassword(newUser.getPassword());
-//
-//
-//        if (newUser.getPassword() == password) {
-//            return new Validator(true, "password match with given email");
-//        }
-//
-//        return new Validator(false, "password do not match with given email");
-//    }
 }
