@@ -103,8 +103,7 @@ public class GardensController {
 
         Optional<String> validGardenSizeCheck = ValidityCheck.validateGardenSize(gardenSize);
         Optional<String> validGardenNameCheck = ValidityCheck.validGardenName(gardenName);
-        Optional<String> validGardenLocationCheck =
-                ValidityCheck.validGardenLocation(gardenLocation);
+        Optional<String> validGardenLocationCheck = ValidityCheck.validGardenLocation(gardenLocation);
 
         if (validGardenNameCheck.isPresent()) {
             model.addAttribute("gardenNameError", validGardenNameCheck.get());
@@ -155,5 +154,37 @@ public class GardensController {
         logger.info("GET /gardens/" + gardenId);
         model.addAttribute("garden", gardenService.getGardenById(gardenId));
         return "gardenProfile";
+    }
+
+    /**
+     * Gets form to be displayed, includes the ability to display results of previous form when
+     * linked to from POST form
+     * 
+     * @param gardenName previously saved garden name entered into form to be displayed
+     * @param gardenLocation previously saved garden location entered into form to be displayed
+     * @param gardenSize previously svaed garden size entered into form to be displayed
+     * @param isValidName boolean for checking name is valid
+     * @param isValidLocation boolean for checking location is valid
+     * @param model (map-like) representation of gardenName, gardenLocation, gardenSize and
+     *        isValidName & isValidLocation boolean for use in thymeleaf
+     * @return thymeleaf demoFormTemplate
+     */
+    @GetMapping("/gardens/edit")
+    public String gardenEditGet(HttpServletRequest request,
+            @RequestParam(name = "gardenName", required = false,
+                    defaultValue = "") String gardenName,
+            @RequestParam(name = "gardenLocation", required = false,
+                    defaultValue = "") String gardenLocation,
+            @RequestParam(name = "gardenSize", required = false,
+                    defaultValue = "") String gardenSize,
+            Model model) {
+        logger.info("GET /gardens/create");
+        model.addAttribute("gardenName", gardenName);
+        model.addAttribute("gardenLocation", gardenLocation);
+        model.addAttribute("gardenSize", gardenSize);
+        String nextDestination = Optional.ofNullable(request.getParameter("next")).orElse("/");
+        model.addAttribute("nextDestination", nextDestination);
+
+        return "editGarden";
     }
 }
