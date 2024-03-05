@@ -120,50 +120,43 @@ public class AccountController {
     }
 
     @PostMapping(" /login")
-    public String login(
-            // not sure how to get the email and the password from the field
-            @RequestParam(name = "email") String email,
-            @RequestParam(name = "password") String password,
-            RegistrationData newUser
-    ) {
+    public String login(RegistrationData newUser, Model model) {
+        logger.info(String.format("in here"));
 
-        Validator isValid = new Validator(true, "Ok");
+        User checkUser = userService.findEmail(newUser.getEmail());
 
-        RegistrationData.LoginData loginData = new RegistrationData.LoginData(email, password);
 
-        //if (userService.getUserByEmail(email))
-
-        if (emailExist(newUser).getStatus() && passwordMatch(newUser, password).getStatus()) {
+        if (newUser.getPassword() == checkUser.getPassword()) {
             return "redirect:/profile";
-        } else {
-            return "pages/loginPage";
-        }
-    }
-
-    private Validator emailExist(RegistrationData newUser) {
-        // Still need to check if the email is valid form
-        Validator emailCheck = checkEmail(newUser.getEmail(), userService);
-        if (emailCheck.getStatus()) {
-            //if the email exist in the database,
-            // now check it the password matches
-
-            return new Validator(true, "email exist in the database");
-        } else {
-            // display error message - does this get handle by different class?
         }
 
-        return new Validator(false, "email does not exist in the database");
+        return "pages/loginPage";
     }
 
-    private Validator passwordMatch(RegistrationData newUser, String password) {
-        // Do not need to check if the password is in the right format - ex) One uppercase etc.
-        //Validator passwordCheck = checkPassword(newUser.getPassword());
-
-
-        if (newUser.getPassword() == password) {
-            return new Validator(true, "password match with given email");
-        }
-
-        return new Validator(false, "password do not match with given email");
-    }
+//    private Validator emailExist(RegistrationData newUser) {
+//        // Still need to check if the email is valid form
+//        Validator emailCheck = checkEmail(newUser.getEmail(), userService);
+//        if (emailCheck.getStatus()) {
+//            //if the email exist in the database,
+//            // now check it the password matches
+//
+//            return new Validator(true, "email exist in the database");
+//        } else {
+//            // display error message - does this get handle by different class?
+//        }
+//
+//        return new Validator(false, "email does not exist in the database");
+//    }
+//
+//    private Validator passwordMatch(RegistrationData newUser, String password) {
+//        // Do not need to check if the password is in the right format - ex) One uppercase etc.
+//        //Validator passwordCheck = checkPassword(newUser.getPassword());
+//
+//
+//        if (newUser.getPassword() == password) {
+//            return new Validator(true, "password match with given email");
+//        }
+//
+//        return new Validator(false, "password do not match with given email");
+//    }
 }
