@@ -167,9 +167,6 @@ public class GardensController {
         logger.info("GET /gardens/" + gardenId + "/edit");
         Garden garden = gardenService.getGardenById(gardenId);
         model.addAttribute("garden", garden);
-        
-        String nextDestination = Optional.ofNullable(request.getParameter("next")).orElse("/");
-        model.addAttribute("nextDestination", nextDestination);
 
         return "editGarden";
     } 
@@ -197,10 +194,8 @@ public class GardensController {
         model.addAttribute("gardenLocation", gardenLocation);
         model.addAttribute("gardenSize", gardenSize);
 
-        String nextDestination = Optional.ofNullable(request.getParameter("next")).orElse("/");
-        model.addAttribute("nextDestination", nextDestination);
-
         Garden garden = gardenService.getGardenById(gardenId);
+
         garden.setName(gardenName);
         garden.setLocation(gardenLocation);
         garden.setSize(Double.parseDouble(gardenSize));
