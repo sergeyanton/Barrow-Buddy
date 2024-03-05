@@ -32,3 +32,9 @@ h1 {
     left: 1rem;
 }
 
+.button {
+    padding: 10px 20px; /* Adjust padding to increase button size */
+    font-size: 16px; /* Increase font size */
+    margin: 0 5px; /* Add margin between buttons */
+}
+
