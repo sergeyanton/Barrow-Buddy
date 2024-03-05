@@ -1,0 +1,25 @@
+<th:block th:fragment="formElement(name, label, value, placeholder, error)">
+    <label th:for="${name}" th:text="${label}"></label>
+    <input type="text" th:name="${name}" th:id="${name}" th:placeholder="${placeholder}" th:value="${value}"><br>
+    <span th:if="${error}" style="color: red;" th:text="${error}"></span>
+    <br>
+</th:block>
+
+<th:block
+    th:fragment="gardenForm(action, cancel, gardenName, gardenLocation, gardenSize, gardenNameError, gardenLocationError, gardenSizeError)">
+    <form th:action="${action}" method="post">
+        <div
+            th:replace="fragments/formElement :: formElement(name='gardenName', label='Name: ', value=${gardenName}, placeholder='Your garden\'s name', error=${gardenNameError})">
+        </div>
+        <div
+            th:replace="fragments/formElement :: formElement(name='gardenLocation', label='Location: ', value=${gardenLocation}, placeholder='Your garden\'s location', error=${gardenLocationError})">
+        </div>
+        <div
+            th:replace="fragments/formElement :: formElement(name='gardenSize', label='Size (optional): ', value=${gardenSize}, placeholder='Your garden\'s size', error=${gardenSizeError})">
+        </div>
+        <button type="submit">Create Garden</button>
+        <a th:href="${cancel}">
+            <button type="button">Cancel</button>
+        </a>
+    </form>
+</th:block>
