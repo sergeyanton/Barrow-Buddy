@@ -47,12 +47,10 @@ public class GardensController {
     /**
      * Gets form to be displayed, includes the ability to display results of previous form when
      * linked to from POST form
-     * 
+     *
      * @param gardenName previous garden name entered into form to be displayed
      * @param gardenLocation previous garden location entered into form to be displayed
      * @param gardenSize previous garden size entered into form to be displayed
-     * @param isValidName boolean for checking name is valid
-     * @param isValidLocation boolean for checking location is valid
      * @param model (map-like) representation of gardenName, gardenLocation, garden Size and
      *        isValidName & isValidLocation boolean for use in thymeleaf
      * @return thymeleaf demoFormTemplate
@@ -139,7 +137,7 @@ public class GardensController {
      */
     @GetMapping("/gardens")
     public String viewGardens(Model model) {
-        logger.info("GET /gardens/createdGardens");
+        logger.info("GET /gardens");
         model.addAttribute("gardens", gardenService.getGardens());
         return "createdGardens";
     }
@@ -193,7 +191,7 @@ public class GardensController {
                                  @RequestParam(name = "gardenName") String gardenName,
                                  @RequestParam(name = "gardenLocation") String gardenLocation,
                                  @RequestParam(name = "gardenSize") String gardenSize, Model model) {
-        logger.info("POST /gardens/create");
+        logger.info("POST /gardens/" + gardenId + "/edit");
 
         model.addAttribute("gardenName", gardenName);
         model.addAttribute("gardenLocation", gardenLocation);
@@ -209,7 +207,7 @@ public class GardensController {
 
         gardenService.updateGarden(garden);
 
-        logger.info("Garden name changed to: " + gardenName);
+        logger.info("Edited garden" + garden);
         return "redirect:/gardens/" + garden.getId();
     }
 }

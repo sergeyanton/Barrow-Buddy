@@ -46,7 +46,10 @@ public class GardenService {
         return gardenRepository.save(garden);
     }
 
-    public void updateGarden(Garden garden) {
-        gardenRepository.save(garden);
-    }
+    /**
+     * Updates a Garden in persistence
+     * @param garden object to update
+     * @return the saved garden object
+     */
+    public Garden updateGarden(Garden garden) { return gardenRepository.save(garden); }
 }
