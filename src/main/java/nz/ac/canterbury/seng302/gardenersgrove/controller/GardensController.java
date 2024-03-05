@@ -101,7 +101,8 @@ public class GardensController {
 
         Optional<String> validGardenSizeCheck = ValidityCheck.validateGardenSize(gardenSize);
         Optional<String> validGardenNameCheck = ValidityCheck.validGardenName(gardenName);
-        Optional<String> validGardenLocationCheck = ValidityCheck.validGardenLocation(gardenLocation);
+        Optional<String> validGardenLocationCheck =
+                ValidityCheck.validGardenLocation(gardenLocation);
 
         if (validGardenNameCheck.isPresent()) {
             model.addAttribute("gardenNameError", validGardenNameCheck.get());
@@ -121,7 +122,8 @@ public class GardensController {
         }
 
         if (ValidityCheck.validGardenForm(gardenName, gardenLocation, gardenSize)) {
-            Garden addedGarden = gardenService.addGarden(new Garden(gardenName, gardenLocation, gardenSize));
+            Garden addedGarden =
+                    gardenService.addGarden(new Garden(gardenName, gardenLocation, gardenSize));
             logger.info("Garden created: " + addedGarden);
             return "redirect:/gardens/" + addedGarden.getId();
         }
@@ -144,6 +146,7 @@ public class GardensController {
 
     /**
      * Gets name of garden that was clicked on.
+     * 
      * @param model (map-like) representation of results to be used by thymeleaf
      * @return thymeleaf demoResponseTemplate
      */
@@ -168,7 +171,7 @@ public class GardensController {
         model.addAttribute("garden", garden);
 
         return "editGarden";
-    } 
+    }
 
     /**
      * Posts a form response with name, location, and size of the garden
@@ -183,12 +186,12 @@ public class GardensController {
      */
     @PostMapping("/gardens/{gardenId}/edit")
     public String gardenEditPost(@PathVariable("gardenId") Long gardenId,
-                                 @RequestParam(name = "gardenName") String gardenName,
-                                 @RequestParam(name = "gardenLocation") String gardenLocation,
-                                 @RequestParam(name = "gardenSize") String gardenSize, Model model) {
+            @RequestParam(name = "gardenName") String gardenName,
+            @RequestParam(name = "gardenLocation") String gardenLocation,
+            @RequestParam(name = "gardenSize") String gardenSize, Model model) {
         logger.info("POST /gardens/" + gardenId + "/edit");
 
-        //TODO get rid of code duplication (write a function)
+        // TODO get rid of code duplication (write a function)
 
         model.addAttribute("gardenName", gardenName);
         model.addAttribute("gardenLocation", gardenLocation);
@@ -196,7 +199,8 @@ public class GardensController {
 
         Optional<String> validGardenSizeCheck = ValidityCheck.validateGardenSize(gardenSize);
         Optional<String> validGardenNameCheck = ValidityCheck.validGardenName(gardenName);
-        Optional<String> validGardenLocationCheck = ValidityCheck.validGardenLocation(gardenLocation);
+        Optional<String> validGardenLocationCheck =
+                ValidityCheck.validGardenLocation(gardenLocation);
 
         if (validGardenNameCheck.isPresent()) {
             model.addAttribute("gardenNameError", validGardenNameCheck.get());
@@ -219,7 +223,7 @@ public class GardensController {
         if (ValidityCheck.validGardenForm(gardenName, gardenLocation, gardenSize)) {
             garden.setName(gardenName);
             garden.setLocation(gardenLocation);
-            garden.setSize(Double.parseDouble(gardenSize));
+            garden.setSize(gardenSize);
 
             gardenService.updateGarden(garden);
             logger.info("Garden updated: " + garden);
