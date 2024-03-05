@@ -8,8 +8,11 @@
 <body>
 <div id="basic">
     <h1>Welcome to Gardener's Grove</h1>
-    <button class="button" th:href="@{register}">Register</button>
-    <button class="button" th:href="@{login}">Sign In</button>
+    <div id="link">
+        <a th:href="@{register}">Register</a>
+        <a th:href="@{login}">Sign In</a>
+    </div>
+
 </div>
 </body>
 </html>

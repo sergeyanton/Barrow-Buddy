@@ -32,9 +32,16 @@ h1 {
     left: 1rem;
 }
 
-.button {
-    padding: 10px 20px; /* Adjust padding to increase button size */
-    font-size: 16px; /* Increase font size */
-    margin: 0 5px; /* Add margin between buttons */
+#link a {
+    padding: 10px 20px; /* Adjust padding to increase link size */
+    font-size: 16px;
+    margin: 0 5px; /* Adjust margin between links */
+    text-decoration: none; /* Remove underline */
+    color: white;
+    background-color: #023020;
+}
+
+#link a:hover {
+    background-color: #ddd;
 }
 
