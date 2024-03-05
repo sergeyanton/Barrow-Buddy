@@ -26,10 +26,20 @@ h1 {
     position: relative;
 }
 
-#cancel {
+
+#cancel a{
+    padding: 10px 20px; /* Adjust padding to increase link size */
     position: absolute;
     bottom: 1rem;
     left: 1rem;
+    font-size: 16px;
+    text-decoration: none; /* Remove underline */
+    color: white;
+    background-color: darkred;
+}
+
+#cancel a:hover {
+    background-color: rgba(139, 0, 0, 0.55);
 }
 
 #link a {
@@ -42,6 +52,6 @@ h1 {
 }
 
 #link a:hover {
-    background-color: #ddd;
+    background-color: rgba(2, 48, 32, 0.71);
 }
 
