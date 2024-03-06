@@ -188,11 +188,11 @@ public class GardensController {
                                  @RequestParam(name = "gardenSize") String gardenSize, Model model) {
         logger.info("POST /gardens/" + gardenId + "/edit");
 
+        //TODO get rid of code duplication (write a function)
+
         model.addAttribute("gardenName", gardenName);
         model.addAttribute("gardenLocation", gardenLocation);
         model.addAttribute("gardenSize", gardenSize);
-
-        Garden garden = gardenService.getGardenById(gardenId);
 
         Optional<String> validGardenSizeCheck = ValidityCheck.validateGardenSize(gardenSize);
         Optional<String> validGardenNameCheck = ValidityCheck.validGardenName(gardenName);
@@ -214,6 +214,8 @@ public class GardensController {
             model.addAttribute("gardenSizeError", "");
         }
 
+        Garden garden = gardenService.getGardenById(gardenId);
+
         if (ValidityCheck.validGardenForm(gardenName, gardenLocation, gardenSize)) {
             garden.setName(gardenName);
             garden.setLocation(gardenLocation);
@@ -224,6 +226,7 @@ public class GardensController {
             return "redirect:/gardens/" + garden.getId();
         }
 
-        return "redirect:/gardens/" + garden.getId() + "/edit";
+        model.addAttribute(garden); // so that editGarden.html knows the id of garden being edited.
+        return "editGarden";
     }
 }
