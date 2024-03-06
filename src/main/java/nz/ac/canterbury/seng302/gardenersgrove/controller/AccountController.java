@@ -1,7 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import nz.ac.canterbury.seng302.gardenersgrove.Validation.InputValidation;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection.LogInData;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection.RegistrationData;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.User;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
@@ -112,7 +110,7 @@ public class AccountController {
             if (!surnameCheck.getStatus()) return surnameCheck;
         }
 
-        Validator emailCheck = checkEmail(newUser.getEmail(),  userService);
+        Validator emailCheck = checkEmailSignup(newUser.getEmail(),  userService);
         if (!emailCheck.getStatus()) return emailCheck;
 
         if(!Objects.equals(newUser.getPassword(), newUser.getRetypePassword())){
@@ -128,11 +126,28 @@ public class AccountController {
         return new Validator(true, "");
     }
 
+    private Validator loginInputCheck(LogInData newUser){
+
+        Validator emailCheck = checkEmailLogin(newUser.getEmail());
+        if (!emailCheck.getStatus()) return emailCheck;
+
+        Validator passwordCheck = checkPasswordEmpty(newUser.getPassword());
+        if (!passwordCheck.getStatus()) return passwordCheck;
+
+        return new Validator(true, "");
+    }
+
     @PostMapping("/login")
     public String login(HttpServletRequest request, LogInData newUser, Model model) {
         logger.info("in here");
 
+        Validator error = loginInputCheck(newUser);
+        if (!error.getStatus()) {
+            return pageWithError("pages/loginPage", model, error.getMessage());
+        }
+
         User user = userService.findEmail(newUser.getEmail());
+
         if (user == null) {
             String errorMessage = String.format("No user with the email '%s' exists.", newUser.getEmail());
             return pageWithError("pages/loginPage", model, errorMessage);
