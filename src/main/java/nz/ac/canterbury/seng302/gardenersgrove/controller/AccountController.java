@@ -20,10 +20,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.time.format.DateTimeFormatter;
-import java.util.Objects;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.Validation.InputValidation.*;
-import static nz.ac.canterbury.seng302.gardenersgrove.Validation.InputValidation.checkDob;
 import static nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection.RegistrationData.createNewUser;
 
 @Controller
@@ -65,7 +63,7 @@ public class AccountController {
     public String register(HttpServletRequest request, RegistrationData newUser, Model model) {
         logger.info(String.format("Registering new user '%s %s'", newUser.getfName(), newUser.getlName()));
 
-        Validator error = dataCheck(newUser);
+        Validator error = checkRegistrationData(newUser, userService);
         if (!error.getStatus()) {
             return pageWithError("pages/registrationPage", model, error.getMessage());
         }
@@ -92,7 +90,7 @@ public class AccountController {
         logger.info("GET /profile");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
-        User u = userService.getUserByEmail(currentPrincipalName);
+        User u = userService.findEmail(currentPrincipalName);
         model.addAttribute("fName", u.getFname());
         model.addAttribute("lName", u.getLname());
         model.addAttribute("email", u.getEmail());
@@ -101,47 +99,12 @@ public class AccountController {
     }
 
 
-    private Validator dataCheck(RegistrationData newUser){
-        Validator nameCheck = checkName(newUser.getfName());
-        if (!nameCheck.getStatus()) return nameCheck;
-
-        if (!newUser.getNoSurnameCheckBox()) {
-            Validator surnameCheck = checkName(newUser.getlName());
-            if (!surnameCheck.getStatus()) return surnameCheck;
-        }
-
-        Validator emailCheck = checkEmailSignup(newUser.getEmail(),  userService);
-        if (!emailCheck.getStatus()) return emailCheck;
-
-        if(!Objects.equals(newUser.getPassword(), newUser.getRetypePassword())){
-            return new Validator(false, "Passwords do not match");
-        }
-
-        Validator passwordCheck = checkPassword(newUser.getPassword());
-        if (!passwordCheck.getStatus()) return passwordCheck;
-
-        Validator dobCheck = checkDob(newUser.getDob());
-        if (!dobCheck.getStatus()){return dobCheck;}
-
-        return new Validator(true, "");
-    }
-
-    private Validator loginInputCheck(LogInData newUser){
-
-        Validator emailCheck = checkEmailLogin(newUser.getEmail());
-        if (!emailCheck.getStatus()) return emailCheck;
-
-        Validator passwordCheck = checkPasswordEmpty(newUser.getPassword());
-        if (!passwordCheck.getStatus()) return passwordCheck;
-
-        return new Validator(true, "");
-    }
 
     @PostMapping("/login")
     public String login(HttpServletRequest request, LogInData newUser, Model model) {
         logger.info("in here");
 
-        Validator error = loginInputCheck(newUser);
+        Validator error = checkLoginData(newUser);
         if (!error.getStatus()) {
             return pageWithError("pages/loginPage", model, error.getMessage());
         }

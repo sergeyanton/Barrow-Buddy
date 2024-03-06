@@ -19,7 +19,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebSecurity
 @ComponentScan("com.baeldung.security")
 public class SecurityConfiguration {
-
     /**
      * Our Custom Authentication Provider {@link CustomAuthenticationProvider}
      */

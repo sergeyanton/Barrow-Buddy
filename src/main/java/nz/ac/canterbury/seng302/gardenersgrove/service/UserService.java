@@ -17,16 +17,13 @@ public class UserService  {
         this.userRepository = userRepository;
     }
 
-    public User registerUser(User user) {
-        return userRepository.save(user);
+    public void registerUser(User user) {
+        userRepository.save(user);
     }
 
     public User getUserByEmailAndPassword(String email, String password) {
-        return userRepository.getUserByEmailAndPassword(email, password);
-    }
-
-    public User getUserByEmail(String email) {
-        return userRepository.getUserByEmail(email);
+        Optional<User> user = userRepository.findByEmailAndPassword(email, password);
+        return user.orElse(null);
     }
 
     public Boolean checkEmail(String email) {
@@ -42,7 +39,7 @@ public class UserService  {
     public User getLoggedInUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
-        return getUserByEmail(currentPrincipalName);
+        return findEmail(currentPrincipalName);
     }
 
     public boolean isSignedIn() {
