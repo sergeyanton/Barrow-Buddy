@@ -8,13 +8,13 @@ import java.time.LocalDate;
 
 
 public class RegistrationData {
-    private final String fName;
-    private final String lName;
-    private final Boolean noSurnameCheckBox;
-    private final String email;
-    private final String password;
-    private final String retypePassword;
-    private final LocalDate dob;
+    private String fName;
+    private String lName;
+    private Boolean noSurnameCheckBox;
+    private String email;
+    private String password;
+    private String retypePassword;
+    private LocalDate dob;
 
     public RegistrationData(
         @RequestParam(name = "email") String email,
@@ -32,6 +32,7 @@ public class RegistrationData {
         this.password = password;
         this.retypePassword = retypePassword;
         this.dob = dob;
+
     }
 
 

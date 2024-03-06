@@ -3,6 +3,8 @@ package nz.ac.canterbury.seng302.gardenersgrove.service;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.User;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -32,8 +34,18 @@ public class UserService  {
         return user.isPresent();
     }
 
-//    public User findEmail(String email) {
-//        Optional<User> user = UserRepository.findByEmail(email);
-//        return user.orElse(null);
-//    }
+    public User findEmail(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+        return user.orElse(null);
+    }
+
+    public User getLoggedInUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentPrincipalName = authentication.getName();
+        return getUserByEmail(currentPrincipalName);
+    }
+
+    public boolean isSignedIn() {
+        return getLoggedInUser() != null;
+    }
 }

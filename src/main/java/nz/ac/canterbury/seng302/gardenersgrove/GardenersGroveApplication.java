@@ -17,5 +17,4 @@ public class GardenersGroveApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(GardenersGroveApplication.class, args);
 	}
-
 }
