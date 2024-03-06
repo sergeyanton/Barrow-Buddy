@@ -21,10 +21,12 @@
 <form th:action="@{logout}" method="post">
     <button type="submit">Logout</button>
 </form>
-
-<div>
-    <a th:href="@{home}">Home</a>
-    <a th:href="@{editProfile}">Edit Profile</a>
+        <div id="editProfile">
+            <a th:href="@{editProfile}">Edit profile</a>
+        </div>
+    <div id="home">
+        <a th:href="@{home}">Home</a>
+    </div>
 </div>
 </body>
 </html>

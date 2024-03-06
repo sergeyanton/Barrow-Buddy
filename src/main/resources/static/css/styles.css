@@ -27,7 +27,7 @@ h1 {
 }
 
 
-#cancel a{
+:is(#cancel,#back,#home) a{
     padding: 10px 20px; /* Adjust padding to increase link size */
     position: absolute;
     bottom: 1rem;
@@ -39,7 +39,7 @@ h1 {
     background-color: darkred;
 }
 
-#cancel a:hover {
+:is(#cancel,#back,#home) a:hover {
     background-color: rgba(139, 0, 0, 0.55);
 }
 
