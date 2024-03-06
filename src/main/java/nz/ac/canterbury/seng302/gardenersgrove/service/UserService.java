@@ -9,6 +9,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+/**
+ * This class provides services related to user service, such as user registration,
+ * retrieval, and authentication.
+ */
 @Service
 public class UserService  {
     private final UserRepository userRepository;
@@ -17,34 +21,68 @@ public class UserService  {
         this.userRepository = userRepository;
     }
 
+    /**
+     * Registers a new user.
+     * @param user The user to register.
+     * @return The registered user.
+     */
     public User registerUser(User user) {
         return userRepository.save(user);
     }
 
+    /**
+     * Retrieves a user by email and password.
+     * @param email The email of the user.
+     * @param password The password of the user.
+     * @return The user if found, otherwise null.
+     */
     public User getUserByEmailAndPassword(String email, String password) {
         return userRepository.getUserByEmailAndPassword(email, password);
     }
 
+    /**
+     * Retrieves a user by email.
+     * @param email The email of the user.
+     * @return The user if found, otherwise null.
+     */
     public User getUserByEmail(String email) {
         return userRepository.getUserByEmail(email);
     }
 
-    public Boolean checkEmail(String email) {
+    /**
+     * Checks if an email is already in use.
+     * @param email The email to check.
+     * @return True if the email is already in use, otherwise false.
+     */
+    public boolean checkEmail(String email) {
         Optional<User> user = userRepository.findByEmail(email);
         return user.isPresent();
     }
 
+    /**
+     * Finds a user by email.
+     * @param email The email of the user to find.
+     * @return The user if found, otherwise null.
+     */
     public User findEmail(String email) {
         Optional<User> user = userRepository.findByEmail(email);
         return user.orElse(null);
     }
 
+    /**
+     * Retrieves the currently logged-in user.
+     * @return The currently logged-in user's name if exists, otherwise null.
+     */
     public User getLoggedInUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
         return getUserByEmail(currentPrincipalName);
     }
 
+    /**
+     * Checks if a user is currently signed in.
+     * @return True if a user is signed in, otherwise false.
+     */
     public boolean isSignedIn() {
         return getLoggedInUser() != null;
     }
