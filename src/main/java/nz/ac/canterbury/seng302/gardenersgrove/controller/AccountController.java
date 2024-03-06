@@ -25,7 +25,8 @@ import java.time.format.DateTimeFormatter;
 
 
 import static nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection.RegistrationData.createNewUser;
-import static nz.ac.canterbury.seng302.gardenersgrove.validation.InputValidation.*;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.InputValidation.checkEmailLogin;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.InputValidation.loginInputCheck;
 
 @Controller
 public class AccountController {
@@ -57,7 +58,7 @@ public class AccountController {
         }
     }
 
-    private String pageWithError(String pagePath, Model model, String errorMessage) {
+    public static String pageWithError(String pagePath, Model model, String errorMessage) {
         model.addAttribute("errorMessage", errorMessage);
         return pagePath;
     }
@@ -105,16 +106,6 @@ public class AccountController {
 
 
 
-    private Validator loginInputCheck(LogInData newUser){
-
-        Validator emailCheck = checkEmailLogin(newUser.getEmail());
-        if (!emailCheck.getStatus()) return emailCheck;
-
-        Validator passwordCheck = checkPasswordEmpty(newUser.getPassword());
-        if (!passwordCheck.getStatus()) return passwordCheck;
-
-        return new Validator(true, "");
-    }
 
     @PostMapping("/login")
     public String login(HttpServletRequest request, LogInData newUser, Model model) {

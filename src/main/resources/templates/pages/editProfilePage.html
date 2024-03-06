@@ -10,7 +10,7 @@
 <div id="basic">
 
         <h4>Edit My Profile</h4>
-
+        <form th:action="@{register}" method="post">
         <label for="fName"> First Name: </label>
         <input type="text" class="form-control" id="fName"
                th:name="fName" th:value="*{fName}" data-cy="fName" autofocus>
@@ -34,12 +34,12 @@
 
         <label for="dob"> Date of Birth: </label>
         <input type="dob" class="form-control" id="dob"
-               th:name="dob" th:value="*{dob}" data-cy="dob" required autofocus>
+               th:name="dob" th:value="*{dob}" data-cy="dob"  autofocus>
         <br/>
 
         <label for="password"> Password: </label>
         <input type="password" class="form-control" id="password" placeholder="********"
-               th:name="password" th:value="*{password}" data-cy="password" required autofocus>
+               th:name="password" th:value="*{password}" data-cy="password"  autofocus>
         <br/>
 
         <div th:if="${errorMessage}">
@@ -53,6 +53,7 @@
         <div id="back">
             <a th:href="@{profile}">Cancel</a>
         </div>
+    </form>
     </div>
 
 </body>

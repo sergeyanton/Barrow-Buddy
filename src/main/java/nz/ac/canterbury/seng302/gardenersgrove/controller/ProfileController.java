@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import static nz.ac.canterbury.seng302.gardenersgrove.controller.AccountController.pageWithError;
 
 
 @Controller
@@ -45,7 +46,7 @@ public class ProfileController {
     }
 
     @PostMapping
-    public String editProfile(RegistrationData updatedUser) {
+    public String editProfile(RegistrationData updatedUser, Model model) {
         logger.info("POST /editProfile");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
@@ -53,6 +54,9 @@ public class ProfileController {
 
         InputValidation inputValidation = new InputValidation(userService);
         Validator error = inputValidation.dataCheck(updatedUser);
+        if (!error.getStatus()) {
+            return pageWithError("pages/registrationPage", model, error.getMessage());
+        }
 
         if (updatedUser.getfName() != null) {
             currentUser.setFname(updatedUser.getfName());

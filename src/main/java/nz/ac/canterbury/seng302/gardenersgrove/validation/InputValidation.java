@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.validation;
 
+import nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection.LogInData;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection.RegistrationData;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Validator;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.UserRepository;
@@ -122,6 +123,18 @@ public class InputValidation {
 
         return new Validator(true, "");
     }
+
+    public static Validator loginInputCheck(LogInData newUser){
+
+        Validator emailCheck = checkEmailLogin(newUser.getEmail());
+        if (!emailCheck.getStatus()) return emailCheck;
+
+        Validator passwordCheck = checkPasswordEmpty(newUser.getPassword());
+        if (!passwordCheck.getStatus()) return passwordCheck;
+
+        return new Validator(true, "");
+    }
+
 
 
 }
