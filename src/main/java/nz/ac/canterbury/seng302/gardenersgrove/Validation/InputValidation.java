@@ -4,7 +4,6 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.Validator;
 import nz.ac.canterbury.seng302.gardenersgrove.service.UserService;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 public class InputValidation {
 
@@ -17,13 +16,29 @@ public class InputValidation {
         return isValid;
     }
 
-    public static Validator checkEmail(String userEmail, UserService userService) {
+    public static Validator checkEmailSignup(String userEmail, UserService userService) {
         Validator isValid = new Validator(true, "Ok");
         if (userEmail.isBlank()) {isValid.setValid(false,"Email address must be in the form ‘jane@doe.nz’");}
         if (!userEmail.matches("^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$")) {isValid.setValid(false,"Email address must be in the form ‘jane@doe.nz’");}
 
         if (userService.checkEmail(userEmail)) {isValid.setValid(false,"Email address is already in use");}
 
+        return isValid;
+    }
+
+    public static Validator checkEmailLogin(String userEmail) {
+        Validator isValid = new Validator(true, "Ok");
+        if (userEmail.isBlank()) {isValid.setValid(false,"Email cannot be empty.");}
+        if (!userEmail.matches("^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$")) {isValid.setValid(false,"Email address must be in the form ‘jane@doe.nz’");}
+
+        return isValid;
+    }
+
+    public static Validator checkPasswordEmpty(String password) {
+        Validator isValid = new Validator(true,"Ok");
+        if (password.isBlank()) {
+            isValid.setValid(false,"Password cannot be empty.");
+        }
         return isValid;
     }
 

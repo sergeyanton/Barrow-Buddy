@@ -4,19 +4,15 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.User;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Validator;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.UserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.UserService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.Validation.InputValidation.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
 
 @SpringBootTest
 public class UserValidationTest {
@@ -51,7 +47,7 @@ public class UserValidationTest {
         user = new User("Fabian","Gilson","fabian.gilson@canterbury.ac.nz"
                 ,  "Fabian123!" ,LocalDate.parse("01/01/2009"));
 
-        Validator emailValidator = checkEmail(user.getEmail(),userService);
+        Validator emailValidator = checkEmailSignup(user.getEmail(),userService);
         assertTrue(emailValidator.getStatus());
     }
 
@@ -87,7 +83,7 @@ public class UserValidationTest {
         UserService userService = new UserService(userRepository);
         user = new User("Fabian","Gilson","fabian"
                 ,  "Fabian123!" ,LocalDate.parse("01/01/2009"));
-        Validator emailValidator = checkEmail(user.getEmail(), userService);
+        Validator emailValidator = checkEmailSignup(user.getEmail(), userService);
         assertFalse(emailValidator.getStatus());
     }
 
