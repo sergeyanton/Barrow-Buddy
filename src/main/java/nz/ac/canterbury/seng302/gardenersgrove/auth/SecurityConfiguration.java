@@ -68,7 +68,7 @@ public class SecurityConfiguration {
                 .authenticated()
                 .and()
                 // Define logging in, a POST "/login" endpoint now exists under the hood, after login redirect to user page
-                .formLogin().loginPage("/login").loginProcessingUrl("/login").defaultSuccessUrl("/user")
+                .formLogin().loginPage("/").permitAll()
                 .and()
                 // Define logging out, a POST "/logout" endpoint now exists under the hood, redirect to "/login", invalidate session and remove cookie
                 .logout().logoutUrl("/logout").logoutSuccessUrl("/login").invalidateHttpSession(true).deleteCookies("JSESSIONID");

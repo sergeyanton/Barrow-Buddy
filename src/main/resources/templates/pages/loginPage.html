@@ -8,16 +8,19 @@
     <h4>Log In</h4>
 
     <div>
-        <form method="post">
+        <form th:action="@{login}" method="post">
             <label for="email"> Email: </label>
             <input type="email" class="form-control" id="email" placeholder="Email"
-                   th:name="username" th:value="*{username}" data-cy="username" size="40" required autofocus>
+                   th:name="email" th:value="*{email}" data-cy="email" size="40" required autofocus>
             <br/>
             <label for="password"> Password: </label>
             <input type="password" class="form-control" id="password" placeholder="Password"
                    th:name="password" data-cy="password" required autofocus>
             <br/>
 
+            <div th:if="${errorMessage}">
+                <div th:replace="~{fragments/errorMessageFragment :: errorMessage(message=${errorMessage})}"></div>
+            </div>
 
             <button type="submit">Sign In</button>
 

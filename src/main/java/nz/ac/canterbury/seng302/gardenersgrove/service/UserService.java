@@ -32,8 +32,8 @@ public class UserService  {
         return user.isPresent();
     }
 
-//    public User findEmail(String email) {
-//        Optional<User> user = UserRepository.findByEmail(email);
-//        return user.orElse(null);
-//    }
+    public User findEmail(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+        return user.orElse(null);
+    }
 }
