@@ -38,6 +38,3 @@ out/
 
 ### Mac
 .DS_Store
-
-### Database
-*.db
