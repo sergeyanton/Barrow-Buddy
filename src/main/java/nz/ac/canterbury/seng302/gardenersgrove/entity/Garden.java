@@ -90,6 +90,6 @@ public class Garden {
 
     @Override
     public String toString() {
-        return "Garden{" + "id=" + id + ", name='" + name + ", size='" + size.toString() + "\'}";
+        return "Garden{id=" + id + ", name=\'" + name + "\', size=\'" + size + "\'}";
     }
 }
