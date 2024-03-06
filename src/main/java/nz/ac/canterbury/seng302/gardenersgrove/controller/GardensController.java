@@ -162,8 +162,7 @@ public class GardensController {
      * @return thymeleaf demoFormTemplate
      */
     @GetMapping("/gardens/{gardenId}/edit")
-    public String gardenEditGet(HttpServletRequest request, @PathVariable("gardenId") Long gardenId,
-            Model model) {
+    public String gardenEditGet(@PathVariable("gardenId") Long gardenId, Model model) {
         logger.info("GET /gardens/" + gardenId + "/edit");
         Garden garden = gardenService.getGardenById(gardenId);
         model.addAttribute("garden", garden);
@@ -183,26 +182,51 @@ public class GardensController {
      *
      */
     @PostMapping("/gardens/{gardenId}/edit")
-    public String gardenEditPost(HttpServletRequest request,
-                                 @PathVariable("gardenId") Long gardenId,
+    public String gardenEditPost(@PathVariable("gardenId") Long gardenId,
                                  @RequestParam(name = "gardenName") String gardenName,
                                  @RequestParam(name = "gardenLocation") String gardenLocation,
                                  @RequestParam(name = "gardenSize") String gardenSize, Model model) {
         logger.info("POST /gardens/" + gardenId + "/edit");
 
+        //TODO get rid of code duplication (write a function)
+
         model.addAttribute("gardenName", gardenName);
         model.addAttribute("gardenLocation", gardenLocation);
         model.addAttribute("gardenSize", gardenSize);
 
+        Optional<String> validGardenSizeCheck = ValidityCheck.validateGardenSize(gardenSize);
+        Optional<String> validGardenNameCheck = ValidityCheck.validGardenName(gardenName);
+        Optional<String> validGardenLocationCheck = ValidityCheck.validGardenLocation(gardenLocation);
+
+        if (validGardenNameCheck.isPresent()) {
+            model.addAttribute("gardenNameError", validGardenNameCheck.get());
+        } else {
+            model.addAttribute("gardenNameError", "");
+        }
+        if (validGardenLocationCheck.isPresent()) {
+            model.addAttribute("gardenLocationError", validGardenLocationCheck.get());
+        } else {
+            model.addAttribute("gardenLocationError", "");
+        }
+        if (validGardenSizeCheck.isPresent()) {
+            model.addAttribute("gardenSizeError", validGardenSizeCheck.get());
+        } else {
+            model.addAttribute("gardenSizeError", "");
+        }
+
         Garden garden = gardenService.getGardenById(gardenId);
 
-        garden.setName(gardenName);
-        garden.setLocation(gardenLocation);
-        garden.setSize(Double.parseDouble(gardenSize));
+        if (ValidityCheck.validGardenForm(gardenName, gardenLocation, gardenSize)) {
+            garden.setName(gardenName);
+            garden.setLocation(gardenLocation);
+            garden.setSize(Double.parseDouble(gardenSize));
 
-        gardenService.updateGarden(garden);
+            gardenService.updateGarden(garden);
+            logger.info("Garden updated: " + garden);
+            return "redirect:/gardens/" + garden.getId();
+        }
 
-        logger.info("Edited garden" + garden);
-        return "redirect:/gardens/" + garden.getId();
+        model.addAttribute(garden); // so that editGarden.html knows the id of garden being edited.
+        return "editGarden";
     }
 }
