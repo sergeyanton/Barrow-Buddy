@@ -6,6 +6,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection.Registr
 import nz.ac.canterbury.seng302.gardenersgrove.entity.User;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Validator;
 import nz.ac.canterbury.seng302.gardenersgrove.service.UserService;
+import nz.ac.canterbury.seng302.gardenersgrove.validation.InputValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.time.format.DateTimeFormatter;
-import java.util.Objects;
+
 
 
 import static nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection.RegistrationData.createNewUser;
@@ -65,7 +66,9 @@ public class AccountController {
     public String register(HttpServletRequest request, RegistrationData newUser, Model model) {
         logger.info(String.format("Registering new user '%s %s'", newUser.getfName(), newUser.getlName()));
 
-        Validator error = dataCheck(newUser);
+        InputValidation inputValidation = new InputValidation(userService);
+
+        Validator error = inputValidation.dataCheck(newUser);
         if (!error.getStatus()) {
             return pageWithError("pages/registrationPage", model, error.getMessage());
         }
@@ -101,30 +104,6 @@ public class AccountController {
     }
 
 
-    private Validator dataCheck(RegistrationData newUser){
-        Validator nameCheck = checkName(newUser.getfName());
-        if (!nameCheck.getStatus()) return nameCheck;
-
-        if (!newUser.getNoSurnameCheckBox()) {
-            Validator surnameCheck = checkName(newUser.getlName());
-            if (!surnameCheck.getStatus()) return surnameCheck;
-        }
-
-        Validator emailCheck = checkEmailSignup(newUser.getEmail(),  userService);
-        if (!emailCheck.getStatus()) return emailCheck;
-
-        if(!Objects.equals(newUser.getPassword(), newUser.getRetypePassword())){
-            return new Validator(false, "Passwords do not match");
-        }
-
-        Validator passwordCheck = checkPassword(newUser.getPassword());
-        if (!passwordCheck.getStatus()) return passwordCheck;
-
-        Validator dobCheck = checkDob(newUser.getDob());
-        if (!dobCheck.getStatus()){return dobCheck;}
-
-        return new Validator(true, "");
-    }
 
     private Validator loginInputCheck(LogInData newUser){
 
