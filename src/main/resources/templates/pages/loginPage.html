@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
     <link rel="stylesheet" type="text/css" th:href="@{/css/styles.css}">
@@ -8,7 +8,7 @@
 <body>
 <div id="basic">
     <h1>Log In</h1>
-    <form method="post">
+    <form th:action="@{login}" method="post">
         <label for="email"> Email: </label>
         <input type="email" class="form-control" id="email"
                th:name="email" data-cy="email" size="40" required autofocus>
@@ -17,6 +17,10 @@
         <input type="password" class="form-control" id="password"
                th:name="password" data-cy="password" required autofocus>
         <br/>
+
+        <div th:if="${errorMessage}">
+            <div th:replace="~{fragments/errorMessageFragment :: errorMessage(message=${errorMessage})}"></div>
+        </div>
 
         <div>
             <a th:href="@{register}">Not registered? Create an account! </a>

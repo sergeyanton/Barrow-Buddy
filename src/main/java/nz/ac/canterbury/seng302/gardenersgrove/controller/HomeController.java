@@ -15,7 +15,6 @@ public class HomeController {
      * Gets the thymeleaf page representing the /home page
      * @return thymeleaf homePage
      */
-
     @GetMapping("/home")
     public String getHome() {
         logger.info("GET /home");
