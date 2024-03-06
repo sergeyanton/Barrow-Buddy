@@ -1,15 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/styles.css}">
     <title>Home</title>
 </head>
 <body>
-    <h4>Home</h4>
-    <div class="top-nav">
-        <!-- Feed, Friends, My profile, Sign out (automatically signs out) -->
+<div id="basic">
+    <h1>Home</h1>
+    <div id="link">
         <a th:href="@{profile}">My Profile</a>
     </div>
-
+</div>
 </body>
 </html>
