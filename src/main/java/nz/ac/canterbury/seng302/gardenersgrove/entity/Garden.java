@@ -18,8 +18,8 @@ public class Garden {
     private String name;
     @Column(nullable = false)
     private String location;
-    @Column(nullable = false)
-    private double size;
+    @Column
+    private Double size;
 
     /**
      * JPA required no-args constructor
@@ -28,10 +28,12 @@ public class Garden {
 
     /**
      * Creates a new Garden object
-     * 
+     *
      * @param name name of garden
+     * @param location location of garden
+     * @param size size of garden
      */
-    public Garden(String name, String location, double size) {
+    public Garden(String name, String location, Double size) {
         this.name = name;
         this.location = location;
         this.size = size;
@@ -54,7 +56,8 @@ public class Garden {
         if (validGardenSizeCheck.isPresent()) {
             throw new IllegalArgumentException(validGardenSizeCheck.get());
         }
-        this.size = Double.parseDouble(size.replace(",", "."));;
+
+        this.size = (size.isBlank()) ? null : Double.parseDouble(size.replace(",", "."));
     }
 
     public Long getId() {
@@ -69,7 +72,7 @@ public class Garden {
         return location;
     }
 
-    public double getSize() {
+    public Double getSize() {
         return size;
     }
 
@@ -81,12 +84,12 @@ public class Garden {
         location = newLocation;
     }
 
-    public void setSize(double newSize) {
+    public void setSize(Double newSize) {
         size = newSize;
     }
 
     @Override
     public String toString() {
-        return "Garden{" + "id=" + id + ", name='" + name + '\'' + '}';
+        return "Garden{" + "id=" + id + ", name='" + name + ", size='" + size.toString() + "\'}";
     }
 }

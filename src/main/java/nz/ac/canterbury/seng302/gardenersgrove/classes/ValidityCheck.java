@@ -57,9 +57,11 @@ public class ValidityCheck {
      *         empty optional
      */
     public static Optional<String> validateGardenSize(String size) {
-        boolean isBlank = size.isBlank();
         boolean isNumber = size.matches("^[0-9]+((\\.|,)[0-9]+)?$");
-        if (!isBlank && isNumber) {
+        if (size.isBlank()) { // valid empty input for no size given
+            return Optional.empty();
+        }
+        if (isNumber) {
             return Optional.empty();
         }
         return Optional.of("Garden size must be a positive number");
