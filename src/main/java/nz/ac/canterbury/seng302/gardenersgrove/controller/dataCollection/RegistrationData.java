@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 
+import static nz.ac.canterbury.seng302.gardenersgrove.Validation.InputValidation.hashPassword;
+
 
 public class RegistrationData {
     private String fName;
@@ -37,7 +39,7 @@ public class RegistrationData {
 
 
     public static User createNewUser(RegistrationData user) {
-        return new User(user.getfName(), user.getlName(), user.getEmail(), user.getPassword(), user.getDob());
+        return new User(user.getfName(), user.getlName(), user.getEmail(), hashPassword(user.getPassword()), user.getDob());
     }
 
     public String getfName() {
