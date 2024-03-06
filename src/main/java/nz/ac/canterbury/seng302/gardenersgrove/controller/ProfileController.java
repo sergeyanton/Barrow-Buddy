@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 public class ProfileController {
-    Logger logger = LoggerFactory.getLogger(HomeController.class);
+    Logger logger = LoggerFactory.getLogger(ProfileController.class);
 
     @GetMapping("/editProfile")
     public String getEditProfilePage() {
@@ -18,7 +18,7 @@ public class ProfileController {
         return "pages/editProfilePage";
     }
     @PostMapping
-    public String editProfile(User currentuser, Model model) {
+    public String editProfile(Model model) {
         logger.info("POST /editProfile");
         
         return "redirect:/profile";
