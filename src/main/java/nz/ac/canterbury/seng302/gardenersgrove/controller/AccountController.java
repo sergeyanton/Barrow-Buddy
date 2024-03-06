@@ -152,8 +152,8 @@ public class AccountController {
             String errorMessage = String.format("No user with the email '%s' exists.", newUser.getEmail());
             return pageWithError("pages/loginPage", model, errorMessage);
         }
-
-        if (!newUser.getPassword().equals(user.getPassword())) {
+        String hashedPassword = hashPassword(newUser.getPassword());
+        if (!verifyPassword(newUser.getPassword(), user.getPassword())){
             String errorMessage = "Wrong password.";
             return pageWithError("pages/loginPage", model, errorMessage);
         }
