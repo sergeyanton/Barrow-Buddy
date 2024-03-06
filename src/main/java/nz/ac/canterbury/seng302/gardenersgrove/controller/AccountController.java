@@ -96,7 +96,7 @@ public class AccountController {
         model.addAttribute("fName", u.getFname());
         model.addAttribute("lName", u.getLname());
         model.addAttribute("email", u.getEmail());
-        model.addAttribute("dob", u.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+        model.addAttribute("dob", u.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         return "pages/profilePage";
     }
 
