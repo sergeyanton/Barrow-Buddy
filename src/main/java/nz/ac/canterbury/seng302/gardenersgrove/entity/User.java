@@ -68,7 +68,10 @@ public class User {
     }
 
     public String getLname() {
-        return lname;
+        if(lname == null){
+            return "";
+        }
+        return lname ;
     }
 
     public String getPassword() {

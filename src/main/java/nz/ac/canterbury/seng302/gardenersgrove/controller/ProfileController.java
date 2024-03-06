@@ -4,6 +4,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.User;
 import nz.ac.canterbury.seng302.gardenersgrove.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -13,22 +14,34 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 public class ProfileController {
-
+    @Autowired
+    public ProfileController(UserService userService) {
+        this.userService = userService;
+    }
     private final UserService userService;
 
     Logger logger = LoggerFactory.getLogger(ProfileController.class);
 
     @GetMapping("/editProfile")
-    public String getEditProfilePage() {
+    public String getEditProfilePage(Model model) {
         logger.info("GET /editProfile");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentPrincipalName = authentication.getName();
+        User currentUser = userService.getUserByEmail(currentPrincipalName);
+        model.addAttribute("fName", currentUser.getFname());
+
+        if (!currentUser.getLname().isEmpty()){
+            model.addAttribute("lName", currentUser.getLname());
+        }
+        model.addAttribute("email", currentUser.getEmail());
+        model.addAttribute("dateOfBirth", currentUser.getDateOfBirth());
+
         return "pages/editProfilePage";
     }
     @PostMapping
-    public String editProfile(Model model) {
+    public String editProfile() {
         logger.info("POST /editProfile");
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentPrincipalName = authentication.getName();
-        User u = userService.getUserByEmail(currentPrincipalName);
+
         return "redirect:/profile";
     }
 }
