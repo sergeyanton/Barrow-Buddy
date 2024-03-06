@@ -8,6 +8,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class represents a user entity in the application.
+ */
 @Entity
 @Table(name = "tab_user")
 public class User {
@@ -36,8 +39,20 @@ public class User {
     @JoinColumn(name = "user_id")
     private List<Authority> userRoles;
 
+    /**
+     * The default constructor that is required.
+     */
     protected User() {}
 
+
+    /**
+     * Constructs a User object with the given details.
+     * @param fname The first name of the user.
+     * @param lname The last name of the user.
+     * @param email The email address of the user.
+     * @param password The password of the user.
+     * @param dateOfBirth The date of birth of the user.
+     */
     public User(String fname, String lname, String email, String password, LocalDate dateOfBirth) {
         this.fname = fname;
         this.lname = lname;
@@ -46,6 +61,10 @@ public class User {
         this.dateOfBirth = dateOfBirth;
     }
 
+    /**
+     * Grants a new authority to the user.
+     * @param authority The authority to grant.
+     */
     public void grantAuthority(String authority) {
         if ( userRoles == null )
             userRoles = new ArrayList<>();
@@ -53,6 +72,10 @@ public class User {
         userRoles.add(new Authority(authority));
     }
 
+    /**
+     * Retrieves authorities granted to the user.
+     * @return A list of authorities granted to the user.
+     */
     public List<GrantedAuthority> getAuthorities(){
         List<GrantedAuthority> authorities = new ArrayList<>();
         this.userRoles.forEach(authority -> authorities.add(new SimpleGrantedAuthority(authority.getRole())));
