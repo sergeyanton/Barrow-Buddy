@@ -21,7 +21,7 @@ public class InputValidation {
     public static Validator checkName(String userName) {
         Validator isValid = new Validator(true, "Ok");
         if (userName.isBlank()) {isValid.setValid(false,"{First/Last} name cannot be empty and must only include letters, spaces, hyphens or apostrophes");}
-        if (userName.length() > 64) {isValid.setValid(false,"{First/Last} name cannot be empty and must only include letters, spaces, hyphens or apostrophes");}
+        if (userName.length() > 64) {isValid.setValid(false,"{First/Last} name must be 64 characters long or less");}
         if (!userName.matches("^[a-zA-Z\\s'-]+$")) {isValid.setValid(false,"{First/Last} name cannot be empty and must only include letters, spaces, hyphens or apostrophes");}
         return isValid;
     }
