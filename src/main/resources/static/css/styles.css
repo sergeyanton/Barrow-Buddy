@@ -1,3 +1,9 @@
+/* Font change */
+* {
+    font-family: Helvetica;
+}
+
+
 /* Body style */
 body {
     background-color: #023020;
@@ -32,8 +38,8 @@ h1 {
 
 /* Cancel link styles */
 #cancel a{
-    padding: 10px 20px; /* Adjust padding to increase link size */
-    font-size: 16px;
+    padding: 15px 25px; /* Adjust padding to increase link size */
+    font-size: 18px;
     border-radius: 1rem;
     color: #FAF9F6;
 
@@ -51,8 +57,8 @@ h1 {
 
 /* Other link styles */
 #link a {
-    padding: 10px 20px; /* Adjust padding to increase link size */
-    font-size: 16px;
+    padding: 15px 25px; /* Adjust padding to increase link size */
+    font-size: 18px;
     border-radius: 1rem;
     color: #FAF9F6;
 
@@ -68,8 +74,8 @@ h1 {
 
 /* Button styles */
 button {
-    padding: 10px 20px;
-    font-size: 16px;
+    padding: 15px 25px;
+    font-size: 18px;
     border-radius: 1rem;
     color: #FAF9F6;
 
