@@ -20,7 +20,7 @@
         <br/>
         <input type="checkbox" class="form-control" id="noSurnameCheckBox"
                th:name="noSurnameCheckBox" data-cy="noSurnameCheckBox"
-               autofocus>
+               onclick="toggleInput()" autofocus>
         <label for="noSurnameCheckBox"> No last name </label>
         <br/>
         <label for="email"> Email: </label>
@@ -55,6 +55,19 @@
 
     </form>
 </div>
+<script>
+    // Function to disable last name input field if the 'no surname' checkbox is checked
+    function toggleInput() {
+        let checkbox = document.getElementById('noSurnameCheckBox');
+        let textField = document.getElementById('lName');
 
+        if (checkbox.checked) {
+            textField.value = '';
+            textField.disabled = true;
+        } else {
+            textField.disabled = false;
+        }
+    }
+</script>
 </body>
 </html>
