@@ -8,7 +8,11 @@ import java.time.LocalDate;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.Validation.InputValidation.hashPassword;
 
-
+/**
+ * Represents the registration data required for user registration.
+ * Contains the information entered by user, including first and last name,
+ * email, password, and date of birth.
+ */
 public class RegistrationData {
     private String fName;
     private String lName;
@@ -18,6 +22,17 @@ public class RegistrationData {
     private String retypePassword;
     private LocalDate dob;
 
+    /**
+     * Creates a RegistrationData object with the requested data from the registration page.
+     *
+     * @param email email address given by user
+     * @param fName first name
+     * @param lName last name (if applicable)
+     * @param dob date of birth
+     * @param password first password field input
+     * @param retypePassword retyped password input
+     * @param noSurnameCheckBox checkbox of if user has a surname
+     */
     public RegistrationData(
         @RequestParam(name = "email") String email,
         @RequestParam(name = "fName") String fName,
@@ -34,10 +49,15 @@ public class RegistrationData {
         this.password = password;
         this.retypePassword = retypePassword;
         this.dob = dob;
-
     }
 
-
+    /**
+     * Creates a new User object from the given RegistrationData.
+     * Hashes the password for security.
+     *
+     * @param user The RegistrationData object to create a new user from.
+     * @return A new User object.
+     */
     public static User createNewUser(RegistrationData user) {
         return new User(user.getfName(), user.getlName(), user.getEmail(), hashPassword(user.getPassword()), user.getDob());
     }
