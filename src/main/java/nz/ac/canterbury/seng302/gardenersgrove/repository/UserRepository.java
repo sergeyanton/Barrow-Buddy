@@ -18,4 +18,6 @@ public interface UserRepository extends CrudRepository<User, Long> {
     User getUserByEmail(@Param("email") String email);
 
     Optional<User> findByEmail(String email);
+
+    void updateUserByEmail(String oldEmail, User newUser);
 }

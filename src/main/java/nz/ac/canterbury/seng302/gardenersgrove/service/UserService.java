@@ -48,4 +48,8 @@ public class UserService  {
     public boolean isSignedIn() {
         return getLoggedInUser() != null;
     }
+
+    public void updateUserByEmail(String oldEmail, User newUser) {
+        userRepository.updateUserByEmail(oldEmail, newUser);
+    }
 }

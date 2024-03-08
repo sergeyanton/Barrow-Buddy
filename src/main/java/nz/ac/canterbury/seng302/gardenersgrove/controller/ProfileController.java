@@ -15,6 +15,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.Objects;
+
 import static nz.ac.canterbury.seng302.gardenersgrove.controller.AccountController.pageWithError;
 
 
@@ -40,44 +42,55 @@ public class ProfileController {
             model.addAttribute("lName", currentUser.getLname());
         }
         model.addAttribute("email", currentUser.getEmail());
+        model.addAttribute("password", currentUser.getPassword());
+        model.addAttribute("retypePassword", currentUser.getPassword());
         model.addAttribute("dateOfBirth", currentUser.getDateOfBirth());
+
 
         return "pages/editProfilePage";
     }
 
-    @PostMapping
+    @PostMapping("/editProfile")
     public String editProfile(RegistrationData updatedUser, Model model) {
         logger.info("POST /editProfile");
+        String oldEmail = updatedUser.getEmail();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
-        User currentUser = userService.getUserByEmail(currentPrincipalName);
 
+        User currentUser = userService.getUserByEmail(currentPrincipalName);
         InputValidation inputValidation = new InputValidation(userService);
-        Validator error = inputValidation.dataCheck(updatedUser);
+
+        Validator error;
+        if (Objects.equals(currentUser.getEmail(), updatedUser.getEmail())) {
+            error = inputValidation.dataCheck(updatedUser,true);
+        } else {
+            error = inputValidation.dataCheck(updatedUser,false);
+        }
         if (!error.getStatus()) {
-            return pageWithError("pages/registrationPage", model, error.getMessage());
+            return pageWithError("pages/editProfilePage", model, error.getMessage());
         }
 
-        if (updatedUser.getfName() != null) {
+        if (updatedUser.getfName() != null &&!Objects.equals(updatedUser.getfName(), currentUser.getFname())) {
             currentUser.setFname(updatedUser.getfName());
         }
 
-        if (updatedUser.getlName() != null) {
+        if (updatedUser.getlName() != null && !Objects.equals(updatedUser.getlName(), currentUser.getLname())) {
             currentUser.setLname(updatedUser.getlName());
         }
 
-        if (updatedUser.getEmail() != null) {
+        if (updatedUser.getEmail() != null && !Objects.equals(updatedUser.getEmail(), currentUser.getEmail())){
             currentUser.setEmail(updatedUser.getEmail());
         }
 
-        if (updatedUser.getPassword() != null) {
+        if (updatedUser.getPassword() != null && !Objects.equals(updatedUser.getPassword(), currentUser.getPassword())){
             currentUser.setPassword(updatedUser.getPassword());
         }
 
-        if (updatedUser.getDob() != null) {
+        if (updatedUser.getDob() != null && !Objects.equals(updatedUser.getDob(), currentUser.getDateOfBirth())){
             currentUser.setDateOfBirth(updatedUser.getDob());
         }
 
+//        userService.updateUserByEmail(oldEmail, currentUser);
 
 
         return "redirect:/profile";

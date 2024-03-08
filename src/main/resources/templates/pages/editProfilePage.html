@@ -10,7 +10,7 @@
 <div id="basic">
 
         <h4>Edit My Profile</h4>
-        <form th:action="@{register}" method="post">
+        <form th:action="@{editProfile}" method="post">
         <label for="fName"> First Name: </label>
         <input type="text" class="form-control" id="fName"
                th:name="fName" th:value="*{fName}" data-cy="fName" autofocus>
@@ -33,7 +33,7 @@
         <br/>
 
         <label for="dob"> Date of Birth: </label>
-        <input type="dob" class="form-control" id="dob"
+        <input type="date" class="form-control" id="dob"
                th:name="dob" th:value="*{dob}" data-cy="dob"  autofocus>
         <br/>
 
@@ -41,6 +41,10 @@
         <input type="password" class="form-control" id="password" placeholder="********"
                th:name="password" th:value="*{password}" data-cy="password"  autofocus>
         <br/>
+            <label for="retypePassword"> Re-type Password: </label>
+            <input type="password" class="form-control" id="retypePassword"
+                   th:name="retypePassword" th:value="*{retypePassword}" data-cy="retypePassword" required autofocus>
+            <br/>
 
         <div th:if="${errorMessage}">
             <div th:replace="~{fragments/errorMessageFragment :: errorMessage(message=${errorMessage})}"></div>

@@ -69,7 +69,7 @@ public class AccountController {
 
         InputValidation inputValidation = new InputValidation(userService);
 
-        Validator error = inputValidation.dataCheck(newUser);
+        Validator error = inputValidation.dataCheck(newUser,false);
         if (!error.getStatus()) {
             return pageWithError("pages/registrationPage", model, error.getMessage());
         }

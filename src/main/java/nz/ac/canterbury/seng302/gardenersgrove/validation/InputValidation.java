@@ -99,7 +99,7 @@ public class InputValidation {
     }
 
 
-    public Validator dataCheck(RegistrationData newUser){
+    public Validator dataCheck(RegistrationData newUser, Boolean emailDupe){
         Validator nameCheck = checkName(newUser.getfName());
         if (!nameCheck.getStatus()) return nameCheck;
 
@@ -108,8 +108,10 @@ public class InputValidation {
             if (!surnameCheck.getStatus()) return surnameCheck;
         }
 
-        Validator emailCheck = checkEmailSignup(newUser.getEmail(), userService);
-        if (!emailCheck.getStatus()) return emailCheck;
+        if (!emailDupe) {
+            Validator emailCheck = checkEmailSignup(newUser.getEmail(), userService);
+            if (!emailCheck.getStatus()) return emailCheck;
+        }
 
         if(!Objects.equals(newUser.getPassword(), newUser.getRetypePassword())){
             return new Validator(false, "Passwords do not match");
