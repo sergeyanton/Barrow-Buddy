@@ -62,7 +62,12 @@ public class ProfileController {
         User currentUser = userService.getUserByEmail(currentPrincipalName);
         InputValidation inputValidation = new InputValidation(userService);
 
-        Validator error = checkName(updatedUser.getfName());
+        Validator error;
+        if (Objects.equals(currentUser.getEmail(), updatedUser.getEmail())) {
+            error = inputValidation.dataCheck(updatedUser,true);
+        } else {
+            error = inputValidation.dataCheck(updatedUser,false);
+        }
         if (!error.getStatus()) {
             return pageWithError("pages/editProfilePage", model, error.getMessage());
         }
