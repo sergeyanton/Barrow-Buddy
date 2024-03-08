@@ -23,3 +23,22 @@
         </a>
     </form>
 </th:block>
+
+<th:block
+    th:fragement="plantForm(action, actionLabel, cancel, plantName, plantCount, plantDescription, plantPlantedDate, plantGardenId, plantNameError, plantCountError, plantDescriptionError, plantPlantedDateError)">
+    <form th:action="${action}" method="post">
+        <div
+            th:replace="fragments/formElement :: formElement(name='plantName', label='Name: ', value=${plantName}, placeholder='Your plant\'s name', error=${plantNameError})">
+        </div>
+        <div
+            th:replace="fragments/formElement :: formElement(name='plantCount', label='Count: ', value=${plantCount}, placeholder='Your plant\'s count', error=${plantCountError})">
+        </div>
+        <div
+            th:replace="fragments/formElement :: formElement(name='plantDescription', label='Description (optional): ', value=${plantDescription}, placeholder='Your plant\'s description', error=${plantDescriptionError})">
+        </div>
+        <div
+            th:replace="fragments/formElement :: formElement(name='plantPlantedDate', label='Planted Date: ', value=${plantPlantedDate}, placeholder='Your plant\'s planted date', error=${plantPlantedDateError})">
+        </div>
+        <input type="hidden" th:name="gardenId" th:id="gardenId" th:value="${plantGardenId}">
+    </form>
+</th:block>
