@@ -8,10 +8,10 @@ import java.time.LocalDate;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.Validation.InputValidation.hashPassword;
 
+
 /**
- * Represents the registration data required for user registration.
- * Contains the information entered by user, including first and last name,
- * email, password, and date of birth.
+ * RegistrationData entity
+ * Used to parse and store the data sent through a register POST request
  */
 public class RegistrationData {
     private String fName;
@@ -22,21 +22,11 @@ public class RegistrationData {
     private String retypePassword;
     private LocalDate dob;
 
-    /**
-     * Creates a RegistrationData object with the requested data from the registration page.
-     *
-     * @param email email address given by user
-     * @param fName first name
-     * @param lName last name (if applicable)
-     * @param dob date of birth
-     * @param password first password field input
-     * @param retypePassword retyped password input
-     * @param noSurnameCheckBox checkbox of if user has a surname
-     */
     public RegistrationData(
         @RequestParam(name = "email") String email,
         @RequestParam(name = "fName") String fName,
         @RequestParam(name = "lName") String lName,
+        // Convert date format from ISO string to LocalDate object
         @RequestParam(name = "dob") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dob,
         @RequestParam(name = "password") String password,
         @RequestParam(name = "password") String retypePassword,
@@ -49,14 +39,13 @@ public class RegistrationData {
         this.password = password;
         this.retypePassword = retypePassword;
         this.dob = dob;
+
     }
 
     /**
-     * Creates a new User object from the given RegistrationData.
-     * Hashes the password for security.
-     *
-     * @param user The RegistrationData object to create a new user from.
-     * @return A new User object.
+     * Create a new user from the given registration data. Uses a hashed version of the password.
+     * @param user The RegistrationData to create a user with
+     * @return A User object constructed from the given data
      */
     public static User createNewUser(RegistrationData user) {
         return new User(user.getfName(), user.getlName(), user.getEmail(), hashPassword(user.getPassword()), user.getDob());

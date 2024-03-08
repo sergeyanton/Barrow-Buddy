@@ -75,6 +75,7 @@ button {
 
     background-color: #023020;
     border: none;
+    cursor: pointer;
 
     position: absolute;
     bottom: 1rem;

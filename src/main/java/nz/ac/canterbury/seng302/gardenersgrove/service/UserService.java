@@ -24,10 +24,9 @@ public class UserService  {
     /**
      * Registers a new user.
      * @param user The user to register.
-     * @return The registered user.
      */
-    public User registerUser(User user) {
-        return userRepository.save(user);
+    public void registerUser(User user) {
+        userRepository.save(user);
     }
 
     /**
@@ -37,16 +36,8 @@ public class UserService  {
      * @return The user if found, otherwise null.
      */
     public User getUserByEmailAndPassword(String email, String password) {
-        return userRepository.getUserByEmailAndPassword(email, password);
-    }
-
-    /**
-     * Retrieves a user by email.
-     * @param email The email of the user.
-     * @return The user if found, otherwise null.
-     */
-    public User getUserByEmail(String email) {
-        return userRepository.getUserByEmail(email);
+        Optional<User> user = userRepository.findByEmailAndPassword(email, password);
+        return user.orElse(null);
     }
 
     /**
@@ -76,7 +67,7 @@ public class UserService  {
     public User getLoggedInUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
-        return getUserByEmail(currentPrincipalName);
+        return findEmail(currentPrincipalName);
     }
 
     /**
