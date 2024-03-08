@@ -87,7 +87,7 @@ public class PlantServiceTest {
 
             }
         });
-        plantService.addPlant(new Plant("My Plant", 1, "My plant is cool", "30/1/2021", 1));
+        plantService.addPlant(new Plant("My Plant", "1", "My plant is cool", "30/1/2021", "1"));
     }
 
     // @Autowired
@@ -99,7 +99,7 @@ public class PlantServiceTest {
     @Test
     public void CreateNewPlant_NewPlantCreated_PlantInRepository() {
         PlantService gardenService = new PlantService(plantRepository);
-        Plant result = gardenService.addPlant(new Plant("My Plant", 1, "My plant is cool", "30/1/2021", 1));
+        Plant result = gardenService.addPlant(new Plant("My Plant", "1", "My plant is cool", "30/1/2021", "1"));
         Assertions.assertEquals(result.getName(), "My Plant");
     }
 }

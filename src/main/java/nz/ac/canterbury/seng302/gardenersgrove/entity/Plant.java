@@ -40,12 +40,12 @@ public class Plant {
      * @param plantedOnDate date when plant was planted (in DD/MM/YYYY format)
      * @param gardenId ID of garden where the plant is currently in
      */
-    public Plant(String name, int count, String description, String plantedOnDate, int gardenId) {
-        this.name = name;
-        this.plantCount = count;
-        this.description = description;
-        this.plantedOnDate = plantedOnDate;
-        this.gardenId = gardenId;
+    public Plant(String name, String count, String description, String plantedOnDate, String gardenId) {
+        setName(name);
+        setCount(count);
+        setDescription(description);
+        setPlantedOnDate(plantedOnDate);
+        setGardenId(gardenId);
     }
 
     public Long getId() {
@@ -72,16 +72,20 @@ public class Plant {
         this.name = name;
     }
 
-    public void setPlantCount(int plantCount) { this.plantCount = plantCount; }
+    public void setCount(String plantCount) { this.plantCount = Integer.parseInt(plantCount); }
 
     public void setDescription(String description) { this.description = description; }
 
     public void setPlantedOnDate(String plantedOnDate) {
         String[] dateList = plantedOnDate.split("/");
-        int[] dateAsInteger = {Integer.parseInt(dateList[0]), Integer.parseInt(dateList[1]), Integer.parseInt(dateList[2])};
+        int[] dateAsInteger = {Integer.parseInt(dateList[0]), Integer.parseInt(dateList[1]), Integer.parseInt(dateList[2])}; // Day, Month, Year
         LocalDate newDate = LocalDate.of(dateAsInteger[2], dateAsInteger[1], dateAsInteger[0]);
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         this.plantedOnDate = newDate.format(dateTimeFormatter);
+    }
+
+    public void setGardenId(String gardenid) {
+        this.gardenId = Integer.parseInt(gardenid);
     }
 
     @Override

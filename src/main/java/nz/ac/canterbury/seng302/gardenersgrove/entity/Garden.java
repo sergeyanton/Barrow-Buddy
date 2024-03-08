@@ -36,6 +36,11 @@ public class Garden {
     public Garden(String name, String location, Double size) {
         this.name = name;
         this.location = location;
+
+        if (size != null && size < 0) {
+            throw new IllegalArgumentException("Garden size must be a positive number");
+        }
+
         this.size = size;
     }
 
@@ -51,13 +56,7 @@ public class Garden {
         this.name = name;
         this.location = location;
 
-        Optional<String> validGardenSizeCheck = ValidityCheck.validateGardenSize(size);
-
-        if (validGardenSizeCheck.isPresent()) {
-            throw new IllegalArgumentException(validGardenSizeCheck.get());
-        }
-
-        this.size = (size.isBlank()) ? null : Double.parseDouble(size.replace(",", "."));
+        this.setSize(size);
     }
 
     public Long getId() {
@@ -86,6 +85,16 @@ public class Garden {
 
     public void setSize(Double newSize) {
         size = newSize;
+    }
+
+    public void setSize(String newSize) {
+        Optional<String> validGardenSizeCheck = ValidityCheck.validateGardenSize(newSize);
+
+        if (validGardenSizeCheck.isPresent()) {
+            throw new IllegalArgumentException(validGardenSizeCheck.get());
+        }
+
+        this.size = (newSize.isBlank()) ? null : Double.parseDouble(newSize.replace(",", "."));
     }
 
     @Override
