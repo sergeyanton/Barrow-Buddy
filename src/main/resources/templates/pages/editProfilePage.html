@@ -34,7 +34,8 @@
 
         <label for="dob"> Date of Birth: </label>
         <input type="date" class="form-control" id="dob"
-               th:name="dob" th:value="*{dob}" data-cy="dob"  autofocus>
+               th:name="dob" th:value="*{dob}" data-cy="dob"
+               th:if="${currentUser.dateOfBirth != null}" th:value="${#dates.format(currentUser.dateOfBirth, 'yyyy-MM-dd')}" autofocus>
         <br/>
 
         <label for="password"> Password: </label>

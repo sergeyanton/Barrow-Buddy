@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.controller.AccountController.pageWithError;
@@ -90,7 +91,7 @@ public class ProfileController {
             currentUser.setDateOfBirth(updatedUser.getDob());
         }
 
-//        userService.updateUserByEmail(oldEmail, currentUser);
+        userService.updateUserByEmail(oldEmail, currentUser);
 
 
         return "redirect:/profile";
