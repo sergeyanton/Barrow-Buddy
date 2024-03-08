@@ -17,7 +17,7 @@ h1 {
 /* Basic container styles */
 #basic {
     padding: 1.5rem;
-    background-color: white;
+    background-color: #FAF9F6;
     border-radius: 1rem;
 
     position: relative;
@@ -35,7 +35,7 @@ h1 {
     padding: 10px 20px; /* Adjust padding to increase link size */
     font-size: 16px;
     border-radius: 1rem;
-    color: white;
+    color: #FAF9F6;
 
     text-decoration: none; /* Remove underline */
 
@@ -54,7 +54,7 @@ h1 {
     padding: 10px 20px; /* Adjust padding to increase link size */
     font-size: 16px;
     border-radius: 1rem;
-    color: white;
+    color: #FAF9F6;
 
     text-decoration: none; /* Remove underline */
 
@@ -71,7 +71,7 @@ button {
     padding: 10px 20px;
     font-size: 16px;
     border-radius: 1rem;
-    color: white;
+    color: #FAF9F6;
 
     background-color: #023020;
     border: none;
