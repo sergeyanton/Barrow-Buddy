@@ -6,7 +6,7 @@
 </th:block>
 
 <th:block
-    th:fragment="gardenForm(action, cancel, gardenName, gardenLocation, gardenSize, gardenNameError, gardenLocationError, gardenSizeError)">
+    th:fragment="gardenForm(action, actionLabel, cancel, gardenName, gardenLocation, gardenSize, gardenNameError, gardenLocationError, gardenSizeError)">
     <form th:action="${action}" method="post">
         <div
             th:replace="fragments/formElement :: formElement(name='gardenName', label='Name: ', value=${gardenName}, placeholder='Your garden\'s name', error=${gardenNameError})">
@@ -17,7 +17,7 @@
         <div
             th:replace="fragments/formElement :: formElement(name='gardenSize', label='Size (optional): ', value=${gardenSize}, placeholder='Your garden\'s size', error=${gardenSizeError})">
         </div>
-        <button type="submit">Create Garden</button>
+        <button type="submit" th:text="${actionLabel}"></button>
         <a th:href="${cancel}">
             <button type="button">Cancel</button>
         </a>

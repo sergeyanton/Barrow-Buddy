@@ -71,6 +71,7 @@ public class GardensController {
         String nextDestination = Optional.ofNullable(request.getParameter("next")).orElse("/");
         model.addAttribute("nextDestination", nextDestination);
 
+        model.addAttribute("actionLabel", "Create Garden");
         return "createGarden";
     }
 
@@ -128,6 +129,7 @@ public class GardensController {
             return "redirect:/gardens/" + addedGarden.getId();
         }
 
+        model.addAttribute("actionLabel", "Create Garden");
         return "createGarden";
     }
 
@@ -170,6 +172,7 @@ public class GardensController {
         Garden garden = gardenService.getGardenById(gardenId);
         model.addAttribute("garden", garden);
 
+        model.addAttribute("actionLabel", "Edit Garden");
         return "editGarden";
     }
 
@@ -231,6 +234,7 @@ public class GardensController {
         }
 
         model.addAttribute(garden); // so that editGarden.html knows the id of garden being edited.
+        model.addAttribute("actionLabel", "Edit Garden");
         return "editGarden";
     }
 }
