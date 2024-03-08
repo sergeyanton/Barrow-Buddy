@@ -6,7 +6,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 
+import static nz.ac.canterbury.seng302.gardenersgrove.Validation.InputValidation.hashPassword;
 
+
+/**
+ * RegistrationData entity
+ * Used to parse and store the data sent through a register POST request
+ */
 public class RegistrationData {
     private String fName;
     private String lName;
@@ -20,6 +26,7 @@ public class RegistrationData {
         @RequestParam(name = "email") String email,
         @RequestParam(name = "fName") String fName,
         @RequestParam(name = "lName") String lName,
+        // Convert date format from ISO string to LocalDate object
         @RequestParam(name = "dob") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dob,
         @RequestParam(name = "password") String password,
         @RequestParam(name = "password") String retypePassword,
@@ -35,9 +42,13 @@ public class RegistrationData {
 
     }
 
-
+    /**
+     * Create a new user from the given registration data. Uses a hashed version of the password.
+     * @param user The RegistrationData to create a user with
+     * @return A User object constructed from the given data
+     */
     public static User createNewUser(RegistrationData user) {
-        return new User(user.getfName(), user.getlName(), user.getEmail(), user.getPassword(), user.getDob());
+        return new User(user.getfName(), user.getlName(), user.getEmail(), hashPassword(user.getPassword()), user.getDob());
     }
 
     public String getfName() {

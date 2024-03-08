@@ -4,7 +4,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 
 /**
- *
+ * LoginData entity
+ * Used to parse and store the data sent through a login POST request
  */
 public class LogInData {
     private String email;

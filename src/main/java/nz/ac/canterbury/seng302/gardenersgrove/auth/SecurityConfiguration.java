@@ -54,7 +54,7 @@ public class SecurityConfiguration {
                 .headers(headers -> headers.frameOptions().disable())
                 .csrf(csrf -> csrf.ignoringRequestMatchers(AntPathRequestMatcher.antMatcher("/h2/**")))
                 .authorizeHttpRequests()
-                // Allow "/", "/register", and "/login" to anyone (permitAll)
+                // Allow "/", "/register", and "/login" to anyone (permitAll) - Also allow access to stylesheets
                 .requestMatchers("/", "/register", "/login", "/css/**")
                 .permitAll()
                 // Only allow admins to reach the "/admin" page
@@ -65,10 +65,10 @@ public class SecurityConfiguration {
                 .anyRequest()
                 .authenticated()
                 .and()
-                // Define logging in, a POST "/login" endpoint now exists under the hood, after login redirect to user page
+                // Redirect to "/" when unauthenticated user tries to access a page that requires login
                 .formLogin().loginPage("/").permitAll()
                 .and()
-                // Define logging out, a POST "/logout" endpoint now exists under the hood, redirect to "/login", invalidate session and remove cookie
+                // Define logging out, a POST "/logout" endpoint now exists under the hood, redirect to "/", invalidate session and remove cookie
                 .logout().logoutUrl("/logout").logoutSuccessUrl("/").invalidateHttpSession(true).deleteCookies("JSESSIONID");
         return http.build();
 

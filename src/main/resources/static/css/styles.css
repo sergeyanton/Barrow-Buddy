@@ -1,3 +1,4 @@
+/* Body style */
 body {
     background-color: #023020;
     display: flex;
@@ -7,35 +8,40 @@ body {
     margin: 0;
 }
 
+/* Heading style */
 h1 {
     text-align: center;
     margin-bottom: 2rem;
 }
 
+/* Basic container styles */
 #basic {
-    background-color: white;
     padding: 1.5rem;
+    background-color: white;
+    border-radius: 1rem;
+
+    position: relative;
     width: 50%;
     height: 50%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border-radius: 1rem;
     box-shadow: 0 0 1rem rgba(0, 0, 0, 0.5);
-    position: relative;
 }
 
-
+/* Cancel link styles */
 #cancel a{
     padding: 10px 20px; /* Adjust padding to increase link size */
+    font-size: 16px;
+    border-radius: 1rem;
+    color: white;
+
+    text-decoration: none; /* Remove underline */
+
     position: absolute;
     bottom: 1rem;
     left: 1rem;
-    font-size: 16px;
-    text-decoration: none; /* Remove underline */
-    border-radius: 1rem;
-    color: white;
     background-color: darkred;
 }
 
@@ -43,13 +49,16 @@ h1 {
     background-color: rgba(139, 0, 0, 0.55);
 }
 
+/* Other link styles */
 #link a {
     padding: 10px 20px; /* Adjust padding to increase link size */
     font-size: 16px;
-    margin: 0 5px; /* Adjust margin between links */
-    text-decoration: none; /* Remove underline */
-    color: white;
     border-radius: 1rem;
+    color: white;
+
+    text-decoration: none; /* Remove underline */
+
+    margin: 0 5px; /* Adjust margin between links */
     background-color: #023020;
 }
 
@@ -57,13 +66,16 @@ h1 {
     background-color: rgba(4, 65, 42, 0.71);
 }
 
+/* Button styles */
 button {
     padding: 10px 20px;
-    border: none;
-    border-radius: 1rem;
-    background-color: #023020;
-    color: white;
     font-size: 16px;
+    border-radius: 1rem;
+    color: white;
+
+    background-color: #023020;
+    border: none;
+    cursor: pointer;
 
     position: absolute;
     bottom: 1rem;

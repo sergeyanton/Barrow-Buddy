@@ -28,22 +28,18 @@ import static nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection.
 public class AccountController {
     Logger logger = LoggerFactory.getLogger(AccountController.class);
     private final UserService userService;
-
+    @Autowired
+    private AuthenticationManager authenticationManager;
     @Autowired
     public AccountController(UserService userService) {
         this.userService = userService;
     }
 
-    @GetMapping("/register")
-    public String getRegisterPage(Model model) {
-        logger.info("GET /register");
-        model.addAttribute("errorMessage", "");
-        return "pages/registrationPage";
-    }
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
+    /**
+     * Authenticate the user with the authenticationManager
+     * @param user The user object to authenticate
+     * @param request The HttpServletRequest corresponding to the request made to the server
+     */
     private void authenticateUser(User user, HttpServletRequest request) {
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword(), user.getAuthorities());
         Authentication authentication = authenticationManager.authenticate(token);
@@ -54,11 +50,57 @@ public class AccountController {
         }
     }
 
+    /**
+     * Adds an error message to a given page. Requires the user of errorMessageFragment in the page HTML.
+     * @param pagePath The path to the HTML/ThymeLeaf page to add the error message to
+     * @param model The request Model
+     * @param errorMessage The error message/text to be displayed
+     * @return The given pagePath
+     */
     private String pageWithError(String pagePath, Model model, String errorMessage) {
         model.addAttribute("errorMessage", errorMessage);
         return pagePath;
     }
 
+
+    /**
+     * Gets the thymeleaf page representing the /profile page, displaying the currently logged-in user's account details.
+     * Will only work if the user is logged in.
+     * @return thymeleaf profilePage
+     */
+    @GetMapping("/profile")
+    public String getProfilePage(Model model) {
+        logger.info("GET /profile");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentPrincipalName = authentication.getName();
+        User u = userService.findEmail(currentPrincipalName);
+        model.addAttribute("fName", u.getFname());
+        model.addAttribute("lName", u.getLname());
+        model.addAttribute("email", u.getEmail());
+        model.addAttribute("dob", u.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        return "pages/profilePage";
+    }
+
+
+    /**
+     * Gets the thymeleaf page representing the /register page
+     * Will only work if the user is not logged in, otherwise it will redirect to the home page
+     * @return thymeleaf registrationPage
+     */
+    @GetMapping("/register")
+    public String getRegisterPage(Model model) {
+        logger.info("GET /register");
+        return userService.isSignedIn() ? "redirect:/" : "pages/registrationPage";
+    }
+
+
+    /**
+     * Handles POST requests to the /register endpoint. registers the user, or shows an error message if the user details are invalid.
+     * @param request The HTTP request being made
+     * @param newUser The user registration data sent in the request
+     * @param model The request model
+     * @return A redirect to the profile page, or the registration page with an error message if unsuccessful
+     */
     @PostMapping("/register")
     public String register(HttpServletRequest request, RegistrationData newUser, Model model) {
         logger.info(String.format("Registering new user '%s %s'", newUser.getfName(), newUser.getlName()));
@@ -79,30 +121,30 @@ public class AccountController {
     }
 
 
+    /**
+     * Gets the thymeleaf page representing the /login page
+     * Will only work if the user is not logged in, otherwise it will redirect to the home page
+     * @return thymeleaf loginPage
+     */
     @GetMapping("/login")
     public String getLoginPage() {
-        return "pages/loginPage";
+        logger.info("GET /login");
+        return userService.isSignedIn() ? "redirect:/" : "pages/loginPage";
     }
 
 
-    @GetMapping("/profile")
-    public String getProfilePage(Model model) {
-        logger.info("GET /profile");
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentPrincipalName = authentication.getName();
-        User u = userService.findEmail(currentPrincipalName);
-        model.addAttribute("fName", u.getFname());
-        model.addAttribute("lName", u.getLname());
-        model.addAttribute("email", u.getEmail());
-        model.addAttribute("dob", u.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-        return "pages/profilePage";
-    }
-
-
-
+    /**
+     * Handles POST requests to the /login endpoint. Logs in the user, or shows an error message if the login details are invalid.
+     * @param request The HTTP request being made
+     * @param newUser The login data sent in the request
+     * @param model The request model
+     * @return A redirect to the profile page, or the login page with an error message if unsuccessful
+     */
     @PostMapping("/login")
     public String login(HttpServletRequest request, LogInData newUser, Model model) {
-        logger.info("in here");
+        if (userService.isSignedIn()) {
+            return "redirect:/";
+        }
 
         Validator error = checkLoginData(newUser);
         if (!error.getStatus()) {
@@ -116,7 +158,7 @@ public class AccountController {
             return pageWithError("pages/loginPage", model, errorMessage);
         }
 
-        if (!newUser.getPassword().equals(user.getPassword())) {
+        if (!verifyPassword(newUser.getPassword(), user.getPassword())){
             String errorMessage = "Wrong password.";
             return pageWithError("pages/loginPage", model, errorMessage);
         }
