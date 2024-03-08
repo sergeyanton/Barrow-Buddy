@@ -17,7 +17,6 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
-
     /**
      * Autowired user service for custom authentication using our own user objects
      */
@@ -26,7 +25,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     public CustomAuthenticationProvider() {
         super();
-
     }
 
     /**
@@ -39,20 +37,15 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         String email = String.valueOf(authentication.getName());
         String password = String.valueOf(authentication.getCredentials());
 
-        if (email == null || email.isEmpty() || password == null || password.isEmpty()) {
-            throw new BadCredentialsException("Bad Credentials");
-        }
-
         User u = userService.getUserByEmailAndPassword(email, password);
-        if (u == null) {
-            throw new BadCredentialsException("Invalid username or password");
-        }
         return new UsernamePasswordAuthenticationToken(u.getEmail(), null, u.getAuthorities());
     }
 
+    /**
+     * Authentication boilerplate
+     */
     @Override
     public boolean supports(Class<?> authentication) {
         return authentication.equals(UsernamePasswordAuthenticationToken.class);
     }
-
 }

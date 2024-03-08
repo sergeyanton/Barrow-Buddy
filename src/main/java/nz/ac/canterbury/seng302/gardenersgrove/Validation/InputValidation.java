@@ -1,17 +1,53 @@
 package nz.ac.canterbury.seng302.gardenersgrove.Validation;
 
+import nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection.LogInData;
+import nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection.RegistrationData;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Validator;
 import nz.ac.canterbury.seng302.gardenersgrove.service.UserService;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 /**
  * This class provides methods for input validation, including checking usernames,
  * email addresses, passwords, and date of birth according to the restriction.
  */
 public class InputValidation {
+    public static Validator checkRegistrationData(RegistrationData newUser, UserService userService){
+        Validator nameCheck = checkName(newUser.getfName());
+        if (!nameCheck.getStatus()) return nameCheck;
 
+        if (!newUser.getNoSurnameCheckBox()) {
+            Validator surnameCheck = checkName(newUser.getlName());
+            if (!surnameCheck.getStatus()) return surnameCheck;
+        }
+
+        Validator emailCheck = checkEmailSignup(newUser.getEmail(), userService);
+        if (!emailCheck.getStatus()) return emailCheck;
+
+        if(!Objects.equals(newUser.getPassword(), newUser.getRetypePassword())){
+            return new Validator(false, "Passwords do not match");
+        }
+
+        Validator passwordCheck = checkPassword(newUser.getPassword());
+        if (!passwordCheck.getStatus()) return passwordCheck;
+
+        Validator dobCheck = checkDob(newUser.getDob());
+        if (!dobCheck.getStatus()){return dobCheck;}
+
+        return new Validator(true, "");
+    }
+
+    public static Validator checkLoginData(LogInData newUser){
+        Validator emailCheck = checkEmailLogin(newUser.getEmail());
+        if (!emailCheck.getStatus()) return emailCheck;
+
+        Validator passwordCheck = checkPasswordEmpty(newUser.getPassword());
+        if (!passwordCheck.getStatus()) return passwordCheck;
+
+        return new Validator(true, "");
+    }
 
     /**
      * Checks if the provided name from the user is valid.
