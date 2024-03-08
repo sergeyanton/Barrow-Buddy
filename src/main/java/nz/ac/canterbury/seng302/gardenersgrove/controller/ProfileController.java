@@ -19,6 +19,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.controller.AccountController.pageWithError;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.InputValidation.checkName;
 
 
 @Controller
@@ -61,12 +62,7 @@ public class ProfileController {
         User currentUser = userService.getUserByEmail(currentPrincipalName);
         InputValidation inputValidation = new InputValidation(userService);
 
-        Validator error;
-        if (Objects.equals(currentUser.getEmail(), updatedUser.getEmail())) {
-            error = inputValidation.dataCheck(updatedUser,true);
-        } else {
-            error = inputValidation.dataCheck(updatedUser,false);
-        }
+        Validator error = checkName(updatedUser.getfName());
         if (!error.getStatus()) {
             return pageWithError("pages/editProfilePage", model, error.getMessage());
         }
