@@ -27,16 +27,16 @@ public class GardenControllerTest {
     @MockBean
     private GardenService gardenService;
 
-//    @BeforeEach
-//    public void SetUp() {
-//        Garden garden = new Garden("gardenName", "gardenLocation", 1.0);
-//
-//    }
+    private Garden testGarden;
+
+    @BeforeEach
+    public void SetUp() {
+        testGarden = new Garden("gardenName", "gardenLocation", 1.0);
+    }
 
     @Test
     public void CreateGardenPost_WithValidGarden_SavesToService() throws Exception {
-        Garden garden = new Garden("gardenName", "gardenLocation", 1.0);
-        Mockito.when(gardenService.addGarden(Mockito.any())).thenReturn(garden);
+        Mockito.when(gardenService.addGarden(Mockito.any())).thenReturn(testGarden);
 
         mockMvc.perform(
                 MockMvcRequestBuilders.post("/gardens/create").param("gardenName", "gardenName")
@@ -48,8 +48,7 @@ public class GardenControllerTest {
 
     @Test
     public void CreateGardenPost_WithInvalidGardenNameEmptyString_ReturnsError() throws Exception {
-        Garden garden = new Garden("gardenName", "gardenLocation", 1.0);
-        Mockito.when(gardenService.addGarden(Mockito.any())).thenReturn(garden);
+        Mockito.when(gardenService.addGarden(Mockito.any())).thenReturn(testGarden);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/create").param("gardenName", "")
                 .param("gardenLocation", "gardenLocation").param("gardenSize", "1"))
@@ -62,8 +61,7 @@ public class GardenControllerTest {
     @Test
     public void CreateGardenPost_WithInvalidGardenLocationEmptyString_ReturnsError()
             throws Exception {
-        Garden garden = new Garden("gardenName", "gardenLocation", 1.0);
-        Mockito.when(gardenService.addGarden(Mockito.any())).thenReturn(garden);
+        Mockito.when(gardenService.addGarden(Mockito.any())).thenReturn(testGarden);
 
         mockMvc.perform(
                 MockMvcRequestBuilders.post("/gardens/create").param("gardenName", "gardenName")
@@ -76,9 +74,8 @@ public class GardenControllerTest {
 
     @Test
     public void EditGardenPost_ValidGarden_SavesToService() throws Exception {
-        Garden garden = new Garden("gardenName", "gardenLocation", 1.0);
-        Mockito.when(gardenService.getGardenById(1L)).thenReturn(garden);
-        Mockito.when(gardenService.updateGarden(Mockito.any())).thenReturn(garden);
+        Mockito.when(gardenService.getGardenById(1L)).thenReturn(testGarden);
+        Mockito.when(gardenService.updateGarden(Mockito.any())).thenReturn(testGarden);
 
         mockMvc.perform(
                         MockMvcRequestBuilders.post("/gardens/1/edit").param("gardenName", "gardenName")
@@ -90,8 +87,7 @@ public class GardenControllerTest {
 
     @Test
     public void EditGardenPost_InvalidNameEmptyString_ReturnsError() throws Exception {
-        Garden garden = new Garden("gardenName", "gardenLocation", 1.0);
-        Mockito.when(gardenService.getGardenById(1L)).thenReturn(garden);
+        Mockito.when(gardenService.getGardenById(1L)).thenReturn(testGarden);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").param("gardenName", "")
                 .param("gardenLocation", "gardenLocation").param("gardenSize", "2"))
@@ -101,8 +97,7 @@ public class GardenControllerTest {
 
     @Test
     public void EditGardenPost_InvalidLocationEmptyString_ReturnsError() throws Exception {
-        Garden garden = new Garden("gardenName", "gardenLocation", 1.0);
-        Mockito.when(gardenService.getGardenById(1L)).thenReturn(garden);
+        Mockito.when(gardenService.getGardenById(1L)).thenReturn(testGarden);
 
         mockMvc.perform(
                 MockMvcRequestBuilders.post("/gardens/1/edit").param("gardenName", "gardenName")
@@ -113,9 +108,8 @@ public class GardenControllerTest {
 
     @Test
     public void EditGardenPost_ValidEmptySize_SavesToService() throws Exception {
-        Garden garden = new Garden("gardenName", "gardenLocation", 1.0);
-        Mockito.when(gardenService.getGardenById(1L)).thenReturn(garden);
-        Mockito.when(gardenService.updateGarden(Mockito.any())).thenReturn(garden);
+        Mockito.when(gardenService.getGardenById(1L)).thenReturn(testGarden);
+        Mockito.when(gardenService.updateGarden(Mockito.any())).thenReturn(testGarden);
 
         mockMvc.perform(
                         MockMvcRequestBuilders.post("/gardens/1/edit").param("gardenName", "gardenName")
@@ -127,9 +121,8 @@ public class GardenControllerTest {
 
     @Test
     public void EditGardenPost_ValidWhitespaceSize_SavesToService() throws Exception {
-        Garden garden = new Garden("gardenName", "gardenLocation", 1.0);
-        Mockito.when(gardenService.getGardenById(1L)).thenReturn(garden);
-        Mockito.when(gardenService.updateGarden(Mockito.any())).thenReturn(garden);
+        Mockito.when(gardenService.getGardenById(1L)).thenReturn(testGarden);
+        Mockito.when(gardenService.updateGarden(Mockito.any())).thenReturn(testGarden);
 
         mockMvc.perform(
                         MockMvcRequestBuilders.post("/gardens/1/edit").param("gardenName", "gardenName")
@@ -142,8 +135,7 @@ public class GardenControllerTest {
 
     @Test
     public void EditGardenPost_InvalidSizeNegativeNumber_ReturnsError() throws Exception {
-        Garden garden = new Garden("gardenName", "gardenLocation", 1.0);
-        Mockito.when(gardenService.getGardenById(1L)).thenReturn(garden);
+        Mockito.when(gardenService.getGardenById(1L)).thenReturn(testGarden);
 
         mockMvc.perform(
                         MockMvcRequestBuilders.post("/gardens/1/edit").param("gardenName", "gardenName")
@@ -154,8 +146,7 @@ public class GardenControllerTest {
 
     @Test
     public void EditGardenPost_InvalidSizeNotANumber_ReturnsError() throws Exception {
-        Garden garden = new Garden("gardenName", "gardenLocation", 1.0);
-        Mockito.when(gardenService.getGardenById(1L)).thenReturn(garden);
+        Mockito.when(gardenService.getGardenById(1L)).thenReturn(testGarden);
 
         mockMvc.perform(
                         MockMvcRequestBuilders.post("/gardens/1/edit").param("gardenName", "gardenName")
