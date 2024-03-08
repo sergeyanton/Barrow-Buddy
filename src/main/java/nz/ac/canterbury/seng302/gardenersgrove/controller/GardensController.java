@@ -71,6 +71,7 @@ public class GardensController {
         String nextDestination = Optional.ofNullable(request.getParameter("next")).orElse("/");
         model.addAttribute("nextDestination", nextDestination);
 
+        model.addAttribute("actionLabel", "Create Garden");
         return "createGarden";
     }
 
@@ -92,35 +93,6 @@ public class GardensController {
             @RequestParam(name = "gardenSize") String gardenSize, Model model) {
         logger.info("POST /gardens/create");
 
-        model.addAttribute("gardenName", gardenName);
-        model.addAttribute("gardenLocation", gardenLocation);
-        model.addAttribute("gardenSize", gardenSize);
-
-        String nextDestination = Optional.ofNullable(request.getParameter("next")).orElse("/");
-        model.addAttribute("nextDestination", nextDestination);
-
-        Optional<String> validGardenSizeCheck = ValidityCheck.validateGardenSize(gardenSize);
-        Optional<String> validGardenNameCheck = ValidityCheck.validGardenName(gardenName);
-        Optional<String> validGardenLocationCheck =
-                ValidityCheck.validGardenLocation(gardenLocation);
-
-        if (validGardenNameCheck.isPresent()) {
-            model.addAttribute("gardenNameError", validGardenNameCheck.get());
-        } else {
-            // clear any previous error message
-            model.addAttribute("gardenNameError", "");
-        }
-        if (validGardenLocationCheck.isPresent()) {
-            model.addAttribute("gardenLocationError", validGardenLocationCheck.get());
-        } else {
-            model.addAttribute("gardenLocationError", "");
-        }
-        if (validGardenSizeCheck.isPresent()) {
-            model.addAttribute("gardenSizeError", validGardenSizeCheck.get());
-        } else {
-            model.addAttribute("gardenSizeError", "");
-        }
-
         if (ValidityCheck.validGardenForm(gardenName, gardenLocation, gardenSize)) {
             Garden addedGarden =
                     gardenService.addGarden(new Garden(gardenName, gardenLocation, gardenSize));
@@ -128,10 +100,16 @@ public class GardensController {
             return "redirect:/gardens/" + addedGarden.getId();
         }
 
+        model.addAttribute("actionLabel", "Create Garden");
+        String nextDestination = Optional.ofNullable(request.getParameter("next")).orElse("/");
+        model.addAttribute("nextDestination", nextDestination);
+
+        displayErrorMessages(gardenName, gardenLocation, gardenSize, model);
+
         return "createGarden";
     }
 
-    /**
+     /**
      * Gets all form responses (gardens)
      *
      * @param model (map-like) representation of results to be used by thymeleaf
@@ -170,6 +148,7 @@ public class GardensController {
         Garden garden = gardenService.getGardenById(gardenId);
         model.addAttribute("garden", garden);
 
+        model.addAttribute("actionLabel", "Edit Garden");
         return "editGarden";
     }
 
@@ -191,16 +170,42 @@ public class GardensController {
             @RequestParam(name = "gardenSize") String gardenSize, Model model) {
         logger.info("POST /gardens/" + gardenId + "/edit");
 
-        // TODO get rid of code duplication (write a function)
+        // TODO Handle error gracefully when user puts invalid id in url (do for each gardenService.getGardenById)
+        Garden garden = gardenService.getGardenById(gardenId);
 
+        if (ValidityCheck.validGardenForm(gardenName, gardenLocation, gardenSize)) {
+            garden.setName(gardenName);
+            garden.setLocation(gardenLocation);
+            garden.setSize(gardenSize);
+
+            gardenService.updateGarden(garden);
+            logger.info("Garden updated: " + garden);
+            return "redirect:/gardens/" + garden.getId();
+        }
+        model.addAttribute(garden); // so that editGarden.html knows the id of garden being edited.
+        model.addAttribute("actionLabel", "Edit Garden");
+        displayErrorMessages(gardenName, gardenLocation, gardenSize, model);
+        return "editGarden";
+    }
+
+    /**
+     * A helper function to avoid duplication of code. Both the create & edit forms for a garden have the
+     * exact same error messages so this code is used in both POSTs.
+     *
+     * @param gardenName name of the garden
+     * @param gardenLocation location of the garden
+     * @param gardenSize size of the garden
+     * @param model (map-like) representation of name for use in thymeleaf, with values being set to
+     *              relevant parameters provided
+     */
+    private void displayErrorMessages(String gardenName, String gardenLocation, String gardenSize, Model model) {
         model.addAttribute("gardenName", gardenName);
         model.addAttribute("gardenLocation", gardenLocation);
         model.addAttribute("gardenSize", gardenSize);
 
-        Optional<String> validGardenSizeCheck = ValidityCheck.validateGardenSize(gardenSize);
         Optional<String> validGardenNameCheck = ValidityCheck.validGardenName(gardenName);
-        Optional<String> validGardenLocationCheck =
-                ValidityCheck.validGardenLocation(gardenLocation);
+        Optional<String> validGardenLocationCheck = ValidityCheck.validGardenLocation(gardenLocation);
+        Optional<String> validGardenSizeCheck = ValidityCheck.validateGardenSize(gardenSize);
 
         if (validGardenNameCheck.isPresent()) {
             model.addAttribute("gardenNameError", validGardenNameCheck.get());
@@ -217,20 +222,5 @@ public class GardensController {
         } else {
             model.addAttribute("gardenSizeError", "");
         }
-
-        Garden garden = gardenService.getGardenById(gardenId);
-
-        if (ValidityCheck.validGardenForm(gardenName, gardenLocation, gardenSize)) {
-            garden.setName(gardenName);
-            garden.setLocation(gardenLocation);
-            garden.setSize(gardenSize);
-
-            gardenService.updateGarden(garden);
-            logger.info("Garden updated: " + garden);
-            return "redirect:/gardens/" + garden.getId();
-        }
-
-        model.addAttribute(garden); // so that editGarden.html knows the id of garden being edited.
-        return "editGarden";
     }
 }
