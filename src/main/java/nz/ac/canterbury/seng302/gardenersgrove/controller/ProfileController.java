@@ -19,6 +19,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.controller.AccountController.pageWithError;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.InputValidation.checkName;
 
 
 @Controller
