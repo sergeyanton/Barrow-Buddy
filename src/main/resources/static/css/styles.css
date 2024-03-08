@@ -38,7 +38,7 @@ h1 {
 
 /* Cancel link styles */
 #cancel a{
-    padding: 15px 25px; /* Adjust padding to increase link size */
+    padding: 10px 22px; /* Adjust padding to increase link size */
     font-size: 18px;
     border-radius: 1rem;
     color: #FAF9F6;
@@ -57,7 +57,7 @@ h1 {
 
 /* Other link styles */
 #link a {
-    padding: 15px 25px; /* Adjust padding to increase link size */
+    padding: 10px 22px; /* Adjust padding to increase link size */
     font-size: 18px;
     border-radius: 1rem;
     color: #FAF9F6;
@@ -74,7 +74,7 @@ h1 {
 
 /* Button styles */
 button {
-    padding: 15px 25px;
+    padding: 10px 22px;
     font-size: 18px;
     border-radius: 1rem;
     color: #FAF9F6;
