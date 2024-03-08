@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import jakarta.persistence.*;
 import nz.ac.canterbury.seng302.gardenersgrove.classes.ValidityCheck;
@@ -21,7 +22,7 @@ public class Plant {
     @Column(nullable = false)
     private String description;
     @Column(nullable = false)
-    private LocalDate plantedOnDate;
+    private String plantedOnDate;
     @Column(nullable = false)
     private int gardenId;
 
@@ -39,7 +40,7 @@ public class Plant {
      * @param plantedOnDate date when plant was planted (in DD/MM/YYYY format)
      * @param gardenId ID of garden where the plant is currently in
      */
-    public Plant(String name, int count, String description, LocalDate plantedOnDate, int gardenId) {
+    public Plant(String name, int count, String description, String plantedOnDate, int gardenId) {
         this.name = name;
         this.plantCount = count;
         this.description = description;
@@ -63,6 +64,10 @@ public class Plant {
         return description;
     }
 
+    public String getPlantedOnDate() { return plantedOnDate; }
+
+    public int getGardenId() { return gardenId; }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -71,8 +76,12 @@ public class Plant {
 
     public void setDescription(String description) { this.description = description; }
 
-    public void setPlantedOnDate(LocalDate plantedOnDate) {
-        this.plantedOnDate = plantedOnDate;
+    public void setPlantedOnDate(String plantedOnDate) {
+        String[] dateList = plantedOnDate.split("/");
+        int[] dateAsInteger = {Integer.parseInt(dateList[0]), Integer.parseInt(dateList[1]), Integer.parseInt(dateList[2])};
+        LocalDate newDate = LocalDate.of(dateAsInteger[2], dateAsInteger[1], dateAsInteger[0]);
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        this.plantedOnDate = newDate.format(dateTimeFormatter);
     }
 
     @Override
