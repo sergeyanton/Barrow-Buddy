@@ -17,6 +17,7 @@ public class HomeController {
     public HomeController(UserService userService) {
         this.userService = userService;
     }
+
     /**
      * Gets the thymeleaf page representing the / page
      * If the user is logged in, this is the home page,
