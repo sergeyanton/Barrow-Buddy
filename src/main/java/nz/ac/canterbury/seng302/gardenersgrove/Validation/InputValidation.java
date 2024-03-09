@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.gardenersgrove.Validation;
+package nz.ac.canterbury.seng302.gardenersgrove.validation;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection.LogInData;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection.RegistrationData;

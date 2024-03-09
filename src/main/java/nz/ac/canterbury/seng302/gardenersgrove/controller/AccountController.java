@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import java.time.format.DateTimeFormatter;
 
-import static nz.ac.canterbury.seng302.gardenersgrove.Validation.InputValidation.*;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.InputValidation.*;
 import static nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection.RegistrationData.createNewUser;
 
 @Controller

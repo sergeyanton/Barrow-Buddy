@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 
-import static nz.ac.canterbury.seng302.gardenersgrove.Validation.InputValidation.hashPassword;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.InputValidation.hashPassword;
 
 
 /**
