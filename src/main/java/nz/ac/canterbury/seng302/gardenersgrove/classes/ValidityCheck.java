@@ -67,8 +67,30 @@ public class ValidityCheck {
         return Optional.of("Garden size must be a positive number");
     }
 
+    /**
+     * Validates the entire garden form (name, location, size)
+     *
+     * @param name the string for the garden's name
+     * @param location the string for the garden's name
+     * @param size the string for the garden's size
+     * @return true if all three inputs are valid
+     */
     public static boolean validGardenForm(String name, String location, String size) {
         return (validGardenName(name).isEmpty() && validGardenLocation(location).isEmpty()
                 && validateGardenSize(size).isEmpty());
+    }
+
+    /**
+     * This method will validate that the entered planted-on date is in the valid DD/MM/YYYY format
+     * @param date the planted-on date
+     * @return Returns an error message string if the date is invalid, otherwise returns an
+     *      empty optional
+     */
+    public static Optional<String> validateDate(String date) {
+        boolean isDate = date.matches("^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/(19|20)\\d{2}$"); //THIS WILL NOT WORK
+        if (isDate) {
+            return Optional.empty();
+        }
+        return Optional.of("Date in not in valid format, DD/MM/YYYY)");
     }
 }
