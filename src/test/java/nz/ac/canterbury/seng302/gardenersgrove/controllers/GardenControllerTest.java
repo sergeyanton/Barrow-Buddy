@@ -47,6 +47,42 @@ public class GardenControllerTest {
     }
 
     @Test
+    public void CreateGardenPost_WithValidGardenEuropeanFormat_SavesToService() throws Exception {
+        Mockito.when(gardenService.addGarden(Mockito.any())).thenReturn(testGarden);
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/gardens/create").param("gardenName", "gardenName")
+                                .param("gardenLocation", "gardenLocation").param("gardenSize", "1,5"))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection());
+
+        Mockito.verify(gardenService, Mockito.times(1)).addGarden(Mockito.any());
+    }
+
+    @Test
+    public void CreateGardenPost_WithValidGardenEmptySize_SavesToService() throws Exception {
+        Mockito.when(gardenService.addGarden(Mockito.any())).thenReturn(testGarden);
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/gardens/create").param("gardenName", "gardenName")
+                                .param("gardenLocation", "gardenLocation").param("gardenSize", ""))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection());
+
+        Mockito.verify(gardenService, Mockito.times(1)).addGarden(Mockito.any());
+    }
+
+    @Test
+    public void CreateGardenPost_WithValidGardenWhitespaceSize_SavesToService() throws Exception {
+        Mockito.when(gardenService.addGarden(Mockito.any())).thenReturn(testGarden);
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/gardens/create").param("gardenName", "gardenName")
+                                .param("gardenLocation", "gardenLocation").param("gardenSize", "    "))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection());
+
+        Mockito.verify(gardenService, Mockito.times(1)).addGarden(Mockito.any());
+    }
+
+    @Test
     public void CreateGardenPost_WithInvalidGardenNameEmptyString_ReturnsError() throws Exception {
         Mockito.when(gardenService.addGarden(Mockito.any())).thenReturn(testGarden);
 
@@ -59,13 +95,38 @@ public class GardenControllerTest {
     }
 
     @Test
-    public void CreateGardenPost_WithInvalidGardenLocationEmptyString_ReturnsError()
-            throws Exception {
+    public void CreateGardenPost_WithInvalidGardenLocationEmptyString_ReturnsError() throws Exception {
         Mockito.when(gardenService.addGarden(Mockito.any())).thenReturn(testGarden);
 
         mockMvc.perform(
                 MockMvcRequestBuilders.post("/gardens/create").param("gardenName", "gardenName")
                         .param("gardenLocation", "").param("gardenSize", "1"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.model().attributeExists("gardenLocationError"));
+
+        Mockito.verify(gardenService, Mockito.times(0)).addGarden(Mockito.any());
+    }
+
+    @Test
+    public void CreateGardenPost_InvalidSizeNegativeNumber_ReturnsError() throws Exception {
+        Mockito.when(gardenService.addGarden(Mockito.any())).thenReturn(testGarden);
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/gardens/create").param("gardenName", "gardenName")
+                                .param("gardenLocation", "").param("gardenSize", "-2"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.model().attributeExists("gardenLocationError"));
+
+        Mockito.verify(gardenService, Mockito.times(0)).addGarden(Mockito.any());
+    }
+
+    @Test
+    public void CreateGardenPost_InvalidSizeNotANumber_ReturnsError() throws Exception {
+        Mockito.when(gardenService.addGarden(Mockito.any())).thenReturn(testGarden);
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/gardens/create").param("gardenName", "gardenName")
+                                .param("gardenLocation", "").param("gardenSize", "5 metres"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.model().attributeExists("gardenLocationError"));
 
@@ -81,6 +142,19 @@ public class GardenControllerTest {
         mockMvc.perform(
                         MockMvcRequestBuilders.post("/gardens/1/edit").param("gardenName", "gardenName")
                                 .param("gardenLocation", "gardenLocation").param("gardenSize", "2"))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection());
+
+        Mockito.verify(gardenService, Mockito.times(1)).updateGarden(Mockito.any());
+    }
+
+    @Test
+    public void EditGardenPost_ValidGardenEuropeanFormat_SavesToService() throws Exception {
+        Mockito.when(gardenService.getGardenById(1L)).thenReturn(testGarden);
+        Mockito.when(gardenService.updateGarden(Mockito.any())).thenReturn(testGarden);
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/gardens/1/edit").param("gardenName", "gardenName")
+                                .param("gardenLocation", "gardenLocation").param("gardenSize", "3,9"))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection());
 
         Mockito.verify(gardenService, Mockito.times(1)).updateGarden(Mockito.any());
@@ -116,6 +190,7 @@ public class GardenControllerTest {
     @Test
     public void EditGardenPost_InvalidNameEmptyString_ReturnsError() throws Exception {
         Mockito.when(gardenService.getGardenById(1L)).thenReturn(testGarden);
+        Mockito.when(gardenService.updateGarden(Mockito.any())).thenReturn(testGarden);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").param("gardenName", "")
                 .param("gardenLocation", "gardenLocation").param("gardenSize", "2"))
@@ -128,6 +203,7 @@ public class GardenControllerTest {
     @Test
     public void EditGardenPost_InvalidLocationEmptyString_ReturnsError() throws Exception {
         Mockito.when(gardenService.getGardenById(1L)).thenReturn(testGarden);
+        Mockito.when(gardenService.updateGarden(Mockito.any())).thenReturn(testGarden);
 
         mockMvc.perform(
                 MockMvcRequestBuilders.post("/gardens/1/edit").param("gardenName", "gardenName")
@@ -141,6 +217,7 @@ public class GardenControllerTest {
     @Test
     public void EditGardenPost_InvalidSizeNegativeNumber_ReturnsError() throws Exception {
         Mockito.when(gardenService.getGardenById(1L)).thenReturn(testGarden);
+        Mockito.when(gardenService.updateGarden(Mockito.any())).thenReturn(testGarden);
 
         mockMvc.perform(
                         MockMvcRequestBuilders.post("/gardens/1/edit").param("gardenName", "gardenName")
@@ -154,6 +231,7 @@ public class GardenControllerTest {
     @Test
     public void EditGardenPost_InvalidSizeNotANumber_ReturnsError() throws Exception {
         Mockito.when(gardenService.getGardenById(1L)).thenReturn(testGarden);
+        Mockito.when(gardenService.updateGarden(Mockito.any())).thenReturn(testGarden);
 
         mockMvc.perform(
                         MockMvcRequestBuilders.post("/gardens/1/edit").param("gardenName", "gardenName")
