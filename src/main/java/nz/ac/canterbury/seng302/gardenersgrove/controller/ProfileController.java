@@ -32,6 +32,11 @@ public class ProfileController {
 
     Logger logger = LoggerFactory.getLogger(ProfileController.class);
 
+    /**
+     * This method is used to get the profile page for the user
+     * @param model Which is used to pass data to the view
+     * @return A string that represents the link to the profile page
+     */
     @GetMapping("/editProfile")
     public String getEditProfilePage(Model model) {
         logger.info("GET /editProfile");
@@ -52,6 +57,12 @@ public class ProfileController {
         return "pages/editProfilePage";
     }
 
+    /**
+     * This method is used to check the data passed in by the user and then if it is valid, update the user's data
+     * @param updatedUser A RegistrationData object that contains the updated user data
+     * @param model Which is used to pass data to the view
+     * @return A string that represents the link to the profile page
+     */
     @PostMapping("/editProfile")
     public String editProfile(RegistrationData updatedUser, Model model) {
         logger.info("POST /editProfile");
