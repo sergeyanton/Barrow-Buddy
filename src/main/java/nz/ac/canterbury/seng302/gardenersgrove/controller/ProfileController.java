@@ -49,8 +49,6 @@ public class ProfileController {
             model.addAttribute("lName", currentUser.getLname());
         }
         model.addAttribute("email", currentUser.getEmail());
-        model.addAttribute("password", currentUser.getPassword());
-        model.addAttribute("retypePassword", currentUser.getPassword());
         model.addAttribute("dateOfBirth", currentUser.getDateOfBirth());
 
 

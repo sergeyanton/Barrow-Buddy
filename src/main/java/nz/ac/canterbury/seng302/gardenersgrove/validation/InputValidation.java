@@ -113,12 +113,15 @@ public class InputValidation {
             if (!emailCheck.getStatus()) return emailCheck;
         }
 
-        if(!Objects.equals(newUser.getPassword(), newUser.getRetypePassword())){
-            return new Validator(false, "Passwords do not match");
+        if (!newUser.getPassword().isBlank()) {
+            if(!Objects.equals(newUser.getPassword(), newUser.getRetypePassword())){
+                return new Validator(false, "Passwords do not match");
+            }
+
+            Validator passwordCheck = checkPassword(newUser.getPassword());
+            if (!passwordCheck.getStatus()) return passwordCheck;
         }
 
-        Validator passwordCheck = checkPassword(newUser.getPassword());
-        if (!passwordCheck.getStatus()) return passwordCheck;
 
         Validator dobCheck = checkDob(newUser.getDob());
         if (!dobCheck.getStatus()){return dobCheck;}
