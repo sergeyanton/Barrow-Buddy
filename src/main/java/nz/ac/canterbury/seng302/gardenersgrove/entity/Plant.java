@@ -58,12 +58,12 @@ public class Plant {
      * @param plantedOnDate date when plant was planted (in DD/MM/YYYY format)
      * @param gardenId ID of garden where the plant is currently in
      */
-    public Plant(String name, String plantCount, String description, String plantedOnDate, String gardenId) {
+    public Plant(String name, String plantCount, String description, String plantedOnDate, Long gardenId) {
         this.name = name;
         this.setPlantCount(plantCount);
         this.description = description;
         this.setPlantedOnDate(plantedOnDate);
-        this.setGardenId(gardenId);
+        this.gardenId = gardenId;
     }
 
     public Long getId() {

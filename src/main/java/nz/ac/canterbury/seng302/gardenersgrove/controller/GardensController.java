@@ -2,9 +2,12 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.classes.ValidityCheck;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import java.util.List;
 import java.util.Optional;
+
+import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +27,12 @@ import jakarta.servlet.http.HttpServletRequest;
 public class GardensController {
     Logger logger = LoggerFactory.getLogger(GardensController.class);
     private final GardenService gardenService;
+    private final PlantService plantService;
 
     @Autowired
-    public GardensController(GardenService gardenService) {
+    public GardensController(GardenService gardenService, PlantService plantService) {
         this.gardenService = gardenService;
+        this.plantService = plantService;
     }
 
     @ModelAttribute("currentUrl")
@@ -104,7 +109,7 @@ public class GardensController {
         String nextDestination = Optional.ofNullable(request.getParameter("next")).orElse("/");
         model.addAttribute("nextDestination", nextDestination);
 
-        displayErrorMessages(gardenName, gardenLocation, gardenSize, model);
+        displayGardenFormErrors(gardenName, gardenLocation, gardenSize, model);
 
         return "createGarden";
     }
@@ -140,7 +145,7 @@ public class GardensController {
      * linked to from POST form
      * 
      * @param model (map-like) representation of garden for use in thymeleaf
-     * @return thymeleaf demoFormTemplate
+     * @return thymeleaf editGarden
      */
     @GetMapping("/gardens/{gardenId}/edit")
     public String gardenEditGet(@PathVariable("gardenId") Long gardenId, Model model) {
@@ -158,9 +163,9 @@ public class GardensController {
      * @param gardenName name of garden
      * @param gardenLocation location of garden
      * @param gardenSize size of garden
-     * @param model (map-like) representation of name for use in thymeleaf, with values being set to
+     * @param model (map-like) representation of values for use in thymeleaf, with values being set to
      *        relevant parameters provided
-     * @return thymeleaf demoFormTemplate
+     * @return thymeleaf editGarden
      *
      */
     @PostMapping("/gardens/{gardenId}/edit")
@@ -185,20 +190,80 @@ public class GardensController {
         }
         model.addAttribute(garden); // so that editGarden.html knows the id of garden being edited.
         model.addAttribute("actionLabel", "Edit Garden");
-        displayErrorMessages(gardenName, gardenLocation, gardenSize, model);
+        displayGardenFormErrors(gardenName, gardenLocation, gardenSize, model);
         return "editGarden";
     }
 
+
+    /**
+     * Gets form to be displayed, includes the ability to display results of previous form when
+     * linked to from POST form
+     *
+     * @param gardenId id of garden that this plant belongs to
+     * @param plantName the name of the plant
+     * @param plantCount the amount of this plant in the garden
+     * @param plantDescription a short description of the plant
+     * @param plantedOnDate the date that the plant was planted on
+     * @param model (map-like) representation of values for use in thymeleaf, with values being set to
+     *      relevant parameters provided
+     * @return thymeleaf createPlant
+     */
     @GetMapping("/gardens/{gardenId}/plants/create")
-    public String gardenCreatePlantPost(@PathVariable("gardenId") Long gardenId, Model model) {
-        logger.info("POST /gardens/" + gardenId + "/plants/create");
+    public String gardenCreatePlantGet(@PathVariable("gardenId") Long gardenId,
+                                       @RequestParam(name = "plantName", required = false,
+                                               defaultValue = "") String plantName,
+                                       @RequestParam(name = "plantCount", required = false,
+                                               defaultValue = "") String plantCount,
+                                       @RequestParam(name = "plantDescription", required = false,
+                                               defaultValue = "") String plantDescription,
+                                       @RequestParam(name = "plantedOnDate", required = false,
+                                               defaultValue = "") String plantedOnDate,
+                                       Model model) {
+        logger.info("GET /gardens/" + gardenId + "/plants/create");
 
-        Garden garden = gardenService.getGardenById(gardenId);
-
-        logger.info("Creating new plant for garden " + garden.toString());
-
+        //TODO handle when the gardenId is not for an existing garden (.getGardenById)
 
         model.addAttribute("gardenId", gardenId);
+        model.addAttribute("plantName", plantName);
+        model.addAttribute("plantCount", plantCount);
+        model.addAttribute("plantDescription", plantDescription);
+        model.addAttribute("plantedOnDate", plantedOnDate);
+
+        model.addAttribute("actionLabel", "Create Plant");
+        return "createPlant";
+    }
+
+    /**
+     * Posts a form response with name, location, and size of the garden
+     *
+     * @param gardenId id of garden that this plant belongs to
+     * @param plantName the name of the plant
+     * @param plantCount the amount of this plant in the garden
+     * @param plantDescription a short description of the plant
+     * @param plantedOnDate the date that the plant was planted on
+     * @param model (map-like) representation of values for use in thymeleaf, with values being set to
+     *      relevant parameters provided
+     * @return thymeleaf createPlant if invalid form, gardens/{gardenId} if valid
+     */
+    @PostMapping("/gardens/{gardenId}/plants/create")
+    public String gardenCreatePlantPost(@PathVariable("gardenId") Long gardenId,
+                                       @RequestParam(name = "plantName") String plantName,
+                                       @RequestParam(name = "plantCount") String plantCount,
+                                       @RequestParam(name = "plantDescription") String plantDescription,
+                                       @RequestParam(name = "plantedOnDate") String plantedOnDate,
+                                       Model model) {
+        logger.info("POST /gardens/" + gardenId + "/plants/create");
+
+        if (ValidityCheck.validPlantForm(plantName, plantCount, plantDescription, plantedOnDate)) {
+            plantedOnDate = plantedOnDate.split("-")[2] + "/" + plantedOnDate.split("-")[1] + "/" + plantedOnDate.split("-")[0]; // maybe not necessary
+            Plant addedPlant = plantService.addPlant(new Plant(plantName, plantCount, plantDescription, plantedOnDate, gardenId));
+            logger.info("Plant created: " + addedPlant);
+            return "redirect:/gardens/" + gardenId;
+        }
+
+        displayPlantFormErrors(plantName, plantCount, plantDescription, plantedOnDate, model);
+
+        model.addAttribute("actionLabel", "Create Plant");
 
         return "createPlant";
     }
@@ -210,10 +275,10 @@ public class GardensController {
      * @param gardenName name of the garden
      * @param gardenLocation location of the garden
      * @param gardenSize size of the garden
-     * @param model (map-like) representation of name for use in thymeleaf, with values being set to
+     * @param model (map-like) representation of values for use in thymeleaf, with values being set to
      *        relevant parameters provided
      */
-    private void displayErrorMessages(String gardenName, String gardenLocation, String gardenSize,
+    private void displayGardenFormErrors(String gardenName, String gardenLocation, String gardenSize,
             Model model) {
         model.addAttribute("gardenName", gardenName);
         model.addAttribute("gardenLocation", gardenLocation);
@@ -238,6 +303,50 @@ public class GardensController {
             model.addAttribute("gardenSizeError", validGardenSizeCheck.get());
         } else {
             model.addAttribute("gardenSizeError", "");
+        }
+    }
+
+    /**
+     * A helper function to avoid duplication of code.
+     *
+     * @param plantName the name of the plant
+     * @param plantCount the amount of plants in the garden
+     * @param plantDescription a short description of the plant
+     * @param plantedOnDate the date that the plant was planted
+     * @param model (map-like) representation of values for use in thymeleaf, with values being set to
+     *      relevant parameters provided
+     */
+    private void displayPlantFormErrors(String plantName, String plantCount, String plantDescription, String plantedOnDate,
+                                         Model model) {
+        model.addAttribute("plantName", plantName);
+        model.addAttribute("plantCount", plantCount);
+        model.addAttribute("plantDescription", plantDescription);
+        model.addAttribute("plantedOnDate", plantedOnDate);
+
+        Optional<String> validPlantNameCheck = ValidityCheck.validatePlantName(plantName);
+        Optional<String> validPlantCountCheck = ValidityCheck.validatePlantCount(plantCount);
+        Optional<String> validPlantDescription = ValidityCheck.validatePlantDescription(plantDescription);
+        Optional<String> validPlantedOnDate = ValidityCheck.validateDate(plantedOnDate);
+
+        if (validPlantNameCheck.isPresent()) {
+            model.addAttribute("plantNameError", validPlantNameCheck.get());
+        } else {
+            model.addAttribute("plantNameError", "");
+        }
+        if (validPlantCountCheck.isPresent()) {
+            model.addAttribute("plantCountError", validPlantCountCheck.get());
+        } else {
+            model.addAttribute("plantCountError", "");
+        }
+        if (validPlantDescription.isPresent()) {
+            model.addAttribute("plantDescriptionError", validPlantDescription.get());
+        } else {
+            model.addAttribute("plantDescriptionError", "");
+        }
+        if (validPlantedOnDate.isPresent()) {
+            model.addAttribute("plantedOnDateError", validPlantedOnDate.get());
+        } else {
+            model.addAttribute("plantedOnDateError", "");
         }
     }
 }
