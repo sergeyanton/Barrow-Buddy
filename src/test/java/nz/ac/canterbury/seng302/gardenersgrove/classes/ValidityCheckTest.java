@@ -247,4 +247,34 @@ public class ValidityCheckTest {
         String description = "a".repeat(513); // Creates a string with 513 characters
         assertEquals(Optional.of("Plant description must be less than 512 characters"), ValidityCheck.validatePlantDescription(description));
     }
+
+    @Test
+    void ValidatePlantCount_PlantCountValid_ReturnsEmptyOptional() {
+        String count = "8";
+        assertEquals(Optional.empty(), ValidityCheck.validatePlantCount(count));
+    }
+
+    @Test
+    void ValidatePlantCount_PlantCountBlank_ReturnsEmptyOptional() {
+        String count = "";
+        assertEquals(Optional.empty(), ValidityCheck.validatePlantCount(count));
+    }
+
+    @Test
+    void ValidatePlantCount_PlantCountZero_ReturnsOptionalErrorMessage() {
+        String count = "0";
+        assertEquals(Optional.of("Plant count must only be a positive integer"), ValidityCheck.validatePlantCount(count));
+    }
+
+    @Test
+    void ValidatePlantCount_PlantCountNegative_ReturnsOptionalErrorMessage() {
+        String count = "-1";
+        assertEquals(Optional.of("Plant count must only be a positive integer"), ValidityCheck.validatePlantCount(count));
+    }
+
+    @Test
+    void ValidatePlantCount_PlantCountNonNumeric_ReturnsOptionalErrorMessage() {
+        String count = "count";
+        assertEquals(Optional.of("Plant count must only be a positive integer"), ValidityCheck.validatePlantCount(count));
+    }
 }

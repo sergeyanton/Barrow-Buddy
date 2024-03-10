@@ -107,6 +107,23 @@ public class ValidityCheck {
     }
 
     /**
+     * This method validates that the entered plant count can only either be empty or a positive integer.
+     * @param count the plant count
+     * @return an error message if the entered plant count is invalid, otherwise returns an empty optional
+     */
+    public static Optional<String> validatePlantCount(String count) {
+        if (count.isBlank()) {
+            return Optional.empty();
+        } else {
+            if (count.matches("^(?!0+$)[0-9]+$")) {
+                return Optional.empty();
+            } else {
+                return Optional.of("Plant count must only be a positive integer");
+            }
+        }
+    }
+
+    /**
      * This method validates that the entered plant name will contain only up to 512 characters.
      * @param description the plant's description
      * @return an error message if the entered plant description contains more than 512 characters, otherwise
