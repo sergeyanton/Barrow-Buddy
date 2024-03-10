@@ -202,4 +202,40 @@ public class ValidityCheckTest {
         assertEquals(Optional.of("Date in not in valid format, DD/MM/YYYY)"), ValidityCheck.validateDate(date3));
         assertEquals(Optional.of("Date in not in valid format, DD/MM/YYYY)"), ValidityCheck.validateDate(date4));
     }
+
+    @Test
+    void ValidatePlantName_ValidName_ReturnsEmptyOptional() {
+        String plantName = "Valid Plant Name";
+        assertEquals(Optional.empty(), ValidityCheck.validatePlantName(plantName));
+    }
+
+    @Test
+    void ValidatePlantName_NameBlank_ReturnsOptionalErrorMessage() {
+        String plantName = "";
+        assertEquals(Optional.of("Plant name must not be empty"), ValidityCheck.validatePlantName(plantName));
+    }
+
+    @Test
+    void ValidatePlantName_NameContainsInvalidCharacters_ReturnsOptionalErrorMessage() {
+        String plantName = "~`!@#$%^&*()_+={}[]:;<>/?";
+        assertEquals(Optional.of("Plant name must only include letters, numbers, spaces, dots, hyphens or apostrophes"), ValidityCheck.validatePlantName(plantName));
+    }
+
+    @Test
+    void ValidatePlantName_NameIsWhitespace_ReturnsOptionalErrorMessage() {
+        String plantName = "     ";
+        assertEquals(Optional.of("Plant name must not be empty"), ValidityCheck.validatePlantName(plantName));
+    }
+
+    @Test
+    void ValidateDescription_DescriptionValid_ReturnsEmptyOptional() {
+        String description = "This plant is cool.";
+        assertEquals(Optional.empty(), ValidityCheck.validatePlantDescription(description));
+    }
+
+    @Test
+    void ValidateDescription_DescriptionOver512Characters_ReturnsOptionalErrorMessage() {
+        String description = "a".repeat(513); // Creates a string with 513 characters
+        assertEquals(Optional.of("Plant description must be less than 512 characters"), ValidityCheck.validatePlantDescription(description));
+    }
 }

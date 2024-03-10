@@ -97,4 +97,35 @@ public class ValidityCheck {
         }
         return Optional.empty();
     }
+
+    /**
+     * This method validates that the entered plant name will contain only valid characters (alphanumeric
+     * characters, spaces dots, hyphens or apostrophes).
+     * @param name the entered plant name
+     * @return an error message if the entered plant name is invalid, otherwise returns an empty optional
+     */
+    public static Optional<String> validatePlantName(String name) {
+        boolean isBlank = name.isBlank();
+        boolean isValidName = name.matches("[a-zA-Z0-9 ,.'-]+");
+        if (isBlank) {
+            return Optional.of("Plant name must not be empty");
+        }
+        if (!isValidName) {
+            return Optional.of(
+                    "Plant name must only include letters, numbers, spaces, dots, hyphens or apostrophes");
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * This method validates that the entered plant name will contain only up to 512 characters.
+     * @param description the plant's description
+     * @return an error message if the entered plant description contains more than 512 characters, otherwise
+     * returns an empty optional.
+     */
+    public static Optional<String> validatePlantDescription(String description) {
+        if (description.length() > 512) {
+            return Optional.of("Plant description must be less than 512 characters");
+        } return Optional.empty();
+    }
 }
