@@ -84,21 +84,6 @@ public class ValidityCheck {
     }
 
     /**
-     * This method will validate that the entered planted-on date is in the valid DD/MM/YYYY format
-     * @param date the planted-on date
-     * @return Returns an error message string if the date is invalid, otherwise returns an
-     *      empty optional
-     */
-    public static Optional<String> validateDate(String date) {
-        try {
-            LocalDate.parse(date);
-        } catch (DateTimeParseException e) {
-            return Optional.of("Date in not in valid format, DD/MM/YYYY)");
-        }
-        return Optional.empty();
-    }
-
-    /**
      * This method validates that the entered plant name will contain only valid characters (alphanumeric
      * characters, spaces dots, hyphens or apostrophes).
      * @param name the entered plant name
@@ -133,9 +118,19 @@ public class ValidityCheck {
         } return Optional.empty();
     }
 
-
-    public static Optional<String> validateDate(String plantedOnDate) {
-        return Optional.empty(); //TODO
+    /**
+     * This method will validate that the entered planted-on date is in the valid DD/MM/YYYY format
+     * @param date the planted-on date
+     * @return Returns an error message string if the date is invalid, otherwise returns an
+     *      empty optional
+     */
+    public static Optional<String> validateDate(String date) {
+        try {
+            LocalDate.parse(date);
+        } catch (DateTimeParseException e) {
+            return Optional.of("Date in not in valid format, DD/MM/YYYY)");
+        }
+        return Optional.empty();
     }
 
     /**
