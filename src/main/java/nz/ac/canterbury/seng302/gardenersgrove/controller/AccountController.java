@@ -90,6 +90,7 @@ public class AccountController {
     @GetMapping("/register")
     public String getRegisterPage(Model model) {
         logger.info("GET /register");
+
         return userService.isSignedIn() ? "redirect:/" : "pages/registrationPage";
     }
 
@@ -107,6 +108,13 @@ public class AccountController {
 
         Validator error = checkRegistrationData(newUser, userService);
         if (!error.getStatus()) {
+            model.addAttribute("fName", newUser.getfName());
+            model.addAttribute("lName", newUser.getlName());
+            model.addAttribute("noSurnameCheckBox", newUser.getNoSurnameCheckBox());
+            model.addAttribute("email", newUser.getEmail());
+            model.addAttribute("password", newUser.getPassword());
+            model.addAttribute("retypePassword", newUser.getRetypePassword());
+            model.addAttribute("dob", newUser.getDob());
             return pageWithError("pages/registrationPage", model, error.getMessage());
         }
 
