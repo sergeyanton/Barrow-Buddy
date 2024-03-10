@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gardener's Grove - Create Garden</title>
+</head>
+
+<body>
+    <div th:replace="fragments/header :: header"></div>
+    <main>
+        <h1>Greate plant for garden</h1>
+        <div>
+            <form
+                th:replace="fragments/formElement :: plantForm(action=@{/gardens/${gardenId}/plants/create}, actionLabel='Create garden', cancel=@{'/gardens/' + ${gardenId} + '/'}, plantName=${plantName}, plantCount=${plantCount}, plantDescription=${plantDescription}, plantPlantedDate=${plantPlantedDate}, plantGardenId=${gardenId}, plantNameError=${plantNameError}, plantCountError=${plantCountError}, plantDescriptionError=${plantDescriptionError}, plantPlantedDateError=${plantPlantedDateError})">
+            </form>
+        </div>
+    </main>
+</body>
+
+</html>
