@@ -1,5 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.classes;
 
+import javax.swing.text.html.Option;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Optional;
 
 /**
@@ -87,10 +90,11 @@ public class ValidityCheck {
      *      empty optional
      */
     public static Optional<String> validateDate(String date) {
-        boolean isDate = date.matches("^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/(19|20)\\d{2}$"); //THIS WILL NOT WORK
-        if (isDate) {
-            return Optional.empty();
+        try {
+            LocalDate.parse(date);
+        } catch (DateTimeParseException e) {
+            return Optional.of("Date in not in valid format, DD/MM/YYYY)");
         }
-        return Optional.of("Date in not in valid format, DD/MM/YYYY)");
+        return Optional.empty();
     }
 }

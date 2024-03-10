@@ -177,4 +177,29 @@ public class ValidityCheckTest {
         assertEquals(Optional.of("Garden size must be a positive number"),
                 ValidityCheck.validateGardenSize(size));
     }
+
+    @Test
+    void ValidateDate_Valid_ReturnsEmptyOptional() {
+        String date = "2024-10-15";
+        assertEquals(Optional.empty(), ValidityCheck.validateDate(date));
+    }
+
+    @Test
+    void ValidateDate_InvalidEmpty_ReturnsOptionalWithErrorMessage() {
+        String date = "";
+        assertEquals(Optional.of("Date in not in valid format, DD/MM/YYYY)"), ValidityCheck.validateDate(date));
+    }
+
+    @Test
+    void ValidateDate_InvalidDates_ReturnsOptionalWithErrorMessage() {
+        String date1 = "10000-10-15";
+        String date2 = "absolutely not a date";
+        String date3 = "15-10-2003";
+        String date4 = "2024-02-31";
+
+        assertEquals(Optional.of("Date in not in valid format, DD/MM/YYYY)"), ValidityCheck.validateDate(date1));
+        assertEquals(Optional.of("Date in not in valid format, DD/MM/YYYY)"), ValidityCheck.validateDate(date2));
+        assertEquals(Optional.of("Date in not in valid format, DD/MM/YYYY)"), ValidityCheck.validateDate(date3));
+        assertEquals(Optional.of("Date in not in valid format, DD/MM/YYYY)"), ValidityCheck.validateDate(date4));
+    }
 }
