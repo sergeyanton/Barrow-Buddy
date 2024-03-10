@@ -10,7 +10,7 @@
 <body>
     <div th:replace="fragments/header :: header"></div>
     <main>
-        <h1>Greate plant for garden</h1>
+        <h1>Create plant for garden</h1>
         <div>
             <form
                 th:replace="fragments/formElement :: plantForm(action=@{/gardens/${gardenId}/plants/create}, actionLabel='Create garden', cancel=@{'/gardens/' + ${gardenId}}, plantName=${plantName}, plantCount=${plantCount}, plantDescription=${plantDescription}, plantPlantedDate=${plantPlantedDate}, plantGardenId=${gardenId}, plantNameError=${plantNameError}, plantCountError=${plantCountError}, plantDescriptionError=${plantDescriptionError}, plantPlantedDateError=${plantPlantedDateError})">
