@@ -25,7 +25,7 @@
 </th:block>
 
 <th:block
-    th:fragement="plantForm(action, actionLabel, cancel, plantName, plantCount, plantDescription, plantPlantedDate, plantGardenId, plantNameError, plantCountError, plantDescriptionError, plantPlantedDateError)">
+    th:fragment="plantForm(action, actionLabel, cancel, plantName, plantCount, plantDescription, plantPlantedDate, plantGardenId, plantNameError, plantCountError, plantDescriptionError, plantPlantedDateError)">
     <form th:action="${action}" method="post">
         <div
             th:replace="fragments/formElement :: formElement(name='plantName', label='Name: ', value=${plantName}, placeholder='Your plant\'s name', error=${plantNameError})">
@@ -40,5 +40,9 @@
             th:replace="fragments/formElement :: formElement(name='plantPlantedDate', label='Planted Date: ', value=${plantPlantedDate}, placeholder='Your plant\'s planted date', error=${plantPlantedDateError})">
         </div>
         <input type="hidden" th:name="gardenId" th:id="gardenId" th:value="${plantGardenId}">
+        <button type="submit" th:text="${actionLabel}"></button>
+        <a th:href="${cancel}">
+            <button type="button">Cancel</button>
+        </a>
     </form>
 </th:block>
