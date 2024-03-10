@@ -20,6 +20,7 @@ import java.util.Objects;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.controller.AccountController.pageWithError;
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.InputValidation.checkName;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.InputValidation.hashPassword;
 
 
 @Controller
@@ -42,7 +43,7 @@ public class ProfileController {
         logger.info("GET /editProfile");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
-        User currentUser = userService.getUserByEmail(currentPrincipalName);
+        User currentUser = userService.findEmail(currentPrincipalName);
         model.addAttribute("fName", currentUser.getFname());
 
         if (!currentUser.getLname().isEmpty()){
@@ -64,11 +65,12 @@ public class ProfileController {
     @PostMapping("/editProfile")
     public String editProfile(RegistrationData updatedUser, Model model) {
         logger.info("POST /editProfile");
-        String oldEmail = updatedUser.getEmail();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
 
-        User currentUser = userService.getUserByEmail(currentPrincipalName);
+        User currentUser = userService.findEmail(currentPrincipalName);
+        String oldEmail = currentUser.getEmail();
+
         InputValidation inputValidation = new InputValidation(userService);
 
         Validator error;
@@ -93,8 +95,8 @@ public class ProfileController {
             currentUser.setEmail(updatedUser.getEmail());
         }
 
-        if (updatedUser.getPassword() != null && !Objects.equals(updatedUser.getPassword(), currentUser.getPassword())){
-            currentUser.setPassword(updatedUser.getPassword());
+        if (!updatedUser.getPassword().isEmpty() && !Objects.equals(updatedUser.getPassword(), currentUser.getPassword())){
+            currentUser.setPassword(hashPassword(updatedUser.getPassword()));
         }
 
         if (updatedUser.getDob() != null && !Objects.equals(updatedUser.getDob(), currentUser.getDateOfBirth())){

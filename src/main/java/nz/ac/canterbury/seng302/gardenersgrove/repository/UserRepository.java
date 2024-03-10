@@ -26,12 +26,15 @@ public interface UserRepository extends CrudRepository<User, Long> {
      * @param newUser the new user details
      */
     default void updateUserByEmail(String oldEmail, User newUser) {
-    User user = getUserByEmail(oldEmail);
-    user.setFname(newUser.getFname());
-    user.setLname(newUser.getLname());
-    user.setEmail(newUser.getEmail());
-    user.setPassword(newUser.getPassword());
-    user.setDateOfBirth(newUser.getDateOfBirth());
-    save(user);
+    Optional<User> optionalUser = findByEmail(oldEmail);
+    if (optionalUser.isPresent()){
+        User user = optionalUser.get();
+        user.setFname(newUser.getFname());
+        user.setLname(newUser.getLname());
+        user.setEmail(newUser.getEmail());
+        user.setPassword(newUser.getPassword());
+        user.setDateOfBirth(newUser.getDateOfBirth());
+        save(user);
+        }
     }
 }

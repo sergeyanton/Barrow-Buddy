@@ -6,6 +6,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection.Registr
 import nz.ac.canterbury.seng302.gardenersgrove.entity.User;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Validator;
 import nz.ac.canterbury.seng302.gardenersgrove.service.UserService;
+import nz.ac.canterbury.seng302.gardenersgrove.validation.InputValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,17 +19,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-
 import java.time.format.DateTimeFormatter;
-import java.util.Objects;
-
-import static nz.ac.canterbury.seng302.gardenersgrove.Validation.InputValidation.*;
-import static nz.ac.canterbury.seng302.gardenersgrove.Validation.InputValidation.checkDob;
 import static nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection.RegistrationData.createNewUser;
-import static nz.ac.canterbury.seng302.gardenersgrove.validation.InputValidation.InputValidation.checkLoginData;
-import static nz.ac.canterbury.seng302.gardenersgrove.validation.InputValidation.InputValidation.verifyPassword;
-import static nz.ac.canterbury.seng302.gardenersgrove.validation.InputValidation.checkEmailLogin;
-import static nz.ac.canterbury.seng302.gardenersgrove.validation.InputValidation.loginInputCheck;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.InputValidation.checkLoginData;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.InputValidation.verifyPassword;
 
 @Controller
 public class AccountController {
@@ -137,7 +131,9 @@ public class AccountController {
     @GetMapping("/login")
     public String getLoginPage() {
         logger.info("GET /login");
-        return userService.isSignedIn() ? "redirect:/" : "pages/loginPage";
+        return userService.isSignedIn() ?   "redirect:/": "pages/loginPage";
+        //        return "pages/loginPage";
+
     }
 
 //
@@ -154,9 +150,6 @@ public class AccountController {
 //        return "pages/profilePage";
 //    }
 //
-
-
-
 
 
     /**
