@@ -38,10 +38,10 @@
             th:replace="fragments/formElement :: formElement(name='plantName', label='Name: ', value=${plantName}, placeholder='Your plant\'s name', error=${plantNameError})">
         </div>
         <div
-            th:replace="fragments/formElement :: formElement(name='plantCount', label='Count: ', value=${plantCount}, placeholder='Your plant\'s count', error=${plantCountError})">
+            th:replace="fragments/formElement :: formElement(name='plantCount', label='Count (optional): ', value=${plantCount}, placeholder='Your plant\'s count', error=${plantCountError})">
         </div>
         <divd
-            th:replace="fragments/formElement :: formElement(name='plantDescription', label='Description (optional): ', value=${plantDescription}, placeholder='Your plant\'s description', error=${plantDescriptionError})">
+            th:replace="fragments/formElement :: formElement(name='plantDescription', label='Description: ', value=${plantDescription}, placeholder='Your plant\'s description', error=${plantDescriptionError})">
         </divd>
         <div
             th:replace="fragments/formElement :: specialFormElement(type='date', name='plantedOnDate', label='Planted Date: ', value=${plantedOnDate}, placeholder='Your plant\'s planted date', error=${plantedOnDateError})">

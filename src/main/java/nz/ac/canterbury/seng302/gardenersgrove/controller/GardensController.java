@@ -227,6 +227,7 @@ public class GardensController {
         logger.info("POST /gardens/" + gardenId + "/plants/create");
 
         if (ValidityCheck.validPlantForm(plantName, plantCount, plantDescription, plantedOnDate)) {
+            plantedOnDate = plantedOnDate.split("-")[2] + "/" + plantedOnDate.split("-")[1] + "/" + plantedOnDate.split("-")[0]; // maybe not necessary
             Plant addedPlant = plantService.addPlant(new Plant(plantName, plantCount, plantDescription, plantedOnDate, gardenId));
             logger.info("Plant created: " + addedPlant);
             return "redirect:/gardens/" + gardenId;
