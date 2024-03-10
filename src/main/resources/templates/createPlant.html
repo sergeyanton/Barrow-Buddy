@@ -13,7 +13,7 @@
         <h1>Create plant for garden</h1>
         <div>
             <form
-                th:replace="fragments/formElement :: plantForm(action=@{/gardens/${gardenId}/plants/create}, actionLabel='Create garden', cancel=@{'/gardens/' + ${gardenId}}, plantName=${plantName}, plantCount=${plantCount}, plantDescription=${plantDescription}, plantedOnDate=${plantedOnDate}, plantGardenId=${gardenId}, plantNameError=${plantNameError}, plantCountError=${plantCountError}, plantDescriptionError=${plantDescriptionError}, plantedOnDateError=${plantedOnDateError})">
+                th:replace="fragments/formElement :: plantForm(action=@{/gardens/{gardenId}/plants/create(gardenId=${gardenId})}, actionLabel=${actionLabel}, cancel=@{'/gardens/' + ${gardenId}}, plantName=${plantName}, plantCount=${plantCount}, plantDescription=${plantDescription}, plantedOnDate=${plantedOnDate}, plantGardenId=${gardenId}, plantNameError=${plantNameError}, plantCountError=${plantCountError}, plantDescriptionError=${plantDescriptionError}, plantedOnDateError=${plantedOnDateError})">
             </form>
         </div>
     </main>

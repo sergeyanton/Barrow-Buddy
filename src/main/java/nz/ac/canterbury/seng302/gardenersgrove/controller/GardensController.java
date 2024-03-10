@@ -213,7 +213,7 @@ public class GardensController {
         model.addAttribute("plantDescription", plantDescription);
         model.addAttribute("plantedOnDate", plantedOnDate);
 
-        model.addAttribute("actionLabel", "Create plant");
+        model.addAttribute("actionLabel", "Create Plant");
         return "createPlant";
     }
 
@@ -232,7 +232,7 @@ public class GardensController {
             return "redirect:/gardens/" + gardenId;
         }
 
-        model.addAttribute("actionLabel", "Create plant");
+        model.addAttribute("actionLabel", "Create Plant");
 
         //TODO Errors
 
