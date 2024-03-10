@@ -19,7 +19,7 @@
                th:name="lName" th:value="*{lName}" data-cy="lName" autofocus>
         <br/>
         <input type="checkbox" class="form-control" id="noSurnameCheckBox"
-               th:name="noSurnameCheckBox" data-cy="noSurnameCheckBox"
+               th:name="noSurnameCheckBox" th:checked="*{noSurnameCheckBox}" data-cy="noSurnameCheckBox"
                onclick="toggleInput()" autofocus>
         <label for="noSurnameCheckBox"> No last name </label>
         <br/>
