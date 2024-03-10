@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.classes;
 
+import java.text.NumberFormat;
 import java.util.Optional;
 
 /**
@@ -89,6 +90,23 @@ public class ValidityCheck {
                     "Plant name must only include letters, numbers, spaces, dots, hyphens or apostrophes");
         }
         return Optional.empty();
+    }
+
+    /**
+     * This method validates that the entered plant count can only either be empty or a positive integer.
+     * @param count the plant count
+     * @return an error message if the entered plant count is invalid, otherwise returns an empty optional
+     */
+    public static Optional<String> validatePlantCount(String count) {
+        if (count.isBlank()) {
+            return Optional.empty();
+        } else {
+            if (count.matches("^(?!0+$)[0-9]+$")) {
+                return Optional.empty();
+            } else {
+                return Optional.of("Plant count must only be a positive integer");
+            }
+        }
     }
 
     /**
