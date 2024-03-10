@@ -91,6 +91,10 @@ public class ValidityCheck {
         return Optional.empty();
     }
 
+    public static Optional<String> validatePlantCount(String plantCount) {
+        return Optional.empty(); //TODO
+    }
+
     /**
      * This method validates that the entered plant name will contain only up to 512 characters.
      * @param description the plant's description
@@ -103,6 +107,11 @@ public class ValidityCheck {
         } return Optional.empty();
     }
 
+
+    public static Optional<String> validateDate(String plantedOnDate) {
+        return Optional.empty(); //TODO
+    }
+
     /**
      * This method checks the entire plant form.
      * @param name the name of the plant
@@ -112,6 +121,7 @@ public class ValidityCheck {
      * @return true if plant form has all valid inputs
      */
     public static boolean validPlantForm(String name, String plantCount, String description, String plantedOnDate) {
-        return true; //TODO
+        return (validatePlantName(name).isEmpty() && validatePlantCount(plantCount).isEmpty()
+                && validatePlantDescription(description).isEmpty()) && validateDate(plantedOnDate).isEmpty();
     }
 }

@@ -233,9 +233,9 @@ public class GardensController {
             return "redirect:/gardens/" + gardenId;
         }
 
-        model.addAttribute("actionLabel", "Create Plant");
+        displayPlantFormErrors(plantName, plantCount, plantDescription, plantedOnDate, model);
 
-        //TODO Errors
+        model.addAttribute("actionLabel", "Create Plant");
 
         return "createPlant";
     }
@@ -275,6 +275,50 @@ public class GardensController {
             model.addAttribute("gardenSizeError", validGardenSizeCheck.get());
         } else {
             model.addAttribute("gardenSizeError", "");
+        }
+    }
+
+    /**
+     * A helper function to avoid duplication of code.
+     *
+     * @param plantName the name of the plant
+     * @param plantCount the amount of plants in the garden
+     * @param plantDescription a short description of the plant
+     * @param plantedOnDate the date that the plant was planted
+     * @param model (map-like) representation of name for use in thymeleaf, with values being set to
+     *      relevant parameters provided
+     */
+    private void displayPlantFormErrors(String plantName, String plantCount, String plantDescription, String plantedOnDate,
+                                         Model model) {
+        model.addAttribute("plantName", plantName);
+        model.addAttribute("plantCount", plantCount);
+        model.addAttribute("plantDescription", plantDescription);
+        model.addAttribute("plantedOnDate", plantedOnDate);
+
+        Optional<String> validPlantNameCheck = ValidityCheck.validatePlantName(plantName);
+        Optional<String> validPlantCountCheck = ValidityCheck.validatePlantCount(plantCount);
+        Optional<String> validPlantDescription = ValidityCheck.validatePlantDescription(plantDescription);
+        Optional<String> validPlantedOnDate = ValidityCheck.validateDate(plantedOnDate);
+
+        if (validPlantNameCheck.isPresent()) {
+            model.addAttribute("plantNameError", validPlantNameCheck.get());
+        } else {
+            model.addAttribute("plantNameError", "");
+        }
+        if (validPlantCountCheck.isPresent()) {
+            model.addAttribute("plantCountError", validPlantCountCheck.get());
+        } else {
+            model.addAttribute("plantCountError", "");
+        }
+        if (validPlantDescription.isPresent()) {
+            model.addAttribute("plantDescriptionError", validPlantDescription.get());
+        } else {
+            model.addAttribute("plantDescriptionError", "");
+        }
+        if (validPlantedOnDate.isPresent()) {
+            model.addAttribute("plantedOnDateError", validPlantedOnDate.get());
+        } else {
+            model.addAttribute("plantedOnDateError", "");
         }
     }
 }
