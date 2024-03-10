@@ -204,6 +204,15 @@ public class ValidityCheckTest {
     }
 
     @Test
+    void ValidateDate_InvalidMonthEdgeCases_ReturnsOptionalWithErrorMessage() {
+        String date1 = "2020-13-15";
+        String date2 = "2020-00-15";
+
+        assertEquals(Optional.of("Date in not in valid format, DD/MM/YYYY)"), ValidityCheck.validateDate(date1));
+        assertEquals(Optional.of("Date in not in valid format, DD/MM/YYYY)"), ValidityCheck.validateDate(date2));
+    }
+
+    @Test
     void ValidatePlantName_ValidName_ReturnsEmptyOptional() {
         String plantName = "Valid Plant Name";
         assertEquals(Optional.empty(), ValidityCheck.validatePlantName(plantName));
