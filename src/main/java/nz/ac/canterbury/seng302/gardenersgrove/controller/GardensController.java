@@ -145,7 +145,7 @@ public class GardensController {
      * linked to from POST form
      * 
      * @param model (map-like) representation of garden for use in thymeleaf
-     * @return thymeleaf demoFormTemplate
+     * @return thymeleaf editGarden
      */
     @GetMapping("/gardens/{gardenId}/edit")
     public String gardenEditGet(@PathVariable("gardenId") Long gardenId, Model model) {
@@ -163,9 +163,9 @@ public class GardensController {
      * @param gardenName name of garden
      * @param gardenLocation location of garden
      * @param gardenSize size of garden
-     * @param model (map-like) representation of name for use in thymeleaf, with values being set to
+     * @param model (map-like) representation of values for use in thymeleaf, with values being set to
      *        relevant parameters provided
-     * @return thymeleaf demoFormTemplate
+     * @return thymeleaf editGarden
      *
      */
     @PostMapping("/gardens/{gardenId}/edit")
@@ -194,6 +194,20 @@ public class GardensController {
         return "editGarden";
     }
 
+
+    /**
+     * Gets form to be displayed, includes the ability to display results of previous form when
+     * linked to from POST form
+     *
+     * @param gardenId id of garden that this plant belongs to
+     * @param plantName the name of the plant
+     * @param plantCount the amount of this plant in the garden
+     * @param plantDescription a short description of the plant
+     * @param plantedOnDate the date that the plant was planted on
+     * @param model (map-like) representation of values for use in thymeleaf, with values being set to
+     *      relevant parameters provided
+     * @return thymeleaf createPlant
+     */
     @GetMapping("/gardens/{gardenId}/plants/create")
     public String gardenCreatePlantGet(@PathVariable("gardenId") Long gardenId,
                                        @RequestParam(name = "plantName", required = false,
@@ -207,6 +221,8 @@ public class GardensController {
                                        Model model) {
         logger.info("GET /gardens/" + gardenId + "/plants/create");
 
+        //TODO handle when the gardenId is not for an existing garden (.getGardenById)
+
         model.addAttribute("gardenId", gardenId);
         model.addAttribute("plantName", plantName);
         model.addAttribute("plantCount", plantCount);
@@ -217,6 +233,18 @@ public class GardensController {
         return "createPlant";
     }
 
+    /**
+     * Posts a form response with name, location, and size of the garden
+     *
+     * @param gardenId id of garden that this plant belongs to
+     * @param plantName the name of the plant
+     * @param plantCount the amount of this plant in the garden
+     * @param plantDescription a short description of the plant
+     * @param plantedOnDate the date that the plant was planted on
+     * @param model (map-like) representation of values for use in thymeleaf, with values being set to
+     *      relevant parameters provided
+     * @return thymeleaf createPlant if invalid form, gardens/{gardenId} if valid
+     */
     @PostMapping("/gardens/{gardenId}/plants/create")
     public String gardenCreatePlantPost(@PathVariable("gardenId") Long gardenId,
                                        @RequestParam(name = "plantName") String plantName,
@@ -247,7 +275,7 @@ public class GardensController {
      * @param gardenName name of the garden
      * @param gardenLocation location of the garden
      * @param gardenSize size of the garden
-     * @param model (map-like) representation of name for use in thymeleaf, with values being set to
+     * @param model (map-like) representation of values for use in thymeleaf, with values being set to
      *        relevant parameters provided
      */
     private void displayGardenFormErrors(String gardenName, String gardenLocation, String gardenSize,
@@ -285,7 +313,7 @@ public class GardensController {
      * @param plantCount the amount of plants in the garden
      * @param plantDescription a short description of the plant
      * @param plantedOnDate the date that the plant was planted
-     * @param model (map-like) representation of name for use in thymeleaf, with values being set to
+     * @param model (map-like) representation of values for use in thymeleaf, with values being set to
      *      relevant parameters provided
      */
     private void displayPlantFormErrors(String plantName, String plantCount, String plantDescription, String plantedOnDate,
