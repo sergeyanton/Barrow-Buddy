@@ -1,5 +1,8 @@
 package nz.ac.canterbury.seng302.gardenersgrove.classes;
 
+import javax.swing.text.html.Option;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Optional;
 
 /**
@@ -67,9 +70,32 @@ public class ValidityCheck {
         return Optional.of("Garden size must be a positive number");
     }
 
+    /**
+     * Validates the entire garden form (name, location, size)
+     *
+     * @param name the string for the garden's name
+     * @param location the string for the garden's name
+     * @param size the string for the garden's size
+     * @return true if all three inputs are valid
+     */
     public static boolean validGardenForm(String name, String location, String size) {
         return (validGardenName(name).isEmpty() && validGardenLocation(location).isEmpty()
                 && validateGardenSize(size).isEmpty());
+    }
+
+    /**
+     * This method will validate that the entered planted-on date is in the valid DD/MM/YYYY format
+     * @param date the planted-on date
+     * @return Returns an error message string if the date is invalid, otherwise returns an
+     *      empty optional
+     */
+    public static Optional<String> validateDate(String date) {
+        try {
+            LocalDate.parse(date);
+        } catch (DateTimeParseException e) {
+            return Optional.of("Date in not in valid format, DD/MM/YYYY)");
+        }
+        return Optional.empty();
     }
 
     /**
