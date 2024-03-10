@@ -2,9 +2,12 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
 import nz.ac.canterbury.seng302.gardenersgrove.classes.ValidityCheck;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import java.util.List;
 import java.util.Optional;
+
+import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +27,12 @@ import jakarta.servlet.http.HttpServletRequest;
 public class GardensController {
     Logger logger = LoggerFactory.getLogger(GardensController.class);
     private final GardenService gardenService;
+    private final PlantService plantService;
 
     @Autowired
-    public GardensController(GardenService gardenService) {
+    public GardensController(GardenService gardenService, PlantService plantService) {
         this.gardenService = gardenService;
+        this.plantService = plantService;
     }
 
     @ModelAttribute("currentUrl")
@@ -104,7 +109,7 @@ public class GardensController {
         String nextDestination = Optional.ofNullable(request.getParameter("next")).orElse("/");
         model.addAttribute("nextDestination", nextDestination);
 
-        displayErrorMessages(gardenName, gardenLocation, gardenSize, model);
+        displayGardenFormErrors(gardenName, gardenLocation, gardenSize, model);
 
         return "createGarden";
     }
@@ -185,20 +190,51 @@ public class GardensController {
         }
         model.addAttribute(garden); // so that editGarden.html knows the id of garden being edited.
         model.addAttribute("actionLabel", "Edit Garden");
-        displayErrorMessages(gardenName, gardenLocation, gardenSize, model);
+        displayGardenFormErrors(gardenName, gardenLocation, gardenSize, model);
         return "editGarden";
     }
 
     @GetMapping("/gardens/{gardenId}/plants/create")
-    public String gardenCreatePlantPost(@PathVariable("gardenId") Long gardenId, Model model) {
-        logger.info("POST /gardens/" + gardenId + "/plants/create");
-
-        Garden garden = gardenService.getGardenById(gardenId);
-
-        logger.info("Creating new plant for garden " + garden.toString());
-
+    public String gardenCreatePlantGet(@PathVariable("gardenId") Long gardenId,
+                                       @RequestParam(name = "plantName", required = false,
+                                               defaultValue = "") String plantName,
+                                       @RequestParam(name = "plantCount", required = false,
+                                               defaultValue = "") String plantCount,
+                                       @RequestParam(name = "plantDescription", required = false,
+                                               defaultValue = "") String plantDescription,
+                                       @RequestParam(name = "plantedOnDate", required = false,
+                                               defaultValue = "") String plantedOnDate,
+                                       Model model) {
+        logger.info("GET /gardens/" + gardenId + "/plants/create");
 
         model.addAttribute("gardenId", gardenId);
+        model.addAttribute("plantName", plantName);
+        model.addAttribute("plantCount", plantCount);
+        model.addAttribute("plantDescription", plantDescription);
+        model.addAttribute("plantedOnDate", plantedOnDate);
+
+        model.addAttribute("actionLabel", "Create plant");
+        return "createPlant";
+    }
+
+    @PostMapping("/gardens/{gardenId}/plants/create")
+    public String gardenCreatePlantPost(@PathVariable("gardenId") Long gardenId,
+                                       @RequestParam(name = "plantName") String plantName,
+                                       @RequestParam(name = "plantCount") String plantCount,
+                                       @RequestParam(name = "plantDescription") String plantDescription,
+                                       @RequestParam(name = "plantedOnDate") String plantedOnDate,
+                                       Model model) {
+        logger.info("POST /gardens/" + gardenId + "/plants/create");
+
+        if (ValidityCheck.validPlantForm(plantName, plantCount, plantDescription, plantedOnDate)) {
+            Plant addedPlant = plantService.addPlant(new Plant(plantName, plantCount, plantDescription, plantedOnDate, gardenId));
+            logger.info("Plant created: " + addedPlant);
+            return "redirect:/gardens/" + gardenId;
+        }
+
+        model.addAttribute("actionLabel", "Create plant");
+
+        //TODO Errors
 
         return "createPlant";
     }
@@ -213,7 +249,7 @@ public class GardensController {
      * @param model (map-like) representation of name for use in thymeleaf, with values being set to
      *        relevant parameters provided
      */
-    private void displayErrorMessages(String gardenName, String gardenLocation, String gardenSize,
+    private void displayGardenFormErrors(String gardenName, String gardenLocation, String gardenSize,
             Model model) {
         model.addAttribute("gardenName", gardenName);
         model.addAttribute("gardenLocation", gardenLocation);

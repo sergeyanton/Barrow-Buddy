@@ -102,4 +102,16 @@ public class ValidityCheck {
             return Optional.of("Plant description must be less than 512 characters");
         } return Optional.empty();
     }
+
+    /**
+     * This method checks the entire plant form.
+     * @param name the name of the plant
+     * @param plantCount the number of plants in the garden
+     * @param description a short description of the plant
+     * @param plantedOnDate the date that the plant was planted on
+     * @return true if plant form has all valid inputs
+     */
+    public static boolean validPlantForm(String name, String plantCount, String description, String plantedOnDate) {
+        return true; //TODO
+    }
 }
