@@ -102,10 +102,6 @@ public class ValidityCheck {
         return Optional.empty();
     }
 
-    public static Optional<String> validatePlantCount(String plantCount) {
-        return Optional.empty(); //TODO
-    }
-
     /**
      * This method validates that the entered plant count can only either be empty or a positive integer.
      * @param count the plant count
