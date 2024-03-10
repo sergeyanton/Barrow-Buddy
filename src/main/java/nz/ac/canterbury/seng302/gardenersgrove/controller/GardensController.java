@@ -109,7 +109,7 @@ public class GardensController {
         return "createGarden";
     }
 
-     /**
+    /**
      * Gets all form responses (gardens)
      *
      * @param model (map-like) representation of results to be used by thymeleaf
@@ -170,7 +170,8 @@ public class GardensController {
             @RequestParam(name = "gardenSize") String gardenSize, Model model) {
         logger.info("POST /gardens/" + gardenId + "/edit");
 
-        // TODO Handle error gracefully when user puts invalid id in url (do for each gardenService.getGardenById)
+        // TODO Handle error gracefully when user puts invalid id in url (do for each
+        // gardenService.getGardenById)
         Garden garden = gardenService.getGardenById(gardenId);
 
         if (ValidityCheck.validGardenForm(gardenName, gardenLocation, gardenSize)) {
@@ -188,23 +189,39 @@ public class GardensController {
         return "editGarden";
     }
 
+    @GetMapping("/gardens/{gardenId}/plants/create")
+    public String gardenCreatePlantPost(@PathVariable("gardenId") Long gardenId, Model model) {
+        logger.info("POST /gardens/" + gardenId + "/plants/create");
+
+        Garden garden = gardenService.getGardenById(gardenId);
+
+        logger.info("Creating new plant for garden " + garden.toString());
+
+
+        model.addAttribute("gardenId", gardenId);
+
+        return "createPlant";
+    }
+
     /**
-     * A helper function to avoid duplication of code. Both the create & edit forms for a garden have the
-     * exact same error messages so this code is used in both POSTs.
+     * A helper function to avoid duplication of code. Both the create & edit forms for a garden
+     * have the exact same error messages so this code is used in both POSTs.
      *
      * @param gardenName name of the garden
      * @param gardenLocation location of the garden
      * @param gardenSize size of the garden
      * @param model (map-like) representation of name for use in thymeleaf, with values being set to
-     *              relevant parameters provided
+     *        relevant parameters provided
      */
-    private void displayErrorMessages(String gardenName, String gardenLocation, String gardenSize, Model model) {
+    private void displayErrorMessages(String gardenName, String gardenLocation, String gardenSize,
+            Model model) {
         model.addAttribute("gardenName", gardenName);
         model.addAttribute("gardenLocation", gardenLocation);
         model.addAttribute("gardenSize", gardenSize);
 
         Optional<String> validGardenNameCheck = ValidityCheck.validGardenName(gardenName);
-        Optional<String> validGardenLocationCheck = ValidityCheck.validGardenLocation(gardenLocation);
+        Optional<String> validGardenLocationCheck =
+                ValidityCheck.validGardenLocation(gardenLocation);
         Optional<String> validGardenSizeCheck = ValidityCheck.validateGardenSize(gardenSize);
 
         if (validGardenNameCheck.isPresent()) {
