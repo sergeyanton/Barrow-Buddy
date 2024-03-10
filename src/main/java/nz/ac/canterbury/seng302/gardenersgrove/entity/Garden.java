@@ -88,12 +88,6 @@ public class Garden {
     }
 
     public void setSize(String newSize) {
-        Optional<String> validGardenSizeCheck = ValidityCheck.validateGardenSize(newSize);
-
-        if (validGardenSizeCheck.isPresent()) {
-            throw new IllegalArgumentException(validGardenSizeCheck.get());
-        }
-
         this.size = (newSize.isBlank()) ? null : Double.parseDouble(newSize.replace(",", "."));
     }
 

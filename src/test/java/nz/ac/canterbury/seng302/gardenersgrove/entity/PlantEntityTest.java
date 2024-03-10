@@ -3,13 +3,14 @@ package nz.ac.canterbury.seng302.gardenersgrove.entity;
 import org.junit.jupiter.api.Test;
 
 import java.time.DateTimeException;
+import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PlantEntityTest {
     @Test
-    void Constructor_AllValid_ReturnsPlantObject() {
+    void StringConstructor_AllValid_ReturnsCorrectPlantObject() {
         String plantName = "Plant Name";
         String plantCount = "3";
         String description = "This plant is cool";
@@ -17,26 +18,33 @@ public class PlantEntityTest {
         String gardenId = "1";
         Plant plant = new Plant(plantName, plantCount, description, dateString, gardenId);
         assertEquals(plantName, plant.getName());
-        assertEquals(Integer.parseInt(plantCount), plant.getCount());
+        assertEquals(Integer.parseInt(plantCount), plant.getPlantCount());
         assertEquals(description, plant.getDescription());
-        assertEquals(dateString, plant.getPlantedOnDate());
-        assertEquals(Integer.parseInt(gardenId), plant.getGardenId());
+        assertEquals(LocalDate.of(2024,1,30), plant.getPlantedOnDate());
+        assertEquals(Long.parseLong(gardenId), plant.getGardenId());
     }
 
     @Test
     void SetCount_ValidCountSet_ChangesCountToNewCount() {
         String newCount = "2";
-        int newCountInt = Integer.parseInt(newCount);
         Plant plant = new Plant();
-        plant.setCount(newCount);
-        assertEquals(plant.getCount(), newCountInt);
+        plant.setPlantCount(newCount);
+        assertEquals(2, plant.getPlantCount());
+    }
+
+    @Test
+    void SetCount_ValidEmptyCountSet_ChangesCountToNewCount() {
+        String newCount = "";
+        Plant plant = new Plant();
+        plant.setPlantCount(newCount);
+        assertEquals(null, plant.getPlantCount());
     }
 
     @Test
     void SetCount_InvalidCountSet_ThrowsNumberFormatException() {
         String newCount = "d";
         Plant plant = new Plant();
-        assertThrows(NumberFormatException.class, () -> plant.setCount(newCount));
+        assertThrows(NumberFormatException.class, () -> plant.setPlantCount(newCount));
     }
 
     @Test
@@ -44,7 +52,7 @@ public class PlantEntityTest {
         String dateString = "11/02/2024";
         Plant plant = new Plant();
         plant.setPlantedOnDate(dateString);
-        assertEquals(plant.getPlantedOnDate(), dateString);
+        assertEquals(LocalDate.of(2024, 2, 11), plant.getPlantedOnDate());
     }
 
     @Test
@@ -57,16 +65,15 @@ public class PlantEntityTest {
     @Test
     void SetGardenId_ValidGardenIdSet_ChangesGardenIdToNewGardenId() {
         String newGardenId = "2";
-        int newGardenIdInt = Integer.parseInt(newGardenId);
         Plant plant = new Plant();
         plant.setGardenId(newGardenId);
-        assertEquals(plant.getGardenId(), newGardenIdInt);
+        assertEquals(2, plant.getGardenId());
     }
 
     @Test
     void SetGardenId_InvalidGardenIdSet_ThrowsNumberFormatException() {
         String newGardenId = "d";
         Plant plant = new Plant();
-        assertThrows(NumberFormatException.class, () -> plant.setCount(newGardenId));
+        assertThrows(NumberFormatException.class, () -> plant.setGardenId(newGardenId));
     }
 }
