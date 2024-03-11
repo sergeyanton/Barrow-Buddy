@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
 class HomeControllerTest {
     @Mock
     UserService userService;
-
+    Logger logger;
     HomeController homeController;
 
     @BeforeEach
