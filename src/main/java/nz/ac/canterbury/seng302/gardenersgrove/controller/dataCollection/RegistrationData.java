@@ -30,7 +30,7 @@ public class RegistrationData {
         @RequestParam(name = "dob") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dob,
         @RequestParam(name = "password") String password,
         @RequestParam(name = "password") String retypePassword,
-        @RequestParam(name = "noSurnameCheckBox", required = false) String noSurnameCheckBox
+        @RequestParam(name = "noSurnameCheckBox", required = false) Boolean noSurnameCheckBox
     )  {
         this.fName = fName;
         this.lName = lName;
