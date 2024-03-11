@@ -4,6 +4,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.service.UserService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,7 +17,9 @@ import static org.mockito.Mockito.*;
 class HomeControllerTest {
     @Mock
     UserService userService;
+    @Mock
     Logger logger;
+    @InjectMocks
     HomeController homeController;
 
     @BeforeEach
