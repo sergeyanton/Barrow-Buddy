@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.InputValidation.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -23,7 +24,7 @@ public class UserValidationTest {
     // No Error cases
     @Test
     void firstNameValidCheck_noError() {
-        user = new User("Fabian","Gilson","fabian.gilson@canterbury.ac.nz", "Fabian123!", LocalDate.parse("01-01-2009"));
+        user = new User("Fabian","Gilson","fabian.gilson@canterbury.ac.nz", "Fabian123!", LocalDate.parse("01-01-2009", DateTimeFormatter.ofPattern("dd-MM-yyyy")));
 
         Validator fnameValidator = checkName(user.getFname());
 
