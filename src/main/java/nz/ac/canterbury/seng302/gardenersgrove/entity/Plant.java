@@ -58,7 +58,7 @@ public class Plant {
     public Plant(String name, String plantCount, String description, String plantedOnDate, Long gardenId) {
         this.name = name;
         this.setPlantCount(plantCount);
-        this.description = description;
+        this.setDescription(description);
         this.setPlantedOnDate(plantedOnDate);
         this.gardenId = gardenId;
     }
