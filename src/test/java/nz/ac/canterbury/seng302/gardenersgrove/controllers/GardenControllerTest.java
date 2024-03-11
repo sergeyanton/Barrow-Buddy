@@ -31,7 +31,6 @@ public class GardenControllerTest {
     @MockBean
     private PlantService plantService; // this is required because the real GardensController has one
 
-
     private Garden testGarden;
 
     @BeforeEach
