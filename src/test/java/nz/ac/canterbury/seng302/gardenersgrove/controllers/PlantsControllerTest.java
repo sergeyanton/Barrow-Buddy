@@ -64,7 +64,30 @@ public class PlantsControllerTest {
 
         Mockito.verify(plantService, Mockito.times(1)).addPlant(Mockito.any());
     }
-    //TODO potentially write tests for other optional inputs
+
+    @Test
+    public void CreatePlantPost_WithValidPlantDescription_SavesToService() throws Exception {
+        Mockito.when(plantService.addPlant(Mockito.any())).thenReturn(testPlant);
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/gardens/1/plants/create").param("plantName", "Plant Name")
+                                .param("plantCount", "3").param("plantDescription", "").param("plantedOnDate", "2023-10-15"))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection());
+
+        Mockito.verify(plantService, Mockito.times(1)).addPlant(Mockito.any());
+    }
+
+    @Test
+    public void CreatePlantPost_WithValidPlantEmptyDate_SavesToService() throws Exception {
+        Mockito.when(plantService.addPlant(Mockito.any())).thenReturn(testPlant);
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/gardens/1/plants/create").param("plantName", "Plant Name")
+                                .param("plantCount", "3").param("plantDescription", "Plant Description").param("plantedOnDate", ""))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection());
+
+        Mockito.verify(plantService, Mockito.times(1)).addPlant(Mockito.any());
+    }
 
     @Test
     public void CreatePlantPost_WithInvalidPlantBadName_ReturnsError() throws Exception {
