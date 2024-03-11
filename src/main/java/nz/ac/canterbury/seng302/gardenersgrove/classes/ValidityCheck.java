@@ -144,7 +144,7 @@ public class ValidityCheck {
         try {
             LocalDate.parse(date);
         } catch (DateTimeParseException e) {
-            return Optional.of("Date in not in valid format, DD/MM/YYYY)");
+            return Optional.of("Date in not in valid format, (DD/MM/YYYY)");
         }
         return Optional.empty();
     }

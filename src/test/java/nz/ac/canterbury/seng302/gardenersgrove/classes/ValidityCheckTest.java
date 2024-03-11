@@ -289,11 +289,11 @@ public class ValidityCheckTest {
         String date5 = "0000-13-15";
 
 
-        assertEquals(Optional.of("Date in not in valid format, DD/MM/YYYY)"), ValidityCheck.validateDate(date1));
-        assertEquals(Optional.of("Date in not in valid format, DD/MM/YYYY)"), ValidityCheck.validateDate(date2));
-        assertEquals(Optional.of("Date in not in valid format, DD/MM/YYYY)"), ValidityCheck.validateDate(date3));
-        assertEquals(Optional.of("Date in not in valid format, DD/MM/YYYY)"), ValidityCheck.validateDate(date4));
-        assertEquals(Optional.of("Date in not in valid format, DD/MM/YYYY)"), ValidityCheck.validateDate(date5));
+        assertEquals(Optional.of("Date in not in valid format, (DD/MM/YYYY)"), ValidityCheck.validateDate(date1));
+        assertEquals(Optional.of("Date in not in valid format, (DD/MM/YYYY)"), ValidityCheck.validateDate(date2));
+        assertEquals(Optional.of("Date in not in valid format, (DD/MM/YYYY)"), ValidityCheck.validateDate(date3));
+        assertEquals(Optional.of("Date in not in valid format, (DD/MM/YYYY)"), ValidityCheck.validateDate(date4));
+        assertEquals(Optional.of("Date in not in valid format, (DD/MM/YYYY)"), ValidityCheck.validateDate(date5));
     }
 
     @Test
@@ -301,7 +301,7 @@ public class ValidityCheckTest {
         String date1 = "2020-13-15";
         String date2 = "2020-00-15";
 
-        assertEquals(Optional.of("Date in not in valid format, DD/MM/YYYY)"), ValidityCheck.validateDate(date1));
-        assertEquals(Optional.of("Date in not in valid format, DD/MM/YYYY)"), ValidityCheck.validateDate(date2));
+        assertEquals(Optional.of("Date in not in valid format, (DD/MM/YYYY)"), ValidityCheck.validateDate(date1));
+        assertEquals(Optional.of("Date in not in valid format, (DD/MM/YYYY)"), ValidityCheck.validateDate(date2));
     }
 }
