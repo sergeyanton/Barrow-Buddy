@@ -16,7 +16,6 @@ import static org.mockito.Mockito.*;
 class HomeControllerTest {
     @Mock
     UserService userService;
-    Logger logger;
 
     HomeController homeController;
 
@@ -24,6 +23,7 @@ class HomeControllerTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         homeController = new HomeController(userService);
+
         SecurityContextHolder.clearContext();
     }
 
@@ -34,6 +34,7 @@ class HomeControllerTest {
         String result = homeController.getHome();
 
         assertEquals("pages/homePage", result);
+
         verify(logger).info("GET /");
     }
 
@@ -44,6 +45,7 @@ class HomeControllerTest {
         String result = homeController.getHome();
 
         assertEquals("pages/landingPage", result);
+
         verify(logger).info("GET /");
     }
 }
