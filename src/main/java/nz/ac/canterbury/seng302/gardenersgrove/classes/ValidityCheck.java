@@ -138,6 +138,9 @@ public class ValidityCheck {
      *      empty optional
      */
     public static Optional<String> validateDate(String date) {
+        if (date.isBlank()) {
+            return Optional.empty();
+        }
         try {
             LocalDate.parse(date);
         } catch (DateTimeParseException e) {

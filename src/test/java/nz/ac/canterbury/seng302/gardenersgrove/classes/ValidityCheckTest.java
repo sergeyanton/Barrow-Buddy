@@ -179,15 +179,105 @@ public class ValidityCheckTest {
     }
 
     @Test
+    void ValidatePlantName_ValidName_ReturnsEmptyOptional() {
+        String plantName = "Valid Plant Name";
+        assertEquals(Optional.empty(), ValidityCheck.validatePlantName(plantName));
+    }
+
+    @Test
+    void ValidatePlantName_NameBlank_ReturnsOptionalErrorMessage() {
+        String plantName = "";
+        assertEquals(Optional.of("Plant name must not be empty"), ValidityCheck.validatePlantName(plantName));
+    }
+
+    @Test
+    void ValidatePlantName_NameContainsInvalidCharacters_ReturnsOptionalErrorMessage() {
+        String plantName = "~`!@#$%^&*()_+={}[]:;<>/?";
+        assertEquals(Optional.of("Plant name must only include letters, numbers, spaces, dots, hyphens or apostrophes"), ValidityCheck.validatePlantName(plantName));
+    }
+
+    @Test
+    void ValidatePlantName_NameIsWhitespace_ReturnsOptionalErrorMessage() {
+        String plantName = "     ";
+        assertEquals(Optional.of("Plant name must not be empty"), ValidityCheck.validatePlantName(plantName));
+    }
+
+    @Test
+    void ValidatePlantCount_PlantCountValid_ReturnsEmptyOptional() {
+        String count = "8";
+        assertEquals(Optional.empty(), ValidityCheck.validatePlantCount(count));
+    }
+
+    @Test
+    void ValidatePlantCount_PlantCountEmpty_ReturnsEmptyOptional() {
+        String count = "";
+        assertEquals(Optional.empty(), ValidityCheck.validatePlantCount(count));
+    }
+
+    @Test
+    void ValidatePlantCount_PlantCountWhitespace_ReturnsEmptyOptional() {
+        String count = "            ";
+        assertEquals(Optional.empty(), ValidityCheck.validatePlantCount(count));
+    }
+
+    @Test
+    void ValidatePlantCount_PlantCountZero_ReturnsOptionalErrorMessage() {
+        String count = "0";
+        assertEquals(Optional.of("Plant count must only be a positive integer"), ValidityCheck.validatePlantCount(count));
+    }
+
+    @Test
+    void ValidatePlantCount_PlantCountNegative_ReturnsOptionalErrorMessage() {
+        String count = "-1";
+        assertEquals(Optional.of("Plant count must only be a positive integer"), ValidityCheck.validatePlantCount(count));
+    }
+
+    @Test
+    void ValidatePlantCount_PlantCountNonNumeric_ReturnsOptionalErrorMessage() {
+        String count = "count";
+        assertEquals(Optional.of("Plant count must only be a positive integer"), ValidityCheck.validatePlantCount(count));
+    }
+
+    @Test
+    void ValidateDescription_DescriptionValid_ReturnsEmptyOptional() {
+        String description = "This plant is cool.";
+        assertEquals(Optional.empty(), ValidityCheck.validatePlantDescription(description));
+    }
+
+    @Test
+    void ValidateDescription_ValidEmpty_ReturnsEmptyOptional() {
+        String description = "";
+        assertEquals(Optional.empty(), ValidityCheck.validatePlantDescription(description));
+    }
+
+    @Test
+    void ValidateDescription_ValidWhitespace_ReturnsEmptyOptional() {
+        String description = "               ";
+        assertEquals(Optional.empty(), ValidityCheck.validatePlantDescription(description));
+    }
+
+    @Test
+    void ValidateDescription_DescriptionOver512Characters_ReturnsOptionalErrorMessage() {
+        String description = "a".repeat(513); // Creates a string with 513 characters
+        assertEquals(Optional.of("Plant description must be less than 512 characters"), ValidityCheck.validatePlantDescription(description));
+    }
+
+    @Test
     void ValidateDate_Valid_ReturnsEmptyOptional() {
         String date = "2024-10-15";
         assertEquals(Optional.empty(), ValidityCheck.validateDate(date));
     }
 
     @Test
-    void ValidateDate_InvalidEmpty_ReturnsOptionalWithErrorMessage() {
+    void ValidateDate_ValidEmpty_ReturnsEmptyOptional() {
         String date = "";
-        assertEquals(Optional.of("Date in not in valid format, DD/MM/YYYY)"), ValidityCheck.validateDate(date));
+        assertEquals(Optional.empty(), ValidityCheck.validateDate(date));
+    }
+
+    @Test
+    void ValidateDate_ValidWhitespace_ReturnsEmptyOptional() {
+        String date = "             ";
+        assertEquals(Optional.empty(), ValidityCheck.validateDate(date));
     }
 
     @Test
@@ -213,71 +303,5 @@ public class ValidityCheckTest {
 
         assertEquals(Optional.of("Date in not in valid format, DD/MM/YYYY)"), ValidityCheck.validateDate(date1));
         assertEquals(Optional.of("Date in not in valid format, DD/MM/YYYY)"), ValidityCheck.validateDate(date2));
-    }
-
-    @Test
-    void ValidatePlantName_ValidName_ReturnsEmptyOptional() {
-        String plantName = "Valid Plant Name";
-        assertEquals(Optional.empty(), ValidityCheck.validatePlantName(plantName));
-    }
-
-    @Test
-    void ValidatePlantName_NameBlank_ReturnsOptionalErrorMessage() {
-        String plantName = "";
-        assertEquals(Optional.of("Plant name must not be empty"), ValidityCheck.validatePlantName(plantName));
-    }
-
-    @Test
-    void ValidatePlantName_NameContainsInvalidCharacters_ReturnsOptionalErrorMessage() {
-        String plantName = "~`!@#$%^&*()_+={}[]:;<>/?";
-        assertEquals(Optional.of("Plant name must only include letters, numbers, spaces, dots, hyphens or apostrophes"), ValidityCheck.validatePlantName(plantName));
-    }
-
-    @Test
-    void ValidatePlantName_NameIsWhitespace_ReturnsOptionalErrorMessage() {
-        String plantName = "     ";
-        assertEquals(Optional.of("Plant name must not be empty"), ValidityCheck.validatePlantName(plantName));
-    }
-
-    @Test
-    void ValidateDescription_DescriptionValid_ReturnsEmptyOptional() {
-        String description = "This plant is cool.";
-        assertEquals(Optional.empty(), ValidityCheck.validatePlantDescription(description));
-    }
-
-    @Test
-    void ValidateDescription_DescriptionOver512Characters_ReturnsOptionalErrorMessage() {
-        String description = "a".repeat(513); // Creates a string with 513 characters
-        assertEquals(Optional.of("Plant description must be less than 512 characters"), ValidityCheck.validatePlantDescription(description));
-    }
-
-    @Test
-    void ValidatePlantCount_PlantCountValid_ReturnsEmptyOptional() {
-        String count = "8";
-        assertEquals(Optional.empty(), ValidityCheck.validatePlantCount(count));
-    }
-
-    @Test
-    void ValidatePlantCount_PlantCountBlank_ReturnsEmptyOptional() {
-        String count = "";
-        assertEquals(Optional.empty(), ValidityCheck.validatePlantCount(count));
-    }
-
-    @Test
-    void ValidatePlantCount_PlantCountZero_ReturnsOptionalErrorMessage() {
-        String count = "0";
-        assertEquals(Optional.of("Plant count must only be a positive integer"), ValidityCheck.validatePlantCount(count));
-    }
-
-    @Test
-    void ValidatePlantCount_PlantCountNegative_ReturnsOptionalErrorMessage() {
-        String count = "-1";
-        assertEquals(Optional.of("Plant count must only be a positive integer"), ValidityCheck.validatePlantCount(count));
-    }
-
-    @Test
-    void ValidatePlantCount_PlantCountNonNumeric_ReturnsOptionalErrorMessage() {
-        String count = "count";
-        assertEquals(Optional.of("Plant count must only be a positive integer"), ValidityCheck.validatePlantCount(count));
     }
 }

@@ -4,6 +4,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import jakarta.persistence.*;
 import nz.ac.canterbury.seng302.gardenersgrove.classes.ValidityCheck;
+import org.springframework.cglib.core.Local;
+
 import java.time.LocalDate;
 
 /**
@@ -19,9 +21,9 @@ public class Plant {
     private String name;
     @Column
     private Integer plantCount;
-    @Column(nullable = false)
+    @Column
     private String description;
-    @Column(nullable = false)
+    @Column
     private LocalDate plantedOnDate;
     @Column(nullable = false)
     private Long gardenId;
@@ -102,7 +104,7 @@ public class Plant {
         this.plantCount = (plantCount.isBlank()) ? null : Integer.parseInt(plantCount);
     }
 
-    public void setDescription(String description) { this.description = description; }
+    public void setDescription(String description) { this.description = (description.isBlank()) ? null : description; }
 
     public void setPlantedOnDate(LocalDate plantedOnDate) {
         this.plantedOnDate = plantedOnDate;
@@ -113,8 +115,12 @@ public class Plant {
      * @param plantedOnDate string representing the date of planting
      */
     public void setPlantedOnDate(String plantedOnDate) {
-        String[] dateList = plantedOnDate.split("/");
-        this.plantedOnDate = LocalDate.of(Integer.parseInt(dateList[2]), Integer.parseInt(dateList[1]), Integer.parseInt(dateList[0]));
+        if (plantedOnDate.isBlank()) {
+            this.plantedOnDate = null;
+        } else {
+            String[] dateList = plantedOnDate.split("/");
+            this.plantedOnDate = LocalDate.of(Integer.parseInt(dateList[2]), Integer.parseInt(dateList[1]), Integer.parseInt(dateList[0]));
+        }
     }
 
     public void setGardenId(Long gardenId) {
