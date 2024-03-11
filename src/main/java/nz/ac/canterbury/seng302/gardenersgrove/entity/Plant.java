@@ -1,11 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.entity;
 
-import java.time.format.DateTimeFormatter;
-import java.util.Optional;
 import jakarta.persistence.*;
-import nz.ac.canterbury.seng302.gardenersgrove.classes.ValidityCheck;
-import org.springframework.cglib.core.Local;
-
 import java.time.LocalDate;
 
 /**

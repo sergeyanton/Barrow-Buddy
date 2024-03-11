@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.gardenersgrove.classes;
 
-import javax.swing.text.html.Option;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Optional;
