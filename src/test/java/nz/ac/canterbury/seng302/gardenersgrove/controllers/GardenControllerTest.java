@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controllers;
 
+import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +27,10 @@ public class GardenControllerTest {
 
     @MockBean
     private GardenService gardenService;
+
+    @MockBean
+    private PlantService plantService; // this is required because the real GardensController has one
+
 
     private Garden testGarden;
 

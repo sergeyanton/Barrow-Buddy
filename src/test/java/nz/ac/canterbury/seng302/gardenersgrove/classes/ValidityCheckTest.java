@@ -196,11 +196,14 @@ public class ValidityCheckTest {
         String date2 = "absolutely not a date";
         String date3 = "15-10-2003";
         String date4 = "2024-02-31";
+        String date5 = "0000-13-15";
+
 
         assertEquals(Optional.of("Date in not in valid format, DD/MM/YYYY)"), ValidityCheck.validateDate(date1));
         assertEquals(Optional.of("Date in not in valid format, DD/MM/YYYY)"), ValidityCheck.validateDate(date2));
         assertEquals(Optional.of("Date in not in valid format, DD/MM/YYYY)"), ValidityCheck.validateDate(date3));
         assertEquals(Optional.of("Date in not in valid format, DD/MM/YYYY)"), ValidityCheck.validateDate(date4));
+        assertEquals(Optional.of("Date in not in valid format, DD/MM/YYYY)"), ValidityCheck.validateDate(date5));
     }
 
     @Test
