@@ -10,10 +10,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.InputValidation.*;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class UserValidationTest {
@@ -24,7 +24,8 @@ public class UserValidationTest {
     // No Error cases
     @Test
     void firstNameValidCheck_noError() {
-        user = new User("Fabian","Gilson","fabian.gilson@canterbury.ac.nz", "Fabian123!", LocalDate.parse("01-01-2009", DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+        user = new User("Fabian","Gilson","fabian.gilson@canterbury.ac.nz",
+                "Fabian123!", LocalDate.parse("01/01/2009", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
         Validator fnameValidator = checkName(user.getFname());
 
@@ -34,7 +35,7 @@ public class UserValidationTest {
     @Test
     void lastNameValidCheck_noError() {
         user = new User("Fabian","Gilson","fabian.gilson@canterbury.ac.nz"
-                ,  "Fabian123!" ,LocalDate.parse("01/01/2009"));
+                ,  "Fabian123!" ,LocalDate.parse("01/01/2009", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
         Validator lnameValidator = checkName(user.getLname());
         assertTrue(lnameValidator.getStatus());
@@ -46,7 +47,7 @@ public class UserValidationTest {
     void emailNameValidCheck_noError() {
         UserService userService = new UserService(userRepository);
         user = new User("Fabian","Gilson","fabian.gilson@canterbury.ac.nz"
-                ,  "Fabian123!" ,LocalDate.parse("01/01/2009"));
+                ,  "Fabian123!" ,LocalDate.parse("01/01/2009", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
         Validator emailValidator = checkEmailSignup(user.getEmail(),userService);
         assertTrue(emailValidator.getStatus());
@@ -55,7 +56,7 @@ public class UserValidationTest {
     @Test
     void dobValidCheck_noError() {
         user = new User("Fabian","Gilson","fabian.gilson@canterbury.ac.nz",
-                "Fabian123!",LocalDate.parse("01/01/2009"));
+                "Fabian123!",LocalDate.parse("01/01/2009", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         Validator dobValidator = checkDob(user.getDateOfBirth());
         assertTrue(dobValidator.getStatus());
     }
@@ -64,7 +65,7 @@ public class UserValidationTest {
     @Test
     void firstNameValidCheck_error() {
         user = new User("","Gilson","fabian.gilson@canterbury.ac.nz"
-                , "Fabian123!" ,LocalDate.parse("01/01/2009"));
+                , "Fabian123!" ,LocalDate.parse("01/01/2009", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
         Validator fnameValidator = checkName(user.getFname());
         assertFalse(fnameValidator.getStatus());
@@ -73,7 +74,7 @@ public class UserValidationTest {
     @Test
     void lastNameValidCheck_error() {
         user = new User("Fabian","","fabian.gilson@canterbury.ac.nz"
-                , "Fabian123!" ,LocalDate.parse("01/01/2009"));
+                , "Fabian123!" ,LocalDate.parse("01/01/2009", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
         Validator lnameValidator = checkName(user.getLname());
         assertFalse(lnameValidator.getStatus());
@@ -83,7 +84,7 @@ public class UserValidationTest {
     void emailNameValidCheck_error() {
         UserService userService = new UserService(userRepository);
         user = new User("Fabian","Gilson","fabian"
-                ,  "Fabian123!" ,LocalDate.parse("01/01/2009"));
+                ,  "Fabian123!" ,LocalDate.parse("01/01/2009", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         Validator emailValidator = checkEmailSignup(user.getEmail(), userService);
         assertFalse(emailValidator.getStatus());
     }
@@ -91,17 +92,20 @@ public class UserValidationTest {
 
     @Test
     void dobInvalidFormatCheck_error() {
-        User invalidUser = new User("Invalid","Person","fabian.gilson@canterbury.ac.nz",
-                "Fabian123!",LocalDate.parse("50/50/2001"));
-        Validator dobValidator = checkDob(invalidUser.getDateOfBirth());
-
-        assertFalse(dobValidator.getStatus());
+        assertThrows(DateTimeParseException.class, () -> {
+            try {
+                User invalidUser = new User("Fabian", "Gilson", "fabian.gilson@canterbury.ac.nz",
+                        "Fabian123!", LocalDate.parse("50/50/2001", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+            } catch (DateTimeParseException e) {
+                throw e;
+            }
+        });
     }
 
     @Test
     void dobInvalidAgeCheck_error() {
-        User invalidUser = new User("Invalid","Person","fabian.gilson@canterbury.ac.nz",
-                "Fabian123!",LocalDate.parse("09/09/2020"));
+        User invalidUser = new User("Fabian","Gilson","fabian.gilson@canterbury.ac.nz",
+                "Fabian123!",LocalDate.parse("09/09/2020", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         Validator dobValidator = checkDob(invalidUser.getDateOfBirth());
 
         assertFalse(dobValidator.getStatus());
@@ -110,7 +114,7 @@ public class UserValidationTest {
     @Test
     void dobFutureDateCheck_error() {
         User invalidUser = new User("Invalid","Person","fabian.gilson@canterbury.ac.nz",
-                "Fabian123!",LocalDate.parse("09/09/2040"));
+                "Fabian123!",LocalDate.parse("09/09/2040", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         Validator dobValidator = checkDob(invalidUser.getDateOfBirth());
         assertFalse(dobValidator.getStatus());
     }
