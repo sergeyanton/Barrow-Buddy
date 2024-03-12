@@ -163,6 +163,6 @@ public class AccountController {
 
         authenticateUser(user, request);
 
-        return "redirect:/profile";
+        return "redirect:/";
     }
 }
