@@ -16,14 +16,14 @@ public class ValidityCheckTest {
     @Test
     void CheckName_WithEmptyName_ReturnsOptionalWithErrorMessage() {
         String name = "";
-        assertEquals(Optional.of("Garden name must not be empty"),
+        assertEquals(Optional.of("Garden name cannot by empty"),
                 ValidityCheck.validGardenName(name));
     }
 
     @Test
     void CheckName_WithWhiteSpaceName_ReturnsOptionalWithErrorMessage() {
         String name = "             ";
-        assertEquals(Optional.of("Garden name must not be empty"),
+        assertEquals(Optional.of("Garden name cannot by empty"),
                 ValidityCheck.validGardenName(name));
     }
 
@@ -187,19 +187,23 @@ public class ValidityCheckTest {
     @Test
     void ValidatePlantName_NameBlank_ReturnsOptionalErrorMessage() {
         String plantName = "";
-        assertEquals(Optional.of("Plant name must not be empty"), ValidityCheck.validatePlantName(plantName));
+        assertEquals(Optional.of("Plant name must not be empty"),
+                ValidityCheck.validatePlantName(plantName));
     }
 
     @Test
     void ValidatePlantName_NameContainsInvalidCharacters_ReturnsOptionalErrorMessage() {
         String plantName = "~`!@#$%^&*()_+={}[]:;<>/?";
-        assertEquals(Optional.of("Plant name must only include letters, numbers, spaces, dots, hyphens or apostrophes"), ValidityCheck.validatePlantName(plantName));
+        assertEquals(Optional.of(
+                "Plant name must only include letters, numbers, spaces, dots, hyphens or apostrophes"),
+                ValidityCheck.validatePlantName(plantName));
     }
 
     @Test
     void ValidatePlantName_NameIsWhitespace_ReturnsOptionalErrorMessage() {
         String plantName = "     ";
-        assertEquals(Optional.of("Plant name must not be empty"), ValidityCheck.validatePlantName(plantName));
+        assertEquals(Optional.of("Plant name must not be empty"),
+                ValidityCheck.validatePlantName(plantName));
     }
 
     @Test
@@ -223,19 +227,22 @@ public class ValidityCheckTest {
     @Test
     void ValidatePlantCount_PlantCountZero_ReturnsOptionalErrorMessage() {
         String count = "0";
-        assertEquals(Optional.of("Plant count must only be a positive integer"), ValidityCheck.validatePlantCount(count));
+        assertEquals(Optional.of("Plant count must only be a positive integer"),
+                ValidityCheck.validatePlantCount(count));
     }
 
     @Test
     void ValidatePlantCount_PlantCountNegative_ReturnsOptionalErrorMessage() {
         String count = "-1";
-        assertEquals(Optional.of("Plant count must only be a positive integer"), ValidityCheck.validatePlantCount(count));
+        assertEquals(Optional.of("Plant count must only be a positive integer"),
+                ValidityCheck.validatePlantCount(count));
     }
 
     @Test
     void ValidatePlantCount_PlantCountNonNumeric_ReturnsOptionalErrorMessage() {
         String count = "count";
-        assertEquals(Optional.of("Plant count must only be a positive integer"), ValidityCheck.validatePlantCount(count));
+        assertEquals(Optional.of("Plant count must only be a positive integer"),
+                ValidityCheck.validatePlantCount(count));
     }
 
     @Test
@@ -259,7 +266,8 @@ public class ValidityCheckTest {
     @Test
     void ValidateDescription_DescriptionOver512Characters_ReturnsOptionalErrorMessage() {
         String description = "a".repeat(513); // Creates a string with 513 characters
-        assertEquals(Optional.of("Plant description must be less than 512 characters"), ValidityCheck.validatePlantDescription(description));
+        assertEquals(Optional.of("Plant description must be less than 512 characters"),
+                ValidityCheck.validatePlantDescription(description));
     }
 
     @Test
@@ -289,11 +297,16 @@ public class ValidityCheckTest {
         String date5 = "0000-13-15";
 
 
-        assertEquals(Optional.of("Date in not in valid format, (DD/MM/YYYY)"), ValidityCheck.validateDate(date1));
-        assertEquals(Optional.of("Date in not in valid format, (DD/MM/YYYY)"), ValidityCheck.validateDate(date2));
-        assertEquals(Optional.of("Date in not in valid format, (DD/MM/YYYY)"), ValidityCheck.validateDate(date3));
-        assertEquals(Optional.of("Date in not in valid format, (DD/MM/YYYY)"), ValidityCheck.validateDate(date4));
-        assertEquals(Optional.of("Date in not in valid format, (DD/MM/YYYY)"), ValidityCheck.validateDate(date5));
+        assertEquals(Optional.of("Date in not in valid format, (DD/MM/YYYY)"),
+                ValidityCheck.validateDate(date1));
+        assertEquals(Optional.of("Date in not in valid format, (DD/MM/YYYY)"),
+                ValidityCheck.validateDate(date2));
+        assertEquals(Optional.of("Date in not in valid format, (DD/MM/YYYY)"),
+                ValidityCheck.validateDate(date3));
+        assertEquals(Optional.of("Date in not in valid format, (DD/MM/YYYY)"),
+                ValidityCheck.validateDate(date4));
+        assertEquals(Optional.of("Date in not in valid format, (DD/MM/YYYY)"),
+                ValidityCheck.validateDate(date5));
     }
 
     @Test
@@ -301,7 +314,9 @@ public class ValidityCheckTest {
         String date1 = "2020-13-15";
         String date2 = "2020-00-15";
 
-        assertEquals(Optional.of("Date in not in valid format, (DD/MM/YYYY)"), ValidityCheck.validateDate(date1));
-        assertEquals(Optional.of("Date in not in valid format, (DD/MM/YYYY)"), ValidityCheck.validateDate(date2));
+        assertEquals(Optional.of("Date in not in valid format, (DD/MM/YYYY)"),
+                ValidityCheck.validateDate(date1));
+        assertEquals(Optional.of("Date in not in valid format, (DD/MM/YYYY)"),
+                ValidityCheck.validateDate(date2));
     }
 }
