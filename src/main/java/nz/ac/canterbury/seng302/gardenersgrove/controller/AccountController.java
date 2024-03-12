@@ -23,6 +23,7 @@ import java.time.format.DateTimeFormatter;
 import static nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection.RegistrationData.createNewUser;
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.InputValidation.checkLoginData;
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.InputValidation.verifyPassword;
+import static nz.ac.canterbury.seng302.gardenersgrove.util.PageUtils.pageWithError;
 
 @Controller
 public class AccountController {
@@ -48,18 +49,6 @@ public class AccountController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
         }
-    }
-
-    /**
-     * Adds an error message to a given page. Requires the user of errorMessageFragment in the page HTML.
-     * @param pagePath The path to the HTML/ThymeLeaf page to add the error message to
-     * @param model The request Model
-     * @param errorMessage The error message/text to be displayed
-     * @return The given pagePath
-     */
-    public static String pageWithError(String pagePath, Model model, String errorMessage) {
-        model.addAttribute("errorMessage", errorMessage);
-        return pagePath;
     }
 
 
@@ -131,26 +120,8 @@ public class AccountController {
     @GetMapping("/login")
     public String getLoginPage() {
         logger.info("GET /login");
-        return userService.isSignedIn() ?   "redirect:/": "pages/loginPage";
-        //        return "pages/loginPage";
-
+        return userService.isSignedIn() ? "redirect:/" : "pages/loginPage";
     }
-
-//
-//    @GetMapping("/profile")
-//    public String getProfilePage(Model model) {
-//        logger.info("GET /profile");
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        String currentPrincipalName = authentication.getName();
-//        User u = userService.getUserByEmail(currentPrincipalName);
-//        model.addAttribute("fName", u.getFname());
-//        model.addAttribute("lName", u.getLname());
-//        model.addAttribute("email", u.getEmail());
-//        model.addAttribute("dob", u.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-//        return "pages/profilePage";
-//    }
-//
-
 
     /**
      * Handles POST requests to the /login endpoint. Logs in the user, or shows an error message if the login details are invalid.
@@ -184,6 +155,6 @@ public class AccountController {
 
         authenticateUser(user, request);
 
-        return "redirect:/";
+        return "redirect:/profile";
     }
 }

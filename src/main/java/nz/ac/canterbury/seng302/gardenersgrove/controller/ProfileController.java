@@ -19,11 +19,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
-import static nz.ac.canterbury.seng302.gardenersgrove.controller.AccountController.pageWithError;
-import static nz.ac.canterbury.seng302.gardenersgrove.validation.InputValidation.checkName;
+import static nz.ac.canterbury.seng302.gardenersgrove.util.PageUtils.pageWithError;
 import static nz.ac.canterbury.seng302.gardenersgrove.validation.InputValidation.hashPassword;
 
 
@@ -118,7 +116,6 @@ public class ProfileController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
         }
-
 
         return "redirect:/profile";
     }
