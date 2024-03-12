@@ -93,12 +93,8 @@ public class UserValidationTest {
     @Test
     void dobInvalidFormatCheck_error() {
         assertThrows(DateTimeParseException.class, () -> {
-            try {
-                User invalidUser = new User("Fabian", "Gilson", "fabian.gilson@canterbury.ac.nz",
-                        "Fabian123!", LocalDate.parse("50/50/2001", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-            } catch (DateTimeParseException e) {
-                throw e;
-            }
+            User invalidUser = new User("Fabian", "Gilson", "fabian.gilson@canterbury.ac.nz",
+                    "Fabian123!", LocalDate.parse("50/50/2001", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         });
     }
 
