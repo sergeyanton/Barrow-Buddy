@@ -68,7 +68,7 @@ public class UserValidationTest {
 
     // Error cases
     @Test
-    void firstNameValidCheck_error() {
+    void firstNameEmptyCheck_error() {
         user = new User("","Gilson","fabian.gilson@canterbury.ac.nz"
                 , "Fabian123!" ,LocalDate.parse("01/01/2009", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
@@ -77,7 +77,7 @@ public class UserValidationTest {
     }
 
     @Test
-    void lastNameValidCheck_error() {
+    void lastNameEmptyCheck_error() {
         user = new User("Fabian","","fabian.gilson@canterbury.ac.nz"
                 , "Fabian123!" ,LocalDate.parse("01/01/2009", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
@@ -86,7 +86,7 @@ public class UserValidationTest {
     }
 
     @Test
-    void emailNameValidCheck_error() {
+    void emailInvalidCheck_error() {
         UserService userService = new UserService(userRepository);
         user = new User("Fabian","Gilson","fabian"
                 ,  "Fabian123!" ,LocalDate.parse("01/01/2009", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
