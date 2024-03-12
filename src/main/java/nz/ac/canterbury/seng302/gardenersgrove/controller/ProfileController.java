@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.gardenersgrove.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection.RegistrationData;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.User;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Validator;
@@ -8,8 +9,11 @@ import nz.ac.canterbury.seng302.gardenersgrove.validation.InputValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +33,8 @@ public class ProfileController {
     public ProfileController(UserService userService) {
         this.userService = userService;
     }
+    @Autowired
+    private AuthenticationManager authenticationManager;
     private final UserService userService;
 
     Logger logger = LoggerFactory.getLogger(ProfileController.class);
@@ -63,7 +69,7 @@ public class ProfileController {
      * @return A string that represents the link to the profile page
      */
     @PostMapping("/editProfile")
-    public String editProfile(RegistrationData updatedUser, Model model) {
+    public String editProfile(HttpServletRequest request, RegistrationData updatedUser, Model model) {
         logger.info("POST /editProfile");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
@@ -104,6 +110,14 @@ public class ProfileController {
         }
 
         userService.updateUserByEmail(oldEmail, currentUser);
+
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(currentUser.getEmail(), currentUser.getPassword(), currentUser.getAuthorities());
+        authentication = authenticationManager.authenticate(token);
+
+        if (authentication.isAuthenticated()) {
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
+        }
 
 
         return "redirect:/profile";
