@@ -15,8 +15,7 @@
 
 <th:block
     th:fragment="gardenForm(action, actionLabel, cancel, gardenName, gardenLocation, gardenSize, gardenNameError, gardenLocationError, gardenSizeError)">
-    <form th:action="${action}" method="post" onkeydown="if(event.keyCode === 13 && event.target.tagName.toLowerCase() === 'input'){
-        event.preventDefault();}" novalidate>
+    <form th:action="${action}" method="post" novalidate>
         <div
             th:replace="~{fragments/formElement :: formElement(name='gardenName', label='Name: ', value=${gardenName}, placeholder='Your garden\'s name', error=${gardenNameError})}">
         </div>
