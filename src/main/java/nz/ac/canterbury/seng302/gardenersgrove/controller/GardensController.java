@@ -151,8 +151,10 @@ public class GardensController {
     public String gardenEditGet(@PathVariable("gardenId") Long gardenId, Model model) {
         logger.info("GET /gardens/" + gardenId + "/edit");
         Garden garden = gardenService.getGardenById(gardenId);
-        model.addAttribute("garden", garden);
-
+        model.addAttribute("gardenId", gardenId);
+        model.addAttribute("gardenName", garden.getName());
+        model.addAttribute("gardenLocation", garden.getLocation());
+        model.addAttribute("gardenSize", garden.getSize());
         model.addAttribute("actionLabel", "Edit Garden");
         return "editGarden";
     }
@@ -163,8 +165,8 @@ public class GardensController {
      * @param gardenName name of garden
      * @param gardenLocation location of garden
      * @param gardenSize size of garden
-     * @param model (map-like) representation of values for use in thymeleaf, with values being set to
-     *        relevant parameters provided
+     * @param model (map-like) representation of values for use in thymeleaf, with values being set
+     *        to relevant parameters provided
      * @return thymeleaf editGarden
      *
      */
@@ -188,8 +190,12 @@ public class GardensController {
             logger.info("Garden updated: " + garden);
             return "redirect:/gardens/" + garden.getId();
         }
-        model.addAttribute(garden); // so that editGarden.html knows the id of garden being edited.
         model.addAttribute("actionLabel", "Edit Garden");
+        model.addAttribute("gardenId", gardenId);
+        model.addAttribute("gardenSize", gardenSize);
+        model.addAttribute("gardenLocation", gardenLocation);
+        model.addAttribute("gardenName", gardenName);
+
         displayGardenFormErrors(gardenName, gardenLocation, gardenSize, model);
         return "editGarden";
     }
@@ -204,24 +210,23 @@ public class GardensController {
      * @param plantCount the amount of this plant in the garden
      * @param plantDescription a short description of the plant
      * @param plantedOnDate the date that the plant was planted on
-     * @param model (map-like) representation of values for use in thymeleaf, with values being set to
-     *      relevant parameters provided
+     * @param model (map-like) representation of values for use in thymeleaf, with values being set
+     *        to relevant parameters provided
      * @return thymeleaf createPlant
      */
     @GetMapping("/gardens/{gardenId}/plants/create")
     public String gardenCreatePlantGet(@PathVariable("gardenId") Long gardenId,
-                                       @RequestParam(name = "plantName", required = false,
-                                               defaultValue = "") String plantName,
-                                       @RequestParam(name = "plantCount", required = false,
-                                               defaultValue = "") String plantCount,
-                                       @RequestParam(name = "plantDescription", required = false,
-                                               defaultValue = "") String plantDescription,
-                                       @RequestParam(name = "plantedOnDate", required = false,
-                                               defaultValue = "") String plantedOnDate,
-                                       Model model) {
+            @RequestParam(name = "plantName", required = false, defaultValue = "") String plantName,
+            @RequestParam(name = "plantCount", required = false,
+                    defaultValue = "") String plantCount,
+            @RequestParam(name = "plantDescription", required = false,
+                    defaultValue = "") String plantDescription,
+            @RequestParam(name = "plantedOnDate", required = false,
+                    defaultValue = "") String plantedOnDate,
+            Model model) {
         logger.info("GET /gardens/" + gardenId + "/plants/create");
 
-        //TODO handle when the gardenId is not for an existing garden (.getGardenById)
+        // TODO handle when the gardenId is not for an existing garden (.getGardenById)
 
         model.addAttribute("gardenId", gardenId);
         model.addAttribute("plantName", plantName);
@@ -241,22 +246,24 @@ public class GardensController {
      * @param plantCount the amount of this plant in the garden
      * @param plantDescription a short description of the plant
      * @param plantedOnDate the date that the plant was planted on
-     * @param model (map-like) representation of values for use in thymeleaf, with values being set to
-     *      relevant parameters provided
+     * @param model (map-like) representation of values for use in thymeleaf, with values being set
+     *        to relevant parameters provided
      * @return thymeleaf createPlant if invalid form, gardens/{gardenId} if valid
      */
     @PostMapping("/gardens/{gardenId}/plants/create")
     public String gardenCreatePlantPost(@PathVariable("gardenId") Long gardenId,
-                                       @RequestParam(name = "plantName") String plantName,
-                                       @RequestParam(name = "plantCount") String plantCount,
-                                       @RequestParam(name = "plantDescription") String plantDescription,
-                                       @RequestParam(name = "plantedOnDate") String plantedOnDate,
-                                       Model model) {
+            @RequestParam(name = "plantName") String plantName,
+            @RequestParam(name = "plantCount") String plantCount,
+            @RequestParam(name = "plantDescription") String plantDescription,
+            @RequestParam(name = "plantedOnDate") String plantedOnDate, Model model) {
         logger.info("POST /gardens/" + gardenId + "/plants/create");
 
         if (ValidityCheck.validPlantForm(plantName, plantCount, plantDescription, plantedOnDate)) {
-            plantedOnDate = plantedOnDate.isBlank() ? "" : plantedOnDate.split("-")[2] + "/" + plantedOnDate.split("-")[1] + "/" + plantedOnDate.split("-")[0]; // maybe not necessary
-            Plant addedPlant = plantService.addPlant(new Plant(plantName, plantCount, plantDescription, plantedOnDate, gardenId));
+            plantedOnDate = plantedOnDate.isBlank() ? ""
+                    : plantedOnDate.split("-")[2] + "/" + plantedOnDate.split("-")[1] + "/"
+                            + plantedOnDate.split("-")[0]; // maybe not necessary
+            Plant addedPlant = plantService.addPlant(
+                    new Plant(plantName, plantCount, plantDescription, plantedOnDate, gardenId));
             logger.info("Plant created: " + addedPlant);
             return "redirect:/gardens/" + gardenId;
         }
@@ -275,11 +282,11 @@ public class GardensController {
      * @param gardenName name of the garden
      * @param gardenLocation location of the garden
      * @param gardenSize size of the garden
-     * @param model (map-like) representation of values for use in thymeleaf, with values being set to
-     *        relevant parameters provided
+     * @param model (map-like) representation of values for use in thymeleaf, with values being set
+     *        to relevant parameters provided
      */
-    private void displayGardenFormErrors(String gardenName, String gardenLocation, String gardenSize,
-            Model model) {
+    private void displayGardenFormErrors(String gardenName, String gardenLocation,
+            String gardenSize, Model model) {
         model.addAttribute("gardenName", gardenName);
         model.addAttribute("gardenLocation", gardenLocation);
         model.addAttribute("gardenSize", gardenSize);
@@ -313,11 +320,11 @@ public class GardensController {
      * @param plantCount the amount of plants in the garden
      * @param plantDescription a short description of the plant
      * @param plantedOnDate the date that the plant was planted
-     * @param model (map-like) representation of values for use in thymeleaf, with values being set to
-     *      relevant parameters provided
+     * @param model (map-like) representation of values for use in thymeleaf, with values being set
+     *        to relevant parameters provided
      */
-    private void displayPlantFormErrors(String plantName, String plantCount, String plantDescription, String plantedOnDate,
-                                         Model model) {
+    private void displayPlantFormErrors(String plantName, String plantCount,
+            String plantDescription, String plantedOnDate, Model model) {
         model.addAttribute("plantName", plantName);
         model.addAttribute("plantCount", plantCount);
         model.addAttribute("plantDescription", plantDescription);
@@ -325,7 +332,8 @@ public class GardensController {
 
         Optional<String> validPlantNameCheck = ValidityCheck.validatePlantName(plantName);
         Optional<String> validPlantCountCheck = ValidityCheck.validatePlantCount(plantCount);
-        Optional<String> validPlantDescription = ValidityCheck.validatePlantDescription(plantDescription);
+        Optional<String> validPlantDescription =
+                ValidityCheck.validatePlantDescription(plantDescription);
         Optional<String> validPlantedOnDate = ValidityCheck.validateDate(plantedOnDate);
 
         if (validPlantNameCheck.isPresent()) {

@@ -13,7 +13,7 @@
         <h1>Edit Garden Details</h1>
         <div>
             <form
-                th:replace="~{fragments/formElement :: gardenForm(action=@{'/gardens/' + ${garden.id} + '/edit'}, actionLabel=${actionLabel}, cancel=@{'/gardens/' + ${garden.id}}, gardenName=${garden.name}, gardenLocation=${garden.location}, gardenSize=${garden.size}, gardenNameError=${gardenNameError}, gardenLocationError=${gardenLocationError}, gardenSizeError=${gardenSizeError})}">
+                th:replace="~{fragments/formElement :: gardenForm(action=@{'/gardens/' + ${gardenId} + '/edit'}, actionLabel=${actionLabel}, cancel=@{'/gardens/' + ${gardenId}}, gardenName=${gardenName}, gardenLocation=${gardenLocation}, gardenSize=${gardenSize}, gardenNameError=${gardenNameError}, gardenLocationError=${gardenLocationError}, gardenSizeError=${gardenSizeError})}">
             </form>
         </div>
     </main>
