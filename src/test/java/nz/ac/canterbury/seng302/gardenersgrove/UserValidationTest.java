@@ -19,8 +19,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UserValidationTest {
     private User user;
 
-
-
     // No Error cases
     @Test
     void firstNameValidCheck_noError() {
@@ -28,7 +26,6 @@ public class UserValidationTest {
                 "Fabian123!", LocalDate.parse("01/01/2009", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
         Validator fnameValidator = checkName(user.getFname());
-
         assertTrue(fnameValidator.getStatus());
     }
 
@@ -59,6 +56,14 @@ public class UserValidationTest {
                 "Fabian123!",LocalDate.parse("01/01/2009", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         Validator dobValidator = checkDob(user.getDateOfBirth());
         assertTrue(dobValidator.getStatus());
+    }
+
+    @Test
+    void passwordValidCheck_noError() {
+        User invalidUser = new User("Invalid","Person","fabian.gilson@canterbury.ac.nz",
+                "Fabian123!",LocalDate.parse("01/01/2009", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        Validator passwordValidator = checkPassword(invalidUser.getPassword());
+        assertTrue(passwordValidator.getStatus());
     }
 
     // Error cases
@@ -108,16 +113,35 @@ public class UserValidationTest {
     }
 
     @Test
-    void dobFutureDateCheck_error() {
+    void dobFutureYearDateCheck_error() {
         User invalidUser = new User("Invalid","Person","fabian.gilson@canterbury.ac.nz",
-                "Fabian123!",LocalDate.parse("09/09/2040", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                "Fabian123!",LocalDate.now().plusYears(5));
         Validator dobValidator = checkDob(invalidUser.getDateOfBirth());
         assertFalse(dobValidator.getStatus());
     }
 
+    @Test
+    void dobFutureMonthDateCheck_error() {
+        User invalidUser = new User("Invalid","Person","fabian.gilson@canterbury.ac.nz",
+                "Fabian123!",LocalDate.now().plusMonths(5));
+        Validator dobValidator = checkDob(invalidUser.getDateOfBirth());
+        assertFalse(dobValidator.getStatus());
+    }
 
+    @Test
+    void dobFutureDayDateCheck_error() {
+        User invalidUser = new User("Invalid","Person","fabian.gilson@canterbury.ac.nz",
+                "Fabian123!",LocalDate.now().plusDays(5));
+        Validator dobValidator = checkDob(invalidUser.getDateOfBirth());
+        assertFalse(dobValidator.getStatus());
+    }
 
-
-
+    @Test
+    void passwordInvalidFormatCheck_error() {
+        User invalidUser = new User("Invalid","Person","fabian.gilson@canterbury.ac.nz",
+                "abc",LocalDate.parse("01/01/2009", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        Validator passwordValidator = checkPassword(invalidUser.getPassword());
+        assertFalse(passwordValidator.getStatus());
+    }
 
 }

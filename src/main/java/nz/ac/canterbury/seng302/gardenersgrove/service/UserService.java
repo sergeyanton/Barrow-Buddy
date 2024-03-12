@@ -29,8 +29,8 @@ public class UserService  {
      * Registers a new user.
      * @param user The user to register.
      */
-    public void registerUser(User user) {
-        userRepository.save(user);
+    public User registerUser(User user) {
+        return userRepository.save(user);
     }
 
     /**

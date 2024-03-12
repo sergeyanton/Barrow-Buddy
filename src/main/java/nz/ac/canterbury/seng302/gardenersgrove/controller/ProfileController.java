@@ -79,9 +79,9 @@ public class ProfileController {
 
         Validator error;
         if (Objects.equals(currentUser.getEmail(), updatedUser.getEmail())) {
-            error = inputValidation.dataCheck(updatedUser,true);
+            error = inputValidation.checkRegistrationData(updatedUser,true);
         } else {
-            error = inputValidation.dataCheck(updatedUser,false);
+            error = inputValidation.checkRegistrationData(updatedUser,false);
         }
         if (!error.getStatus()) {
             return pageWithError(getEditProfilePage(model), model, error.getMessage());

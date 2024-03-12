@@ -18,7 +18,8 @@ public class InputValidation {
     public InputValidation(UserService userService) {
         this.userService = userService;
     }
-    public static Validator checkRegistrationData(RegistrationData newUser, UserService userService){
+
+    public Validator checkRegistrationData(RegistrationData newUser, Boolean emailDupe) {
         Validator nameCheck = checkName(newUser.getfName());
         if (!nameCheck.getStatus()) return nameCheck;
 
@@ -27,15 +28,19 @@ public class InputValidation {
             if (!surnameCheck.getStatus()) return surnameCheck;
         }
 
-        Validator emailCheck = checkEmailSignup(newUser.getEmail(), userService);
-        if (!emailCheck.getStatus()) return emailCheck;
-
-        if(!Objects.equals(newUser.getPassword(), newUser.getRetypePassword())){
-            return new Validator(false, "Passwords do not match");
+        if (!emailDupe) {
+            Validator emailCheck = checkEmailSignup(newUser.getEmail(), userService);
+            if (!emailCheck.getStatus()) return emailCheck;
         }
 
-        Validator passwordCheck = checkPassword(newUser.getPassword());
-        if (!passwordCheck.getStatus()) return passwordCheck;
+        if (!newUser.getPassword().isBlank()) {
+            if(!Objects.equals(newUser.getPassword(), newUser.getRetypePassword())){
+                return new Validator(false, "Passwords do not match");
+            }
+
+            Validator passwordCheck = checkPassword(newUser.getPassword());
+            if (!passwordCheck.getStatus()) return passwordCheck;
+        }
 
         Validator dobCheck = checkDob(newUser.getDob());
         if (!dobCheck.getStatus()){return dobCheck;}
@@ -169,7 +174,6 @@ public class InputValidation {
         return BCrypt.hashpw(password, BCrypt.gensalt());
     }
 
-
     /**
      * Checks if a given plain text password is equal to a given hashed password.
      * @param givenPassword plain text password
@@ -179,49 +183,5 @@ public class InputValidation {
     public static boolean verifyPassword(String givenPassword, String hashedPassword) {
         return BCrypt.checkpw(givenPassword, hashedPassword);
     }
-
-
-    public Validator dataCheck(RegistrationData newUser, Boolean emailDupe){
-        Validator nameCheck = checkName(newUser.getfName());
-        if (!nameCheck.getStatus()) return nameCheck;
-
-        if (!newUser.getNoSurnameCheckBox()) {
-            Validator surnameCheck = checkName(newUser.getlName());
-            if (!surnameCheck.getStatus()) return surnameCheck;
-        }
-
-        if (!emailDupe) {
-            Validator emailCheck = checkEmailSignup(newUser.getEmail(), userService);
-            if (!emailCheck.getStatus()) return emailCheck;
-        }
-
-        if (!newUser.getPassword().isBlank()) {
-            if(!Objects.equals(newUser.getPassword(), newUser.getRetypePassword())){
-                return new Validator(false, "Passwords do not match");
-            }
-
-            Validator passwordCheck = checkPassword(newUser.getPassword());
-            if (!passwordCheck.getStatus()) return passwordCheck;
-        }
-
-
-        Validator dobCheck = checkDob(newUser.getDob());
-        if (!dobCheck.getStatus()){return dobCheck;}
-
-        return new Validator(true, "");
-    }
-
-    public static Validator loginInputCheck(LogInData newUser){
-
-        Validator emailCheck = checkEmailLogin(newUser.getEmail());
-        if (!emailCheck.getStatus()) return emailCheck;
-
-        Validator passwordCheck = checkPasswordEmpty(newUser.getPassword());
-        if (!passwordCheck.getStatus()) return passwordCheck;
-
-        return new Validator(true, "");
-    }
-
-
 
 }
