@@ -6,6 +6,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection.Registr
 import nz.ac.canterbury.seng302.gardenersgrove.entity.User;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.Validator;
 import nz.ac.canterbury.seng302.gardenersgrove.service.UserService;
+import nz.ac.canterbury.seng302.gardenersgrove.validation.InputValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +20,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-
 import java.time.format.DateTimeFormatter;
-
-import static nz.ac.canterbury.seng302.gardenersgrove.validation.InputValidation.*;
 import static nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection.RegistrationData.createNewUser;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.InputValidation.checkLoginData;
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.InputValidation.verifyPassword;
+import static nz.ac.canterbury.seng302.gardenersgrove.util.PageUtils.pageWithError;
 
 @Controller
 public class AccountController {
@@ -49,18 +50,6 @@ public class AccountController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
         }
-    }
-
-    /**
-     * Adds an error message to a given page. Requires the user of errorMessageFragment in the page HTML.
-     * @param pagePath The path to the HTML/ThymeLeaf page to add the error message to
-     * @param model The request Model
-     * @param errorMessage The error message/text to be displayed
-     * @return The given pagePath
-     */
-    private String pageWithError(String pagePath, Model model, String errorMessage) {
-        model.addAttribute("errorMessage", errorMessage);
-        return pagePath;
     }
 
 
@@ -107,7 +96,9 @@ public class AccountController {
     public String register(HttpServletRequest request, RegistrationData newUser, Model model) {
         logger.info(String.format("Registering new user '%s %s'", newUser.getfName(), newUser.getlName()));
 
-        Validator error = checkRegistrationData(newUser, userService);
+        InputValidation inputValidation = new InputValidation(userService);
+
+        Validator error = inputValidation.dataCheck(newUser,false);
         if (!error.getStatus()) {
             model.addAttribute("fName", newUser.getfName());
             model.addAttribute("lName", newUser.getlName());
@@ -143,7 +134,6 @@ public class AccountController {
         return userService.isSignedIn() ? "redirect:/" : "pages/loginPage";
     }
 
-
     /**
      * Handles POST requests to the /login endpoint. Logs in the user, or shows an error message if the login details are invalid.
      * @param request The HTTP request being made
@@ -176,6 +166,6 @@ public class AccountController {
 
         authenticateUser(user, request);
 
-        return "redirect:/";
+        return "redirect:/profile";
     }
 }
