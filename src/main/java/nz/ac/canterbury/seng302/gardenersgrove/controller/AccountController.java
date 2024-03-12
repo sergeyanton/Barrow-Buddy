@@ -156,7 +156,7 @@ public class AccountController {
         User user = userService.findEmail(newUser.getEmail());
 
         if (user == null) {
-            String errorMessage = String.format("No user with the email '%s' exists.", newUser.getEmail());
+            String errorMessage = "The email address is unknown, or the password is invalid";
             return pageWithError("pages/loginPage", model, errorMessage);
         }
 
