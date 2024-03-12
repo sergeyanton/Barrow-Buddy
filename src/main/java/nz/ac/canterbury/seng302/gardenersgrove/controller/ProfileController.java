@@ -80,7 +80,7 @@ public class ProfileController {
             error = inputValidation.dataCheck(updatedUser,false);
         }
         if (!error.getStatus()) {
-            return pageWithError("pages/editProfilePage", model, error.getMessage());
+            return pageWithError(getEditProfilePage(model), model, error.getMessage());
         }
 
         if (updatedUser.getfName() != null &&!Objects.equals(updatedUser.getfName(), currentUser.getFname())) {
