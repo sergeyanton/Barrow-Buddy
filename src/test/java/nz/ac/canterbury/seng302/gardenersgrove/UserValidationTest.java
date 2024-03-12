@@ -1,7 +1,7 @@
 package nz.ac.canterbury.seng302.gardenersgrove;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.User;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Validator;
+import nz.ac.canterbury.seng302.gardenersgrove.validation.Validator;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.UserRepository;
 import nz.ac.canterbury.seng302.gardenersgrove.service.UserService;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.gardenersgrove.entity;
+package nz.ac.canterbury.seng302.gardenersgrove.validation;
 
 /**
  * This class represents a validation result, including a status and a message.
