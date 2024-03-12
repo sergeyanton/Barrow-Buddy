@@ -18,7 +18,13 @@
         <button type="submit">Log Out</button>
     </form>
 
-    <div id="cancel">
+<form th:action="@{logout}" method="post">
+    <button type="submit">Logout</button>
+</form>
+        <div id="editProfile">
+            <a th:href="@{editProfile}">Edit profile</a>
+        </div>
+    <div id="home">
         <a th:href="@{.}">Home</a>
     </div>
 </div>

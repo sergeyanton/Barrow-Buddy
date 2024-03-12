@@ -20,7 +20,7 @@ h1 {
     margin-bottom: 2rem;
 }
 
-/*Basic container styles */
+/* Basic container styles */
 #basic {
     padding: 1.5rem;
     background-color: #FAF9F6;
@@ -37,25 +37,7 @@ h1 {
 }
 
 
-/* If we want to make the container size fits the texts automatically */
-/*#basic {*/
-/*    padding: 10px 22px;*/
-/*    background-color: #FAF9F6;*/
-/*    border-radius: 1rem;*/
-/*    position: relative;*/
-/*    width: auto;*/
-/*    height: 45%;*/
-/*    display: flex;*/
-/*    flex-direction: column;*/
-/*    justify-content: center;*/
-/*    align-items: center;*/
-/*    box-shadow: 0 0 1rem rgba(0, 0, 0, 0.5);*/
-/*}*/
-
-
-
-/* Cancel link styles */
-#cancel a{
+:is(#cancel,#back,#home) a{
     padding: 10px 22px; /* Adjust padding to increase link size */
     font-size: 18px;
     border-radius: 1rem;
@@ -69,7 +51,7 @@ h1 {
     background-color: darkred;
 }
 
-#cancel a:hover {
+:is(#cancel,#back,#home) a:hover {
     background-color: rgba(139, 0, 0, 0.55);
 }
 

@@ -1,12 +1,12 @@
 package nz.ac.canterbury.seng302.gardenersgrove.repository;
 
 import nz.ac.canterbury.seng302.gardenersgrove.entity.User;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -19,4 +19,22 @@ public interface UserRepository extends CrudRepository<User, Long> {
     Optional<User> findByEmailAndPassword(String email, String password);
 
     Optional<User> findByEmail(String email);
+
+    /**
+     * Updates the user with the given email to the new user details.
+     * @param oldEmail the email of the user to update
+     * @param newUser the new user details
+     */
+    default void updateUserByEmail(String oldEmail, User newUser) {
+    Optional<User> optionalUser = findByEmail(oldEmail);
+    if (optionalUser.isPresent()){
+        User user = optionalUser.get();
+        user.setFname(newUser.getFname());
+        user.setLname(newUser.getLname());
+        user.setEmail(newUser.getEmail());
+        user.setPassword(newUser.getPassword());
+        user.setDateOfBirth(newUser.getDateOfBirth());
+        save(user);
+        }
+    }
 }
