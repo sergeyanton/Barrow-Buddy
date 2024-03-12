@@ -8,12 +8,12 @@
 </head>
 
 <body>
-    <div th:replace="fragments/header :: header"></div>
+    <div th:replace="~{fragments/header :: header}"></div>
     <main>
         <h1>Create a garden</h1>
         <div>
             <form
-                th:replace="fragments/formElement :: gardenForm(action=@{/gardens/create}, cancel=${nextDestination}, gardenName=${gardenName}, gardenLocation=${gardenLocation}, gardenSize=${gardenSize}, gardenNameError=${gardenNameError}, gardenLocationError=${gardenLocationError}, gardenSizeError=${gardenSizeError})">
+                th:replace="~{fragments/formElement :: gardenForm(action=@{/gardens/create}, actionLabel=${actionLabel}, cancel=${nextDestination}, gardenName=${gardenName}, gardenLocation=${gardenLocation}, gardenSize=${gardenSize}, gardenNameError=${gardenNameError}, gardenLocationError=${gardenLocationError}, gardenSizeError=${gardenSizeError})}">
             </form>
         </div>
     </main>
