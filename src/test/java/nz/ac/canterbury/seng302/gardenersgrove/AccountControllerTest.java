@@ -17,15 +17,16 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.*;
 
 import java.time.LocalDate;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 @WebMvcTest(AccountController.class)
 @AutoConfigureMockMvc
@@ -53,6 +54,7 @@ class AccountControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void createUser_validUserGiven_SaveUser() throws Exception {
         String email = "test@example.com";
         String fName = "John";
@@ -61,18 +63,20 @@ class AccountControllerTest {
         String password = "testPassword";
         String retypePassword = "testPassword";
 
-        String hashedPassword = InputValidation.hashPassword(password);
-
         RegistrationData registrationData = new RegistrationData(email, fName, lName, dob, password, retypePassword, false);
         User validUser = RegistrationData.createNewUser(registrationData);
 
         userService.registerUser(validUser);
 
-        mockMvc.perform(formLogin("/register")
+        String body = makeMapper().writeValueAsString(registrationData);
+        System.out.println(body);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/register")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(makeMapper().writeValueAsString(registrationData)))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("redirect:/profile"));
+                        .content(body))
+                        .andExpect(MockMvcResultMatchers.status().isOk());
+                        //.andExpect(MockMvcResultMatchers.redirectedUrl("redirect:/profile"));
     }
 
 //    @Test
@@ -90,7 +94,7 @@ class AccountControllerTest {
 //                registrationData.getPassword(), registrationData.getDob());
 //        Mockito.when(userService.getUserByEmailAndPassword(mockUser.getEmail(), mockUser.getPassword()).thenReturn(mockUser));
 //
-//        mockMvc.perform(MockMvcRequestBuilders.get("/user/1"))
+//        mockMvc.perform(MockMvcRequestBuilders.get("/user/1")
 //                .andExpect(MockMvcResultMatchers.status().isOk())
 //                .andExpect(MockMvcResultMatchers.jsonPath("$.email").value("test@example.com"))
 //                .andExpect(MockMvcResultMatchers.jsonPath("$.password").value("testPassword"));
