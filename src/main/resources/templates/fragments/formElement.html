@@ -1,3 +1,4 @@
+
 <th:block th:fragment="formElement(name, label, value, placeholder, error)">
     <label th:for="${name}" th:text="${label}"></label>
     <input type="text" th:name="${name}" th:id="${name}" th:placeholder="${placeholder}" th:value="${value}"><br>
@@ -14,7 +15,8 @@
 
 <th:block
     th:fragment="gardenForm(action, actionLabel, cancel, gardenName, gardenLocation, gardenSize, gardenNameError, gardenLocationError, gardenSizeError)">
-    <form th:action="${action}" method="post" novalidate>
+    <form th:action="${action}" method="post" onkeydown="if(event.keyCode === 13 && event.target.tagName.toLowerCase() === 'input'){
+        event.preventDefault();}" novalidate>
         <div
             th:replace="~{fragments/formElement :: formElement(name='gardenName', label='Name: ', value=${gardenName}, placeholder='Your garden\'s name', error=${gardenNameError})}">
         </div>
