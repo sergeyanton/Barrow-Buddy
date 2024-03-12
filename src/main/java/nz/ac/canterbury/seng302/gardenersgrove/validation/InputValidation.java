@@ -2,7 +2,6 @@ package nz.ac.canterbury.seng302.gardenersgrove.validation;
 
 import nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection.LogInData;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection.RegistrationData;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Validator;
 import nz.ac.canterbury.seng302.gardenersgrove.service.UserService;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -60,9 +59,9 @@ public class InputValidation {
      */
     public static Validator checkName(String userName) {
         Validator isValid = new Validator(true, "Ok");
-        if (userName.isBlank()) {isValid.setValid(false,"Name cannot be empty and must only include letters, spaces, hyphens or apostrophes");}
-        if (userName.length() > 64) {isValid.setValid(false,"Name must be 64 characters long or less");}
-        if (!userName.matches("^[a-zA-Z\\s'-]+$")) {isValid.setValid(false,"Name cannot be empty and must only include letters, spaces, hyphens or apostrophes");}
+        if (userName.isBlank()) {isValid.setValid(false,"{First/Last} name cannot be empty and must only include letters, spaces, hyphens or apostrophes");}
+        if (userName.length() > 64) {isValid.setValid(false,"{First/Last} name must be 64 characters long or less");}
+        if (!userName.matches("^[a-zA-Z\\s'-]+$")) {isValid.setValid(false,"{First/Last} name cannot be empty and must only include letters, spaces, hyphens or apostrophes");}
         return isValid;
     }
 
