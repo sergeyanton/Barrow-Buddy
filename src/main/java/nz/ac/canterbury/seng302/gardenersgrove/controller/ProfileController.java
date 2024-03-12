@@ -55,6 +55,7 @@ public class ProfileController {
         }
         model.addAttribute("email", currentUser.getEmail());
         model.addAttribute("dateOfBirth", currentUser.getDateOfBirth());
+        model.addAttribute("noSurnameCheckBox", currentUser.getLname().isEmpty());
 
 
         return "pages/editProfilePage";
