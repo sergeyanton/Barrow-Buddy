@@ -132,7 +132,7 @@ public class Plant {
 
     @Override
     public String toString() {
-        return "Plant{" + "id=" + id + ", name='" + name + ", count=" + plantCount + ", description=" + description +
-                ", planted on date=" + plantedOnDate + ", garden id=" + gardenId + '\'' + '}';
+        return "Plant{" + "id=" + id + ", name='" + name + "', count=" + plantCount + ", description='" + description +
+                "', planted on date=" + plantedOnDate + ", garden id=" + gardenId + '\'' + '}';
     }
 }
