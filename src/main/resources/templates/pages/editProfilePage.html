@@ -7,7 +7,7 @@
 </head>
 
 <body>
-<div id="basic">
+<div class="basic">
 
         <h1>Edit My Profile</h1>
         <form th:action="@{editProfile}" method="post">
@@ -50,13 +50,9 @@
             <div th:replace="~{fragments/errorMessageFragment :: errorMessage(message=${errorMessage})}"></div>
         </div>
 
-        <div id="next">
-            <button type="submit">Update Profile</button>
-        </div>
+        <button type="submit">Update Profile</button>
 
-        <div id="back">
-            <a th:href="@{profile}">Cancel</a>
-        </div>
+        <a class="cancel" th:href="@{profile}">Cancel</a>
     </form>
     </div>
 <script>

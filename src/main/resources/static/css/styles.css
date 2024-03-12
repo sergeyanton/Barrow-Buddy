@@ -21,13 +21,13 @@ h1 {
 }
 
 /* Basic container styles */
-#basic {
+.basic {
     padding: 1.5rem;
     background-color: #FAF9F6;
     border-radius: 1rem;
 
     position: relative;
-    width: 50%;
+    width: 35rem;
     height: 50%;
     display: flex;
     flex-direction: column;
@@ -37,9 +37,9 @@ h1 {
 }
 
 
-:is(#cancel,#back,#home) a{
-    padding: 10px 22px; /* Adjust padding to increase link size */
-    font-size: 18px;
+.cancel{
+    padding: 8px 18px;
+    font-size: 16px;
     border-radius: 10px;
     color: #FAF9F6;
 
@@ -51,13 +51,31 @@ h1 {
     background-color: darkred;
 }
 
-:is(#cancel,#back,#home) a:hover {
+button.cancel{
+    padding: 8px 18px;
+    font-size: 16px;
+    border-radius: 10px;
+    color: #FAF9F6;
+
+    text-decoration: none; /* Remove underline */
+
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    background-color: darkred;
+}
+
+.cancel:hover {
+    background-color: rgba(139, 0, 0, 0.55);
+}
+
+button.cancel:hover {
     background-color: rgba(139, 0, 0, 0.55);
 }
 
 /* Other link styles */
-#link a {
-    padding: 10px 22px; /* Adjust padding to increase link size */
+#landing a {
+    padding: 10px 22px;
     font-size: 18px;
     border-radius: 10px;
     color: #FAF9F6;
@@ -68,20 +86,21 @@ h1 {
     background-color: #023020;
 }
 
-#link a:hover {
+#landing a:hover {
     background-color: rgba(4, 65, 42, 0.71);
 }
 
 /* Button styles */
-button {
-    padding: 10px 22px;
-    font-size: 18px;
+button, .next {
+    padding: 8px 18px;
+    font-size: 16px;
     border-radius: 10px;
     color: #FAF9F6;
 
     background-color: #023020;
     border: none;
     cursor: pointer;
+    text-decoration: none;
 
     position: absolute;
     bottom: 1rem;
