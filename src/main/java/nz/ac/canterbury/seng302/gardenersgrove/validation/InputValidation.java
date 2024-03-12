@@ -204,9 +204,11 @@ public class InputValidation {
             if (!passwordCheck.getStatus()) return passwordCheck;
         }
 
+        if (newUser.getDob() != null) {
+            Validator dobCheck = checkDob(newUser.getDob());
+            if (!dobCheck.getStatus()){return dobCheck;}
+        }
 
-        Validator dobCheck = checkDob(newUser.getDob());
-        if (!dobCheck.getStatus()){return dobCheck;}
 
         return new Validator(true, "");
     }
