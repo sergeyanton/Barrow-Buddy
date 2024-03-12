@@ -37,21 +37,6 @@ public class AccountController {
         this.userService = userService;
     }
 
-    /**
-     * Authenticate the user with the authenticationManager
-     * @param user The user object to authenticate
-     * @param request The HttpServletRequest corresponding to the request made to the server
-     */
-    private void authenticateUser(User user, HttpServletRequest request) {
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword(), user.getAuthorities());
-        Authentication authentication = authenticationManager.authenticate(token);
-
-        if (authentication.isAuthenticated()) {
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
-        }
-    }
-
 
     /**
      * Gets the thymeleaf page representing the /profile page, displaying the currently logged-in user's account details.
@@ -115,7 +100,7 @@ public class AccountController {
         userService.registerUser(user);
 
         // Auto-login when registering
-        authenticateUser(user, request);
+        userService.authenticateUser(authenticationManager, user, request);
 
         ResponseEntity.ok();
 
@@ -164,7 +149,7 @@ public class AccountController {
             return pageWithError("pages/loginPage", model, errorMessage);
         }
 
-        authenticateUser(user, request);
+        userService.authenticateUser(authenticationManager, user, request);
 
         return "redirect:/profile";
     }

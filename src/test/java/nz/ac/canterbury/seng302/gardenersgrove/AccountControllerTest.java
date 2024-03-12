@@ -9,6 +9,7 @@ import nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection.Registr
 import nz.ac.canterbury.seng302.gardenersgrove.entity.User;
 import nz.ac.canterbury.seng302.gardenersgrove.service.UserService;
 import nz.ac.canterbury.seng302.gardenersgrove.validation.InputValidation;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -60,23 +61,23 @@ class AccountControllerTest {
         String fName = "John";
         String lName = "Doe";
         LocalDate dob = LocalDate.of(1990, 1, 1);
-        String password = "testPassword";
-        String retypePassword = "testPassword";
+        String password = "testPassword123!";
+        String retypePassword = "testPassword123!";
 
         RegistrationData registrationData = new RegistrationData(email, fName, lName, dob, password, retypePassword, false);
         User validUser = RegistrationData.createNewUser(registrationData);
 
-        userService.registerUser(validUser);
-
-        String body = makeMapper().writeValueAsString(registrationData);
-        System.out.println(body);
-
         mockMvc.perform(MockMvcRequestBuilders.post("/register")
                         .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(body))
-                        .andExpect(MockMvcResultMatchers.status().isOk());
-                        //.andExpect(MockMvcResultMatchers.redirectedUrl("redirect:/profile"));
+                        .param("email", email)
+                        .param("fName", fName)
+                        .param("lName", lName)
+                        .param("dob", dob.toString())
+                        .param("password", password)
+                        .param("retypePassword", retypePassword)
+                        )
+                        .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                        .andExpect(MockMvcResultMatchers.redirectedUrl("/profile"));
     }
 
 //    @Test

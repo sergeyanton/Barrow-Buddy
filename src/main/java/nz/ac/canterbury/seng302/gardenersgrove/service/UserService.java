@@ -1,8 +1,10 @@
 package nz.ac.canterbury.seng302.gardenersgrove.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.User;
 import nz.ac.canterbury.seng302.gardenersgrove.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -82,5 +84,22 @@ public class UserService  {
 
     public void updateUserByEmail(String oldEmail, User newUser) {
         userRepository.updateUserByEmail(oldEmail, newUser);
+    }
+
+
+    /**
+     * Authenticate the user with the given authenticationManager
+     * @param authenticationManager The authentication manager to use
+     * @param user The user object to authenticate
+     * @param request The HttpServletRequest corresponding to the request made to the server
+     */
+    public void authenticateUser(AuthenticationManager authenticationManager, User user, HttpServletRequest request) {
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword(), user.getAuthorities());
+        Authentication authentication = authenticationManager.authenticate(token);
+
+        if (authentication.isAuthenticated()) {
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
+        }
     }
 }
