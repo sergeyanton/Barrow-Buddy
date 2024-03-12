@@ -9,7 +9,7 @@
 <body>
 <div id="basic">
 
-        <h4>Edit My Profile</h4>
+        <h1>Edit My Profile</h1>
         <form th:action="@{editProfile}" method="post">
         <label for="fName"> First Name: </label>
         <input type="text" class="form-control" id="fName"
@@ -23,11 +23,11 @@
 
         <input type="checkbox" class="form-control" id="noSurnameCheckBox"
                th:name="noSurnameCheckBox" th:checked="*{noSurnameCheckBox}" data-cy="noSurnameCheckBox"
-               autofocus>
+               onclick="toggleInput()" autofocus>
         <label for="noSurnameCheckBox"> No last name </label>
         <br/>
 
-        <label for="email"> email: </label>
+        <label for="email"> Email: </label>
         <input type="email" class="form-control" id="email"
                th:name="email" th:value="*{email}" data-cy="email" required autofocus>
         <br/>
@@ -59,6 +59,25 @@
         </div>
     </form>
     </div>
+<script>
+    // Function to disable last name input field if the 'no surname' checkbox is checked
+    function toggleInput() {
+        let checkbox = document.getElementById('noSurnameCheckBox');
+        let textField = document.getElementById('lName');
+
+        if (checkbox.checked) {
+            textField.value = '';
+            textField.readOnly = true;
+        } else {
+            textField.readOnly = false;
+        }
+    };
+
+    // Calls toggleInput when the page loads to ensure it runs initially
+    window.onload = function() {
+        toggleInput();
+    };
+</script>
 
 </body>
 
