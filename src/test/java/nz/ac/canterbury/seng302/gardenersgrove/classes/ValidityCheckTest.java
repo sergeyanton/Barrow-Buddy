@@ -14,6 +14,12 @@ public class ValidityCheckTest {
     }
 
     @Test
+    void CheckName_LettersWithAccent_ReturnsEmptyOptional() {
+        String name = "àèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâêîôûÂÊÎÔÛãñõÃÑÕäëïöüÿÄËÏÖÜŸåÅæÆœŒçÇðÐøØß";
+        assertEquals(Optional.empty(), ValidityCheck.validGardenName(name));
+    }
+
+    @Test
     void CheckName_WithEmptyName_ReturnsOptionalWithErrorMessage() {
         String name = "";
         assertEquals(Optional.of("Garden name cannot by empty"),
@@ -182,6 +188,12 @@ public class ValidityCheckTest {
     void ValidatePlantName_ValidName_ReturnsEmptyOptional() {
         String plantName = "Valid Plant Name";
         assertEquals(Optional.empty(), ValidityCheck.validatePlantName(plantName));
+    }
+
+    @Test
+    void CheckPlantName_LettersWithAccent_ReturnsEmptyOptional() {
+        String name = "àèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâêîôûÂÊÎÔÛãñõÃÑÕäëïöüÿÄËÏÖÜŸåÅæÆœŒçÇðÐøØß";
+        assertEquals(Optional.empty(), ValidityCheck.validatePlantName(name));
     }
 
     @Test

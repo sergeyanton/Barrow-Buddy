@@ -8,8 +8,13 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
+<<<<<<< HEAD
+ * Service class for Gardens, defined by the @link{Service} annotation.
+ * This class links automatically with @link{GardenRepository}, see the @link{Autowired} annotation below
+=======
  * Service class for Plants, defined by the @link{Service} annotation.
  * This class links automatically with @link{PlantRepository}, see the @link{Autowired} annotation below
+>>>>>>> 1911727fc84a3e4e5caea036e1cc0b168bba2f06
  */
 @Service
 public class PlantService {
@@ -33,7 +38,7 @@ public class PlantService {
      * Gets all plants from persistence
      * @return all plants currently saved in persistence
      */
-    public List<Plant> getGardens() {
+    public List<Plant> getPlants() {
         return plantRepository.findAll();
     }
 

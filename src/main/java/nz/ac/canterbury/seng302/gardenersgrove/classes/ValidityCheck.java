@@ -11,18 +11,28 @@ public class ValidityCheck {
 
     /**
      * This method checks if the entered garden name contains only alphanumeric or valid characters
-     * 
+     *
      * @param name the garden name entered by user
      * @return Returns an error message string if the garden size is invalid, otherwise returns an
      *         empty optional
      */
     public static Optional<String> validGardenName(String name) {
         boolean isBlank = name.isBlank();
-        boolean isValidName = name.matches("[a-zA-Z0-9 ,.'-]+");
+        boolean isInvalidName = false;
+
+        String invalidCharacters = "`~!@#$%%^&*()_+={}[]|:;<>?/\\\"";
+
+        String[] charactersInName = name.split("");
+
+        for (String s : charactersInName) {
+            if (invalidCharacters.contains(s)) {
+                isInvalidName = true;
+            }
+        }
         if (isBlank) {
             return Optional.of("Garden name cannot by empty");
         }
-        if (!isValidName) {
+        if (isInvalidName) {
             return Optional.of(
                     "Garden name must only include letters, numbers, spaces, dots, hyphens or apostrophes");
         }
@@ -32,7 +42,7 @@ public class ValidityCheck {
     /**
      * This method checks if the entered garden location contains only alphanumeric or valid
      * characters
-     * 
+     *
      * @param location the garden location entered by user
      * @return Returns an error message string if the garden size is invalid, otherwise returns an
      *         empty optional
@@ -53,7 +63,7 @@ public class ValidityCheck {
     /**
      * This method will validate that the entered garden size is a positive number, It will also
      * accept a number with a comma as a decimal separator
-     * 
+     *
      * @param size the garden size entered by user
      * @return Returns an error message string if the garden size is invalid, otherwise returns an
      *         empty optional
@@ -85,18 +95,28 @@ public class ValidityCheck {
     /**
      * This method validates that the entered plant name will contain only valid characters
      * (alphanumeric characters, spaces dots, hyphens or apostrophes).
-     * 
+     *
      * @param name the entered plant name
      * @return an error message if the entered plant name is invalid, otherwise returns an empty
      *         optional
      */
     public static Optional<String> validatePlantName(String name) {
         boolean isBlank = name.isBlank();
-        boolean isValidName = name.matches("[a-zA-Z0-9 ,.'-]+");
+        boolean isInvalidName = false;
+
+        String invalidCharacters = "`~!@#$%%^&*()_+={}[]|:;<>?/\\\"";
+
+        String[] charactersInName = name.split("");
+
+        for (String s : charactersInName) {
+            if (invalidCharacters.contains(s)) {
+                isInvalidName = true;
+            }
+        }
         if (isBlank) {
             return Optional.of("Plant name must not be empty");
         }
-        if (!isValidName) {
+        if (isInvalidName) {
             return Optional.of(
                     "Plant name must only include letters, numbers, spaces, dots, hyphens or apostrophes");
         }
@@ -106,7 +126,7 @@ public class ValidityCheck {
     /**
      * This method validates that the entered plant count can only either be empty or a positive
      * integer.
-     * 
+     *
      * @param count the plant count
      * @return an error message if the entered plant count is invalid, otherwise returns an empty
      *         optional
@@ -125,7 +145,7 @@ public class ValidityCheck {
 
     /**
      * This method validates that the entered plant name will contain only up to 512 characters.
-     * 
+     *
      * @param description the plant's description
      * @return an error message if the entered plant description contains more than 512 characters,
      *         otherwise returns an empty optional.
@@ -139,7 +159,7 @@ public class ValidityCheck {
 
     /**
      * This method will validate that the entered planted-on date is in the valid DD/MM/YYYY format
-     * 
+     *
      * @param date the planted-on date
      * @return Returns an error message string if the date is invalid, otherwise returns an empty
      *         optional
@@ -158,7 +178,7 @@ public class ValidityCheck {
 
     /**
      * This method checks the entire plant form.
-     * 
+     *
      * @param name the name of the plant
      * @param plantCount the number of plants in the garden
      * @param description a short description of the plant
@@ -166,7 +186,7 @@ public class ValidityCheck {
      * @return true if plant form has all valid inputs
      */
     public static boolean validPlantForm(String name, String plantCount, String description,
-            String plantedOnDate) {
+                                         String plantedOnDate) {
         return (validatePlantName(name).isEmpty() && validatePlantCount(plantCount).isEmpty()
                 && validatePlantDescription(description).isEmpty())
                 && validateDate(plantedOnDate).isEmpty();
