@@ -40,7 +40,7 @@ h1 {
 :is(#cancel,#back,#home) a{
     padding: 10px 22px; /* Adjust padding to increase link size */
     font-size: 18px;
-    border-radius: 1rem;
+    border-radius: 10px;
     color: #FAF9F6;
 
     text-decoration: none; /* Remove underline */
@@ -59,7 +59,7 @@ h1 {
 #link a {
     padding: 10px 22px; /* Adjust padding to increase link size */
     font-size: 18px;
-    border-radius: 1rem;
+    border-radius: 10px;
     color: #FAF9F6;
 
     text-decoration: none; /* Remove underline */
@@ -76,7 +76,7 @@ h1 {
 button {
     padding: 10px 22px;
     font-size: 18px;
-    border-radius: 1rem;
+    border-radius: 10px;
     color: #FAF9F6;
 
     background-color: #023020;
@@ -96,6 +96,3 @@ input {
     margin-bottom: 7px;
 }
 
-/*#home {*/
-/*    background-color: #FAF9F6;*/
-/*}*/
