@@ -88,6 +88,10 @@ public class ProfileController {
             return pageWithError(getEditProfilePage(model), model, error.getMessage());
         }
 
+        if (updatedUser.getPassword().isBlank() && !updatedUser.getRetypePassword().isBlank()) {
+            return pageWithError(getEditProfilePage(model), model, "Passwords do not match");
+        }
+
         if (updatedUser.getfName() != null &&!Objects.equals(updatedUser.getfName(), currentUser.getFname())) {
             currentUser.setFname(updatedUser.getfName());
         }
