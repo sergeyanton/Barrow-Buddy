@@ -19,7 +19,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebSecurity
 @ComponentScan("com.baeldung.security")
 public class SecurityConfiguration {
-
     /**
      * Our Custom Authentication Provider {@link CustomAuthenticationProvider}
      */
@@ -54,10 +53,9 @@ public class SecurityConfiguration {
         http.authorizeHttpRequests(auth -> auth.requestMatchers(AntPathRequestMatcher.antMatcher("/h2/**")).permitAll())
                 .headers(headers -> headers.frameOptions().disable())
                 .csrf(csrf -> csrf.ignoringRequestMatchers(AntPathRequestMatcher.antMatcher("/h2/**")))
-
                 .authorizeHttpRequests()
-                // Allow "/", "/register", and "/login" to anyone (permitAll)
-                .requestMatchers("/", "/register", "/login")
+                // Allow "/", "/register", and "/login" to anyone (permitAll) - Also allow access to stylesheets
+                .requestMatchers("/", "/register", "/login", "/css/**")
                 .permitAll()
                 // Only allow admins to reach the "/admin" page
                 .requestMatchers("/admin")
@@ -67,11 +65,11 @@ public class SecurityConfiguration {
                 .anyRequest()
                 .authenticated()
                 .and()
-                // Define logging in, a POST "/login" endpoint now exists under the hood, after login redirect to user page
-                .formLogin().loginPage("/login").loginProcessingUrl("/login").defaultSuccessUrl("/user")
+                // Redirect to "/" when unauthenticated user tries to access a page that requires login
+                .formLogin().loginPage("/").permitAll()
                 .and()
-                // Define logging out, a POST "/logout" endpoint now exists under the hood, redirect to "/login", invalidate session and remove cookie
-                .logout().logoutUrl("/logout").logoutSuccessUrl("/login").invalidateHttpSession(true).deleteCookies("JSESSIONID");
+                // Define logging out, a POST "/logout" endpoint now exists under the hood, redirect to "/", invalidate session and remove cookie
+                .logout().logoutUrl("/logout").logoutSuccessUrl("/").invalidateHttpSession(true).deleteCookies("JSESSIONID");
         return http.build();
 
     }
