@@ -80,9 +80,9 @@ public class ProfileController {
 
         Validator error;
         if (Objects.equals(currentUser.getEmail(), updatedUser.getEmail())) {
-            error = inputValidation.dataCheck(updatedUser,true);
+            error = inputValidation.checkRegistrationData(updatedUser,true);
         } else {
-            error = inputValidation.dataCheck(updatedUser,false);
+            error = inputValidation.checkRegistrationData(updatedUser,false);
         }
         if (!error.getStatus()) {
             return pageWithError(getEditProfilePage(model), model, error.getMessage());
@@ -109,14 +109,7 @@ public class ProfileController {
         }
 
         userService.updateUserByEmail(oldEmail, currentUser);
-
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(currentUser.getEmail(), currentUser.getPassword(), currentUser.getAuthorities());
-        authentication = authenticationManager.authenticate(token);
-
-        if (authentication.isAuthenticated()) {
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
-        }
+        userService.authenticateUser(authenticationManager, currentUser, request);
 
         return "redirect:/profile";
     }

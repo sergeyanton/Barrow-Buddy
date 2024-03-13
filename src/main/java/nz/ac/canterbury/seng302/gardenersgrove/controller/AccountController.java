@@ -10,11 +10,10 @@ import nz.ac.canterbury.seng302.gardenersgrove.validation.InputValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,21 +33,6 @@ public class AccountController {
     @Autowired
     public AccountController(UserService userService) {
         this.userService = userService;
-    }
-
-    /**
-     * Authenticate the user with the authenticationManager
-     * @param user The user object to authenticate
-     * @param request The HttpServletRequest corresponding to the request made to the server
-     */
-    private void authenticateUser(User user, HttpServletRequest request) {
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword(), user.getAuthorities());
-        Authentication authentication = authenticationManager.authenticate(token);
-
-        if (authentication.isAuthenticated()) {
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
-        }
     }
 
 
@@ -101,7 +85,7 @@ public class AccountController {
 
         InputValidation inputValidation = new InputValidation(userService);
 
-        Validator error = inputValidation.dataCheck(newUser,false);
+        Validator error = inputValidation.checkRegistrationData(newUser,false);
         if (!error.getStatus()) {
             model.addAttribute("fName", newUser.getfName());
             model.addAttribute("lName", newUser.getlName());
@@ -118,7 +102,9 @@ public class AccountController {
         userService.registerUser(user);
 
         // Auto-login when registering
-        authenticateUser(user, request);
+        userService.authenticateUser(authenticationManager, user, request);
+
+        ResponseEntity.ok();
 
         return "redirect:/profile";
     }
@@ -165,7 +151,7 @@ public class AccountController {
             return pageWithError("pages/loginPage", model, errorMessage);
         }
 
-        authenticateUser(user, request);
+        userService.authenticateUser(authenticationManager, user, request);
 
         return "redirect:/";
     }
