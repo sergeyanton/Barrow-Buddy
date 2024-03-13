@@ -7,26 +7,23 @@
 </head>
 
 <body>
-<div id="basic">
+<div class="basic">
     <h1>My Profile</h1>
     <p th:text="'First Name: ' + ${fName}"></p>
     <p th:text="'Last Name: ' + ${lName}"></p>
     <p th:text="'Email: ' + ${email}"></p>
-    <p th:text="'Date of birth: ' + ${dob}"></p>
+    <p th:if="${dob != null}" th:text="'Date of birth: ' + ${dob}"></p>
+    <p th:if="${dob == null}" th:text="'Date of birth: '"></p>
+
 
     <form th:action="@{logout}" method="post">
-        <button type="submit">Log Out</button>
+        <button class=cancel type="submit">Log Out</button>
     </form>
 
-<form th:action="@{logout}" method="post">
-    <button type="submit">Logout</button>
-</form>
-        <div id="editProfile">
-            <a th:href="@{editProfile}">Edit profile</a>
-        </div>
-    <div id="home">
-        <a th:href="@{.}">Home</a>
-    </div>
+    <a th:href="@{editProfile}">Edit profile</a>
+
+    <a class="next" th:href="@{.}">Home</a>
+
 </div>
 </body>
 </html>

@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection.LogInData;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection.RegistrationData;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.User;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Validator;
+import nz.ac.canterbury.seng302.gardenersgrove.validation.Validator;
 import nz.ac.canterbury.seng302.gardenersgrove.service.UserService;
 import nz.ac.canterbury.seng302.gardenersgrove.validation.InputValidation;
 import org.slf4j.Logger;
@@ -50,7 +50,11 @@ public class AccountController {
         model.addAttribute("fName", u.getFname());
         model.addAttribute("lName", u.getLname());
         model.addAttribute("email", u.getEmail());
-        model.addAttribute("dob", u.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        if (u.getDateOfBirth() != null) {
+            model.addAttribute("dob", u.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        }
+
+
         return "pages/profilePage";
     }
 
@@ -138,7 +142,7 @@ public class AccountController {
         User user = userService.findEmail(newUser.getEmail());
 
         if (user == null) {
-            String errorMessage = String.format("No user with the email '%s' exists.", newUser.getEmail());
+            String errorMessage = "The email address is unknown, or the password is invalid";
             return pageWithError("pages/loginPage", model, errorMessage);
         }
 
@@ -149,6 +153,6 @@ public class AccountController {
 
         userService.authenticateUser(authenticationManager, user, request);
 
-        return "redirect:/profile";
+        return "redirect:/";
     }
 }

@@ -7,7 +7,7 @@
 </head>
 
 <body>
-<div id="basic">
+<div class="basic">
     <h1>Register</h1>
     <form th:action="@{register}" method="post">
         <label for="fName"> First Name: </label>
@@ -21,7 +21,7 @@
         <input type="checkbox" class="form-control" id="noSurnameCheckBox"
                th:name="noSurnameCheckBox" th:checked="*{noSurnameCheckBox}" data-cy="noSurnameCheckBox"
                onclick="toggleInput()" autofocus>
-        <label for="noSurnameCheckBox"> No last name </label>
+        <label for="noSurnameCheckBox"> I have no surname </label>
         <br/>
         <label for="email"> Email: </label>
         <input type="email" class="form-control" id="email" placeholder="fabian.gilson@canterbury.ac.nz"
@@ -38,20 +38,18 @@
         <br/>
         <label for="dob"> Date Of Birth: </label>
         <input type="date" class="form-control" id="dob"
-               th:name="dob" th:value="*{dob}" data-cy="dob" required autofocus>
+               th:name="dob" th:value="*{dob}" data-cy="dob" autofocus>
         <br/>
 
         <div th:if="${errorMessage}">
             <div th:replace="~{fragments/errorMessageFragment :: errorMessage(message=${errorMessage})}"></div>
         </div>
 
-        <div id="next">
-            <button type="submit">Sign Up</button>
-        </div>
 
-        <div id="cancel">
-            <a th:href="@{.}">Cancel</a>
-        </div>
+        <button class="next" type="submit">Sign Up</button>
+
+
+        <a class="cancel" th:href="@{.}">Cancel</a>
 
     </form>
 </div>
@@ -67,7 +65,8 @@
         } else {
             textField.readOnly = false;
         }
-    }
+    };
+
 </script>
 </body>
 </html>

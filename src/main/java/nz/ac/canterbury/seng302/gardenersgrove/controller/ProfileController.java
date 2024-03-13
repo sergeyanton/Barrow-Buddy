@@ -3,7 +3,7 @@ package nz.ac.canterbury.seng302.gardenersgrove.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.seng302.gardenersgrove.controller.dataCollection.RegistrationData;
 import nz.ac.canterbury.seng302.gardenersgrove.entity.User;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Validator;
+import nz.ac.canterbury.seng302.gardenersgrove.validation.Validator;
 import nz.ac.canterbury.seng302.gardenersgrove.service.UserService;
 import nz.ac.canterbury.seng302.gardenersgrove.validation.InputValidation;
 import org.slf4j.Logger;
@@ -55,6 +55,7 @@ public class ProfileController {
         }
         model.addAttribute("email", currentUser.getEmail());
         model.addAttribute("dateOfBirth", currentUser.getDateOfBirth());
+        model.addAttribute("noSurnameCheckBox", currentUser.getLname().isEmpty());
 
 
         return "pages/editProfilePage";

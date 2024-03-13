@@ -6,7 +6,7 @@
     <title>Log in</title>
 </head>
 <body>
-<div id="basic">
+<div class="basic">
     <h1>Log In</h1>
     <form th:action="@{login}" method="post">
         <label for="email"> Email: </label>
@@ -29,9 +29,7 @@
 
         <button type="submit">Sign In</button>
 
-        <div id="cancel">
-            <a th:href="@{.}">Cancel</a>
-        </div>
+        <a class="cancel" th:href="@{.}">Cancel</a>
 
     </form>
 </div>
