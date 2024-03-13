@@ -27,12 +27,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.time.LocalDate;
-import java.util.Locale;
 
-import static nz.ac.canterbury.seng302.gardenersgrove.validation.InputValidation.checkLoginData;
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Validator;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 @WebMvcTest(AccountController.class)

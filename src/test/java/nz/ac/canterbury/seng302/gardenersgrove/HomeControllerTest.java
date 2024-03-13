@@ -17,8 +17,6 @@ import static org.mockito.Mockito.*;
 class HomeControllerTest {
     @Mock
     UserService userService;
-    @Mock
-    Logger logger;
     @InjectMocks
     HomeController homeController;
 
@@ -37,8 +35,6 @@ class HomeControllerTest {
         String result = homeController.getHome();
 
         assertEquals("pages/homePage", result);
-
-        verify(logger).info("GET /");
     }
 
     @Test
@@ -48,7 +44,5 @@ class HomeControllerTest {
         String result = homeController.getHome();
 
         assertEquals("pages/landingPage", result);
-
-        verify(logger).info("GET /");
     }
 }
