@@ -10,7 +10,10 @@ import nz.ac.canterbury.seng302.gardenersgrove.entity.User;
 import nz.ac.canterbury.seng302.gardenersgrove.service.UserService;
 import nz.ac.canterbury.seng302.gardenersgrove.validation.InputValidation;
 import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -24,7 +27,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.time.LocalDate;
+import java.util.Locale;
 
+import static nz.ac.canterbury.seng302.gardenersgrove.validation.InputValidation.checkLoginData;
+import nz.ac.canterbury.seng302.gardenersgrove.entity.Validator;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -45,39 +51,52 @@ class AccountControllerTest {
     @MockBean
     private PasswordEncoder passwordEncoder;
 
+    private static User user;
 
-    private static ObjectMapper makeMapper() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new ParameterNamesModule());
-        mapper.registerModule(new Jdk8Module());
-        mapper.registerModule(new JavaTimeModule());
-        return mapper;
+    @BeforeAll
+    public static void setup() {
+        user = new User(
+                "John",
+                "Doe",
+                "test@example.com",
+                "testPassword123!",
+                LocalDate.of(1990, 1, 1)
+        );
     }
 
     @Test
     @WithMockUser
-    public void createUser_validUserGiven_SaveUser() throws Exception {
-        String email = "test@example.com";
-        String fName = "John";
-        String lName = "Doe";
-        LocalDate dob = LocalDate.of(1990, 1, 1);
-        String password = "testPassword123!";
-        String retypePassword = "testPassword123!";
-
-        RegistrationData registrationData = new RegistrationData(email, fName, lName, dob, password, retypePassword, false);
-        User validUser = RegistrationData.createNewUser(registrationData);
-
+    public void registerPostRequest_validUserDetails_userRegisteredAndAuthenticated() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/register")
                         .with(csrf())
-                        .param("email", email)
-                        .param("fName", fName)
-                        .param("lName", lName)
-                        .param("dob", dob.toString())
-                        .param("password", password)
-                        .param("retypePassword", retypePassword)
-                        )
-                        .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-                        .andExpect(MockMvcResultMatchers.redirectedUrl("/profile"));
+                        .param("email", user.getEmail())
+                        .param("fName", user.getFname())
+                        .param("lName", user.getLname())
+                        .param("dob", user.getDateOfBirth().toString())
+                        .param("password", user.getPassword())
+                        .param("retypePassword", user.getPassword())
+                )
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/profile"));
+
+        Mockito.verify(userService).registerUser(Mockito.any());
+    }
+
+    @Test
+    @WithMockUser
+    public void loginPostRequest_validUserDetails_userAuthenticated() throws Exception {
+        Mockito.when(userService.isSignedIn()).thenReturn(false);
+        Mockito.when(userService.findEmail(Mockito.any())).thenReturn(user);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/login")
+                        .with(csrf())
+                        .param("email", user.getEmail())
+                        .param("password", user.getPassword())
+                )
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/profile"));
+
+        Mockito.verify(userService).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
     }
 
 //    @Test
@@ -101,37 +120,6 @@ class AccountControllerTest {
 //                .andExpect(MockMvcResultMatchers.jsonPath("$.password").value("testPassword"));
 //    }
 
-
-    @Test
-    void registerValidInputs() throws Exception {
-        // Mock the registration data
-        String email = "test@example.com";
-        String fName = "John";
-        String lName = "Doe";
-        LocalDate dob = LocalDate.of(1990, 1, 1);
-        String password = "testPassword";
-        String retypePassword = "testPassword";
-        Boolean noSurnameCheckBox = false;
-        RegistrationData testInput = new RegistrationData(email, fName, lName, dob, password,
-                retypePassword, noSurnameCheckBox);
-
-        User mockUser = new User(testInput.getfName(), testInput.getlName(), testInput.getEmail(), testInput.getPassword(),
-                testInput.getDob());
-
-        doNothing().when(userService).registerUser(any(User.class));
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/register")
-                        .contentType("application/x-www-form-urlencoded")
-                        .param("fName", testInput.getfName())
-                        .param("lName", testInput.getlName())
-                        .param("email", testInput.getEmail())
-                        .param("password", testInput.getPassword())
-                        .param("retypePassword", testInput.getRetypePassword())
-                        .param("dob", testInput.getDob().toString()))
-                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/profile"));
-
-    }
 
     @Test
     void login() {
