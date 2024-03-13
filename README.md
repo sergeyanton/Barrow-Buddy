@@ -1,4 +1,4 @@
-# SENG302 Team G - Gardens Grove Users
+# SENG302 Gorgeous Gs - Gardens Grove Users
 Basic project using ```gradle```, ```Spring Boot```, ```Thymeleaf```, and ```GitLab CI```.
 
 > Gardens Grove user side application. This project is a part of the SENG302 course at the University of Canterbury. 
