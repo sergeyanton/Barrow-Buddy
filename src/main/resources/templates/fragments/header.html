@@ -1,0 +1,26 @@
+<th:block th:fragment="headerA(href, text)">
+    <a th:href="${href}" th:class="${currentUrl == href ? 'active' : ''}" th:text="${text}">
+    </a>
+</th:block>
+
+<header th:fragment="header">
+    <nav>
+        <ul>
+            <li>
+                <a th:replace="~{:: headerA(href=@{/}, text='Home')}"></a>
+            </li>
+            <li>
+                <!-- /* URL for garden create form, but passing in the next parameter making sure to prevent any loops */ -->
+                <a th:replace="~{:: headerA(href=@{/gardens/create(next=${#strings.replace(currentUrl, '/gardens/create?next=', '')})}, text='New Garden')}"></a>
+            </li>
+            <li>
+                <a th:replace="~{:: headerA(href=@{/gardens}, text='My Gardens')}"></a>
+                <ul>
+                    <li th:each="garden : ${allGardens}">
+                        <a th:replace="~{:: headerA(href=@{/gardens/{id}(id=${garden.id})}, text=${garden.name})}"></a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+</header>

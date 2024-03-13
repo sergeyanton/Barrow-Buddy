@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head(title='Gardener\'s Grove - Create Plant')}"></head>
+
+<body>
+    <div th:replace="~{fragments/header :: header}"></div>
+    <main>
+        <h1>Create plant for garden</h1>
+        <div class="content">
+            <form
+                th:replace="~{fragments/formElement :: plantForm(action=@{/gardens/{gardenId}/plants/create(gardenId=${gardenId})}, actionLabel=${actionLabel}, cancel=@{'/gardens/' + ${gardenId}}, plantName=${plantName}, plantCount=${plantCount}, plantDescription=${plantDescription}, plantedOnDate=${plantedOnDate}, plantGardenId=${gardenId}, plantNameError=${plantNameError}, plantCountError=${plantCountError}, plantDescriptionError=${plantDescriptionError}, plantedOnDateError=${plantedOnDateError})}">
+            </form>
+        </div>
+    </main>
+</body>
+
+</html>
