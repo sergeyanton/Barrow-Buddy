@@ -124,6 +124,7 @@ public class InputValidation {
         int currentDay = currentDate.getDayOfMonth();
 
         Validator isValid = new Validator(true, "Ok");
+        if (userDob == null) return isValid;
 
         int year = userDob.getYear();
         int month = userDob.getMonthValue();
