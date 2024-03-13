@@ -39,20 +39,6 @@ On windows:
 gradlew test
 ```
 
-## Todo (Sprint 1)
-
-- Add team name into `build.gradle`
-- Update this README title
-- Update this README contributors
-
-## Todo (Sprint 2)
-
-- Update team name into `build.gradle`
-- Update this README title
-- Update this README contributors
-- Set up Gitlab CI server (refer to the student guide on Scrumboard)
-- Decide on a LICENSE
-
 ## Contributors
 
 - SENG302 teaching team
