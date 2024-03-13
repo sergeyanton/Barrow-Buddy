@@ -23,7 +23,7 @@
             th:replace="~{fragments/formElement :: formElement(name='gardenLocation', label='Location: ', value=${gardenLocation}, placeholder='Your garden\'s location', error=${gardenLocationError})}">
         </div>
         <div
-            th:replace="~{fragments/formElement :: formElement(name='gardenSize', label='Size (optional): ', value=${gardenSize}, placeholder='Your garden\'s size', error=${gardenSizeError})}">
+            th:replace="~{fragments/formElement :: formElement(name='gardenSize', label='Size in m&sup2; (optional): ', value=${gardenSize}, placeholder='Your garden\'s size', error=${gardenSizeError})}">
         </div>
         <button type="submit" th:text="${actionLabel}"></button>
         <a th:href="${cancel}">

@@ -6,19 +6,15 @@
 <body>
     <div th:replace="~{fragments/header :: header}"></div>
     <main>
-        <div>
-            <h2 th:text="${garden.name}"></h2>
+        <h1 th:text="${garden.name}"></h1>
+        <div class="content">
             <a th:href="@{'/gardens/' + ${garden.id} + '/plants/create'}">
-                Add a plant
+                <button>Add a plant</button>
             </a>
-            <h4 th:text="'Location: ' + ${garden.location}"></h4>
-            <h4 th:if="${garden.size != null}" th:text="'Size: ' + ${garden.size}"></h4>
-            <div>
-                <a th:href="@{'/gardens/' + ${garden.id} + '/edit'}">Edit Garden Details</a>
-            </div>
-            <div>
-                <a th:href="@{/gardens}">Back to My Gardens</a>
-            </div>
+            <div th:text="'Location: ' + ${garden.location}"></div>
+            <div th:if="${garden.size != null}" th:text="'Size: ' + ${garden.size} + ' m&sup2;'"></div>
+            <div><a th:href="@{'/gardens/' + ${garden.id} + '/edit'}">Edit Garden Details</a></div>
+            <div><a th:href="@{/gardens}">Back to My Gardens</a></div>
         </div>
     </main>
 </body>

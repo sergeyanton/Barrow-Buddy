@@ -7,7 +7,7 @@
     <div th:replace="~{fragments/header :: header}"></div>
     <main>
         <h1>Create a garden</h1>
-        <div>
+        <div class="content">
             <form
                 th:replace="~{fragments/formElement :: gardenForm(action=@{/gardens/create}, actionLabel=${actionLabel}, cancel=${nextDestination}, gardenName=${gardenName}, gardenLocation=${gardenLocation}, gardenSize=${gardenSize}, gardenNameError=${gardenNameError}, gardenLocationError=${gardenLocationError}, gardenSizeError=${gardenSizeError})}">
             </form>
