@@ -1,6 +1,8 @@
-# Team-0 Gardner's grove
+# Gardener's Grove - Team O
+Gardener's Grove is the best application for any keen gardener. Whether you have your own personal forest or you kill the few houseplants you have, Gardener's Grove is the place for you to track your gardens and the plants contained within them.
 
-Gardners grove is the application anyone with a garden, if you have lots of plants or you kill the few you have. Gardners grove is the place for you to track your gardens and the plants contained within thme.
+## Dependencies
+This project requires Java version >= 21
 
 ## How to run
 
@@ -40,8 +42,6 @@ On Windows:
 gradlew test
 ```
 
-## Todo (Sprint 1)
-
 ## Todo (Sprint 2)
 
 - Update team name into `build.gradle`
@@ -52,7 +52,7 @@ gradlew test
 
 ## Contributors
 
-- SENG302 teaching team
+- SENG302 Teaching Team
 - Hanan Fokkens (hfo22)
 - Stephen Hockey (sho151)
 - Ahmick Montana (amo255)
