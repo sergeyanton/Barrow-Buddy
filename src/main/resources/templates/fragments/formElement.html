@@ -2,14 +2,14 @@
 <th:block th:fragment="formElement(name, label, value, placeholder, error)">
     <label th:for="${name}" th:text="${label}"></label>
     <input type="text" th:name="${name}" th:id="${name}" th:placeholder="${placeholder}" th:value="${value}"><br>
-    <span th:if="${error}" th:text="${error}"></span>
+    <span class="error" th:if="${error}" th:text="${error}"></span>
     <br>
 </th:block>
 
 <th:block th:fragment="specialFormElement(type, name, label, value, placeholder, error)">
     <label th:for="${name}" th:text="${label}"></label>
     <input th:type="${type}" th:name="${name}" th:id="${name}" th:placeholder="${placeholder}" th:value="${value}"><br>
-    <span th:if="${error}" th:text="${error}"></span>
+    <span class="error" th:if="${error}" th:text="${error}"></span>
     <br>
 </th:block>
 
