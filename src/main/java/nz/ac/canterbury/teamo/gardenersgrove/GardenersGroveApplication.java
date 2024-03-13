@@ -1,17 +1,17 @@
-package nz.ac.canterbury.seng302.gardenersgrove;
+package nz.ac.canterbury.teamo.gardenersgrove;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * Gardener's Grove entry-point
- * Note @link{SpringBootApplication} annotation
+ * Gardener's Grove entry-point Note @link{SpringBootApplication} annotation
  */
 @SpringBootApplication
 public class GardenersGroveApplication {
 
 	/**
 	 * Main entry point, runs the Spring application
+	 * 
 	 * @param args command line arguments
 	 */
 	public static void main(String[] args) {

@@ -1,15 +1,14 @@
-package nz.ac.canterbury.seng302.gardenersgrove.service;
+package nz.ac.canterbury.teamo.gardenersgrove.service;
 
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import nz.ac.canterbury.teamo.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.teamo.gardenersgrove.repository.GardenRepository;
 import java.util.List;
 
 /**
- * Service class for Gardens, defined by the @link{Service} annotation.
- * This class links automatically with @link{GardenRepository}, see the @link{Autowired} annotation below
+ * Service class for Gardens, defined by the @link{Service} annotation. This class links
+ * automatically with @link{GardenRepository}, see the @link{Autowired} annotation below
  */
 @Service
 public class GardenService {
@@ -22,15 +21,18 @@ public class GardenService {
 
     /**
      * Gets a garden from persistence by searching for the id
+     * 
      * @param id id to look for
      * @return the appropriate garden
      */
     public Garden getGardenById(long id) {
-        return gardenRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid garden id: " + id));
+        return gardenRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid garden id: " + id));
     }
 
     /**
      * Gets all gardens from persistence
+     * 
      * @return all gardens currently saved in persistence
      */
     public List<Garden> getGardens() {
@@ -39,6 +41,7 @@ public class GardenService {
 
     /**
      * Adds a Garden to persistence
+     * 
      * @param garden object to persist
      * @return the saved garden object
      */
@@ -48,8 +51,11 @@ public class GardenService {
 
     /**
      * Updates a Garden in persistence
+     * 
      * @param garden object to update
      * @return the saved garden object
      */
-    public Garden updateGarden(Garden garden) { return gardenRepository.save(garden); }
+    public Garden updateGarden(Garden garden) {
+        return gardenRepository.save(garden);
+    }
 }

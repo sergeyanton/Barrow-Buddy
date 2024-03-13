@@ -1,14 +1,13 @@
-package nz.ac.canterbury.seng302.gardenersgrove;
+package nz.ac.canterbury.teamo.gardenersgrove;
 
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Garden;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.GardenRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.service.GardenService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
-
+import nz.ac.canterbury.teamo.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.teamo.gardenersgrove.repository.GardenRepository;
+import nz.ac.canterbury.teamo.gardenersgrove.service.GardenService;
 import java.util.List;
 import java.util.Optional;
 

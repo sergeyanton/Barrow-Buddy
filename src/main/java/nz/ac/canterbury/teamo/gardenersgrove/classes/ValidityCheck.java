@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.gardenersgrove.classes;
+package nz.ac.canterbury.teamo.gardenersgrove.classes;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -186,7 +186,7 @@ public class ValidityCheck {
      * @return true if plant form has all valid inputs
      */
     public static boolean validPlantForm(String name, String plantCount, String description,
-                                         String plantedOnDate) {
+            String plantedOnDate) {
         return (validatePlantName(name).isEmpty() && validatePlantCount(plantCount).isEmpty()
                 && validatePlantDescription(description).isEmpty())
                 && validateDate(plantedOnDate).isEmpty();

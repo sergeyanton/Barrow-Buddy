@@ -1,8 +1,8 @@
-package nz.ac.canterbury.seng302.gardenersgrove.entity;
+package nz.ac.canterbury.teamo.gardenersgrove.entity;
 
 import java.util.Optional;
 import jakarta.persistence.*;
-import nz.ac.canterbury.seng302.gardenersgrove.classes.ValidityCheck;
+import nz.ac.canterbury.teamo.gardenersgrove.classes.ValidityCheck;
 
 /**
  * Entity class reflecting an entry of name, location, and size of a garden Note the @link{Entity}

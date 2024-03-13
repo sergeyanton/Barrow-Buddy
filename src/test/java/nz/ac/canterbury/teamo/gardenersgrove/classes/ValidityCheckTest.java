@@ -1,9 +1,10 @@
-package nz.ac.canterbury.seng302.gardenersgrove.classes;
+package nz.ac.canterbury.teamo.gardenersgrove.classes;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
+import nz.ac.canterbury.teamo.gardenersgrove.classes.ValidityCheck;
 
 public class ValidityCheckTest {
 

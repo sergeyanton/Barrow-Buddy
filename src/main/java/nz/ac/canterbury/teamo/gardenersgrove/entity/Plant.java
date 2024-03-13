@@ -1,10 +1,11 @@
-package nz.ac.canterbury.seng302.gardenersgrove.entity;
+package nz.ac.canterbury.teamo.gardenersgrove.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
 /**
- * Entity class reflecting an entry of name, count, description, planted on date, and garden id of a plant
+ * Entity class reflecting an entry of name, count, description, planted on date, and garden id of a
+ * plant
  */
 @Entity
 public class Plant {
@@ -37,7 +38,8 @@ public class Plant {
      * @param plantedOnDate date when plant was planted (in DD/MM/YYYY format)
      * @param gardenId ID of garden where the plant is currently in
      */
-    public Plant(String name, Integer plantCount, String description, LocalDate plantedOnDate, Long gardenId) {
+    public Plant(String name, Integer plantCount, String description, LocalDate plantedOnDate,
+            Long gardenId) {
         this.name = name;
         this.plantCount = plantCount;
         this.description = description;
@@ -55,7 +57,8 @@ public class Plant {
      * @param plantedOnDate date when plant was planted (in DD/MM/YYYY format)
      * @param gardenId ID of garden where the plant is currently in
      */
-    public Plant(String name, String plantCount, String description, String plantedOnDate, Long gardenId) {
+    public Plant(String name, String plantCount, String description, String plantedOnDate,
+            Long gardenId) {
         this.name = name;
         this.setPlantCount(plantCount);
         this.setDescription(description);
@@ -79,9 +82,13 @@ public class Plant {
         return description;
     }
 
-    public LocalDate getPlantedOnDate() { return plantedOnDate; }
+    public LocalDate getPlantedOnDate() {
+        return plantedOnDate;
+    }
 
-    public Long getGardenId() { return gardenId; }
+    public Long getGardenId() {
+        return gardenId;
+    }
 
     public void setName(String name) {
         this.name = name;
@@ -93,13 +100,16 @@ public class Plant {
 
     /**
      * Sets plantCount from a string representation
+     * 
      * @param plantCount the amount of this plant in this garden (optional)
      */
     public void setPlantCount(String plantCount) {
         this.plantCount = (plantCount.isBlank()) ? null : Integer.parseInt(plantCount);
     }
 
-    public void setDescription(String description) { this.description = (description.isBlank()) ? null : description; }
+    public void setDescription(String description) {
+        this.description = (description.isBlank()) ? null : description;
+    }
 
     public void setPlantedOnDate(LocalDate plantedOnDate) {
         this.plantedOnDate = plantedOnDate;
@@ -107,6 +117,7 @@ public class Plant {
 
     /**
      * Sets plantedOnDate given a string representation in DD/MM/YYYY format
+     * 
      * @param plantedOnDate string representing the date of planting
      */
     public void setPlantedOnDate(String plantedOnDate) {
@@ -114,7 +125,8 @@ public class Plant {
             this.plantedOnDate = null;
         } else {
             String[] dateList = plantedOnDate.split("/");
-            this.plantedOnDate = LocalDate.of(Integer.parseInt(dateList[2]), Integer.parseInt(dateList[1]), Integer.parseInt(dateList[0]));
+            this.plantedOnDate = LocalDate.of(Integer.parseInt(dateList[2]),
+                    Integer.parseInt(dateList[1]), Integer.parseInt(dateList[0]));
         }
     }
 
@@ -124,6 +136,7 @@ public class Plant {
 
     /**
      * Sets gardenId from a String representation
+     * 
      * @param gardenId the id of the garden this plant belongs to
      */
     public void setGardenId(String gardenId) {
@@ -132,7 +145,8 @@ public class Plant {
 
     @Override
     public String toString() {
-        return "Plant{" + "id=" + id + ", name='" + name + "', count=" + plantCount + ", description='" + description +
-                "', planted on date=" + plantedOnDate + ", garden id=" + gardenId + '\'' + '}';
+        return "Plant{" + "id=" + id + ", name='" + name + "', count=" + plantCount
+                + ", description='" + description + "', planted on date=" + plantedOnDate
+                + ", garden id=" + gardenId + '\'' + '}';
     }
 }

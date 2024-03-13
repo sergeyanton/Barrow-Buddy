@@ -1,20 +1,17 @@
-package nz.ac.canterbury.seng302.gardenersgrove.service;
+package nz.ac.canterbury.teamo.gardenersgrove.service;
 
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import nz.ac.canterbury.teamo.gardenersgrove.entity.Plant;
+import nz.ac.canterbury.teamo.gardenersgrove.repository.PlantRepository;
 import java.util.List;
 
 /**
-<<<<<<< HEAD
- * Service class for Gardens, defined by the @link{Service} annotation.
- * This class links automatically with @link{GardenRepository}, see the @link{Autowired} annotation below
-=======
- * Service class for Plants, defined by the @link{Service} annotation.
- * This class links automatically with @link{PlantRepository}, see the @link{Autowired} annotation below
->>>>>>> 1911727fc84a3e4e5caea036e1cc0b168bba2f06
+ * <<<<<<< HEAD Service class for Gardens, defined by the @link{Service} annotation. This class
+ * links automatically with @link{GardenRepository}, see the @link{Autowired} annotation below
+ * ======= Service class for Plants, defined by the @link{Service} annotation. This class links
+ * automatically with @link{PlantRepository}, see the @link{Autowired} annotation below >>>>>>>
+ * 1911727fc84a3e4e5caea036e1cc0b168bba2f06
  */
 @Service
 public class PlantService {
@@ -27,15 +24,18 @@ public class PlantService {
 
     /**
      * Gets a plant from persistence by searching for the id
+     * 
      * @param id id to look for
      * @return the appropriate plant
      */
     public Plant getPlantById(long id) {
-        return plantRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid plant id: " + id));
+        return plantRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid plant id: " + id));
     }
 
     /**
      * Gets all plants from persistence
+     * 
      * @return all plants currently saved in persistence
      */
     public List<Plant> getPlants() {
@@ -44,6 +44,7 @@ public class PlantService {
 
     /**
      * Adds a Plant to persistence
+     * 
      * @param plant object to persist
      * @return the saved plant object
      */

@@ -1,14 +1,13 @@
-package nz.ac.canterbury.seng302.gardenersgrove;
+package nz.ac.canterbury.teamo.gardenersgrove;
 
-import nz.ac.canterbury.seng302.gardenersgrove.entity.Plant;
-import nz.ac.canterbury.seng302.gardenersgrove.repository.PlantRepository;
-import nz.ac.canterbury.seng302.gardenersgrove.service.PlantService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
-
+import nz.ac.canterbury.teamo.gardenersgrove.entity.Plant;
+import nz.ac.canterbury.teamo.gardenersgrove.repository.PlantRepository;
+import nz.ac.canterbury.teamo.gardenersgrove.service.PlantService;
 import java.util.List;
 import java.util.Optional;
 
@@ -99,7 +98,8 @@ public class PlantServiceTest {
     @Test
     public void CreateNewPlant_NewPlantCreated_PlantInRepository() {
         PlantService gardenService = new PlantService(plantRepository);
-        Plant result = gardenService.addPlant(new Plant("My Plant", "1", "My plant is cool", "30/1/2021", 1L));
+        Plant result = gardenService
+                .addPlant(new Plant("My Plant", "1", "My plant is cool", "30/1/2021", 1L));
         Assertions.assertEquals(result.getName(), "My Plant");
     }
 }

@@ -1,8 +1,9 @@
-package nz.ac.canterbury.seng302.gardenersgrove.entity;
+package nz.ac.canterbury.teamo.gardenersgrove.entity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
+import nz.ac.canterbury.teamo.gardenersgrove.entity.Garden;
 
 public class GardenEntityTest {
     @Test
