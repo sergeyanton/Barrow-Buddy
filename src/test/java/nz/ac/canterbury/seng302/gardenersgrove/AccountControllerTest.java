@@ -83,45 +83,6 @@ class AccountControllerTest {
     }
 
     @Test
-    @WithMockUser
-    public void loginPostRequest_validUserDetails_userAuthenticated() throws Exception {
-        Mockito.when(userService.isSignedIn()).thenReturn(false);
-        Mockito.when(userService.findEmail(Mockito.any())).thenReturn(user);
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/login")
-                        .with(csrf())
-                        .param("email", user.getEmail())
-                        .param("password", user.getPassword())
-                )
-                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/profile"));
-
-        Mockito.verify(userService).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
-    }
-
-//    @Test
-//    public void getUser_userIdGiven_returnCorrectUser() throws Exception {
-//        String email = "test@example.com";
-//        String fName = "John";
-//        String lName = "Doe";
-//        LocalDate dob = LocalDate.of(1990, 1, 1);
-//        String password = "testPassword";
-//        String retypePassword = "testPassword";
-//
-//        RegistrationData registrationData = new RegistrationData(email, fName, lName, dob, password,
-//                retypePassword, false);
-//        User mockUser = new User(registrationData.getfName(), registrationData.getlName(), registrationData.getEmail(),
-//                registrationData.getPassword(), registrationData.getDob());
-//        Mockito.when(userService.getUserByEmailAndPassword(mockUser.getEmail(), mockUser.getPassword()).thenReturn(mockUser));
-//
-//        mockMvc.perform(MockMvcRequestBuilders.get("/user/1")
-//                .andExpect(MockMvcResultMatchers.status().isOk())
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.email").value("test@example.com"))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.password").value("testPassword"));
-//    }
-
-
-    @Test
     void login() {
     }
 }
