@@ -15,7 +15,7 @@
 
 <th:block
     th:fragment="gardenForm(action, actionLabel, cancel, gardenName, gardenLocation, gardenSize, gardenNameError, gardenLocationError, gardenSizeError)">
-    <form th:action="${action}" method="post" novalidate>
+    <form th:action="${action}" method="post">
         <div
             th:replace="~{fragments/formElement :: formElement(name='gardenName', label='Name: ', value=${gardenName}, placeholder='Your garden\'s name', error=${gardenNameError})}">
         </div>
@@ -34,7 +34,7 @@
 
 <th:block
     th:fragment="plantForm(action, actionLabel, cancel, plantName, plantCount, plantDescription, plantedOnDate, plantGardenId, plantNameError, plantCountError, plantDescriptionError, plantedOnDateError)">
-    <form th:action="${action}" method="post" novalidate>
+    <form th:action="${action}" method="post">
         <div
             th:replace="~{fragments/formElement :: formElement(name='plantName', label='Name: ', value=${plantName}, placeholder='Your plant\'s name', error=${plantNameError})}">
         </div>
@@ -53,4 +53,18 @@
             <button type="button">Cancel</button>
         </a>
     </form>
+    <script>
+        const dates = document.querySelectorAll("input[type='date']");
+        dates.forEach((date) => {
+            date.addEventListener("input", () => {
+                date.setCustomValidity("");
+            });
+
+            date.addEventListener("invalid", () => {
+                if (!date.validity.valid) {
+                    date.setCustomValidity("Date is not in valid format (DD/MM/YYYY)")
+                }
+            })
+        });
+    </script>
 </th:block>
