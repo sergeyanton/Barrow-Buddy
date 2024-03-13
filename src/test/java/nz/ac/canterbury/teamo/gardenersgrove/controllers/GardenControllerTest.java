@@ -291,8 +291,12 @@ public class GardenControllerTest {
 
                 mockMvc.perform(MockMvcRequestBuilders.get("/gardens/1/edit"))
                                 .andExpect(MockMvcResultMatchers.status().isOk())
-                                .andExpect(MockMvcResultMatchers.model().attribute("garden",
-                                                testGarden));
+                                .andExpect(MockMvcResultMatchers.model().attribute("gardenName",
+                                                testGarden.getName()))
+                                .andExpect(MockMvcResultMatchers.model().attribute("gardenSize",
+                                                testGarden.getSize()))
+                                .andExpect(MockMvcResultMatchers.model().attribute("gardenLocation",
+                                                testGarden.getLocation()));
 
                 Mockito.verify(gardenService, Mockito.times(1)).getGardenById(1L);
         }
