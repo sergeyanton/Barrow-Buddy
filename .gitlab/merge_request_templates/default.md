@@ -6,13 +6,13 @@ _fill out with description_
 
 ## Review Checklist
 
-- [] Appropriate tests added
-- [] All tests pass
-- [] Javadoc is complete and comprehensive
-- [] Codestyle consistent with the rest of the codebase
-- [] All pipelines passing
-- [] UI is consistent
-- [] Passes all non-functional requirements:
+- [ ] Appropriate tests added
+- [ ] All tests pass
+- [ ] Javadoc is complete and comprehensive
+- [ ] Codestyle consistent with the rest of the codebase
+- [ ] All pipelines passing
+- [ ] UI is consistent
+- [ ] Passes all non-functional requirements:
     - Sensical Data for Functionality
     - Data Integrity Between Releases
     - Consistent User Interface and Experience
