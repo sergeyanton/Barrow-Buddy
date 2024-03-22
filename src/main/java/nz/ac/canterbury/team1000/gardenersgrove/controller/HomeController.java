@@ -1,6 +1,8 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
 import java.util.List;
+
+import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +23,12 @@ public class HomeController {
     Logger logger = LoggerFactory.getLogger(HomeController.class);
 
     private final GardenService gardenService;
+    private final UserService userService;
 
     @Autowired
-    public HomeController(GardenService gardenService) {
+    public HomeController(GardenService gardenService, UserService userService) {
         this.gardenService = gardenService;
+        this.userService = userService;
     }
 
     @ModelAttribute("currentUrl")
@@ -46,7 +50,6 @@ public class HomeController {
      */
     @GetMapping("/")
     public String home() {
-        return "home";
-        // return userService.isSignedIn() ? "pages/homePage" : "pages/landingPage";
+        return userService.isSignedIn() ? "pages/homePage" : "pages/landingPage";
     }
 }

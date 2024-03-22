@@ -1,9 +1,11 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import nz.ac.canterbury.team1000.gardenersgrove.controller.dataCollection.LogInData;
 import nz.ac.canterbury.team1000.gardenersgrove.controller.dataCollection.RegistrationData;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
+import nz.ac.canterbury.team1000.gardenersgrove.form.RegistrationForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
 import nz.ac.canterbury.team1000.gardenersgrove.validation.InputValidation;
 import nz.ac.canterbury.team1000.gardenersgrove.validation.Validator;
@@ -16,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import static nz.ac.canterbury.team1000.gardenersgrove.controller.dataCollection.RegistrationData.createNewUser;
@@ -69,8 +72,8 @@ public class AccountController {
      * @return thymeleaf registrationPage
      */
     @GetMapping("/register")
-    public String getRegisterPage(Model model) {
-        logger.info("GET /register");
+    public String getRegisterPage(RegistrationForm registrationForm) {
+//        logger.info("GET /register");
 
         return userService.isSignedIn() ? "redirect:/" : "pages/registrationPage";
     }
@@ -87,32 +90,42 @@ public class AccountController {
      *         unsuccessful
      */
     @PostMapping("/register")
-    public String register(HttpServletRequest request, RegistrationData newUser, Model model) {
-        logger.info(String.format("Registering new user '%s %s'", newUser.getfName(),
-                newUser.getlName()));
+    public String register(@Valid RegistrationForm registrationForm, BindingResult bindingResult) {
+//        logger.info(String.format("Registering new user '%s %s'", newUser.getfName(),
+//                newUser.getlName()));
 
-        InputValidation inputValidation = new InputValidation(userService);
+//        InputValidation inputValidation = new InputValidation(userService);
 
-        Validator error = inputValidation.checkRegistrationData(newUser, false);
-        if (!error.getStatus()) {
-            model.addAttribute("fName", newUser.getfName());
-            model.addAttribute("lName", newUser.getlName());
-            model.addAttribute("noSurnameCheckBox", newUser.getNoSurnameCheckBox());
-            model.addAttribute("email", newUser.getEmail());
-            model.addAttribute("password", newUser.getPassword());
-            model.addAttribute("retypePassword", newUser.getRetypePassword());
-            model.addAttribute("dob", newUser.getDob());
-            return pageWithError("pages/registrationPage", model, error.getMessage());
+//        Validator error = inputValidation.checkRegistrationData(newUser, false);
+//        if (!error.getStatus()) {
+//            model.addAttribute("fName", newUser.getfName());
+//            model.addAttribute("lName", newUser.getlName());
+//            model.addAttribute("noSurnameCheckBox", newUser.getNoSurnameCheckBox());
+//            model.addAttribute("email", newUser.getEmail());
+//            model.addAttribute("password", newUser.getPassword());
+//            model.addAttribute("retypePassword", newUser.getRetypePassword());
+//            model.addAttribute("dob", newUser.getDob());
+//            return pageWithError("pages/registrationPage", model, error.getMessage());
+//        }
+
+//        User user = createNewUser(newUser);
+//        user.grantAuthority("ROLE_USER");
+//        userService.registerUser(user);
+//
+//        // Auto-login when registering
+//        userService.authenticateUser(authenticationManager, user, request);
+
+//        ResponseEntity.ok();
+
+
+        logger.info("I am here!");
+        logger.info("See my errors " + bindingResult.hasErrors());
+        logger.info(registrationForm.getFirstName());
+        logger.info(bindingResult.toString());
+
+        if (bindingResult.hasErrors()) {
+            return "pages/registrationPage";
         }
-
-        User user = createNewUser(newUser);
-        user.grantAuthority("ROLE_USER");
-        userService.registerUser(user);
-
-        // Auto-login when registering
-        userService.authenticateUser(authenticationManager, user, request);
-
-        ResponseEntity.ok();
 
         return "redirect:/profile";
     }
