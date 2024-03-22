@@ -4,8 +4,8 @@ plugins {
 	id 'io.spring.dependency-management' version '1.1.4'
 }
 
-group = 'nz.ac.canterbury.teamo'
-version = '0.0.1-SNAPSHOT'
+group = 'nz.ac.canterbury.team1000'
+version = '0.0.2-SNAPSHOT'
 sourceCompatibility = '17'
 
 repositories {
