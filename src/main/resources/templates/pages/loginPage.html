@@ -1,38 +1,41 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
 <head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
-    <link rel="stylesheet" type="text/css" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/styles-user.css}">
     <title>Log in</title>
 </head>
+
 <body>
-<div class="basic">
-    <h1>Log In</h1>
-    <form th:action="@{login}" method="post">
-        <label for="email"> Email: </label>
-        <input type="email" class="form-control" id="email"
-               th:name="email" data-cy="email" size="40" required autofocus>
-        <br/>
-        <label for="password"> Password: </label>
-        <input type="password" class="form-control" id="password"
-               th:name="password" data-cy="password" required autofocus>
-        <br/>
+    <div class="basic">
+        <h1>Log In</h1>
+        <form th:action="@{login}" method="post">
+            <label for="email"> Email: </label>
+            <input type="email" class="form-control" id="email" th:name="email" data-cy="email" size="40" required
+                autofocus>
+            <br />
+            <label for="password"> Password: </label>
+            <input type="password" class="form-control" id="password" th:name="password" data-cy="password" required
+                autofocus>
+            <br />
 
-        <div th:if="${errorMessage}">
-            <div th:replace="~{fragments/errorMessageFragment :: errorMessage(message=${errorMessage})}"></div>
-        </div>
+            <div th:if="${errorMessage}">
+                <div th:replace="~{fragments/errorMessageFragment :: errorMessage(message=${errorMessage})}"></div>
+            </div>
 
-        <div>
-            <p>Not registered? <a th:href="@{register}">Create an account!</a></p>
-        </div>
+            <div>
+                <p>Not registered? <a th:href="@{register}">Create an account!</a></p>
+            </div>
 
 
-        <button type="submit">Sign In</button>
+            <button type="submit">Sign In</button>
 
-        <a class="cancel" th:href="@{.}">Cancel</a>
+            <a class="cancel" th:href="@{.}">Cancel</a>
 
-    </form>
-</div>
+        </form>
+    </div>
 
 </body>
+
 </html>

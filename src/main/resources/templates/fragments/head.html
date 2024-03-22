@@ -1,0 +1,16 @@
+<head th:fragment="head(title)">
+    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}"></title>
+    <!--    <script>-->
+    <!--        document.addEventListener('keydown', function(event) {-->
+    <!--            if (event.key === 'Enter' && event.target.tagName.toLowerCase() === 'input') {-->
+    <!--                event.preventDefault();-->
+    <!--                event.target.blur();-->
+    <!--            }-->
+    <!--        });-->
+    <!--    </script>-->
+    <script th:src="@{/js/preventDefaultBehaviour.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/normalize.css}">
+    <link rel="stylesheet" th:href="@{/css/styles-plants.css}">
+</head>
