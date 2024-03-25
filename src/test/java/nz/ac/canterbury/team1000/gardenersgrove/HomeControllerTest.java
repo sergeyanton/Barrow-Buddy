@@ -7,9 +7,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.context.SecurityContextHolder;
 import nz.ac.canterbury.team1000.gardenersgrove.controller.HomeController;
+import nz.ac.canterbury.team1000.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
-import java.util.logging.Logger;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -17,13 +16,17 @@ import static org.mockito.Mockito.*;
 class HomeControllerTest {
     @Mock
     UserService userService;
+
+    @Mock
+    GardenService gardenService;
+
     @InjectMocks
     HomeController homeController;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        homeController = new HomeController(userService);
+        homeController = new HomeController(gardenService);
 
         SecurityContextHolder.clearContext();
     }

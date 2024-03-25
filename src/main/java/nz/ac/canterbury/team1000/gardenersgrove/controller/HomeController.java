@@ -5,10 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.team1000.gardenersgrove.service.GardenService;
@@ -45,7 +43,7 @@ public class HomeController {
      * Renders the template.
      */
     @GetMapping("/")
-    public String home() {
+    public String getHome() {
         return "home";
         // return userService.isSignedIn() ? "pages/homePage" : "pages/landingPage";
     }
