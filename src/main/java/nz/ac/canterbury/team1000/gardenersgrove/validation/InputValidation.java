@@ -165,6 +165,10 @@ public class InputValidation {
         int month = userDob.getMonthValue();
         int day = userDob.getDayOfMonth();
 
+        if (Integer.toString(year).length() != 4) {
+            isValid.setValid(false, "Date in not in valid format, DD/MM/YYYY)");
+        }
+
         if (month % 2 != 0 && day > 30) {
             isValid.setValid(false, "Date in not in valid format, DD/MM/YYYY)");
         }
@@ -182,16 +186,18 @@ public class InputValidation {
             isValid.setValid(false, "The maximum age allowed is 120 years");
         }
 
-        // checks that date given is not in the future
-        if (year > currentYear) {
-            // invalid year
-            isValid.setValid(false, "Date cannot be in the future");
-        } else if (year == currentYear && month > currentMonth) {
-            // invalid month
-            isValid.setValid(false, "Date cannot be in the future");
-        } else if (year == currentYear && month == currentMonth && day > currentDay) {
-            // invalid day
-            isValid.setValid(false, "Date cannot be in the future");
+        if (isValid) {
+            // checks that date given is not in the future
+            if (year > currentYear) {
+                // invalid year
+                isValid.setValid(false, "Date cannot be in the future");
+            } else if (year == currentYear && month > currentMonth) {
+                // invalid month
+                isValid.setValid(false, "Date cannot be in the future");
+            } else if (year == currentYear && month == currentMonth && day > currentDay) {
+                // invalid day
+                isValid.setValid(false, "Date cannot be in the future");
+            }
         }
 
         return isValid;
