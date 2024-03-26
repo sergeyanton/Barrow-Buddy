@@ -1,35 +1,57 @@
 package nz.ac.canterbury.team1000.gardenersgrove.form;
-
-import jakarta.validation.constraints.*;
-import org.springframework.format.annotation.DateTimeFormat;
-
 import java.time.LocalDate;
 
 /**
  * Entity used to parse and store the data sent through a register POST request
  */
 public class RegistrationForm {
-    @NotBlank(message = "{First/Last} name cannot be empty")
-    @Max(value = 64, message = "{First/Last} name must be 64 characters long or less")
-    @Pattern(regexp = "^[a-zA-Z\\s'-]+$", message = "{First/Last} name must only include letters, spaces, hyphens or apostrophes")
     private String firstName;
-
-    @NotBlank(message = "{First/Last} name cannot be empty")
-    @Max(value = 64, message = "{First/Last} name must be 64 characters long or less")
-    @Pattern(regexp = "^[a-zA-Z\\s'-]+$", message = "{First/Last} name must only include letters, spaces, hyphens or apostrophes")
     private String lastName;
+    private Boolean noSurnameCheckBox;
+    private String email;
+    private String password;
+    private String retypePassword;
+    private String dob;
 
-//    @NotNull
-//    private Boolean noSurnameCheckBox;
-//    @NotBlank(message = "Email address must be in the form ‘jane@doe.nz’")
-//    @Email(message = "Email address must be in the form ‘jane@doe.nz’")
-//    private String email;
-//    @NotBlank(message = "Password cannot be empty.")
-//    private String password;
-//    @NotNull(message = "Password ")
-//    private String retypePassword;
-//    @NotBlank
-//    private LocalDate dob;
+    public Boolean getNoSurnameCheckBox() {
+        return noSurnameCheckBox;
+    }
+
+    public void setNoSurnameCheckBox(Boolean noSurnameCheckBox) {
+        this.noSurnameCheckBox = noSurnameCheckBox;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getRetypePassword() {
+        return retypePassword;
+    }
+
+    public void setRetypePassword(String retypePassword) {
+        this.retypePassword = retypePassword;
+    }
+
+    public String getDob() {
+        return dob;
+    }
+
+    public void setDob(String dob) {
+        this.dob = dob;
+    }
 
     public String getFirstName() {
         return this.firstName;

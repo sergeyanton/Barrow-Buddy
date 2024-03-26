@@ -19,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import static nz.ac.canterbury.team1000.gardenersgrove.controller.dataCollection.RegistrationData.createNewUser;
@@ -118,10 +119,7 @@ public class AccountController {
 //        ResponseEntity.ok();
 
 
-        logger.info("I am here!");
-        logger.info("See my errors " + bindingResult.hasErrors());
-        logger.info(registrationForm.getFirstName());
-        logger.info(bindingResult.toString());
+        bindingResult.addError(new FieldError("registrationForm", "lastName", "Help!"));
 
         if (bindingResult.hasErrors()) {
             return "pages/registrationPage";
