@@ -179,10 +179,10 @@ public class InputValidation {
             isValid.setValid(false, "Date is not in valid format, DD/MM/YYYY)");
         }
 
-        if (userDob.isAfter(LocalDate.now().minusYears(13))) {
+        if (year > currentYear - 13) {
             isValid.setValid(false, "You must be 13 years or older to create an account");
         }
-        if (userDob.isBefore(LocalDate.now().minusYears(120))) {
+        if (year < currentYear - 120) {
             isValid.setValid(false, "The maximum age allowed is 120 years");
         }
 

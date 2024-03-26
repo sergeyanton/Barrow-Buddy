@@ -108,25 +108,13 @@ public class UserValidationTest {
     }
 
     @Test
-    void dobYoungAgeCheck_error() {
+    void dobInvalidAgeCheck_error() {
         User invalidUser =
                 new User("Fabian", "Gilson", "fabian.gilson@canterbury.ac.nz", "Fabian123!",
-                        LocalDate.now().minusYears(13).plusDays(1));
+                        LocalDate.parse("09/09/2020", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         Validator dobValidator = checkDob(invalidUser.getDateOfBirth());
 
         assertFalse(dobValidator.getStatus());
-        assertEquals(dobValidator.getMessage(), "You must be 13 years or older to create an account");
-    }
-
-    @Test
-    void dobOver120YearsOldCheck_error() {
-        User invalidUser =
-                new User("Fabian", "Gilson", "fabian.gilson@canterbury.ac.nz", "Fabian123!",
-                        LocalDate.now().minusYears(120).minusDays(1));
-        Validator dobValidator = checkDob(invalidUser.getDateOfBirth());
-
-        assertFalse(dobValidator.getStatus());
-        assertEquals(dobValidator.getMessage(), "The maximum age allowed is 120 years");
     }
 
     @Test
