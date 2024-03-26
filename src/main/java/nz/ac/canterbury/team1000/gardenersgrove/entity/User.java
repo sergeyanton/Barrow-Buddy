@@ -34,6 +34,9 @@ public class User {
     @Column(nullable = true)
     private LocalDate dateOfBirth;
 
+    @Column(nullable = true)
+    private String profilePicturePath;
+
     @Column()
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
@@ -113,6 +116,10 @@ public class User {
         return dateOfBirth;
     }
 
+    public String getProfilePicturePath() {
+        return profilePicturePath;
+    }
+
     public void setFname(String fname) {
         this.fname = fname;
     }
@@ -131,5 +138,9 @@ public class User {
 
     public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
+    }
+
+    public void setProfilePicturePath(String profilePicturePath) {
+        this.profilePicturePath = profilePicturePath;
     }
 }

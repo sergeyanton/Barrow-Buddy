@@ -106,6 +106,7 @@ public class AccountController {
         }
 
         User user = createNewUser(newUser);
+        user.setProfilePicturePath("/resources/images/default_pic.jpg");
         user.grantAuthority("ROLE_USER");
         userService.registerUser(user);
 
