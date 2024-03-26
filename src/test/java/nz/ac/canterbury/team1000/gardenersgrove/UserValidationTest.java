@@ -7,6 +7,8 @@ import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.repository.UserRepository;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
 import nz.ac.canterbury.team1000.gardenersgrove.validation.Validator;
+
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -55,6 +57,7 @@ public class UserValidationTest {
                 LocalDate.parse("01/01/2009", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         Validator dobValidator = checkDob(user.getDateOfBirth());
         assertTrue(dobValidator.getStatus());
+        assertEquals(dobValidator.getMessage(), "Ok");
     }
 
 //    @Test
@@ -105,13 +108,25 @@ public class UserValidationTest {
     }
 
     @Test
-    void dobInvalidAgeCheck_error() {
+    void dobYoungAgeCheck_error() {
         User invalidUser =
                 new User("Fabian", "Gilson", "fabian.gilson@canterbury.ac.nz", "Fabian123!",
-                        LocalDate.parse("09/09/2020", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                        LocalDate.now().minusYears(13).plusDays(1));
         Validator dobValidator = checkDob(invalidUser.getDateOfBirth());
 
         assertFalse(dobValidator.getStatus());
+        assertEquals(dobValidator.getMessage(), "You must be 13 years or older to create an account");
+    }
+
+    @Test
+    void dobOver120YearsOldCheck_error() {
+        User invalidUser =
+                new User("Fabian", "Gilson", "fabian.gilson@canterbury.ac.nz", "Fabian123!",
+                        LocalDate.now().minusYears(120).minusDays(1));
+        Validator dobValidator = checkDob(invalidUser.getDateOfBirth());
+
+        assertFalse(dobValidator.getStatus());
+        assertEquals(dobValidator.getMessage(), "The maximum age allowed is 120 years");
     }
 
     @Test
@@ -120,6 +135,7 @@ public class UserValidationTest {
                 "Fabian123!", LocalDate.now().plusYears(5));
         Validator dobValidator = checkDob(invalidUser.getDateOfBirth());
         assertFalse(dobValidator.getStatus());
+        assertEquals(dobValidator.getMessage(), "Date cannot be in the future");
     }
 
     @Test
@@ -128,6 +144,7 @@ public class UserValidationTest {
                 "Fabian123!", LocalDate.now().plusMonths(5));
         Validator dobValidator = checkDob(invalidUser.getDateOfBirth());
         assertFalse(dobValidator.getStatus());
+        assertEquals(dobValidator.getMessage(), "Date cannot be in the future");
     }
 
     @Test
@@ -136,6 +153,7 @@ public class UserValidationTest {
                 "Fabian123!", LocalDate.now().plusDays(5));
         Validator dobValidator = checkDob(invalidUser.getDateOfBirth());
         assertFalse(dobValidator.getStatus());
+        assertEquals(dobValidator.getMessage(), "Date cannot be in the future");
     }
 
     @Test
@@ -144,6 +162,15 @@ public class UserValidationTest {
                 "Fabian123!", LocalDate.of(20000, 1, 1));
         Validator dobValidator = checkDob(invalidUser.getDateOfBirth());
         assertFalse(dobValidator.getStatus());
+        assertEquals(dobValidator.getMessage(), "Date cannot be in the future");
+    }
+
+    @Test
+    void dobBillionYearsCheck_error() {
+        assertThrows(DateTimeException.class, () -> {
+            User invalidUser = new User("Invalid", "Person", "fabian.gilson@canterbury.ac.nz",
+                    "Fabian123!", LocalDate.of(1000000000, 1, 1));
+        });
     }
 
 //    @Test

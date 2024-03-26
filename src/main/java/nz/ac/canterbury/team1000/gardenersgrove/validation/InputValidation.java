@@ -166,38 +166,36 @@ public class InputValidation {
         int day = userDob.getDayOfMonth();
 
         if (Integer.toString(year).length() != 4) {
-            isValid.setValid(false, "Date in not in valid format, DD/MM/YYYY)");
+            isValid.setValid(false, "Date is not in valid format, DD/MM/YYYY)");
         }
 
         if (month % 2 != 0 && day > 30) {
-            isValid.setValid(false, "Date in not in valid format, DD/MM/YYYY)");
+            isValid.setValid(false, "Date is not in valid format, DD/MM/YYYY)");
         }
         if (year % 4 == 0 && month == 2 && day > 29) {
-            isValid.setValid(false, "Date in not in valid format, DD/MM/YYYY)");
+            isValid.setValid(false, "Date is not in valid format, DD/MM/YYYY)");
         }
         if (year % 4 != 0 && month == 2 && day > 28) {
-            isValid.setValid(false, "Date in not in valid format, DD/MM/YYYY)");
+            isValid.setValid(false, "Date is not in valid format, DD/MM/YYYY)");
         }
 
-        if (year > currentYear - 13) {
+        if (userDob.isAfter(LocalDate.now().minusYears(13))) {
             isValid.setValid(false, "You must be 13 years or older to create an account");
         }
-        if (year < currentYear - 120) {
+        if (userDob.isBefore(LocalDate.now().minusYears(120))) {
             isValid.setValid(false, "The maximum age allowed is 120 years");
         }
 
-        if (isValid) {
-            // checks that date given is not in the future
-            if (year > currentYear) {
-                // invalid year
-                isValid.setValid(false, "Date cannot be in the future");
-            } else if (year == currentYear && month > currentMonth) {
-                // invalid month
-                isValid.setValid(false, "Date cannot be in the future");
-            } else if (year == currentYear && month == currentMonth && day > currentDay) {
-                // invalid day
-                isValid.setValid(false, "Date cannot be in the future");
-            }
+        // checks that date given is not in the future
+        if (year > currentYear) {
+            // invalid year
+            isValid.setValid(false, "Date cannot be in the future");
+        } else if (year == currentYear && month > currentMonth) {
+            // invalid month
+            isValid.setValid(false, "Date cannot be in the future");
+        } else if (year == currentYear && month == currentMonth && day > currentDay) {
+            // invalid day
+            isValid.setValid(false, "Date cannot be in the future");
         }
 
         return isValid;
