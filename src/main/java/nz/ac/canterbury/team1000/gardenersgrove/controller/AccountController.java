@@ -3,16 +3,14 @@ package nz.ac.canterbury.team1000.gardenersgrove.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import nz.ac.canterbury.team1000.gardenersgrove.controller.dataCollection.LogInData;
-import nz.ac.canterbury.team1000.gardenersgrove.controller.dataCollection.RegistrationData;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
+import nz.ac.canterbury.team1000.gardenersgrove.form.FormValidator;
 import nz.ac.canterbury.team1000.gardenersgrove.form.RegistrationForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
-import nz.ac.canterbury.team1000.gardenersgrove.validation.InputValidation;
 import nz.ac.canterbury.team1000.gardenersgrove.validation.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,7 +20,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import static nz.ac.canterbury.team1000.gardenersgrove.controller.dataCollection.RegistrationData.createNewUser;
+
 import static nz.ac.canterbury.team1000.gardenersgrove.util.PageUtils.pageWithError;
 import static nz.ac.canterbury.team1000.gardenersgrove.validation.InputValidation.checkLoginData;
 import static nz.ac.canterbury.team1000.gardenersgrove.validation.InputValidation.verifyPassword;
@@ -91,39 +89,24 @@ public class AccountController {
      *         unsuccessful
      */
     @PostMapping("/register")
-    public String register(@Valid RegistrationForm registrationForm, BindingResult bindingResult) {
-//        logger.info(String.format("Registering new user '%s %s'", newUser.getfName(),
-//                newUser.getlName()));
-
-//        InputValidation inputValidation = new InputValidation(userService);
-
-//        Validator error = inputValidation.checkRegistrationData(newUser, false);
-//        if (!error.getStatus()) {
-//            model.addAttribute("fName", newUser.getfName());
-//            model.addAttribute("lName", newUser.getlName());
-//            model.addAttribute("noSurnameCheckBox", newUser.getNoSurnameCheckBox());
-//            model.addAttribute("email", newUser.getEmail());
-//            model.addAttribute("password", newUser.getPassword());
-//            model.addAttribute("retypePassword", newUser.getRetypePassword());
-//            model.addAttribute("dob", newUser.getDob());
-//            return pageWithError("pages/registrationPage", model, error.getMessage());
-//        }
-
-//        User user = createNewUser(newUser);
-//        user.grantAuthority("ROLE_USER");
-//        userService.registerUser(user);
-//
-//        // Auto-login when registering
-//        userService.authenticateUser(authenticationManager, user, request);
-
-//        ResponseEntity.ok();
-
-
-        bindingResult.addError(new FieldError("registrationForm", "lastName", "Help!"));
+    public String register(HttpServletRequest request, RegistrationForm registrationForm, BindingResult bindingResult) {
+        FormValidator.validateRegistrationForm(registrationForm, bindingResult);
 
         if (bindingResult.hasErrors()) {
             return "pages/registrationPage";
         }
+
+        // form was submitted with valid data
+        // create the user and log them in
+        User newUser = new User(
+            registrationForm.getFirstName(),
+            registrationForm.getLastName(),
+            registrationForm.getEmail(),
+            registrationForm.getPassword(),
+            registrationForm.getDobLocalDate()
+        );
+        userService.registerUser(newUser);
+        userService.authenticateUser(authenticationManager, newUser, request);
 
         return "redirect:/profile";
     }

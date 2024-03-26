@@ -21,7 +21,7 @@ class ErrorAdder {
     }
 }
 
-public class Validator {
+public class FormValidator {
     private static DateTimeFormatter validDateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     public static void validateRegistrationForm(RegistrationForm registrationForm, BindingResult bindingResult) {
@@ -53,11 +53,11 @@ public class Validator {
         if (!registrationForm.getPassword().equals(registrationForm.getRetypePassword())) {
             errors.add("retypePassword", "Passwords do not match");
         }
-        if (checkDateNotInCorrectFormat(registrationForm.getDob())) {
+        if (checkDateNotInCorrectFormat(registrationForm.getDob()) || checkBlank(registrationForm.getDob())) {
             errors.add("dob", "Date in not in valid format, DD/MM/YYYY");
         } else if (!checkDateBefore(registrationForm.getDob(), LocalDate.now().plusDays(1))) {
             errors.add("dob", "Date cannot be in the future");
-        } else if (checkDateBefore(registrationForm.getDob(), LocalDate.now().minusYears(13))) {
+        } else if (!checkDateBefore(registrationForm.getDob(), LocalDate.now().minusYears(13))) {
             errors.add("dob", "You must be 13 years or older to create an account");
         } else if (!checkDateBefore(registrationForm.getDob(), LocalDate.now().minusYears(120))) {
             errors.add("dob", "The maximum age allowed is 120 years");
@@ -88,9 +88,11 @@ public class Validator {
         try {
             LocalDate.parse(dateString, validDateFormat);
         } catch (DateTimeParseException e) {
-            return false;
+            // date is incorrect format
+            return true;
         }
-        return true;
+        // date is correct format
+        return false;
     }
     public static boolean checkDateBefore(String dateString, LocalDate before) {
         try {

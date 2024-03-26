@@ -1,5 +1,7 @@
 package nz.ac.canterbury.team1000.gardenersgrove.form;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 /**
  * Entity used to parse and store the data sent through a register POST request
@@ -47,6 +49,15 @@ public class RegistrationForm {
 
     public String getDob() {
         return dob;
+    }
+
+    public LocalDate getDobLocalDate() {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            return LocalDate.parse(dob, formatter);
+        } catch (DateTimeParseException e) {
+            return null;
+        }
     }
 
     public void setDob(String dob) {

@@ -17,39 +17,30 @@
             <br />
             <label for="lastName"> Last Name: </label>
             <input type="text" class="form-control" id="lastName" placeholder="Gilson" th:field="*{lastName}">
-            <span class="error" th:if="${#fields.hasErrors('lastName')}" th:error="*{lastName}">First name error</span>
+            <span class="error" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">First name error</span>
             <br />
-<!--            <input type="checkbox" class="form-control" id="noSurnameCheckBox" th:name="noSurnameCheckBox"-->
-<!--                th:checked="*{noSurnameCheckBox}" data-cy="noSurnameCheckBox" onclick="toggleInput()" autofocus>-->
-<!--            <label for="noSurnameCheckBox"> I have no surname </label>-->
-<!--            <br />-->
-<!--            <label for="email"> Email: </label>-->
-<!--            <input type="email" class="form-control" id="email" placeholder="fabian.gilson@canterbury.ac.nz"-->
-<!--                th:name="email" th:value="*{email}" data-cy="email" size="40" required autofocus>-->
-<!--            <br />-->
-
-<!--            <label for="password"> Password: </label>-->
-<!--            <input type="password" class="form-control" id="password" th:name="password" th:value="*{password}"-->
-<!--                data-cy="password" required autofocus>-->
-<!--            <br />-->
-<!--            <label for="retypePassword"> Re-type Password: </label>-->
-<!--            <input type="password" class="form-control" id="retypePassword" th:name="retypePassword"-->
-<!--                th:value="*{retypePassword}" data-cy="retypePassword" required autofocus>-->
-<!--            <br />-->
-<!--            <label for="dob"> Date Of Birth: </label>-->
-<!--            <input type="date" class="form-control" id="dob" th:name="dob" th:value="*{dob}" data-cy="dob" autofocus>-->
-<!--            <br />-->
-
-<!--            <div th:if="${errorMessage}">-->
-<!--                <div th:replace="~{fragments/errorMessageFragment :: errorMessage(message=${errorMessage})}"></div>-->
-<!--            </div>-->
-
+            <input type="checkbox" class="form-control" id="noSurnameCheckBox" th:field="*{noSurnameCheckBox}"  onclick="toggleInput()">
+            <label for="noSurnameCheckBox"> I have no surname </label>
+            <br />
+            <label for="email"> Email: </label>
+            <input type="text" class="form-control" id="email" placeholder="Gilson" th:field="*{email}">
+            <span class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email error</span>
+            <br />
+            <label for="password"> Password: </label>
+            <input type="password" class="form-control" id="password" placeholder="password" th:field="*{password}">
+            <span class="error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password error</span>
+            <br />
+            <label for="retypePassword"> Re-Type Password: </label>
+            <input type="password" class="form-control" id="retypePassword" th:field="*{retypePassword}">
+            <span class="error" th:if="${#fields.hasErrors('retypePassword')}" th:errors="*{retypePassword}">Re-Type Password error</span>
+            <br />
+            <label for="dob"> Date of Birth: </label>
+            <input type="text" class="form-control" id="dob" th:field="*{dob}">
+            <span class="error" th:if="${#fields.hasErrors('dob')}" th:errors="*{dob}">DoB error</span>
+            <br />
 
             <button class="next" type="submit">Sign Up</button>
-
-
             <a class="cancel" th:href="@{.}">Cancel</a>
-
         </form>
     </div>
     <script>
