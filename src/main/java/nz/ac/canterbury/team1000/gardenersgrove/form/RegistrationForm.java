@@ -84,7 +84,7 @@ public class RegistrationForm {
         this.lastName = lastName;
     }
 
-    public User getUer() {
+    public User getUser() {
         return new User(
             this.firstName,
                 this.lastName,
@@ -92,5 +92,12 @@ public class RegistrationForm {
                 Password.hashPassword(this.password),
                 this.getDobLocalDate()
         );
+    }
+
+    public void setFromUser(User user) {
+        this.firstName = user.getFname();
+        this.lastName = user.getLname();
+        this.email = user.getEmail();
+        this.dob = user.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 }

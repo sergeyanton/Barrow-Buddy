@@ -1,7 +1,6 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 import nz.ac.canterbury.team1000.gardenersgrove.controller.dataCollection.LogInData;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.FormValidator;
@@ -17,7 +16,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -102,13 +100,9 @@ public class AccountController {
 
         // form was submitted with valid data
         // create the user and log them in
-        User newUser = new User(
-            registrationForm.getFirstName(),
-            registrationForm.getLastName(),
-            registrationForm.getEmail(),
-            registrationForm.getPassword(),
-            registrationForm.getDobLocalDate()
-        );
+        User newUser = registrationForm.getUser();
+        // Give them the role of user
+        newUser.grantAuthority("ROLE_USER");
         userService.registerUser(newUser);
         userService.authenticateUser(authenticationManager, newUser, request);
 

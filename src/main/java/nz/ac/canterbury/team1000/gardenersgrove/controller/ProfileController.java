@@ -1,26 +1,20 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import nz.ac.canterbury.team1000.gardenersgrove.controller.dataCollection.RegistrationData;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
+import nz.ac.canterbury.team1000.gardenersgrove.form.EditUserForm;
+import nz.ac.canterbury.team1000.gardenersgrove.form.FormValidator;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
-import nz.ac.canterbury.team1000.gardenersgrove.validation.InputValidation;
-import nz.ac.canterbury.team1000.gardenersgrove.validation.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import static nz.ac.canterbury.team1000.gardenersgrove.util.PageUtils.pageWithError;
-import static nz.ac.canterbury.team1000.gardenersgrove.util.Password.hashPassword;
-import java.util.Objects;
 
 
 @Controller
@@ -39,24 +33,17 @@ public class ProfileController {
     /**
      * This method is used to get the profile page for the user
      * 
-     * @param model Which is used to pass data to the view
+     * @param editUserForm the form used to edit the user's profile
      * @return A string that represents the link to the profile page
      */
     @GetMapping("/editProfile")
-    public String getEditProfilePage(Model model) {
+    public String getEditProfilePage(EditUserForm editUserForm) {
         logger.info("GET /editProfile");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
         User currentUser = userService.findEmail(currentPrincipalName);
-        model.addAttribute("fName", currentUser.getFname());
 
-        if (!currentUser.getLname().isEmpty()) {
-            model.addAttribute("lName", currentUser.getLname());
-        }
-        model.addAttribute("email", currentUser.getEmail());
-        model.addAttribute("dateOfBirth", currentUser.getDateOfBirth());
-        model.addAttribute("noSurnameCheckBox", currentUser.getLname().isEmpty());
-
+        editUserForm.setFromUser(currentUser);
 
         return "pages/editProfilePage";
     }
@@ -65,13 +52,13 @@ public class ProfileController {
      * This method is used to check the data passed in by the user and then if it is valid, update
      * the user's data
      * 
-     * @param updatedUser A RegistrationData object that contains the updated user data
-     * @param model Which is used to pass data to the view
+     * @param request the request object
+     * @param editUserForm the form used to edit the user's profile
+     * @param bindingResult the binding result for binding the form errors
      * @return A string that represents the link to the profile page
      */
     @PostMapping("/editProfile")
-    public String editProfile(HttpServletRequest request, RegistrationData updatedUser,
-            Model model) {
+    public String editProfile(HttpServletRequest request, EditUserForm editUserForm, BindingResult bindingResult) {
         logger.info("POST /editProfile");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
@@ -79,45 +66,17 @@ public class ProfileController {
         User currentUser = userService.findEmail(currentPrincipalName);
         String oldEmail = currentUser.getEmail();
 
-        InputValidation inputValidation = new InputValidation(userService);
+        FormValidator.validateEditUserForm(editUserForm, bindingResult, currentUser);
 
-        Validator error;
-        if (Objects.equals(currentUser.getEmail(), updatedUser.getEmail())) {
-            error = inputValidation.checkRegistrationData(updatedUser, true);
-        } else {
-            error = inputValidation.checkRegistrationData(updatedUser, false);
-        }
-        if (!error.getStatus()) {
-            return pageWithError(getEditProfilePage(model), model, error.getMessage());
+        if (bindingResult.hasErrors()) {
+            return "pages/editProfilePage";
         }
 
-        if (updatedUser.getPassword().isBlank() && !updatedUser.getRetypePassword().isBlank()) {
-            return pageWithError(getEditProfilePage(model), model, "Passwords do not match");
-        }
-
-        if (updatedUser.getfName() != null
-                && !Objects.equals(updatedUser.getfName(), currentUser.getFname())) {
-            currentUser.setFname(updatedUser.getfName());
-        }
-
-        if (updatedUser.getlName() != null
-                && !Objects.equals(updatedUser.getlName(), currentUser.getLname())) {
-            currentUser.setLname(updatedUser.getlName());
-        }
-
-        if (updatedUser.getEmail() != null
-                && !Objects.equals(updatedUser.getEmail(), currentUser.getEmail())) {
-            currentUser.setEmail(updatedUser.getEmail());
-        }
-
-        if (!updatedUser.getPassword().isEmpty()
-                && !Objects.equals(updatedUser.getPassword(), currentUser.getPassword())) {
-            currentUser.setPassword(hashPassword(updatedUser.getPassword()));
-        }
-
-        if (updatedUser.getDob() != null
-                && !Objects.equals(updatedUser.getDob(), currentUser.getDateOfBirth())) {
-            currentUser.setDateOfBirth(updatedUser.getDob());
+        currentUser.setFname(editUserForm.getFirstName());
+        currentUser.setLname(editUserForm.getLastName());
+        currentUser.setEmail(editUserForm.getEmail());
+        if (!editUserForm.getPassword().isEmpty()) {
+            currentUser.setPassword(editUserForm.getPassword());
         }
 
         userService.updateUserByEmail(oldEmail, currentUser);
