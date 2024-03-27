@@ -11,32 +11,20 @@
     <div class="basic">
         <h1>Register</h1>
         <form th:action="@{/register}" method="post" th:object="${registrationForm}">
-            <label for="firstName"> First Name: </label>
-            <input type="text" id="firstName" class="form-control" placeholder="Fabian" th:field="*{firstName}"/>
-            <span class="error" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">First name error</span>
+            <input th:replace="~{fragments/formElement :: formElementField(fieldName='firstName', label='First Name: ', placeholder='Fabian')}" />
             <br />
-            <label for="lastName"> Last Name: </label>
-            <input type="text" class="form-control" id="lastName" placeholder="Gilson" th:field="*{lastName}">
-            <span class="error" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">First name error</span>
+            <input th:replace="~{fragments/formElement :: formElementField(fieldName='lastName', label='Last Name: ', placeholder='Gilson')}" />
             <br />
-            <input type="checkbox" class="form-control" id="noSurnameCheckBox" th:field="*{noSurnameCheckBox}"  onclick="toggleInput()">
+            <input type="checkbox" class="form-control" id="noSurnameCheckBox" th:field="*{noSurnameCheckBox}" onclick="toggleInput()">
             <label for="noSurnameCheckBox"> I have no surname </label>
             <br />
-            <label for="email"> Email: </label>
-            <input type="text" class="form-control" id="email" placeholder="Gilson" th:field="*{email}">
-            <span class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email error</span>
+            <input th:replace="~{fragments/formElement :: formElementField(fieldName='email', label='Email: ', placeholder='jane@doe.nz')}" />
             <br />
-            <label for="password"> Password: </label>
-            <input type="password" class="form-control" id="password" placeholder="password" th:field="*{password}">
-            <span class="error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password error</span>
+            <input th:replace="~{fragments/formElement :: formElementField(fieldName='password', label='Password: ', placeholder='*******', type='password')}" />
             <br />
-            <label for="retypePassword"> Re-Type Password: </label>
-            <input type="password" class="form-control" id="retypePassword" th:field="*{retypePassword}">
-            <span class="error" th:if="${#fields.hasErrors('retypePassword')}" th:errors="*{retypePassword}">Re-Type Password error</span>
+            <input th:replace="~{fragments/formElement :: formElementField(fieldName='retypePassword', label='Re-Type Password: ', placeholder='*******', type='password')}" />
             <br />
-            <label for="dob"> Date of Birth: </label>
-            <input type="text" class="form-control" id="dob" th:field="*{dob}">
-            <span class="error" th:if="${#fields.hasErrors('dob')}" th:errors="*{dob}">DoB error</span>
+            <input th:replace="~{fragments/formElement :: formElementField(fieldName='dob', label='Date of Birth: ', placeholder='DD/MM/YYYY')}" />
             <br />
 
             <button class="next" type="submit">Sign Up</button>
@@ -47,7 +35,7 @@
         // Function to disable last name input field if the 'no surname' checkbox is checked
         function toggleInput() {
             let checkbox = document.getElementById('noSurnameCheckBox');
-            let textField = document.getElementById('lName');
+            let textField = document.getElementById('lastName');
 
             if (checkbox.checked) {
                 textField.value = '';

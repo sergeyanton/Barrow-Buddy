@@ -34,8 +34,8 @@ class ErrorAdder {
      * @param fieldName the name of the field for which the error occurred
      * @param message   the error message to be added
      */
-    public void add(String fieldName, String message) {
-        this.bindingResult.addError(new FieldError(this.objectName, fieldName, message));
+    public void add(String fieldName, String message, String rejectedValue) {
+        this.bindingResult.addError(new FieldError(this.objectName, fieldName, rejectedValue, false, null, null, message));
     }
 }
 
@@ -58,50 +58,50 @@ public class FormValidator {
 
         // Validate first name
         if (checkBlank(registrationForm.getFirstName())) {
-            errors.add("firstName", "{First/Last} name cannot be empty");
+            errors.add("firstName", "{First/Last} name cannot be empty", registrationForm.getFirstName());
         } else if (checkOverMaxLength(registrationForm.getFirstName(), 64)) {
-            errors.add("firstName", "{First/Last} name must be 64 characters long or less");
+            errors.add("firstName", "{First/Last} name must be 64 characters long or less", registrationForm.getFirstName());
         } else if (checkOnlyHasLettersSpacesHyphensApostrophes(registrationForm.getFirstName())) {
-            errors.add("firstName", "{First/Last} name must only include letters, spaces, hyphens or apostrophes");
+            errors.add("firstName", "{First/Last} name must only include letters, spaces, hyphens or apostrophes", registrationForm.getFirstName());
         }
 
         // Validate last name only if checkbox is not checked
         if (!registrationForm.getNoSurnameCheckBox()) {
             if (checkBlank(registrationForm.getLastName())) {
-                errors.add("lastName", "{First/Last} name cannot be empty");
+                errors.add("lastName", "{First/Last} name cannot be empty", registrationForm.getLastName());
             } else if (checkOverMaxLength(registrationForm.getLastName(), 64)) {
-                errors.add("lastName", "{First/Last} name must be 64 characters long or less");
+                errors.add("lastName", "{First/Last} name must be 64 characters long or less", registrationForm.getLastName());
             } else if (checkOnlyHasLettersSpacesHyphensApostrophes(registrationForm.getLastName())) {
-                errors.add("lastName", "{First/Last} name must only include letters, spaces, hyphens or apostrophes");
+                errors.add("lastName", "{First/Last} name must only include letters, spaces, hyphens or apostrophes", registrationForm.getLastName());
             }
         }
 
         // Validate email
         if (checkBlank(registrationForm.getEmail()) || checkEmailIsInvalid(registrationForm.getEmail())) {
-            errors.add("email", "Email address must be in the form ‘jane@doe.nz’");
+            errors.add("email", "Email address must be in the form ‘jane@doe.nz’", registrationForm.getEmail());
         }
 
         // Validate password
         if (checkBlank(registrationForm.getPassword())) {
-            errors.add("password", "Password cannot be empty");
+            errors.add("password", "Password cannot be empty", registrationForm.getPassword());
         } else if (checkPasswordIsInvalid(registrationForm.getPassword())) {
-            errors.add("password", "Your password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.");
+            errors.add("password", "Your password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.", registrationForm.getPassword());
         }
 
         // Validate password match
         if (!registrationForm.getPassword().equals(registrationForm.getRetypePassword())) {
-            errors.add("retypePassword", "Passwords do not match");
+            errors.add("retypePassword", "Passwords do not match", registrationForm.getRetypePassword());
         }
 
         // Validate date of birth
         if (checkDateNotInCorrectFormat(registrationForm.getDob()) || checkBlank(registrationForm.getDob())) {
-            errors.add("dob", "Date in not in valid format, DD/MM/YYYY");
+            errors.add("dob", "Date in not in valid format, DD/MM/YYYY", registrationForm.getDob());
         } else if (!checkDateBefore(registrationForm.getDob(), LocalDate.now().plusDays(1))) {
-            errors.add("dob", "Date cannot be in the future");
+            errors.add("dob", "Date cannot be in the future", registrationForm.getDob());
         } else if (!checkDateBefore(registrationForm.getDob(), LocalDate.now().minusYears(13))) {
-            errors.add("dob", "You must be 13 years or older to create an account");
-        } else if (!checkDateBefore(registrationForm.getDob(), LocalDate.now().minusYears(120))) {
-            errors.add("dob", "The maximum age allowed is 120 years");
+            errors.add("dob", "You must be 13 years or older to create an account", registrationForm.getDob());
+        } else if (checkDateBefore(registrationForm.getDob(), LocalDate.now().minusYears(119))) {
+            errors.add("dob", "The maximum age allowed is 120 years", registrationForm.getDob());
         }
     }
 

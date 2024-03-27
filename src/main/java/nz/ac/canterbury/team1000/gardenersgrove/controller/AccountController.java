@@ -19,11 +19,12 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import static nz.ac.canterbury.team1000.gardenersgrove.util.PageUtils.pageWithError;
 import static nz.ac.canterbury.team1000.gardenersgrove.validation.InputValidation.checkLoginData;
-import static nz.ac.canterbury.team1000.gardenersgrove.validation.InputValidation.verifyPassword;
+import static nz.ac.canterbury.team1000.gardenersgrove.util.Password.verifyPassword;
 import java.time.format.DateTimeFormatter;
 
 @Controller
@@ -90,8 +91,10 @@ public class AccountController {
      *  *         - If registration is successful, redirects to the user's profile page.
      */
     @PostMapping("/register")
-    public String register(HttpServletRequest request, RegistrationForm registrationForm, BindingResult bindingResult) {
+    public String register(HttpServletRequest request, @ModelAttribute("registrationForm") RegistrationForm registrationForm, BindingResult bindingResult) {
         FormValidator.validateRegistrationForm(registrationForm, bindingResult);
+
+        System.out.println(registrationForm.getEmail());
 
         if (bindingResult.hasErrors()) {
             return "pages/registrationPage";

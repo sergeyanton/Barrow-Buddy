@@ -1,4 +1,8 @@
 package nz.ac.canterbury.team1000.gardenersgrove.form;
+
+import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
+import nz.ac.canterbury.team1000.gardenersgrove.util.Password;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -78,5 +82,15 @@ public class RegistrationForm {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public User getUer() {
+        return new User(
+            this.firstName,
+                this.lastName,
+                this.email,
+                Password.hashPassword(this.password),
+                this.getDobLocalDate()
+        );
     }
 }

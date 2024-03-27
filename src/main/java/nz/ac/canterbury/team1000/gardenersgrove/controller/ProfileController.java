@@ -19,7 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import static nz.ac.canterbury.team1000.gardenersgrove.util.PageUtils.pageWithError;
-import static nz.ac.canterbury.team1000.gardenersgrove.validation.InputValidation.hashPassword;
+import static nz.ac.canterbury.team1000.gardenersgrove.util.Password.hashPassword;
 import java.util.Objects;
 
 
