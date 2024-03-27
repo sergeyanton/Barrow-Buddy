@@ -3,7 +3,6 @@ package nz.ac.canterbury.team1000.gardenersgrove.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.EditUserForm;
-import nz.ac.canterbury.team1000.gardenersgrove.form.FormValidator;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +66,7 @@ public class ProfileController {
         User currentUser = userService.findEmail(currentPrincipalName);
         String oldEmail = currentUser.getEmail();
 
-        FormValidator.validateEditUserForm(editUserForm, bindingResult, currentUser);
+        EditUserForm.validate(editUserForm, bindingResult, currentUser);
 
         if (!bindingResult.hasFieldErrors("email") && !currentUser.getEmail().equals(oldEmail) && userService.checkEmail(editUserForm.getEmail())) {
             bindingResult.addError(new FieldError("registrationForm", "email", editUserForm.getEmail(), false, null, null, "Email address is already in use"));
