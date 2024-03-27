@@ -79,14 +79,15 @@ public class AccountController {
 
 
     /**
-     * Handles POST requests to the /register endpoint. registers the user, or shows an error
-     * message if the user details are invalid.
-     * 
-     * @param request The HTTP request being made
-     * @param newUser The user registration data sent in the request
-     * @param model The request model
-     * @return A redirect to the profile page, or the registration page with an error message if
-     *         unsuccessful
+     * Handles POST requests to the /register endpoint.
+     * Handles the registration process for new users.
+     *
+     * @param request           the HttpServletRequest object containing the request information
+     * @param registrationForm  the RegistrationForm object representing the user's registration data
+     * @param bindingResult     the BindingResult object for validation errors
+     * @return a String representing the view to display after registration:
+     *  *         - If there are validation errors, returns the registration page to display errors.
+     *  *         - If registration is successful, redirects to the user's profile page.
      */
     @PostMapping("/register")
     public String register(HttpServletRequest request, RegistrationForm registrationForm, BindingResult bindingResult) {
