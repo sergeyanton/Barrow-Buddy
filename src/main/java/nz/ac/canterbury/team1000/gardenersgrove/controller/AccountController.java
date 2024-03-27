@@ -52,6 +52,8 @@ public class AccountController {
         model.addAttribute("fName", u.getFname());
         model.addAttribute("lName", u.getLname());
         model.addAttribute("email", u.getEmail());
+        model.addAttribute("profilePictureUrl", u.getProfilePicturePath());
+        System.out.println(u.getProfilePicturePath());
         if (u.getDateOfBirth() != null) {
             model.addAttribute("dob",
                     u.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
@@ -106,7 +108,7 @@ public class AccountController {
         }
 
         User user = createNewUser(newUser);
-        user.setProfilePicturePath("/resources/images/default_pic.jpg");
+        user.setProfilePicturePath("/images/default_pic.jpg");
         user.grantAuthority("ROLE_USER");
         userService.registerUser(user);
 

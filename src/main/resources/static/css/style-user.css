@@ -114,3 +114,9 @@ button:hover {
 input {
     margin-bottom: 7px;
 }
+
+.profile-picture {
+    width: 100px;
+    height: auto;
+}
+
