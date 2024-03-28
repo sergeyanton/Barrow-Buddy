@@ -118,4 +118,9 @@ public class FormUtilsTest {
     void checkDateNotInCorrectFormat_WithDayMontYeardate_ReturnsFalse() {
         Assertions.assertFalse(FormUtils.checkDateNotInCorrectFormat("28/01/2000"));
     }
+
+    @Test
+    void checkDateNotInCorrectFormat_WithDayMonthYear5DigitYearDate_ReturnsTrue() {
+        Assertions.assertTrue(FormUtils.checkDateNotInCorrectFormat("28/01/20000"));
+    }
 }
