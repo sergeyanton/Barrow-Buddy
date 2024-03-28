@@ -3,7 +3,7 @@ package nz.ac.canterbury.team1000.gardenersgrove.controller.dataCollection;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.RequestParam;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
-import static nz.ac.canterbury.team1000.gardenersgrove.validation.InputValidation.hashPassword;
+import static nz.ac.canterbury.team1000.gardenersgrove.util.Password.hashPassword;
 import java.time.LocalDate;
 
 
@@ -22,8 +22,8 @@ public class RegistrationData {
     public RegistrationData(@RequestParam(name = "email") String email,
             @RequestParam(name = "fName") String fName, @RequestParam(name = "lName") String lName,
             // Convert date format from ISO string to LocalDate object
-            @RequestParam(name = "dob") @DateTimeFormat(
-                    iso = DateTimeFormat.ISO.DATE) LocalDate dob,
+                            @RequestParam(name = "dob") @DateTimeFormat(
+                                    iso = DateTimeFormat.ISO.DATE) LocalDate dob,
             @RequestParam(name = "password") String password,
             @RequestParam(name = "password") String retypePassword,
             @RequestParam(name = "noSurnameCheckBox", required = false) Boolean noSurnameCheckBox) {
