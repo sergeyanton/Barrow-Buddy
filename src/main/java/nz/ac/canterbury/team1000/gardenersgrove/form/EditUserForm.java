@@ -4,8 +4,19 @@ import org.springframework.validation.BindingResult;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.*;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class EditUserForm extends RegistrationForm {
+    public void setFromUser(User user) {
+        this.firstName = user.getFname();
+        this.lastName = user.getLname();
+        this.email = user.getEmail();
+        this.dob = user.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        this.noSurnameCheckBox = this.lastName == null || this.lastName.isEmpty();
+        this.password = "";
+        this.retypePassword = "";
+    }
+
     /**
      * Validates the EditUserForm object and adds any errors to the BindingResult.
      * 
@@ -22,7 +33,7 @@ public class EditUserForm extends RegistrationForm {
             errors.add("firstName", "{First/Last} name cannot be empty", editUserForm.getFirstName());
         } else if (checkOverMaxLength(editUserForm.getFirstName(), 64)) {
             errors.add("firstName", "{First/Last} name must be 64 characters long or less", editUserForm.getFirstName());
-        } else if (checkOnlyHasLettersSpacesHyphensApostrophes(editUserForm.getFirstName())) {
+        } else if (!checkOnlyHasLettersSpacesHyphensApostrophes(editUserForm.getFirstName())) {
             errors.add("firstName", "{First/Last} name must only include letters, spaces, hyphens or apostrophes", editUserForm.getFirstName());
         }
 
@@ -32,7 +43,7 @@ public class EditUserForm extends RegistrationForm {
                 errors.add("lastName", "{First/Last} name cannot be empty", editUserForm.getLastName());
             } else if (checkOverMaxLength(editUserForm.getLastName(), 64)) {
                 errors.add("lastName", "{First/Last} name must be 64 characters long or less", editUserForm.getLastName());
-            } else if (checkOnlyHasLettersSpacesHyphensApostrophes(editUserForm.getLastName())) {
+            } else if (!checkOnlyHasLettersSpacesHyphensApostrophes(editUserForm.getLastName())) {
                 errors.add("lastName", "{First/Last} name must only include letters, spaces, hyphens or apostrophes", editUserForm.getLastName());
             }
         }

@@ -73,7 +73,7 @@ public class FormUtils {
      * @return true if the string contains only valid characters, false otherwise
      */
     public static boolean checkOnlyHasLettersSpacesHyphensApostrophes (String string) {
-        return checkNotMatchesRegex(string, "^[a-zA-Z\\s'-]+$");
+        return !checkNotMatchesRegex(string, "^[a-zA-Z\\s'-]+$");
     }
 
     /**

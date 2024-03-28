@@ -13,13 +13,13 @@ import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.*;
  * Entity used to parse and store the data sent through a register POST request
  */
 public class RegistrationForm {
-    private String firstName;
-    private String lastName;
-    private Boolean noSurnameCheckBox;
-    private String email;
-    private String password;
-    private String retypePassword;
-    private String dob;
+    protected String firstName;
+    protected String lastName;
+    protected Boolean noSurnameCheckBox;
+    protected String email;
+    protected String password;
+    protected String retypePassword;
+    protected String dob;
 
     public Boolean getNoSurnameCheckBox() {
         return noSurnameCheckBox;
@@ -96,13 +96,6 @@ public class RegistrationForm {
         );
     }
 
-    public void setFromUser(User user) {
-        this.firstName = user.getFname();
-        this.lastName = user.getLname();
-        this.email = user.getEmail();
-        this.dob = user.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-    }
-
     /**
      * Validates the registration form data and adds validation errors to the BindingResult.
      *
@@ -118,7 +111,7 @@ public class RegistrationForm {
             errors.add("firstName", "{First/Last} name cannot be empty", registrationForm.getFirstName());
         } else if (checkOverMaxLength(registrationForm.getFirstName(), 64)) {
             errors.add("firstName", "{First/Last} name must be 64 characters long or less", registrationForm.getFirstName());
-        } else if (checkOnlyHasLettersSpacesHyphensApostrophes(registrationForm.getFirstName())) {
+        } else if (!checkOnlyHasLettersSpacesHyphensApostrophes(registrationForm.getFirstName())) {
             errors.add("firstName", "{First/Last} name must only include letters, spaces, hyphens or apostrophes", registrationForm.getFirstName());
         }
 
@@ -128,7 +121,7 @@ public class RegistrationForm {
                 errors.add("lastName", "{First/Last} name cannot be empty", registrationForm.getLastName());
             } else if (checkOverMaxLength(registrationForm.getLastName(), 64)) {
                 errors.add("lastName", "{First/Last} name must be 64 characters long or less", registrationForm.getLastName());
-            } else if (checkOnlyHasLettersSpacesHyphensApostrophes(registrationForm.getLastName())) {
+            } else if (!checkOnlyHasLettersSpacesHyphensApostrophes(registrationForm.getLastName())) {
                 errors.add("lastName", "{First/Last} name must only include letters, spaces, hyphens or apostrophes", registrationForm.getLastName());
             }
         }
