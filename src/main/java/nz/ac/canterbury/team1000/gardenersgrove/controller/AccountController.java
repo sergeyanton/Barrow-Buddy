@@ -153,7 +153,7 @@ public class AccountController {
         }
 
         if (!verifyPassword(newUser.getPassword(), user.getPassword())) {
-            String errorMessage = "Wrong password.";
+            String errorMessage = "The email address is unknown, or the password is invalid";
             return pageWithError("pages/loginPage", model, errorMessage);
         }
 
