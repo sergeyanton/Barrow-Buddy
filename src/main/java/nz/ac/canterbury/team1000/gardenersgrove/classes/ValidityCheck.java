@@ -135,16 +135,16 @@ public class ValidityCheck {
      * optional
      */
     public static Optional<String> validatePlantCount(String count) {
-        boolean tooBig = new BigInteger(count).compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0;
         if (count.isBlank()) {
             return Optional.empty();
-        } else {
-            if (count.matches("^(?!0+$)[0-9]+$") && !tooBig) {
+        }
+        if (count.matches("^(?!0+$)[0-9]+$")) {
+            boolean tooBig = new BigInteger(count).compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0;
+            if (!tooBig) {
                 return Optional.empty();
-            } else {
-                return Optional.of("Plant count must only be a positive integer");
             }
         }
+        return Optional.of("Plant count must only be a positive integer");
     }
 
     /**
