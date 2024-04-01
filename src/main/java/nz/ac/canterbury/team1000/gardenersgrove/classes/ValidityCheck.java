@@ -128,7 +128,7 @@ public class ValidityCheck {
     /**
      * This method validates that the entered plant count can only either be empty or a positive
      * integer.
-     * Makes sure the plant number is not too big to be stored as an integer.
+     * Makes sure the plant number is not larger than max integer (2,147,483,647).
      *
      * @param count the plant count
      * @return an error message if the entered plant count is invalid, otherwise returns an empty
