@@ -1,6 +1,7 @@
 package nz.ac.canterbury.team1000.gardenersgrove.entity;
 
 import java.util.Optional;
+
 import jakarta.persistence.*;
 import nz.ac.canterbury.team1000.gardenersgrove.classes.ValidityCheck;
 
@@ -24,14 +25,15 @@ public class Garden {
     /**
      * JPA required no-args constructor
      */
-    protected Garden() {}
+    protected Garden() {
+    }
 
     /**
      * Creates a new Garden object
      *
-     * @param name name of garden
+     * @param name     name of garden
      * @param location location of garden
-     * @param size size of garden
+     * @param size     size of garden
      */
     public Garden(String name, String location, Double size) {
         this.name = name;
@@ -47,10 +49,10 @@ public class Garden {
     /**
      * Creates a new garden but takes the size as a string that is then parsed to a double It can
      * either use a , or a . as a decimal separator
-     * 
-     * @param name name of garden
+     *
+     * @param name     name of garden
      * @param location location of garden
-     * @param size size of garden
+     * @param size     size of garden
      */
     public Garden(String name, String location, String size) {
         this.name = name;

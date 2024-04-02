@@ -2,26 +2,27 @@ package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.team1000.gardenersgrove.controller.dataCollection.LogInData;
-import nz.ac.canterbury.team1000.gardenersgrove.controller.dataCollection.RegistrationData;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
+import nz.ac.canterbury.team1000.gardenersgrove.form.RegistrationForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
-import nz.ac.canterbury.team1000.gardenersgrove.validation.InputValidation;
 import nz.ac.canterbury.team1000.gardenersgrove.validation.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import static nz.ac.canterbury.team1000.gardenersgrove.controller.dataCollection.RegistrationData.createNewUser;
+
 import static nz.ac.canterbury.team1000.gardenersgrove.util.PageUtils.pageWithError;
 import static nz.ac.canterbury.team1000.gardenersgrove.validation.InputValidation.checkLoginData;
-import static nz.ac.canterbury.team1000.gardenersgrove.validation.InputValidation.verifyPassword;
+import static nz.ac.canterbury.team1000.gardenersgrove.util.Password.verifyPassword;
 import java.time.format.DateTimeFormatter;
 
 @Controller
@@ -52,8 +53,6 @@ public class AccountController {
         model.addAttribute("fName", u.getFname());
         model.addAttribute("lName", u.getLname());
         model.addAttribute("email", u.getEmail());
-        model.addAttribute("profilePictureUrl", u.getProfilePicturePath());
-        System.out.println(u.getProfilePicturePath());
         if (u.getDateOfBirth() != null) {
             model.addAttribute("dob",
                     u.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
@@ -71,51 +70,43 @@ public class AccountController {
      * @return thymeleaf registrationPage
      */
     @GetMapping("/register")
-    public String getRegisterPage(Model model) {
-        logger.info("GET /register");
+    public String getRegisterPage(RegistrationForm registrationForm) {
+//        logger.info("GET /register");
 
         return userService.isSignedIn() ? "redirect:/" : "pages/registrationPage";
     }
 
 
     /**
-     * Handles POST requests to the /register endpoint. registers the user, or shows an error
-     * message if the user details are invalid.
-     * 
-     * @param request The HTTP request being made
-     * @param newUser The user registration data sent in the request
-     * @param model The request model
-     * @return A redirect to the profile page, or the registration page with an error message if
-     *         unsuccessful
+     * Handles POST requests to the /register endpoint.
+     * Handles the registration process for new users.
+     *
+     * @param request           the HttpServletRequest object containing the request information
+     * @param registrationForm  the RegistrationForm object representing the user's registration data
+     * @param bindingResult     the BindingResult object for validation errors
+     * @return a String representing the view to display after registration:
+     *  *         - If there are validation errors, returns the registration page to display errors.
+     *  *         - If registration is successful, redirects to the user's profile page.
      */
     @PostMapping("/register")
-    public String register(HttpServletRequest request, RegistrationData newUser, Model model) {
-        logger.info(String.format("Registering new user '%s %s'", newUser.getfName(),
-                newUser.getlName()));
+    public String register(HttpServletRequest request, @ModelAttribute("registrationForm") RegistrationForm registrationForm, BindingResult bindingResult) {
+        RegistrationForm.validate(registrationForm, bindingResult);
 
-        InputValidation inputValidation = new InputValidation(userService);
-
-        Validator error = inputValidation.checkRegistrationData(newUser, false);
-        if (!error.getStatus()) {
-            model.addAttribute("fName", newUser.getfName());
-            model.addAttribute("lName", newUser.getlName());
-            model.addAttribute("noSurnameCheckBox", newUser.getNoSurnameCheckBox());
-            model.addAttribute("email", newUser.getEmail());
-            model.addAttribute("password", newUser.getPassword());
-            model.addAttribute("retypePassword", newUser.getRetypePassword());
-            model.addAttribute("dob", newUser.getDob());
-            return pageWithError("pages/registrationPage", model, error.getMessage());
+        if (!bindingResult.hasFieldErrors("email") && userService.checkEmail(registrationForm.getEmail())) {
+            bindingResult.addError(new FieldError("registrationForm", "email", registrationForm.getEmail(), false, null, null, "Email already in use"));
         }
 
-        User user = createNewUser(newUser);
-        user.setProfilePicturePath("/images/default_pic.jpg");
-        user.grantAuthority("ROLE_USER");
-        userService.registerUser(user);
+        if (bindingResult.hasErrors()) {
+            return "pages/registrationPage";
+        }
 
-        // Auto-login when registering
-        userService.authenticateUser(authenticationManager, user, request);
-
-        ResponseEntity.ok();
+        // form was submitted with valid data
+        // create the user and log them in
+        User newUser = registrationForm.getUser();
+        // Give them the role of user
+        newUser.grantAuthority("ROLE_USER");
+        userService.registerUser(newUser);
+        userService.authenticateUser(authenticationManager, newUser, request);
 
         return "redirect:/profile";
     }

@@ -1,10 +1,10 @@
 package nz.ac.canterbury.team1000.gardenersgrove.classes;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import nz.ac.canterbury.team1000.gardenersgrove.classes.ValidityCheck;
 
 public class ValidityCheckTest {
 
@@ -38,7 +38,7 @@ public class ValidityCheckTest {
     void CheckName_WithInvalidName_ReturnsOptionalWithErrorMessage() {
         String name = "Invalid Name Because Of The Dollar $ign ";
         assertEquals(Optional.of(
-                "Garden name must only include letters, numbers, spaces, dots, hyphens or apostrophes"),
+                        "Garden name must only include letters, numbers, spaces, dots, hyphens or apostrophes"),
                 ValidityCheck.validGardenName(name));
     }
 
@@ -112,7 +112,7 @@ public class ValidityCheckTest {
     public void UserEntersGardenLocation_LocationContainsInvalidCharacters_ReturnsFalse() {
         String location = "`~_+=[]{}:;<>/?!@#$%^&*()";
         assertEquals(Optional.of(
-                "Location name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes"),
+                        "Location name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes"),
                 ValidityCheck.validGardenLocation(location));
 
     }
@@ -185,6 +185,24 @@ public class ValidityCheckTest {
                 ValidityCheck.validateGardenSize(size));
     }
 
+    /**
+     * Testing validation of garden size, preventing size being greater than 2,147,483,647
+     */
+    @Test
+    void ValidGardenSize_GardenSizeTooBig_ReturnsOptionalWithErrorMessage() {
+        String count = "2147483648.0";
+        assertEquals(Optional.of("Garden size must be a positive number"),
+                ValidityCheck.validateGardenSize(count));
+    }
+
+    @Test
+    void ValidGardenSize_GardenSizeTooBig_ReturnsEmptyOptional() {
+        String count = "2147483647.0";
+        assertEquals(Optional.empty(),
+                ValidityCheck.validateGardenSize(count));
+    }
+
+
     @Test
     void ValidatePlantName_ValidName_ReturnsEmptyOptional() {
         String plantName = "Valid Plant Name";
@@ -208,7 +226,7 @@ public class ValidityCheckTest {
     void ValidatePlantName_NameContainsInvalidCharacters_ReturnsOptionalErrorMessage() {
         String plantName = "~`!@#$%^&*()_+={}[]:;<>/?";
         assertEquals(Optional.of(
-                "Plant name must only include letters, numbers, spaces, dots, hyphens or apostrophes"),
+                        "Plant name must only include letters, numbers, spaces, dots, hyphens or apostrophes"),
                 ValidityCheck.validatePlantName(plantName));
     }
 
@@ -256,6 +274,23 @@ public class ValidityCheckTest {
         String count = "count";
         assertEquals(Optional.of("Plant count must only be a positive integer"),
                 ValidityCheck.validatePlantCount(count));
+    }
+
+    /**
+     * Boundary test for the plant count, the plant count is the maximum value that can be stored as an integer
+     */
+    @Test
+    void ValidatePlantCount_PlantCountTooBig_ReturnsOptionalErrorMessage() {
+        String count = "2147483648";
+        assertEquals(Optional.of("Plant count must only be a positive integer"),
+                ValidityCheck.validatePlantCount(count));
+    }
+
+
+    @Test
+    void ValidatePlantCount_PlantCountTooBig_ReturnsOptional() {
+        String count = "2147483647";
+        assertEquals(Optional.empty(), ValidityCheck.validatePlantCount(count));
     }
 
     @Test

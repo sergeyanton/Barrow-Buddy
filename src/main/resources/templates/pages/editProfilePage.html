@@ -11,47 +11,24 @@
     <div class="basic">
 
         <h1>Edit My Profile</h1>
-        <form th:action="@{editProfile}" method="post">
-            <label for="fName"> First Name: </label>
-            <input type="text" class="form-control" id="fName" th:name="fName" th:value="*{fName}" data-cy="fName"
-                autofocus>
+        <form th:action="@{/editProfile}" method="post" th:object="${editUserForm}">
+            <input th:replace="~{fragments/formElement :: formElementField(fieldName='firstName', label='First Name: ', placeholder='Fabian')}" />
             <br />
-
-            <label for="lName"> Last Name: </label>
-            <input type="text" class="form-control" id="lName" th:name="lName" th:value="*{lName}" data-cy="lName"
-                autofocus>
+            <input th:replace="~{fragments/formElement :: formElementField(fieldName='lastName', label='Last Name: ', placeholder='Gilson')}" />
             <br />
-
-            <input type="checkbox" class="form-control" id="noSurnameCheckBox" th:name="noSurnameCheckBox"
-                th:checked="*{noSurnameCheckBox}" data-cy="noSurnameCheckBox" onclick="toggleInput()" autofocus>
+            <input type="checkbox" class="form-control" id="noSurnameCheckBox" th:field="*{noSurnameCheckBox}" onclick="toggleInput()">
             <label for="noSurnameCheckBox"> I have no surname </label>
             <br />
-
-            <label for="email"> Email: </label>
-            <input type="email" class="form-control" id="email" th:name="email" th:value="*{email}" data-cy="email"
-                required autofocus>
+            <input th:replace="~{fragments/formElement :: formElementField(fieldName='email', label='Email: ', placeholder='jane@doe.nz')}" />
             <br />
-
-            <label for="dob"> Date of Birth: </label>
-            <input type="date" class="form-control" id="dob" th:name="dob" th:value="*{dateOfBirth}" data-cy="dob"
-                autofocus>
+            <input th:replace="~{fragments/formElement :: formElementField(fieldName='dob', label='Date of Birth: ', placeholder='DD/MM/YYYY')}" />
             <br />
-
-            <label for="password"> Password: </label>
-            <input type="password" class="form-control" id="password" placeholder="********" th:name="password"
-                th:value="*{password}" data-cy="password" autofocus>
+            <input th:replace="~{fragments/formElement :: formElementField(fieldName='password', label='Password: ', placeholder='*******', type='password')}" />
             <br />
-            <label for="retypePassword"> Re-type Password: </label>
-            <input type="password" class="form-control" id="retypePassword" th:name="retypePassword"
-                th:value="*{retypePassword}" data-cy="retypePassword" autofocus>
+            <input th:replace="~{fragments/formElement :: formElementField(fieldName='retypePassword', label='Re-Type Password: ', placeholder='*******', type='password')}" />
             <br />
-
-            <div th:if="${errorMessage}">
-                <div th:replace="~{fragments/errorMessageFragment :: errorMessage(message=${errorMessage})}"></div>
-            </div>
 
             <button type="submit">Update Profile</button>
-
             <a class="cancel" th:href="@{profile}">Cancel</a>
         </form>
     </div>
@@ -59,7 +36,7 @@
         // Function to disable last name input field if the 'no surname' checkbox is checked
         function toggleInput() {
             let checkbox = document.getElementById('noSurnameCheckBox');
-            let textField = document.getElementById('lName');
+            let textField = document.getElementById('lastName');
 
             if (checkbox.checked) {
                 textField.value = '';

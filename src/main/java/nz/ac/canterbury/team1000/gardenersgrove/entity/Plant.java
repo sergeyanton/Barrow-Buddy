@@ -1,6 +1,7 @@
 package nz.ac.canterbury.team1000.gardenersgrove.entity;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDate;
 
 /**
@@ -27,19 +28,20 @@ public class Plant {
     /**
      * JPA required no-args constructor
      */
-    protected Plant() {}
+    protected Plant() {
+    }
 
     /**
      * Creates a new Plant object
      *
-     * @param name name of plant
-     * @param plantCount number of plant occurrence in garden
-     * @param description description of plant
+     * @param name          name of plant
+     * @param plantCount    number of plant occurrence in garden
+     * @param description   description of plant
      * @param plantedOnDate date when plant was planted (in DD/MM/YYYY format)
-     * @param gardenId ID of garden where the plant is currently in
+     * @param gardenId      ID of garden where the plant is currently in
      */
     public Plant(String name, Integer plantCount, String description, LocalDate plantedOnDate,
-            Long gardenId) {
+                 Long gardenId) {
         this.name = name;
         this.plantCount = plantCount;
         this.description = description;
@@ -51,14 +53,14 @@ public class Plant {
     /**
      * Creates a new Plant object given strings for each attribute
      *
-     * @param name name of plant
-     * @param plantCount number of plant occurrence in garden
-     * @param description description of plant
+     * @param name          name of plant
+     * @param plantCount    number of plant occurrence in garden
+     * @param description   description of plant
      * @param plantedOnDate date when plant was planted (in DD/MM/YYYY format)
-     * @param gardenId ID of garden where the plant is currently in
+     * @param gardenId      ID of garden where the plant is currently in
      */
     public Plant(String name, String plantCount, String description, String plantedOnDate,
-            Long gardenId) {
+                 Long gardenId) {
         this.name = name;
         this.setPlantCount(plantCount);
         this.setDescription(description);
@@ -100,7 +102,7 @@ public class Plant {
 
     /**
      * Sets plantCount from a string representation
-     * 
+     *
      * @param plantCount the amount of this plant in this garden (optional)
      */
     public void setPlantCount(String plantCount) {
@@ -117,7 +119,7 @@ public class Plant {
 
     /**
      * Sets plantedOnDate given a string representation in DD/MM/YYYY format
-     * 
+     *
      * @param plantedOnDate string representing the date of planting
      */
     public void setPlantedOnDate(String plantedOnDate) {
@@ -136,7 +138,7 @@ public class Plant {
 
     /**
      * Sets gardenId from a String representation
-     * 
+     *
      * @param gardenId the id of the garden this plant belongs to
      */
     public void setGardenId(String gardenId) {
