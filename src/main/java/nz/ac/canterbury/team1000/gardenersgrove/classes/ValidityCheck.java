@@ -77,7 +77,7 @@ public class ValidityCheck {
             return Optional.empty();
         }
         if (isNumber) {
-            boolean tooBig = new BigDecimal(size.replace(",", ".")).compareTo(BigDecimal.valueOf(Double.MAX_VALUE)) > 0;
+            boolean tooBig = new BigDecimal(size.replace(",", ".")).compareTo(BigDecimal.valueOf(Integer.MAX_VALUE)) > 0;
             if (!tooBig) {
                 return Optional.empty();
             }

@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import nz.ac.canterbury.team1000.gardenersgrove.classes.ValidityCheck;
 
 public class ValidityCheckTest {
 
@@ -187,15 +186,22 @@ public class ValidityCheckTest {
     }
 
     /**
-     * Testing validation of garden size, preventing size being greater than 1.7976931348623157E+308
+     * Testing validation of garden size, preventing size being greater than 2,147,483,647
      */
     @Test
     void ValidGardenSize_GardenSizeTooBig_ReturnsOptionalWithErrorMessage() {
-        String count = "1.7976931348623158E+308";
+        String count = "2147483648.0";
         assertEquals(Optional.of("Garden size must be a positive number"),
                 ValidityCheck.validateGardenSize(count));
     }
-    
+
+    @Test
+    void ValidGardenSize_GardenSizeTooBig_ReturnsEmptyOptional() {
+        String count = "2147483647.0";
+        assertEquals(Optional.empty(),
+                ValidityCheck.validateGardenSize(count));
+    }
+
 
     @Test
     void ValidatePlantName_ValidName_ReturnsEmptyOptional() {
