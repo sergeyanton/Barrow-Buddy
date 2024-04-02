@@ -1,5 +1,6 @@
 package nz.ac.canterbury.team1000.gardenersgrove.classes;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -65,6 +66,7 @@ public class ValidityCheck {
     /**
      * This method will validate that the entered garden size is a positive number, It will also
      * accept a number with a comma as a decimal separator
+     * Makes sure the garden size is not larger than max integer (2,147,483,647).
      *
      * @param size the garden size entered by user
      * @return Returns an error message string if the garden size is invalid, otherwise returns an
@@ -76,7 +78,10 @@ public class ValidityCheck {
             return Optional.empty();
         }
         if (isNumber) {
-            return Optional.empty();
+            boolean tooBig = new BigDecimal(size.replace(",", ".")).compareTo(BigDecimal.valueOf(Integer.MAX_VALUE)) > 0;
+            if (!tooBig) {
+                return Optional.empty();
+            }
         }
         return Optional.of("Garden size must be a positive number");
     }
