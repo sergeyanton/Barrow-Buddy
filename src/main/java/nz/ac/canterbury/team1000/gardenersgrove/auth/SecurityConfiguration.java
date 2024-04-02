@@ -55,27 +55,29 @@ public class SecurityConfiguration {
         // See https://github.com/spring-projects/spring-security/issues/12546
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers(AntPathRequestMatcher.antMatcher("/h2/**")).permitAll())
-                .headers(headers -> headers.frameOptions().disable())
+                .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()))
                 .csrf(csrf -> csrf
                         .ignoringRequestMatchers(AntPathRequestMatcher.antMatcher("/h2/**")))
-                .authorizeHttpRequests()
-                // Allow "/", "/register", and "/login" to anyone (permitAll) - Also allow access to
-                // stylesheets
-                .requestMatchers("/", "/gardens/**", "/hello", "/register", "/login", "/css/**")
-                .permitAll()
-                // Only allow admins to reach the "/admin" page
-                .requestMatchers("/admin")
-                // note we do not need the "ROLE_" prefix as we are calling "hasRole()"
-                .hasRole("ADMIN")
-                // Any other request requires authentication
-                .anyRequest().authenticated().and()
+                .authorizeHttpRequests(requests -> requests
+                        // Allow "/", "/register", and "/login" to anyone (permitAll) - Also allow
+                        // access to
+                        // stylesheets
+                        .requestMatchers("/", "/gardens/**", "/hello", "/register", "/login",
+                                "/css/**")
+                        .permitAll()
+                        // Only allow admins to reach the "/admin" page
+                        .requestMatchers("/admin")
+                        // note we do not need the "ROLE_" prefix as we are calling "hasRole()"
+                        .hasRole("ADMIN")
+                        // Any other request requires authentication
+                        .anyRequest().authenticated())
                 // Redirect to "/" when unauthenticated user tries to access a page that requires
                 // login
-                .formLogin().loginPage("/").permitAll().and()
+                .formLogin(login -> login.loginPage("/").permitAll())
                 // Define logging out, a POST "/logout" endpoint now exists under the hood, redirect
                 // to "/", invalidate session and remove cookie
-                .logout().logoutUrl("/logout").logoutSuccessUrl("/").invalidateHttpSession(true)
-                .deleteCookies("JSESSIONID");
+                .logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/")
+                        .invalidateHttpSession(true).deleteCookies("JSESSIONID"));
         return http.build();
 
     }

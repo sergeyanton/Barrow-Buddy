@@ -1,8 +1,10 @@
 package nz.ac.canterbury.team1000.gardenersgrove.classes;
 
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Optional;
+
 
 /**
  * A class that assists with checking the validity of garden variables.
@@ -14,7 +16,7 @@ public class ValidityCheck {
      *
      * @param name the garden name entered by user
      * @return Returns an error message string if the garden size is invalid, otherwise returns an
-     *         empty optional
+     * empty optional
      */
     public static Optional<String> validGardenName(String name) {
         boolean isBlank = name.isBlank();
@@ -45,7 +47,7 @@ public class ValidityCheck {
      *
      * @param location the garden location entered by user
      * @return Returns an error message string if the garden size is invalid, otherwise returns an
-     *         empty optional
+     * empty optional
      */
     public static Optional<String> validGardenLocation(String location) {
         boolean isBlank = location.isBlank();
@@ -66,7 +68,7 @@ public class ValidityCheck {
      *
      * @param size the garden size entered by user
      * @return Returns an error message string if the garden size is invalid, otherwise returns an
-     *         empty optional
+     * empty optional
      */
     public static Optional<String> validateGardenSize(String size) {
         boolean isNumber = size.matches("^[0-9]+((\\.|,)[0-9]+)?$");
@@ -82,9 +84,9 @@ public class ValidityCheck {
     /**
      * Validates the entire garden form (name, location, size)
      *
-     * @param name the string for the garden's name
+     * @param name     the string for the garden's name
      * @param location the string for the garden's name
-     * @param size the string for the garden's size
+     * @param size     the string for the garden's size
      * @return true if all three inputs are valid
      */
     public static boolean validGardenForm(String name, String location, String size) {
@@ -98,7 +100,7 @@ public class ValidityCheck {
      *
      * @param name the entered plant name
      * @return an error message if the entered plant name is invalid, otherwise returns an empty
-     *         optional
+     * optional
      */
     public static Optional<String> validatePlantName(String name) {
         boolean isBlank = name.isBlank();
@@ -126,21 +128,23 @@ public class ValidityCheck {
     /**
      * This method validates that the entered plant count can only either be empty or a positive
      * integer.
+     * Makes sure the plant number is not larger than max integer (2,147,483,647).
      *
      * @param count the plant count
      * @return an error message if the entered plant count is invalid, otherwise returns an empty
-     *         optional
+     * optional
      */
     public static Optional<String> validatePlantCount(String count) {
         if (count.isBlank()) {
             return Optional.empty();
-        } else {
-            if (count.matches("^(?!0+$)[0-9]+$")) {
+        }
+        if (count.matches("^(?!0+$)[0-9]+$")) {
+            boolean tooBig = new BigInteger(count).compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0;
+            if (!tooBig) {
                 return Optional.empty();
-            } else {
-                return Optional.of("Plant count must only be a positive integer");
             }
         }
+        return Optional.of("Plant count must only be a positive integer");
     }
 
     /**
@@ -148,7 +152,7 @@ public class ValidityCheck {
      *
      * @param description the plant's description
      * @return an error message if the entered plant description contains more than 512 characters,
-     *         otherwise returns an empty optional.
+     * otherwise returns an empty optional.
      */
     public static Optional<String> validatePlantDescription(String description) {
         if (description.length() > 512) {
@@ -162,7 +166,7 @@ public class ValidityCheck {
      *
      * @param date the planted-on date
      * @return Returns an error message string if the date is invalid, otherwise returns an empty
-     *         optional
+     * optional
      */
     public static Optional<String> validateDate(String date) {
         if (date.isBlank()) {
@@ -179,14 +183,14 @@ public class ValidityCheck {
     /**
      * This method checks the entire plant form.
      *
-     * @param name the name of the plant
-     * @param plantCount the number of plants in the garden
-     * @param description a short description of the plant
+     * @param name          the name of the plant
+     * @param plantCount    the number of plants in the garden
+     * @param description   a short description of the plant
      * @param plantedOnDate the date that the plant was planted on
      * @return true if plant form has all valid inputs
      */
     public static boolean validPlantForm(String name, String plantCount, String description,
-            String plantedOnDate) {
+                                         String plantedOnDate) {
         return (validatePlantName(name).isEmpty() && validatePlantCount(plantCount).isEmpty()
                 && validatePlantDescription(description).isEmpty())
                 && validateDate(plantedOnDate).isEmpty();
