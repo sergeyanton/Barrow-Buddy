@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Optional;
 
+
 /**
  * A class that assists with checking the validity of garden variables.
  */
@@ -132,6 +133,7 @@ public class ValidityCheck {
     /**
      * This method validates that the entered plant count can only either be empty or a positive
      * integer.
+     * Makes sure the plant number is not larger than max integer (2,147,483,647).
      *
      * @param count the plant count
      * @return an error message if the entered plant count is invalid, otherwise returns an empty
@@ -140,13 +142,14 @@ public class ValidityCheck {
     public static Optional<String> validatePlantCount(String count) {
         if (count.isBlank()) {
             return Optional.empty();
-        } else {
-            if (count.matches("^(?!0+$)[0-9]+$")) {
+        }
+        if (count.matches("^(?!0+$)[0-9]+$")) {
+            boolean tooBig = new BigInteger(count).compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0;
+            if (!tooBig) {
                 return Optional.empty();
-            } else {
-                return Optional.of("Plant count must only be a positive integer");
             }
         }
+        return Optional.of("Plant count must only be a positive integer");
     }
 
     /**

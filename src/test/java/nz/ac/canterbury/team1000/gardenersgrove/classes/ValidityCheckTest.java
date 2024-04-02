@@ -276,6 +276,23 @@ public class ValidityCheckTest {
                 ValidityCheck.validatePlantCount(count));
     }
 
+    /**
+     * Boundary test for the plant count, the plant count is the maximum value that can be stored as an integer
+     */
+    @Test
+    void ValidatePlantCount_PlantCountTooBig_ReturnsOptionalErrorMessage() {
+        String count = "2147483648";
+        assertEquals(Optional.of("Plant count must only be a positive integer"),
+                ValidityCheck.validatePlantCount(count));
+    }
+
+
+    @Test
+    void ValidatePlantCount_PlantCountTooBig_ReturnsOptional() {
+        String count = "2147483647";
+        assertEquals(Optional.empty(), ValidityCheck.validatePlantCount(count));
+    }
+
     @Test
     void ValidateDescription_DescriptionValid_ReturnsEmptyOptional() {
         String description = "This plant is cool.";
