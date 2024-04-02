@@ -20,6 +20,7 @@ public class RegistrationForm {
     protected String password;
     protected String retypePassword;
     protected String dob;
+    protected String profilePictureUrl;
 
     public Boolean getNoSurnameCheckBox() {
         return noSurnameCheckBox;
@@ -84,6 +85,13 @@ public class RegistrationForm {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public void setProfilePictureUrl(String profilePictureUrl) {
+        this.profilePictureUrl = profilePictureUrl;
+    }
+    public String getProfilePictureUrl() {
+        return this.profilePictureUrl;
     }
 
     public User getUser() {

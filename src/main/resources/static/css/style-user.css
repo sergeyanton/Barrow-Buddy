@@ -15,9 +15,13 @@ body {
 }
 
 /* Heading style */
-h1 {
+h1, form {
     text-align: center;
     margin-bottom: 2rem;
+}
+
+form button.cancel {
+    text-align: left;
 }
 
 /* Basic container styles */
@@ -48,6 +52,7 @@ h1 {
     position: absolute;
     bottom: 1rem;
     left: 1rem;
+    right: auto;
     background-color: darkred;
 }
 
@@ -62,6 +67,7 @@ button.cancel{
     position: absolute;
     bottom: 1rem;
     left: 1rem;
+    right: auto;
     background-color: darkred;
 }
 

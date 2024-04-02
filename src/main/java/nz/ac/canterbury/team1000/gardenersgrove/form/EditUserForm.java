@@ -15,6 +15,7 @@ public class EditUserForm extends RegistrationForm {
         this.noSurnameCheckBox = this.lastName == null || this.lastName.isEmpty();
         this.password = "";
         this.retypePassword = "";
+        this.profilePictureUrl = user.getProfilePicturePath();
     }
 
     /**
@@ -78,5 +79,7 @@ public class EditUserForm extends RegistrationForm {
         } else if (checkDateBefore(editUserForm.getDob(), LocalDate.now().minusYears(120).plusDays(1))) {
             errors.add("dob", "The maximum age allowed is 120 years", editUserForm.getDob());
         }
+
+        // TODO validate profile picture URL
     }
 }

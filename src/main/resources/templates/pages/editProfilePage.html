@@ -12,19 +12,16 @@
 
         <h1>Edit My Profile</h1>
         <form th:action="@{/editProfile}" method="post" th:object="${editUserForm}">
+            <img th:src="${editUserForm.getProfilePictureUrl()}" alt="Profile Picture" class="profile-picture">
+            <br />
             <input th:replace="~{fragments/formElement :: formElementField(fieldName='firstName', label='First Name: ', placeholder='Fabian')}" />
-            <br />
             <input th:replace="~{fragments/formElement :: formElementField(fieldName='lastName', label='Last Name: ', placeholder='Gilson')}" />
-            <br />
             <input type="checkbox" class="form-control" id="noSurnameCheckBox" th:field="*{noSurnameCheckBox}" onclick="toggleInput()">
             <label for="noSurnameCheckBox"> I have no surname </label>
             <br />
             <input th:replace="~{fragments/formElement :: formElementField(fieldName='email', label='Email: ', placeholder='jane@doe.nz')}" />
-            <br />
             <input th:replace="~{fragments/formElement :: formElementField(fieldName='dob', label='Date of Birth: ', placeholder='DD/MM/YYYY')}" />
-            <br />
             <input th:replace="~{fragments/formElement :: formElementField(fieldName='password', label='Password: ', placeholder='*******', type='password')}" />
-            <br />
             <input th:replace="~{fragments/formElement :: formElementField(fieldName='retypePassword', label='Re-Type Password: ', placeholder='*******', type='password')}" />
             <br />
 
