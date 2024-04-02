@@ -82,7 +82,7 @@ public class AccountController {
     @GetMapping("/forgotPassword")
     public String getForgotPasswordPage() {
         logger.info("GET /forgotPassword");
-        return "forgotPassword";
+        return "pages/forgotPasswordPage";
     }
 
 
