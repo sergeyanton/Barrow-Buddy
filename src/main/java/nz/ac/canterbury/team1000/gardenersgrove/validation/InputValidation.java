@@ -1,5 +1,6 @@
 package nz.ac.canterbury.team1000.gardenersgrove.validation;
 
+import nz.ac.canterbury.team1000.gardenersgrove.controller.dataCollection.ResetPasswordData;
 import org.mindrot.jbcrypt.BCrypt;
 import nz.ac.canterbury.team1000.gardenersgrove.controller.dataCollection.LogInData;
 import nz.ac.canterbury.team1000.gardenersgrove.controller.dataCollection.RegistrationData;
@@ -211,5 +212,13 @@ public class InputValidation {
                     "Your password must be  at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.");
         }
         return isValid;
+    }
+
+    public static Validator checkResetPasswordData(ResetPasswordData userEmail) {
+        Validator emailCheck = checkEmailLogin(userEmail.getEmail());
+        if (!emailCheck.getStatus())
+            return emailCheck;
+
+        return new Validator(true, "");
     }
 }

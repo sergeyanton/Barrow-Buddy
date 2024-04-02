@@ -2,6 +2,7 @@ package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.team1000.gardenersgrove.controller.dataCollection.LogInData;
+import nz.ac.canterbury.team1000.gardenersgrove.controller.dataCollection.ResetPasswordData;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.RegistrationForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
@@ -23,6 +24,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import static nz.ac.canterbury.team1000.gardenersgrove.util.PageUtils.pageWithError;
 import static nz.ac.canterbury.team1000.gardenersgrove.validation.InputValidation.checkLoginData;
 import static nz.ac.canterbury.team1000.gardenersgrove.util.Password.verifyPassword;
+import static nz.ac.canterbury.team1000.gardenersgrove.validation.InputValidation.checkResetPasswordData;
+
 import java.time.format.DateTimeFormatter;
 
 @Controller
@@ -74,6 +77,12 @@ public class AccountController {
 //        logger.info("GET /register");
 
         return userService.isSignedIn() ? "redirect:/" : "pages/registrationPage";
+    }
+
+    @GetMapping("/forgotPassword")
+    public String getForgotPasswordPage() {
+        logger.info("GET /forgotPassword");
+        return "forgotPassword";
     }
 
 
@@ -158,6 +167,27 @@ public class AccountController {
         }
 
         userService.authenticateUser(authenticationManager, user, request);
+
+        return "redirect:/";
+    }
+
+    @PostMapping("/forgotPassword")
+    public String forgotPassword (HttpServletRequest request, ResetPasswordData userEmail, Model model) {
+        if (userService.isSignedIn()) {
+            return "redirect:/";
+        }
+
+        Validator error = checkResetPasswordData(userEmail);
+        if (!error.getStatus()) {
+            return pageWithError("pages/forgotPasswordPage", model, error.getMessage());
+        }
+
+        User user = userService.findEmail(userEmail.getEmail());
+
+        if (user == null) {
+            String errorMessage = "The email address is unknown";
+            return pageWithError("pages/forgotPasswordPage", model, errorMessage);
+        }
 
         return "redirect:/";
     }
