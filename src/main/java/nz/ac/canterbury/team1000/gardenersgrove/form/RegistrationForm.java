@@ -89,10 +89,10 @@ public class RegistrationForm {
     public User getUser() {
         return new User(
             this.firstName,
-                this.lastName,
-                this.email,
-                Password.hashPassword(this.password),
-                this.getDobLocalDate()
+            this.lastName,
+            this.email,
+            Password.hashPassword(this.password),
+            this.getDobLocalDate()
         );
     }
 

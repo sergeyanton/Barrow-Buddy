@@ -1,0 +1,22 @@
+package nz.ac.canterbury.team1000.gardenersgrove.form;
+import org.springframework.validation.BindingResult;
+
+import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.*;
+
+public class ForgotPasswordForm {
+    protected String email;
+    public String getEmail() {
+        return email;
+    }
+
+    public static void validate(ForgotPasswordForm forgotPasswordForm, BindingResult bindingResult) {
+        // Create an ErrorAdder instance with the BindingResult and object name
+        ErrorAdder errors = new ErrorAdder(bindingResult, "forgotPasswordForm");
+
+        // Validate email
+        if (checkBlank(forgotPasswordForm.getEmail()) || checkEmailIsInvalid(forgotPasswordForm.getEmail())) {
+            errors.add("email", "Email address must be in the form ‘jane@doe.nz’", forgotPasswordForm.getEmail());
+        }
+    }
+
+}

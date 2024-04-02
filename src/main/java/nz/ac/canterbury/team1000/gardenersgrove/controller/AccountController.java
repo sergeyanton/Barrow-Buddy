@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.team1000.gardenersgrove.controller.dataCollection.LogInData;
 import nz.ac.canterbury.team1000.gardenersgrove.controller.dataCollection.ResetPasswordData;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
+import nz.ac.canterbury.team1000.gardenersgrove.form.ForgotPasswordForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.RegistrationForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
 import nz.ac.canterbury.team1000.gardenersgrove.validation.Validator;
@@ -26,6 +27,7 @@ import static nz.ac.canterbury.team1000.gardenersgrove.validation.InputValidatio
 import static nz.ac.canterbury.team1000.gardenersgrove.util.Password.verifyPassword;
 import static nz.ac.canterbury.team1000.gardenersgrove.validation.InputValidation.checkResetPasswordData;
 
+import java.io.Console;
 import java.time.format.DateTimeFormatter;
 
 @Controller
@@ -80,7 +82,7 @@ public class AccountController {
     }
 
     @GetMapping("/forgotPassword")
-    public String getForgotPasswordPage() {
+    public String getForgotPasswordPage(ForgotPasswordForm forgotPasswordForm) {
         logger.info("GET /forgotPassword");
         return "pages/forgotPasswordPage";
     }
@@ -172,23 +174,24 @@ public class AccountController {
     }
 
     @PostMapping("/forgotPassword")
-    public String forgotPassword (HttpServletRequest request, ResetPasswordData userEmail, Model model) {
-        if (userService.isSignedIn()) {
-            return "redirect:/";
+    public String forgotPassword(HttpServletRequest request, @ModelAttribute("forgotPasswordForm") ForgotPasswordForm forgotPasswordForm, BindingResult bindingResult) {
+        ForgotPasswordForm.validate(forgotPasswordForm, bindingResult);
+
+        if (!bindingResult.hasFieldErrors("email") && !userService.checkEmail(forgotPasswordForm.getEmail())) {
+            bindingResult.addError(new FieldError("forgotPasswordForm", "email", forgotPasswordForm.getEmail(), false, null, null, "Email does not exist"));
         }
 
-        Validator error = checkResetPasswordData(userEmail);
-        if (!error.getStatus()) {
-            return pageWithError("pages/forgotPasswordPage", model, error.getMessage());
+        if (bindingResult.hasErrors()) {
+            return "pages/forgotPasswordPage";
         }
 
-        User user = userService.findEmail(userEmail.getEmail());
+        // form was submitted with valid data
+        // send a reset password email to the provided email
 
-        if (user == null) {
-            String errorMessage = "The email address is unknown";
-            return pageWithError("pages/forgotPasswordPage", model, errorMessage);
-        }
+        logger.info("SEND A RESET EMAIL TO USER!!!!!! - NOT IMPLEMENTED");
 
-        return "redirect:/";
+
+        return "redirect:/forgotPasswordPage";
     }
+
 }
