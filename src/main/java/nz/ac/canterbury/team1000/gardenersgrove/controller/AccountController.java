@@ -53,11 +53,11 @@ public class AccountController {
         model.addAttribute("fName", u.getFname());
         model.addAttribute("lName", u.getLname());
         model.addAttribute("email", u.getEmail());
+        model.addAttribute("profilePictureUrl", u.getProfilePicturePath());
         if (u.getDateOfBirth() != null) {
             model.addAttribute("dob",
                     u.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         }
-
 
         return "pages/profilePage";
     }
@@ -103,6 +103,7 @@ public class AccountController {
         // form was submitted with valid data
         // create the user and log them in
         User newUser = registrationForm.getUser();
+        newUser.setProfilePicturePath("/images/default_pic.jpg");
         // Give them the role of user
         newUser.grantAuthority("ROLE_USER");
         userService.registerUser(newUser);
