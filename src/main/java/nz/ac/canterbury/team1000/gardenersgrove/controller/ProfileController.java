@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -96,17 +95,17 @@ public class ProfileController {
             currentUser.setPassword(editUserForm.getPassword());
         }
 
-        // normalize the file path
-         String fileName = StringUtils.cleanPath(profilePicture.getOriginalFilename());
+        String fileName = StringUtils.cleanPath(profilePicture.getOriginalFilename());
 
-        // save file on the local file system
-        try {
-            Path filePath = Paths.get(uploadDir, fileName);
-            Files.createDirectories(filePath.getParent());
-            Files.copy(profilePicture.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-            currentUser.setProfilePicturePath("/images/" + fileName);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (!profilePicture.isEmpty()) {
+            try {
+                Path filePath = Paths.get(uploadDir, fileName);
+                Files.createDirectories(filePath.getParent());
+                Files.copy(profilePicture.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+                currentUser.setProfilePicturePath("/images/" + fileName);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         userService.updateUserByEmail(oldEmail, currentUser);
