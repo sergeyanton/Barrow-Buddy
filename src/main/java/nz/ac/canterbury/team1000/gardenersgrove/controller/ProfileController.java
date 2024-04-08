@@ -38,7 +38,7 @@ public class ProfileController {
     private AuthenticationManager authenticationManager;
     private final UserService userService;
 
-    private static final String uploadDir = "C:/team-1000/src/main/resources/static/images/"; // "../images/";
+    private static final String uploadDir = "C:/team-1000/src/main/resources/static/images/";
 
 
     Logger logger = LoggerFactory.getLogger(ProfileController.class);
@@ -99,23 +99,12 @@ public class ProfileController {
         // normalize the file path
          String fileName = StringUtils.cleanPath(profilePicture.getOriginalFilename());
 
-        // save the file on the local file system
+        // save file on the local file system
         try {
             Path filePath = Paths.get(uploadDir, fileName);
-            //if (!Files.exists(uploadPath)) {
             Files.createDirectories(filePath.getParent());
-            //}
-
-            // Path filePath = uploadPath.resolve(fileName);
-            // System.out.println("File Path: " + filePath);
             Files.copy(profilePicture.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-
             currentUser.setProfilePicturePath("/images/" + fileName);
-            System.out.println(currentUser.getProfilePicturePath());
-
-//            Path path = Paths.get(uploadDir);
-//            Path filePath = path.resolve(fileName);
-//            Files.copy(profilePicture.getInputStream(), filePath);StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();
         }

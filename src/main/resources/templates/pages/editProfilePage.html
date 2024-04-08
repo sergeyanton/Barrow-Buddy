@@ -62,39 +62,32 @@
 
         function validateImage(input) {
             const file = input.files[0];
-            // const fileSize = file.size;
-            // const fileType = file.type;
             const validTypes = ["image/png", "image/jpeg", "image/svg+xml"];
             const maxFileSize = 10 * 1024 * 1024; // 10MB
 
             if (!validTypes.includes(file.type)) {
                 alert("Image must be of type png, jpg or svg");
-                input.value = ''; // Clear file input
+                input.value = '';
                 return false;
             }
 
             if (file.size > maxFileSize) {
                 alert("Image must be less than 10MB");
-                input.value = ''; // Clear file input
+                input.value = '';
                 return false;
             }
 
-            // If the file passes validation, display the selected image
-            // AND save as new user profile photo
-            displaySelectedImage(input);
-        }
-
-        function displaySelectedImage(input) {
             if (input.files && input.files[0]) {
-                const reader = new FileReader();
+                const fileReader = new FileReader();
 
-                reader.onload = function (e) {
+                fileReader.onload = function (e) {
                     document.getElementById('profileImage').src = e.target.result;
                 }
 
-                reader.readAsDataURL(input.files[0]);
+                fileReader.readAsDataURL(input.files[0]);
             }
         }
+
 
     </script>
 
