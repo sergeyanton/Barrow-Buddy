@@ -11,10 +11,20 @@
     <div class="basic">
 
         <h1>Edit My Profile</h1>
+<!--        <form th:action="@{/upload}" method="post" th:object="${editUserForm}" enctype="multipart/form-data">-->
+<!--            <img id="profilePicture" th:src="${editUserForm.getProfilePictureUrl()}" alt="Profile Picture" class="profile-picture">-->
+<!--            <br />-->
+<!--            <input type="file" id="profilePictureInput" name="profilePicture" onchange="validateImage(this)">-->
+<!--            <button type="submit" class="submit">Submit</button>-->
+<!--        </form>-->
+
         <form th:action="@{/editProfile}" method="post" th:object="${editUserForm}" enctype="multipart/form-data">
-            <img th:src="${editUserForm.getProfilePictureUrl()}" alt="Profile Picture" class="profile-picture">
+<!--            <img th:src="${editUserForm.getProfilePictureUrl()}" alt="Profile Picture" class="profile-picture">-->
+            <img id="profileImage" th:src="${editUserForm.getProfilePictureUrl()}" alt="Profile Picture" class="profile-picture">
             <br />
-            <input th:type="file" name="profilePicture" accept="image/*">
+            <input type="file" id="profilePictureInput" name="profilePicture" onchange="validateImage(this)">
+            <br />
+<!--            <input th:type="file" name="profilePicture" accept="image/*" onchange="displayImage(this)">-->
             <br />
             <input th:replace="~{fragments/formElement :: formElementField(fieldName='firstName', label='First Name: ', placeholder='Fabian')}" />
             <input th:replace="~{fragments/formElement :: formElementField(fieldName='lastName', label='Last Name: ', placeholder='Gilson')}" />
@@ -49,6 +59,43 @@
         window.onload = function () {
             toggleInput();
         };
+
+        function validateImage(input) {
+            const file = input.files[0];
+            // const fileSize = file.size;
+            // const fileType = file.type;
+            const validTypes = ["image/png", "image/jpeg", "image/svg+xml"];
+            const maxFileSize = 10 * 1024 * 1024; // 10MB
+
+            if (!validTypes.includes(file.type)) {
+                alert("Image must be of type png, jpg or svg");
+                input.value = ''; // Clear file input
+                return false;
+            }
+
+            if (file.size > maxFileSize) {
+                alert("Image must be less than 10MB");
+                input.value = ''; // Clear file input
+                return false;
+            }
+
+            // If the file passes validation, display the selected image
+            // AND save as new user profile photo
+            displaySelectedImage(input);
+        }
+
+        function displaySelectedImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    document.getElementById('profileImage').src = e.target.result;
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
     </script>
 
 </body>

@@ -11,10 +11,20 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 
 @Controller
@@ -27,6 +37,9 @@ public class ProfileController {
     @Autowired
     private AuthenticationManager authenticationManager;
     private final UserService userService;
+
+    private static final String uploadDir = "C:/team-1000/src/main/resources/static/images/"; // "../images/";
+
 
     Logger logger = LoggerFactory.getLogger(ProfileController.class);
 
@@ -58,7 +71,7 @@ public class ProfileController {
      * @return A string that represents the link to the profile page
      */
     @PostMapping("/editProfile")
-    public String editProfile(HttpServletRequest request, EditUserForm editUserForm, BindingResult bindingResult) {
+    public String editProfile(HttpServletRequest request, EditUserForm editUserForm, BindingResult bindingResult, @RequestParam("profilePicture") MultipartFile profilePicture) {
         logger.info("POST /editProfile");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
@@ -83,9 +96,34 @@ public class ProfileController {
             currentUser.setPassword(editUserForm.getPassword());
         }
 
+        // normalize the file path
+         String fileName = StringUtils.cleanPath(profilePicture.getOriginalFilename());
+
+        // save the file on the local file system
+        try {
+            Path filePath = Paths.get(uploadDir, fileName);
+            //if (!Files.exists(uploadPath)) {
+            Files.createDirectories(filePath.getParent());
+            //}
+
+            // Path filePath = uploadPath.resolve(fileName);
+            // System.out.println("File Path: " + filePath);
+            Files.copy(profilePicture.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            currentUser.setProfilePicturePath("/images/" + fileName);
+            System.out.println(currentUser.getProfilePicturePath());
+
+//            Path path = Paths.get(uploadDir);
+//            Path filePath = path.resolve(fileName);
+//            Files.copy(profilePicture.getInputStream(), filePath);StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         userService.updateUserByEmail(oldEmail, currentUser);
         userService.authenticateUser(authenticationManager, currentUser, request);
 
         return "redirect:/profile";
     }
+
 }

@@ -113,6 +113,22 @@ button, .next {
     right: 1rem;
 }
 
+button.submit {
+    padding: 8px 18px;
+    font-size: 16px;
+    border-radius: 10px;
+    color: #FAF9F6;
+
+    background-color: #023020;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+
+    position: absolute;
+    bottom: auto;
+    right: 1rem;
+}
+
 button:hover {
     background-color: rgba(4, 65, 42, 0.71);
 }
