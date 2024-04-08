@@ -138,7 +138,8 @@ public class InputValidation {
     public static Validator checkPasswordEmpty(String password) {
         Validator isValid = new Validator(true, "Ok");
         if (password.isBlank()) {
-            isValid.setValid(false, "Password cannot be empty.");
+            isValid.setValid(false, "The email address is unknown, or the password is invalid"
+            );
         }
         return isValid;
     }
