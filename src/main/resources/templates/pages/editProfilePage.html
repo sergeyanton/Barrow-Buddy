@@ -11,8 +11,10 @@
     <div class="basic">
 
         <h1>Edit My Profile</h1>
-        <form th:action="@{/editProfile}" method="post" th:object="${editUserForm}">
+        <form th:action="@{/editProfile}" method="post" th:object="${editUserForm}" enctype="multipart/form-data">
             <img th:src="${editUserForm.getProfilePictureUrl()}" alt="Profile Picture" class="profile-picture">
+            <br />
+            <input th:type="file" name="profilePicture" accept="image/*">
             <br />
             <input th:replace="~{fragments/formElement :: formElementField(fieldName='firstName', label='First Name: ', placeholder='Fabian')}" />
             <input th:replace="~{fragments/formElement :: formElementField(fieldName='lastName', label='Last Name: ', placeholder='Gilson')}" />
