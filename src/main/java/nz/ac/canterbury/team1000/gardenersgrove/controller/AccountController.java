@@ -5,7 +5,6 @@ import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.LoginForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.RegistrationForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
-import nz.ac.canterbury.team1000.gardenersgrove.validation.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +19,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import static nz.ac.canterbury.team1000.gardenersgrove.util.PageUtils.pageWithError;
-import static nz.ac.canterbury.team1000.gardenersgrove.validation.InputValidation.checkLoginData;
 import static nz.ac.canterbury.team1000.gardenersgrove.util.Password.verifyPassword;
 import java.time.format.DateTimeFormatter;
 
