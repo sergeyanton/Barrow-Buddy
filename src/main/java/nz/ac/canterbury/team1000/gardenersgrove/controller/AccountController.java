@@ -1,11 +1,10 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import nz.ac.canterbury.team1000.gardenersgrove.controller.dataCollection.LogInData;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
+import nz.ac.canterbury.team1000.gardenersgrove.form.LoginForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.RegistrationForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
-import nz.ac.canterbury.team1000.gardenersgrove.validation.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +19,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import static nz.ac.canterbury.team1000.gardenersgrove.util.PageUtils.pageWithError;
-import static nz.ac.canterbury.team1000.gardenersgrove.validation.InputValidation.checkLoginData;
 import static nz.ac.canterbury.team1000.gardenersgrove.util.Password.verifyPassword;
 import java.time.format.DateTimeFormatter;
 
@@ -119,45 +116,49 @@ public class AccountController {
      * @return thymeleaf loginPage
      */
     @GetMapping("/login")
-    public String getLoginPage() {
+    public String getLoginPage(LoginForm loginForm) {
         logger.info("GET /login");
         return userService.isSignedIn() ? "redirect:/" : "pages/loginPage";
     }
 
     /**
-     * Handles POST requests to the /login endpoint. Logs in the user, or shows an error message if
-     * the login details are invalid.
+     * Handles POST requests to the /login endpoint.
+     * Logs in the user, or shows an error message if the login details are invalid.
      * 
-     * @param request The HTTP request being made
-     * @param newUser The login data sent in the request
-     * @param model The request model
-     * @return A redirect to the profile page, or the login page with an error message if
-     *         unsuccessful
+     * @param request the HttpServletRequest object containing the request information
+     * @param loginForm the LoginForm object representing the user's login data
+     * @param bindingResult the BindingResult object for validation errors
+     * @return a String representing the view to display after login:
+     *      *  *         - If there are validation errors, returns the login page to display errors.
+     *      *  *         - If login is successful, redirects to the application's home page.
      */
     @PostMapping("/login")
-    public String login(HttpServletRequest request, LogInData newUser, Model model) {
+    public String login(HttpServletRequest request, @ModelAttribute("loginForm") LoginForm loginForm, BindingResult bindingResult) {
         if (userService.isSignedIn()) {
             return "redirect:/";
         }
 
-        Validator error = checkLoginData(newUser);
-        if (!error.getStatus()) {
-            return pageWithError("pages/loginPage", model, error.getMessage());
+        LoginForm.validate(loginForm, bindingResult);
+
+        if (!bindingResult.hasFieldErrors()) {
+            User user = userService.findEmail(loginForm.getEmail());
+            // check if email exists
+            String invalidUserError = "The email address is unknown, or the password is invalid";
+            if (user == null) {
+                bindingResult.addError(new FieldError("loginForm", "password", loginForm.getPassword(), false, null, null, invalidUserError));
+            } else if (!verifyPassword(loginForm.getPassword(), user.getPassword())) {
+                bindingResult.addError(new FieldError("loginForm", "password", loginForm.getPassword(), false, null, null, invalidUserError));
+            }
         }
 
-        User user = userService.findEmail(newUser.getEmail());
-
-        if (user == null) {
-            String errorMessage = "The email address is unknown, or the password is invalid";
-            return pageWithError("pages/loginPage", model, errorMessage);
+        if (bindingResult.hasErrors()) {
+            return "pages/loginPage";
         }
 
-        if (!verifyPassword(newUser.getPassword(), user.getPassword())) {
-            String errorMessage = "Wrong password.";
-            return pageWithError("pages/loginPage", model, errorMessage);
-        }
-
-        userService.authenticateUser(authenticationManager, user, request);
+        // form submitted with valid data
+        // log in the user
+        User validUser = userService.findEmail(loginForm.getEmail());
+        userService.authenticateUser(authenticationManager, validUser, request);
 
         return "redirect:/";
     }
