@@ -1,9 +1,6 @@
 package nz.ac.canterbury.team1000.gardenersgrove.entity;
 
-import java.util.Optional;
-
 import jakarta.persistence.*;
-import nz.ac.canterbury.team1000.gardenersgrove.classes.ValidityCheck;
 
 /**
  * Entity class reflecting an entry of name, location, and size of a garden Note the @link{Entity}
@@ -22,6 +19,9 @@ public class Garden {
     @Column
     private Double size;
 
+    @ManyToOne
+    private User owner;
+
     /**
      * JPA required no-args constructor
      */
@@ -34,8 +34,9 @@ public class Garden {
      * @param name     name of garden
      * @param location location of garden
      * @param size     size of garden
+     * @param owner    owner of garden
      */
-    public Garden(String name, String location, Double size) {
+    public Garden(String name, String location, Double size, User owner) {
         this.name = name;
         this.location = location;
 
@@ -44,6 +45,7 @@ public class Garden {
         }
 
         this.size = size;
+        this.owner = owner;
     }
 
     /**
@@ -52,11 +54,13 @@ public class Garden {
      *
      * @param name     name of garden
      * @param location location of garden
-     * @param size     size of garden
+     * @param size     size of garden as a string. Separators can be , or .
+     * @param owner    owner of garden
      */
-    public Garden(String name, String location, String size) {
+    public Garden(String name, String location, String size, User owner) {
         this.name = name;
         this.location = location;
+        this.owner = owner;
 
         this.setSize(size);
     }
@@ -86,11 +90,22 @@ public class Garden {
     }
 
     public void setSize(Double newSize) {
+        if (newSize != null && newSize < 0) {
+            throw new IllegalArgumentException("Garden size must be a positive number");
+        }
         size = newSize;
     }
 
     public void setSize(String newSize) {
-        this.size = (newSize.isBlank()) ? null : Double.parseDouble(newSize.replace(",", "."));
+        setSize((newSize.isBlank()) ? null : Double.parseDouble(newSize.replace(",", ".")));
+    }
+
+    public void setOwner(User newOwner) {
+        owner = newOwner;
+    }
+
+    public User getOwner() {
+        return owner;
     }
 
     @Override
