@@ -83,6 +83,8 @@ public class CreateGardenForm {
         }
 
         // Validate garden size
-
+        if (!checkValidDouble(createGardenForm.getSize())) {
+            errors.add("size", "Garden size must be a positive number", createGardenForm.getSize());
+        }
     }
 }

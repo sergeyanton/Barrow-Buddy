@@ -109,6 +109,9 @@ public class FormUtils {
      * @return true if the string is valid, false otherwise
      */
     public static boolean checkValidDouble (String string) {
+        if (string.isBlank()) {
+            return true;
+        }
         boolean isNumber = string.matches("^\\d*[,.]?\\d+$");
         if (isNumber) {
             boolean tooBig = new BigDecimal(string.replace(",", ".")).compareTo(BigDecimal.valueOf(Integer.MAX_VALUE)) > 0;

@@ -227,4 +227,10 @@ public class FormUtilsTest {
         String size = "3 m^2";
         Assertions.assertFalse(FormUtils.checkValidDouble(size));
     }
+
+    @Test
+    void checkValidDouble_Empty_ReturnsTrue() {
+        String size = "";
+        Assertions.assertTrue(FormUtils.checkValidDouble(size));
+    }
 }
