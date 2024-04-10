@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.service.GardenService;
 
 /**
@@ -40,7 +41,11 @@ public class HomeController {
 
     @ModelAttribute("allGardens")
     private List<Garden> getAllGardens() {
-        return gardenService.getGardens();
+        User loggedInUser = userService.getLoggedInUser();
+        if (loggedInUser != null) {
+            return gardenService.getUserGardens(loggedInUser.getId());
+        }
+        return null;
     }
 
     /**

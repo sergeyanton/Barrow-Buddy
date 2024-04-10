@@ -31,12 +31,13 @@ public class GardenService {
     }
 
     /**
-     * Gets all gardens from persistence
+     * Gets all gardens for the user.
      * 
-     * @return all gardens currently saved in persistence
+     * @param ownerId The owner id to search for
+     * @return List of gardens for the user
      */
-    public List<Garden> getGardens() {
-        return gardenRepository.findAll();
+    public List<Garden> getUserGardens(long ownerId) {
+        return gardenRepository.findByOwnerId(ownerId);
     }
 
     /**

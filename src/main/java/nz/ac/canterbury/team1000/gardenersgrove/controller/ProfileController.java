@@ -9,8 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -40,9 +38,7 @@ public class ProfileController {
     @GetMapping("/editProfile")
     public String getEditProfilePage(EditUserForm editUserForm) {
         logger.info("GET /editProfile");
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentPrincipalName = authentication.getName();
-        User currentUser = userService.findEmail(currentPrincipalName);
+        User currentUser = userService.getLoggedInUser();
 
         editUserForm.setFromUser(currentUser);
 
@@ -61,10 +57,8 @@ public class ProfileController {
     @PostMapping("/editProfile")
     public String editProfile(HttpServletRequest request, EditUserForm editUserForm, BindingResult bindingResult) {
         logger.info("POST /editProfile");
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentPrincipalName = authentication.getName();
 
-        User currentUser = userService.findEmail(currentPrincipalName);
+        User currentUser = userService.getLoggedInUser();
         String oldEmail = currentUser.getEmail();
 
         EditUserForm.validate(editUserForm, bindingResult, currentUser);

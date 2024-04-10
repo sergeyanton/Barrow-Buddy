@@ -1,11 +1,12 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.team1000.gardenersgrove.classes.ValidityCheck;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Plant;
+import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.PlantService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
@@ -30,13 +32,15 @@ public class GardensController {
     private final GardenService gardenService;
     private final PlantService plantService;
     private final UserService userService;
+    private final AuthenticationManager authenticationManager;
 
-    @Autowired
+    
     public GardensController(GardenService gardenService, PlantService plantService,
-                             UserService userService) {
+                             UserService userService, AuthenticationManager authenticationManager) {
         this.gardenService = gardenService;
         this.plantService = plantService;
         this.userService = userService;
+        this.authenticationManager = authenticationManager;
     }
 
     @ModelAttribute("currentUrl")
@@ -50,7 +54,11 @@ public class GardensController {
 
     @ModelAttribute("allGardens")
     private List<Garden> getAllGardens() {
-        return gardenService.getGardens();
+        User loggedInUser = userService.getLoggedInUser();
+        if (loggedInUser == null) {
+            return Arrays.asList();
+        }
+        return gardenService.getUserGardens(loggedInUser.getId());
     }
 
     /**
@@ -101,9 +109,11 @@ public class GardensController {
                                    @RequestParam(name = "gardenSize") String gardenSize, Model model) {
         logger.info("POST /gardens/create");
 
+        User loggedInUser = userService.getLoggedInUser();
+
         if (ValidityCheck.validGardenForm(gardenName, gardenLocation, gardenSize)) {
             Garden addedGarden =
-                    gardenService.addGarden(new Garden(gardenName, gardenLocation, gardenSize));
+                    gardenService.addGarden(new Garden(gardenName, gardenLocation, gardenSize, loggedInUser));
             logger.info("Garden created: " + addedGarden);
             return "redirect:/gardens/" + addedGarden.getId();
         }
@@ -126,7 +136,8 @@ public class GardensController {
     @GetMapping("/gardens")
     public String viewGardens(Model model) {
         logger.info("GET /gardens");
-        model.addAttribute("gardens", gardenService.getGardens());
+        User loggedInUser = userService.getLoggedInUser();
+        model.addAttribute("gardens", gardenService.getUserGardens(loggedInUser.getId()));
         return "createdGardens";
     }
 
@@ -139,7 +150,14 @@ public class GardensController {
     @GetMapping("/gardens/{gardenId}")
     public String viewGarden(@PathVariable("gardenId") Long gardenId, Model model) {
         logger.info("GET /gardens/" + gardenId);
-        model.addAttribute("garden", gardenService.getGardenById(gardenId));
+        Garden garden = gardenService.getGardenById(gardenId);
+        User loggedInUser = userService.getLoggedInUser();
+        // check that the garden belongs to the logged in user
+        if (garden.getOwner().getId() != loggedInUser.getId()) {
+            // respond with 403 Forbidden
+            return "error/403";
+        }
+        model.addAttribute("garden", garden);
         return "gardenProfile";
     }
 
@@ -153,7 +171,15 @@ public class GardensController {
     @GetMapping("/gardens/{gardenId}/edit")
     public String gardenEditGet(@PathVariable("gardenId") Long gardenId, Model model) {
         logger.info("GET /gardens/" + gardenId + "/edit");
+
+        User loggedInUser = userService.getLoggedInUser();
         Garden garden = gardenService.getGardenById(gardenId);
+
+        if (garden.getOwner().getId() != loggedInUser.getId()) {
+            // respond with 403 Forbidden
+            return "error/403";
+        }
+
         model.addAttribute("gardenId", gardenId);
         model.addAttribute("gardenName", garden.getName());
         model.addAttribute("gardenLocation", garden.getLocation());
@@ -179,9 +205,13 @@ public class GardensController {
                                  @RequestParam(name = "gardenSize") String gardenSize, Model model) {
         logger.info("POST /gardens/" + gardenId + "/edit");
 
-        // TODO Handle error gracefully when user puts invalid id in url (do for each
-        // gardenService.getGardenById)
+        User loggedInUser = userService.getLoggedInUser();
         Garden garden = gardenService.getGardenById(gardenId);
+
+        if (garden.getOwner().getId() != loggedInUser.getId()) {
+            // respond with 403 Forbidden
+            return "error/403";
+        }
 
         if (ValidityCheck.validGardenForm(gardenName, gardenLocation, gardenSize)) {
             garden.setName(gardenName);
@@ -228,7 +258,13 @@ public class GardensController {
                                        Model model) {
         logger.info("GET /gardens/" + gardenId + "/plants/create");
 
-        // TODO handle when the gardenId is not for an existing garden (.getGardenById)
+        User loggedInUser = userService.getLoggedInUser();
+        Garden garden = gardenService.getGardenById(gardenId);
+
+        if (garden.getOwner().getId() != loggedInUser.getId()) {
+            // respond with 403 Forbidden
+            return "error/403";
+        }
 
         model.addAttribute("gardenId", gardenId);
         model.addAttribute("plantName", plantName);
@@ -259,6 +295,14 @@ public class GardensController {
                                         @RequestParam(name = "plantDescription") String plantDescription,
                                         @RequestParam(name = "plantedOnDate") String plantedOnDate, Model model) {
         logger.info("POST /gardens/" + gardenId + "/plants/create");
+
+        User loggedInUser = userService.getLoggedInUser();
+        Garden garden = gardenService.getGardenById(gardenId);
+
+        if (garden.getOwner().getId() != loggedInUser.getId()) {
+            // respond with 403 Forbidden
+            return "error/403";
+        }
 
         if (ValidityCheck.validPlantForm(plantName, plantCount, plantDescription, plantedOnDate)) {
             plantedOnDate = plantedOnDate.isBlank() ? ""
