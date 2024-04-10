@@ -3,11 +3,15 @@ package nz.ac.canterbury.team1000.gardenersgrove.controller;
 import java.util.List;
 import java.util.Optional;
 
+import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
+import nz.ac.canterbury.team1000.gardenersgrove.form.CreateGardenForm;
+import nz.ac.canterbury.team1000.gardenersgrove.form.RegistrationForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -65,22 +69,16 @@ public class GardensController {
      * @return thymeleaf demoFormTemplate
      */
     @GetMapping("/gardens/create")
-    public String gardenCreateGet(HttpServletRequest request,
-                                  @RequestParam(name = "gardenName", required = false,
-                                          defaultValue = "") String gardenName,
-                                  @RequestParam(name = "gardenLocation", required = false,
-                                          defaultValue = "") String gardenLocation,
-                                  @RequestParam(name = "gardenSize", required = false,
-                                          defaultValue = "") String gardenSize,
-                                  Model model) {
+    public String gardenCreateGet(CreateGardenForm createGardenForm) {
         logger.info("GET /gardens/create");
-        model.addAttribute("gardenName", gardenName);
-        model.addAttribute("gardenLocation", gardenLocation);
-        model.addAttribute("gardenSize", gardenSize);
-        String nextDestination = Optional.ofNullable(request.getParameter("next")).orElse("/");
-        model.addAttribute("nextDestination", nextDestination);
-
-        model.addAttribute("actionLabel", "Create Garden");
+//        model.addAttribute("gardenName", gardenName);
+//        model.addAttribute("gardenLocation", gardenLocation);
+//        model.addAttribute("gardenSize", gardenSize);
+//        String nextDestination = Optional.ofNullable(request.getParameter("next")).orElse("/");
+//        model.addAttribute("nextDestination", nextDestination);
+//
+//        model.addAttribute("actionLabel", "Create Garden");
+        //TODO authentication
         return "createGarden";
     }
 
@@ -96,25 +94,32 @@ public class GardensController {
      */
     @PostMapping("/gardens/create")
     public String gardenCreatePost(HttpServletRequest request,
-                                   @RequestParam(name = "gardenName") String gardenName,
-                                   @RequestParam(name = "gardenLocation") String gardenLocation,
-                                   @RequestParam(name = "gardenSize") String gardenSize, Model model) {
+                                   @ModelAttribute("createGardenForm") CreateGardenForm createGardenForm,
+                                   BindingResult bindingResult) {
         logger.info("POST /gardens/create");
+//        if (ValidityCheck.validGardenForm(gardenName, gardenLocation, gardenSize)) {
+//            Garden addedGarden =
+//                    gardenService.addGarden(new Garden(gardenName, gardenLocation, gardenSize));
+//            logger.info("Garden created: " + addedGarden);
+//            return "redirect:/gardens/" + addedGarden.getId();
+//        }
+//
+//        model.addAttribute("actionLabel", "Create Garden");
+//        String nextDestination = Optional.ofNullable(request.getParameter("next")).orElse("/");
+//        model.addAttribute("nextDestination", nextDestination);
+//
+//        displayGardenFormErrors(gardenName, gardenLocation, gardenSize, model);
 
-        if (ValidityCheck.validGardenForm(gardenName, gardenLocation, gardenSize)) {
-            Garden addedGarden =
-                    gardenService.addGarden(new Garden(gardenName, gardenLocation, gardenSize));
-            logger.info("Garden created: " + addedGarden);
-            return "redirect:/gardens/" + addedGarden.getId();
+        CreateGardenForm.validate(createGardenForm, bindingResult);
+        if (bindingResult.hasErrors()) {
+            return "createGarden";
         }
 
-        model.addAttribute("actionLabel", "Create Garden");
-        String nextDestination = Optional.ofNullable(request.getParameter("next")).orElse("/");
-        model.addAttribute("nextDestination", nextDestination);
-
-        displayGardenFormErrors(gardenName, gardenLocation, gardenSize, model);
-
-        return "createGarden";
+        Garden newGarden = createGardenForm.getGarden();
+        // Give them the role of user
+        gardenService.addGarden(newGarden);
+        logger.info("Garden created: " + newGarden);
+        return "redirect:/gardens/" + newGarden.getId();
     }
 
     /**
