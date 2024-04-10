@@ -10,24 +10,14 @@
 <body>
     <div class="basic">
         <h1>Log In</h1>
-        <form th:action="@{login}" method="post">
-            <label for="email"> Email: </label>
-            <input type="email" class="form-control" id="email" th:name="email" data-cy="email" size="40" required
-                autofocus>
+        <form th:action="@{login}" method="post" th:object="${loginForm}">
+            <input th:replace="~{fragments/formElement :: formElementField(fieldName='email', label='Email: ', placeholder='jane@doe.nz')}" />
             <br />
-            <label for="password"> Password: </label>
-            <input type="password" class="form-control" id="password" th:name="password" data-cy="password" required
-                autofocus>
+            <input th:replace="~{fragments/formElement :: formElementField(fieldName='password', label='Password: ', placeholder='*******', type='password')}" />
             <br />
-
-            <div th:if="${errorMessage}">
-                <div th:replace="~{fragments/errorMessageFragment :: errorMessage(message=${errorMessage})}"></div>
-            </div>
-
             <div>
                 <p>Not registered? <a th:href="@{register}">Create an account!</a></p>
             </div>
-
 
             <button type="submit">Sign In</button>
 
