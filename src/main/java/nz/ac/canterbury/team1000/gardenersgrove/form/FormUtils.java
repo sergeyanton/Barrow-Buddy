@@ -2,9 +2,12 @@ package nz.ac.canterbury.team1000.gardenersgrove.form;
 
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Optional;
 
 /**
  * Helper class for adding validation errors to a BindingResult.
@@ -74,6 +77,44 @@ public class FormUtils {
      */
     public static boolean checkOnlyHasLettersSpacesHyphensApostrophes (String string) {
         return !checkNotMatchesRegex(string, "^[a-zA-Z\\s'-]+$");
+    }
+
+    /**
+     * Checks if the given string is only made up of alphanumeric characters, commas,
+     * dots, hyphens, and apostrophes.
+     *
+     * @param string the string to check
+     * @return true if the string contains only valid characters, false otherwise
+     */
+    public static boolean checkValidGardenName (String string) {
+        return !checkNotMatchesRegex(string, "^[\\p{L}0-9\\s,.'-]+$");
+    }
+
+    /**
+     * Checks if the given string is only made up of alphanumeric characters, commas,
+     * dots, hyphens, and apostrophes.
+     *
+     * @param string the string to check
+     * @return true if the string contains only valid characters, false otherwise
+     */
+    public static boolean checkValidLocationName (String string) {
+        return !checkNotMatchesRegex(string, "^[\\p{L}0-9\\s,.'-]+$");
+    }
+
+    /**
+     * Checks if the given string represents a valid Double, where the decimal point can also be a comma. And the
+     * value doesn't exceed the maximum integer value
+     *
+     * @param string the string to check
+     * @return true if the string is valid, false otherwise
+     */
+    public static boolean checkValidDouble (String string) {
+        boolean isNumber = string.matches("^\\d*[,.]?\\d+$");
+        if (isNumber) {
+            boolean tooBig = new BigDecimal(string.replace(",", ".")).compareTo(BigDecimal.valueOf(Integer.MAX_VALUE)) > 0;
+            return !tooBig;
+        }
+        return false;
     }
 
     /**

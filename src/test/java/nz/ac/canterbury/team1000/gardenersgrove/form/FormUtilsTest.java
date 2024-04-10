@@ -1,8 +1,12 @@
 package nz.ac.canterbury.team1000.gardenersgrove.form;
 
+import nz.ac.canterbury.team1000.gardenersgrove.classes.ValidityCheck;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FormUtilsTest {
     @Test
@@ -134,4 +138,70 @@ public class FormUtilsTest {
     void checkDateWithinBoundary_Date120YearsAgo_ReturnsTrue() {
         Assertions.assertTrue(FormUtils.checkDateBefore("01/04/1904", LocalDate.now().minusYears(120).plusDays(1)));
     }
+
+    @Test
+    void checkGardenName_WithValidName_ReturnsTrue() {
+        String name = "Valid Tree Name";
+        Assertions.assertTrue(FormUtils.checkValidGardenName(name));
+    }
+
+    @Test
+    void checkGardenName_AtypicalLetters_ReturnsTrue() {
+        String name = "àèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâêîôûÂÊÎÔÛãñõÃÑÕäëïöüÿÄËÏÖÜŸåÅæÆœŒçÇðÐøØß";
+        Assertions.assertTrue(FormUtils.checkValidGardenName(name));
+    }
+
+    @Test
+    void checkGardenName_WithInvalidName_ReturnsFalse() {
+        String name = "Invalid Name Because Of The Dollar $ign ";
+        Assertions.assertFalse(FormUtils.checkValidGardenName(name));
+    }
+
+    @Test
+    void checkGardenLocation_WithValidLocation_ReturnsTrue() {
+        String location = "Valid Location Name";
+        Assertions.assertTrue(FormUtils.checkValidLocationName(location));
+    }
+
+    @Test
+    void checkGardenLocation_AtypicalLetters_ReturnsTrue() {
+        String location = "àèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâêîôûÂÊÎÔÛãñõÃÑÕäëïöüÿÄËÏÖÜŸåÅæÆœŒçÇðÐøØß";
+        Assertions.assertTrue(FormUtils.checkValidLocationName(location));
+    }
+
+    @Test
+    void checkGardenLocation_WithInvalidLocation_ReturnsFalse() {
+        String location = "Invalid Location Because Of The @ Symbol";
+        Assertions.assertFalse(FormUtils.checkValidLocationName(location));
+    }
+
+    @Test
+    void checkValidDouble_WithValidZero_ReturnsTrue() {
+        String size = "0";
+        Assertions.assertTrue(FormUtils.checkValidDouble(size));
+    }
+
+    @Test
+    void checkValidDouble_WithValidInteger_ReturnsTrue() {
+        String size = "32";
+        Assertions.assertTrue(FormUtils.checkValidDouble(size));
+    }
+
+    @Test
+    void checkValidDouble_WithValidDecimal_ReturnsTrue() {
+        String size = "5.5";
+        Assertions.assertTrue(FormUtils.checkValidDouble(size));
+    }
+
+    @Test
+    void checkValidDouble_WithValidDecimalNoIntegerPart_ReturnsTrue() {
+        String size = ".123";
+        Assertions.assertTrue(FormUtils.checkValidDouble(size));
+    }
+    @Test
+    void checkValidDouble_WithValidCommaNoIntegerPart_ReturnsTrue() {
+        String size = ",123";
+        Assertions.assertTrue(FormUtils.checkValidDouble(size));
+    }
+
 }
