@@ -194,6 +194,12 @@ public class FormUtilsTest {
     }
 
     @Test
+    void checkValidDouble_WithValidComma_ReturnsTrue() {
+        String size = "5,3";
+        Assertions.assertTrue(FormUtils.checkValidDouble(size));
+    }
+
+    @Test
     void checkValidDouble_WithValidDecimalNoIntegerPart_ReturnsTrue() {
         String size = ".123";
         Assertions.assertTrue(FormUtils.checkValidDouble(size));
@@ -204,4 +210,21 @@ public class FormUtilsTest {
         Assertions.assertTrue(FormUtils.checkValidDouble(size));
     }
 
+    @Test
+    void checkValidDouble_MaximumIntegerValue_ReturnsTrue() {
+        String size = "2147483647"; // maximum integer value
+        Assertions.assertTrue(FormUtils.checkValidDouble(size));
+    }
+
+    @Test
+    void checkValidDouble_OverMaximumIntegerValue_ReturnsFalse() {
+        String size = "2147483647.1";
+        Assertions.assertFalse(FormUtils.checkValidDouble(size));
+    }
+
+    @Test
+    void checkValidDouble_BadString_ReturnsFalse() {
+        String size = "3 m^2";
+        Assertions.assertFalse(FormUtils.checkValidDouble(size));
+    }
 }
