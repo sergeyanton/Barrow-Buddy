@@ -108,27 +108,30 @@ public class RegistrationForm {
 
         // Validate first name
         if (checkBlank(registrationForm.getFirstName())) {
-            errors.add("firstName", "{First/Last} name cannot be empty", registrationForm.getFirstName());
+            errors.add("firstName", "First name cannot be empty", registrationForm.getFirstName());
         } else if (checkOverMaxLength(registrationForm.getFirstName(), 64)) {
-            errors.add("firstName", "{First/Last} name must be 64 characters long or less", registrationForm.getFirstName());
+            errors.add("firstName", "First name must be 64 characters long or less", registrationForm.getFirstName());
         } else if (!checkOnlyHasLettersSpacesHyphensApostrophes(registrationForm.getFirstName())) {
-            errors.add("firstName", "{First/Last} name must only include letters, spaces, hyphens or apostrophes", registrationForm.getFirstName());
+            errors.add("firstName", "First name must only include letters, spaces, hyphens or apostrophes", registrationForm.getFirstName());
         }
 
         // Validate last name only if checkbox is not checked
         if (!registrationForm.getNoSurnameCheckBox()) {
             if (checkBlank(registrationForm.getLastName())) {
-                errors.add("lastName", "{First/Last} name cannot be empty", registrationForm.getLastName());
+                errors.add("lastName", "Last name cannot be empty", registrationForm.getLastName());
             } else if (checkOverMaxLength(registrationForm.getLastName(), 64)) {
-                errors.add("lastName", "{First/Last} name must be 64 characters long or less", registrationForm.getLastName());
+                errors.add("lastName", "Last name must be 64 characters long or less", registrationForm.getLastName());
             } else if (!checkOnlyHasLettersSpacesHyphensApostrophes(registrationForm.getLastName())) {
-                errors.add("lastName", "{First/Last} name must only include letters, spaces, hyphens or apostrophes", registrationForm.getLastName());
+                errors.add("lastName", "Last name must only include letters, spaces, hyphens or apostrophes", registrationForm.getLastName());
             }
         }
 
         // Validate email
         if (checkBlank(registrationForm.getEmail()) || checkEmailIsInvalid(registrationForm.getEmail())) {
             errors.add("email", "Email address must be in the form ‘jane@doe.nz’", registrationForm.getEmail());
+        }
+        else if (checkOverMaxLength(registrationForm.getEmail(), MAX_DB_STR_LEN)) {
+            errors.add("email", "Email address must be 255 characters long or less", registrationForm.getEmail());
         }
 
         // Validate password
