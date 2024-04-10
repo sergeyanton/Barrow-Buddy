@@ -58,65 +58,40 @@ public class GardensController {
     }
 
     /**
-     * Gets form to be displayed, includes the ability to display results of previous form when
-     * linked to from POST form
+     * Gets form to be displayed, displays results of previous form when linked to from POST request
      *
-     * @param gardenName     previous garden name entered into form to be displayed
-     * @param gardenLocation previous garden location entered into form to be displayed
-     * @param gardenSize     previous garden size entered into form to be displayed
-     * @param model          (map-like) representation of gardenName, gardenLocation, garden Size and
-     *                       isValidName & isValidLocation boolean for use in thymeleaf
-     * @return thymeleaf demoFormTemplate
+     * @param createGardenForm the CreateGardenForm object representing the new garden's details,
+     *                         useful for seeing erroneous inputs of a failed POST request
+     * @return the view to display, 'createGarden', which contains a form
      */
     @GetMapping("/gardens/create")
-    public String gardenCreateGet(CreateGardenForm createGardenForm) {
+    public String gardenCreateGet(@ModelAttribute("createGardenForm") CreateGardenForm createGardenForm) {
         logger.info("GET /gardens/create");
-//        model.addAttribute("gardenName", gardenName);
-//        model.addAttribute("gardenLocation", gardenLocation);
-//        model.addAttribute("gardenSize", gardenSize);
-//        String nextDestination = Optional.ofNullable(request.getParameter("next")).orElse("/");
-//        model.addAttribute("nextDestination", nextDestination);
-//
-//        model.addAttribute("actionLabel", "Create Garden");
-        //TODO authentication
         return "createGarden";
     }
 
     /**
-     * Posts a form response with name, location, and size of the garden
+     * Handles POST requests from the /gardens/create endpoint.
+     * Handles creation of new gardens
      *
-     * @param gardenName     name of garden
-     * @param gardenLocation location of garden
-     * @param gardenSize     size of garden
-     * @param model          (map-like) representation of name for use in thymeleaf, with values being set to
-     *                       relevant parameters provided
-     * @return thymeleaf demoFormTemplate
+     * @param request           the HttpServletRequest object containing the request information
+     * @param createGardenForm  the CreateGardenForm object representing the new garden's details
+     * @param bindingResult     the BindingResult object for validation errors
+     * @return the view to display:
+     *         - If there are validation errors, stays on the 'Create Garden' form.
+     *         - Else, redirect to the newly created garden's profile page.
      */
     @PostMapping("/gardens/create")
     public String gardenCreatePost(HttpServletRequest request,
                                    @ModelAttribute("createGardenForm") CreateGardenForm createGardenForm,
                                    BindingResult bindingResult) {
         logger.info("POST /gardens/create");
-//        if (ValidityCheck.validGardenForm(gardenName, gardenLocation, gardenSize)) {
-//            Garden addedGarden =
-//                    gardenService.addGarden(new Garden(gardenName, gardenLocation, gardenSize));
-//            logger.info("Garden created: " + addedGarden);
-//            return "redirect:/gardens/" + addedGarden.getId();
-//        }
-//
-//        model.addAttribute("actionLabel", "Create Garden");
-//        String nextDestination = Optional.ofNullable(request.getParameter("next")).orElse("/");
-//        model.addAttribute("nextDestination", nextDestination);
-//
-//        displayGardenFormErrors(gardenName, gardenLocation, gardenSize, model);
-
         CreateGardenForm.validate(createGardenForm, bindingResult);
         if (bindingResult.hasErrors()) {
             return "createGarden";
         }
 
         Garden newGarden = createGardenForm.getGarden();
-        // Give them the role of user
         gardenService.addGarden(newGarden);
         logger.info("Garden created: " + newGarden);
         return "redirect:/gardens/" + newGarden.getId();
