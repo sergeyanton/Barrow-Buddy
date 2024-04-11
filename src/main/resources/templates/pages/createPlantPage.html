@@ -8,7 +8,7 @@
     <main>
         <h1>Create plant for garden</h1>
         <div class="content">
-            <form th:action="@{/gardens/{gardenId}/plants/create(gardenId=${gardenId})}" method="post" th:object="${createPlantForm}">
+            <form th:action="@{'/gardens/' + ${gardenId} + '/plants/create'}" method="post" th:object="${createPlantForm}">
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='name', label='Plant Name: ', placeholder='Red Roses')}" />
                 <br />
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='plantCount', label='How many? (optional): ', placeholder='1')}" />
@@ -18,10 +18,9 @@
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='plantedOnDate', label='Planted Date (optional): ', placeholder='15/12/2023')}" />
                 <br />
                 <button class="next" type="submit">Create</button>
-                <a class="cancel" th:href="@{.}">Cancel</a>
+                <a class="cancel" th:href="@{'/gardens/' + ${gardenId}}">Cancel</a>
             </form>
         </div>
     </main>
 </body>
-
 </html>

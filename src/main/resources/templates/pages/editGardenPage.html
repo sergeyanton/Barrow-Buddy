@@ -16,10 +16,9 @@
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='size', label='Size in m&sup2; (optional): ', placeholder='540000.0')}" />
                 <br />
                 <button class="next" type="submit">Edit</button>
-                <a class="cancel" th:href="@{.}">Cancel</a>
+                <a class="cancel" th:href="@{'/gardens/' + ${gardenId}}">Cancel</a>
             </form>
         </div>
     </main>
 </body>
-
 </html>

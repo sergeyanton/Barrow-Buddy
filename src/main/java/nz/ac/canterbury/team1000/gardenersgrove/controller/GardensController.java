@@ -1,11 +1,8 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
 import java.util.List;
-import java.util.Optional;
-
 import nz.ac.canterbury.team1000.gardenersgrove.form.GardenForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PlantForm;
-import org.h2.table.Plan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.servlet.http.HttpServletRequest;
-import nz.ac.canterbury.team1000.gardenersgrove.classes.ValidityCheck;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.team1000.gardenersgrove.service.GardenService;
@@ -52,6 +47,11 @@ public class GardensController {
         return request.getRequestURI() + "?" + request.getQueryString();
     }
 
+
+    /**
+     * Necessary for being able to display each garden in the nav bar
+     * @return all gardens currently in the database
+     */
     @ModelAttribute("allGardens")
     private List<Garden> getAllGardens() {
         return gardenService.getGardens();
@@ -63,12 +63,12 @@ public class GardensController {
      *
      * @param createGardenForm the GardenForm object representing the new garden's details,
      *                         useful for seeing erroneous inputs of a failed POST request
-     * @return the view to display, 'createGarden', which contains a form
+     * @return the view to display, 'pages/createGardenPage', which contains a form
      */
     @GetMapping("/gardens/create")
     public String gardenCreateGet(@ModelAttribute("createGardenForm") GardenForm createGardenForm) {
         logger.info("GET /gardens/create");
-        return "createGarden";
+        return "pages/createGardenPage";
     }
 
     /**
@@ -89,7 +89,7 @@ public class GardensController {
         logger.info("POST /gardens/create");
         GardenForm.validate(createGardenForm, bindingResult);
         if (bindingResult.hasErrors()) {
-            return "createGarden";
+            return "pages/createGardenPage";
         }
 
         Garden newGarden = createGardenForm.getGarden();
@@ -103,13 +103,13 @@ public class GardensController {
      * Displays all gardens that the user owns.
      *
      * @param model (map-like) representation of results to be used by thymeleaf
-     * @return thymeleaf createdGardens
+     * @return thymeleaf pages/gardensPage
      */
     @GetMapping("/gardens")
     public String viewGardens(Model model) {
         logger.info("GET /gardens");
         model.addAttribute("gardens", gardenService.getGardens());
-        return "createdGardens";
+        return "pages/gardensPage";
     }
 
     /**
@@ -117,13 +117,13 @@ public class GardensController {
      * Displays details of the garden with the given id
      *
      * @param model (map-like) representation of results to be used by thymeleaf
-     * @return thymeleaf gardenProfile
+     * @return thymeleaf pages/gardenProfilePage
      */
     @GetMapping("/gardens/{gardenId}")
     public String viewGarden(@PathVariable("gardenId") Long gardenId, Model model) {
         logger.info("GET /gardens/" + gardenId);
         model.addAttribute("garden", gardenService.getGardenById(gardenId));
-        return "gardenProfile";
+        return "pages/gardenProfilePage";
     }
 
     /**
@@ -133,17 +133,19 @@ public class GardensController {
      * @param gardenId       the id of the garden being got
      * @param editGardenForm the GardenForm object representing the edited garden's details,
      *                       useful for seeing erroneous inputs of a failed POST request
-     * @return thymeleaf editGarden
+     * @return thymeleaf pages/editGardenPage
      */
     @GetMapping("/gardens/{gardenId}/edit")
     public String gardenEditGet(@PathVariable("gardenId") Long gardenId,
                                 @ModelAttribute("editGardenForm") GardenForm editGardenForm) {
         logger.info("GET /gardens/" + gardenId + "/edit");
+
         Garden garden = gardenService.getGardenById(gardenId);
         editGardenForm.setName(garden.getName());
         editGardenForm.setLocation(garden.getLocation());
         if (garden.getSize() != null) editGardenForm.setSize(garden.getSize().toString());
-        return "editGarden";
+
+        return "pages/editGardenPage";
     }
 
     /**
@@ -164,9 +166,10 @@ public class GardensController {
                                  BindingResult bindingResult,
                                  @PathVariable("gardenId") Long gardenId) {
         logger.info("POST /gardens/" + gardenId + "/edit");
+
         GardenForm.validate(editGardenForm, bindingResult);
         if (bindingResult.hasErrors()) {
-            return "editGarden";
+            return "pages/editGardenPage";
         }
 
         Garden garden = gardenService.getGardenById(gardenId);
@@ -182,34 +185,34 @@ public class GardensController {
     }
 
     /**
-     * Gets form to be displayed, includes the ability to display results of previous form when
-     * linked to from POST form
+     * Handles GET requests from the /gardens/{gardenId}/edit endpoint.
+     * Displays the 'Edit Garden' form.
      *
      * @param gardenId        id of garden that this plant belongs to
      * @param createPlantForm the PlantForm object representing the plant's details,
      *                        useful for seeing erroneous inputs of a failed POST request
-     * @return thymeleaf createPlant
+     * @return thymeleaf pages/createPlantPage
      */
     @GetMapping("/gardens/{gardenId}/plants/create")
     public String gardenCreatePlantGet(@PathVariable("gardenId") Long gardenId,
                                        @ModelAttribute("createPlantForm") PlantForm createPlantForm) {
         logger.info("GET /gardens/" + gardenId + "/plants/create");
-        return "createPlant";
+        return "pages/createPlantPage";
     }
 
     // TODO handle when the gardenId is not for an existing garden (.getGardenById)
 
     /**
-     * Posts a form response with name, location, and size of the garden
+     * Handles POST requests from the /gardens/{gardenId}/plants/create endpoint.
+     * Handles creation of plants
      *
-     * @param gardenId         id of garden that this plant belongs to
-     * @param plantName        the name of the plant
-     * @param plantCount       the amount of this plant in the garden
-     * @param plantDescription a short description of the plant
-     * @param plantedOnDate    the date that the plant was planted on
-     * @param model            (map-like) representation of values for use in thymeleaf, with values being set
-     *                         to relevant parameters provided
-     * @return thymeleaf createPlant if invalid form, gardens/{gardenId} if valid
+     * @param request the HttpServletRequest object containing the request information
+     * @param createPlantForm the PlantForm object representing the garden's new details
+     * @param bindingResult the BindingResult object for validation errors
+     * @param gardenId the id of the garden that the plant is being added to
+     * @return  the view to display:
+     *          - If there are validation errors, stays on the 'Create Plant' form.
+     *          - Else, redirect to the plant's garden's profile page.
      */
     @PostMapping("/gardens/{gardenId}/plants/create")
     public String gardenCreatePlantPost(HttpServletRequest request,
@@ -217,9 +220,10 @@ public class GardensController {
                                         BindingResult bindingResult,
                                         @PathVariable("gardenId") Long gardenId) {
         logger.info("POST /gardens/" + gardenId + "/plants/create");
+
         PlantForm.validate(createPlantForm, bindingResult);
         if (bindingResult.hasErrors()) {
-            return "createPlant";
+            return "pages/createPlantPage";
         }
 
         // this line is actually not strictly needed as spring MVC does this implicitly, but I have left it for the sake
