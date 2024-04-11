@@ -75,12 +75,12 @@ public class GardensController {
      * Handles POST requests from the /gardens/create endpoint.
      * Handles creation of new gardens
      *
-     * @param request           the HttpServletRequest object containing the request information
-     * @param createGardenForm  the GardenForm object representing the new garden's details
-     * @param bindingResult     the BindingResult object for validation errors
+     * @param request          the HttpServletRequest object containing the request information
+     * @param createGardenForm the GardenForm object representing the new garden's details
+     * @param bindingResult    the BindingResult object for validation errors
      * @return the view to display:
-     *         - If there are validation errors, stays on the 'Create Garden' form.
-     *         - Else, redirect to the newly created garden's profile page.
+     * - If there are validation errors, stays on the 'Create Garden' form.
+     * - Else, redirect to the newly created garden's profile page.
      */
     @PostMapping("/gardens/create")
     public String gardenCreatePost(HttpServletRequest request,
@@ -130,7 +130,7 @@ public class GardensController {
      * Handles GET requests from the /gardens/{gardenId}/edit endpoint.
      * Displays the 'Edit Garden' form.
      *
-     * @param gardenId the id of the garden being got
+     * @param gardenId       the id of the garden being got
      * @param editGardenForm the GardenForm object representing the edited garden's details,
      *                       useful for seeing erroneous inputs of a failed POST request
      * @return thymeleaf editGarden
@@ -150,13 +150,13 @@ public class GardensController {
      * Handles POST requests from the /gardens/{gardenId}/edit endpoint.
      * Handles editing of gardens
      *
-     * @param request           the HttpServletRequest object containing the request information
-     * @param editGardenForm    the GardenForm object representing the garden's new details
-     * @param bindingResult     the BindingResult object for validation errors
-     * @param gardenId          the id of the garden being edited
+     * @param request        the HttpServletRequest object containing the request information
+     * @param editGardenForm the GardenForm object representing the garden's new details
+     * @param bindingResult  the BindingResult object for validation errors
+     * @param gardenId       the id of the garden being edited
      * @return the view to display:
-     *         - If there are validation errors, stays on the 'Edit Garden' form.
-     *         - Else, redirect to the edited garden's profile page.
+     * - If there are validation errors, stays on the 'Edit Garden' form.
+     * - Else, redirect to the edited garden's profile page.
      */
     @PostMapping("/gardens/{gardenId}/edit")
     public String gardenEditPost(HttpServletRequest request,
@@ -185,10 +185,9 @@ public class GardensController {
      * Gets form to be displayed, includes the ability to display results of previous form when
      * linked to from POST form
      *
-     * @param gardenId         id of garden that this plant belongs to
-     * @param createPlantForm  the PlantForm object representing the plant's details,
-     *                         useful for seeing erroneous inputs of a failed POST request
-     *
+     * @param gardenId        id of garden that this plant belongs to
+     * @param createPlantForm the PlantForm object representing the plant's details,
+     *                        useful for seeing erroneous inputs of a failed POST request
      * @return thymeleaf createPlant
      */
     @GetMapping("/gardens/{gardenId}/plants/create")
@@ -218,61 +217,19 @@ public class GardensController {
                                         BindingResult bindingResult,
                                         @PathVariable("gardenId") Long gardenId) {
         logger.info("POST /gardens/" + gardenId + "/plants/create");
-
         PlantForm.validate(createPlantForm, bindingResult);
         if (bindingResult.hasErrors()) {
             return "createPlant";
         }
 
+        // this line is actually not strictly needed as spring MVC does this implicitly, but I have left it for the sake
+        // of understanding how the plant 'knows' what garden it belongs to. It appears to be magic otherwise
         createPlantForm.setGardenId(gardenId);
+
         Plant plant = createPlantForm.getPlant();
         plantService.addPlant(plant);
 
         logger.info("Plant created: " + plant);
         return "redirect:/gardens/" + gardenId;
-    }
-
-    /**
-     * A helper function to avoid duplication of code.
-     *
-     * @param plantName        the name of the plant
-     * @param plantCount       the amount of plants in the garden
-     * @param plantDescription a short description of the plant
-     * @param plantedOnDate    the date that the plant was planted
-     * @param model            (map-like) representation of values for use in thymeleaf, with values being set
-     *                         to relevant parameters provided
-     */
-    private void displayPlantFormErrors(String plantName, String plantCount,
-                                        String plantDescription, String plantedOnDate, Model model) {
-        model.addAttribute("plantName", plantName);
-        model.addAttribute("plantCount", plantCount);
-        model.addAttribute("plantDescription", plantDescription);
-        model.addAttribute("plantedOnDate", plantedOnDate);
-
-        Optional<String> validPlantNameCheck = ValidityCheck.validatePlantName(plantName);
-        Optional<String> validPlantCountCheck = ValidityCheck.validatePlantCount(plantCount);
-        Optional<String> validPlantDescription = ValidityCheck.validatePlantDescription(plantDescription);
-        Optional<String> validPlantedOnDate = ValidityCheck.validateDate(plantedOnDate);
-
-        if (validPlantNameCheck.isPresent()) {
-            model.addAttribute("plantNameError", validPlantNameCheck.get());
-        } else {
-            model.addAttribute("plantNameError", "");
-        }
-        if (validPlantCountCheck.isPresent()) {
-            model.addAttribute("plantCountError", validPlantCountCheck.get());
-        } else {
-            model.addAttribute("plantCountError", "");
-        }
-        if (validPlantDescription.isPresent()) {
-            model.addAttribute("plantDescriptionError", validPlantDescription.get());
-        } else {
-            model.addAttribute("plantDescriptionError", "");
-        }
-        if (validPlantedOnDate.isPresent()) {
-            model.addAttribute("plantedOnDateError", validPlantedOnDate.get());
-        } else {
-            model.addAttribute("plantedOnDateError", "");
-        }
     }
 }
