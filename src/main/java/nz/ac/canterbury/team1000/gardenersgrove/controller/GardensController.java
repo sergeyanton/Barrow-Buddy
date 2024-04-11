@@ -137,15 +137,12 @@ public class GardensController {
      */
     @GetMapping("/gardens/{gardenId}/edit")
     public String gardenEditGet(@PathVariable("gardenId") Long gardenId,
-                                @ModelAttribute("editGardenForm") CreateGardenForm editGardenForm,
-                                Model model) {
+                                @ModelAttribute("editGardenForm") CreateGardenForm editGardenForm) {
         logger.info("GET /gardens/" + gardenId + "/edit");
         Garden garden = gardenService.getGardenById(gardenId);
-//        model.addAttribute("gardenId", gardenId);
-//        model.addAttribute("gardenName", garden.getName());
-//        model.addAttribute("gardenLocation", garden.getLocation());
-//        model.addAttribute("gardenSize", garden.getSize());
-//        model.addAttribute("actionLabel", "Edit Garden");
+        editGardenForm.setName(garden.getName());
+        editGardenForm.setLocation(garden.getLocation());
+        if (garden.getSize() != null) editGardenForm.setSize(garden.getSize().toString());
         return "editGarden";
     }
 
@@ -167,28 +164,6 @@ public class GardensController {
                                  BindingResult bindingResult,
                                  @PathVariable("gardenId") Long gardenId) {
         logger.info("POST /gardens/" + gardenId + "/edit");
-
-//        // TODO Handle error gracefully when user puts invalid id in url (do for each
-//        // gardenService.getGardenById)
-//        Garden garden = gardenService.getGardenById(gardenId);
-//
-//        if (ValidityCheck.validGardenForm(gardenName, gardenLocation, gardenSize)) {
-//            garden.setName(gardenName);
-//            garden.setLocation(gardenLocation);
-//            garden.setSize(gardenSize);
-//
-//            gardenService.updateGarden(garden);
-//            logger.info("Garden updated: " + garden);
-//            return "redirect:/gardens/" + garden.getId();
-//        }
-//        model.addAttribute("actionLabel", "Edit Garden");
-//        model.addAttribute("gardenId", gardenId);
-//        model.addAttribute("gardenSize", gardenSize);
-//        model.addAttribute("gardenLocation", gardenLocation);
-//        model.addAttribute("gardenName", gardenName);
-//
-//        displayGardenFormErrors(gardenName, gardenLocation, gardenSize, model);
-//        return "editGarden";
         CreateGardenForm.validate(editGardenForm, bindingResult);
         if (bindingResult.hasErrors()) {
             return "editGarden";
@@ -279,44 +254,6 @@ public class GardensController {
         model.addAttribute("actionLabel", "Create Plant");
 
         return "createPlant";
-    }
-
-    /**
-     * A helper function to avoid duplication of code. Both the create & edit forms for a garden
-     * have the exact same error messages so this code is used in both POSTs.
-     *
-     * @param gardenName     name of the garden
-     * @param gardenLocation location of the garden
-     * @param gardenSize     size of the garden
-     * @param model          (map-like) representation of values for use in thymeleaf, with values being set
-     *                       to relevant parameters provided
-     */
-    private void displayGardenFormErrors(String gardenName, String gardenLocation,
-                                         String gardenSize, Model model) {
-        model.addAttribute("gardenName", gardenName);
-        model.addAttribute("gardenLocation", gardenLocation);
-        model.addAttribute("gardenSize", gardenSize);
-
-        Optional<String> validGardenNameCheck = ValidityCheck.validGardenName(gardenName);
-        Optional<String> validGardenLocationCheck =
-                ValidityCheck.validGardenLocation(gardenLocation);
-        Optional<String> validGardenSizeCheck = ValidityCheck.validateGardenSize(gardenSize);
-
-        if (validGardenNameCheck.isPresent()) {
-            model.addAttribute("gardenNameError", validGardenNameCheck.get());
-        } else {
-            model.addAttribute("gardenNameError", "");
-        }
-        if (validGardenLocationCheck.isPresent()) {
-            model.addAttribute("gardenLocationError", validGardenLocationCheck.get());
-        } else {
-            model.addAttribute("gardenLocationError", "");
-        }
-        if (validGardenSizeCheck.isPresent()) {
-            model.addAttribute("gardenSizeError", validGardenSizeCheck.get());
-        } else {
-            model.addAttribute("gardenSizeError", "");
-        }
     }
 
     /**
