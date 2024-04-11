@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import nz.ac.canterbury.team1000.gardenersgrove.form.GardenForm;
+import nz.ac.canterbury.team1000.gardenersgrove.form.PlantForm;
+import org.h2.table.Plan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -184,37 +186,19 @@ public class GardensController {
      * linked to from POST form
      *
      * @param gardenId         id of garden that this plant belongs to
-     * @param plantName        the name of the plant
-     * @param plantCount       the amount of this plant in the garden
-     * @param plantDescription a short description of the plant
-     * @param plantedOnDate    the date that the plant was planted on
-     * @param model            (map-like) representation of values for use in thymeleaf, with values being set
-     *                         to relevant parameters provided
+     * @param createPlantForm  the PlantForm object representing the plant's details,
+     *                         useful for seeing erroneous inputs of a failed POST request
+     *
      * @return thymeleaf createPlant
      */
     @GetMapping("/gardens/{gardenId}/plants/create")
     public String gardenCreatePlantGet(@PathVariable("gardenId") Long gardenId,
-                                       @RequestParam(name = "plantName", required = false, defaultValue = "") String plantName,
-                                       @RequestParam(name = "plantCount", required = false,
-                                               defaultValue = "") String plantCount,
-                                       @RequestParam(name = "plantDescription", required = false,
-                                               defaultValue = "") String plantDescription,
-                                       @RequestParam(name = "plantedOnDate", required = false,
-                                               defaultValue = "") String plantedOnDate,
-                                       Model model) {
+                                       @ModelAttribute("createPlantForm") PlantForm createPlantForm) {
         logger.info("GET /gardens/" + gardenId + "/plants/create");
-
-        // TODO handle when the gardenId is not for an existing garden (.getGardenById)
-
-        model.addAttribute("gardenId", gardenId);
-        model.addAttribute("plantName", plantName);
-        model.addAttribute("plantCount", plantCount);
-        model.addAttribute("plantDescription", plantDescription);
-        model.addAttribute("plantedOnDate", plantedOnDate);
-
-        model.addAttribute("actionLabel", "Create Plant");
         return "createPlant";
     }
+
+    // TODO handle when the gardenId is not for an existing garden (.getGardenById)
 
     /**
      * Posts a form response with name, location, and size of the garden
@@ -229,28 +213,23 @@ public class GardensController {
      * @return thymeleaf createPlant if invalid form, gardens/{gardenId} if valid
      */
     @PostMapping("/gardens/{gardenId}/plants/create")
-    public String gardenCreatePlantPost(@PathVariable("gardenId") Long gardenId,
-                                        @RequestParam(name = "plantName") String plantName,
-                                        @RequestParam(name = "plantCount") String plantCount,
-                                        @RequestParam(name = "plantDescription") String plantDescription,
-                                        @RequestParam(name = "plantedOnDate") String plantedOnDate, Model model) {
+    public String gardenCreatePlantPost(HttpServletRequest request,
+                                        @ModelAttribute("createPlantForm") PlantForm createPlantForm,
+                                        BindingResult bindingResult,
+                                        @PathVariable("gardenId") Long gardenId) {
         logger.info("POST /gardens/" + gardenId + "/plants/create");
 
-        if (ValidityCheck.validPlantForm(plantName, plantCount, plantDescription, plantedOnDate)) {
-            plantedOnDate = plantedOnDate.isBlank() ? ""
-                    : plantedOnDate.split("-")[2] + "/" + plantedOnDate.split("-")[1] + "/"
-                    + plantedOnDate.split("-")[0]; // maybe not necessary
-            Plant addedPlant = plantService.addPlant(
-                    new Plant(plantName, plantCount, plantDescription, plantedOnDate, gardenId));
-            logger.info("Plant created: " + addedPlant);
-            return "redirect:/gardens/" + gardenId;
+        PlantForm.validate(createPlantForm, bindingResult);
+        if (bindingResult.hasErrors()) {
+            return "createPlant";
         }
 
-        displayPlantFormErrors(plantName, plantCount, plantDescription, plantedOnDate, model);
+        createPlantForm.setGardenId(gardenId);
+        Plant plant = createPlantForm.getPlant();
+        plantService.addPlant(plant);
 
-        model.addAttribute("actionLabel", "Create Plant");
-
-        return "createPlant";
+        logger.info("Plant created: " + plant);
+        return "redirect:/gardens/" + gardenId;
     }
 
     /**
