@@ -18,7 +18,7 @@ public class Plant {
     private String name;
     @Column
     private Integer plantCount;
-    @Column
+    @Column(length = 512)
     private String description;
     @Column
     private LocalDate plantedOnDate;

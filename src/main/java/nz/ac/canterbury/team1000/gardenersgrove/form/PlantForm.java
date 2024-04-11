@@ -101,7 +101,7 @@ public class PlantForm {
 
         // Validate description (if there is one)
         if (!checkBlank(createPlantForm.getDescription())) {
-            if (checkOverMaxLength(createPlantForm.getPlantCount(), 512)) {
+            if (checkOverMaxLength(createPlantForm.getDescription(), 512)) {
                 errors.add("description", "Plant description must be less than 512 characters", createPlantForm.getDescription());
             }
         }

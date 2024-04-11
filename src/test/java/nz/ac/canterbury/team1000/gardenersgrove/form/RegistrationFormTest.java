@@ -127,4 +127,39 @@ public class RegistrationFormTest {
         RegistrationForm.validate(registrationFormForm, bindingResult);
         Mockito.verify(bindingResult).addError(Mockito.any());
     }
+
+    @Test
+    void validate_PlantedOnDateValid_DoesNotAddError() {
+        registrationFormForm.setDob("01/01/2001");
+        RegistrationForm.validate(registrationFormForm, bindingResult);
+        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
+
+    @Test
+    void validate_PlantedOnDateInvalid_AddsError() {
+        registrationFormForm.setDob("bad");
+        RegistrationForm.validate(registrationFormForm, bindingResult);
+        Mockito.verify(bindingResult).addError(Mockito.any());
+    }
+
+    @Test
+    void validate_PlantedOnDateInvalidLeapDay_AddsError() {
+        registrationFormForm.setDob("29/02/2003");
+        RegistrationForm.validate(registrationFormForm, bindingResult);
+        Mockito.verify(bindingResult).addError(Mockito.any());
+    }
+
+    @Test
+    void validate_PlantedOnDateValidLeapDay_DoesNotAddError() {
+        registrationFormForm.setDob("29/02/2004");
+        RegistrationForm.validate(registrationFormForm, bindingResult);
+        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
+
+    @Test
+    void validate_PlantedOnDateLocalDateFormat_AddsError() {
+        registrationFormForm.setDob("2003-02-02");
+        RegistrationForm.validate(registrationFormForm, bindingResult);
+        Mockito.verify(bindingResult).addError(Mockito.any());
+    }
 }

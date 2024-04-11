@@ -251,8 +251,38 @@ public class FormUtilsTest {
     }
 
     @Test
+    void checkIntegerTooBig_LeadingZeros_ReturnsFalse() {
+        String size = "0".repeat(10000); // maximum integer value
+        Assertions.assertFalse(FormUtils.checkIntegerTooBig(size));
+    }
+
+    @Test
     void checkIntegerTooBig_NotAValidIntegerString_ReturnsFalse() {
         String size = "invalid integer obviously";
         Assertions.assertFalse(FormUtils.checkIntegerTooBig(size));
+    }
+
+    @Test
+    void checkIntegerIsInvalid_ValidInteger_ReturnsFalse() {
+        String size = "3";
+        Assertions.assertFalse(FormUtils.checkIntegerIsInvalid(size));
+    }
+
+    @Test
+    void checkIntegerIsInvalid_Double_ReturnsTrue() {
+        String size = "1.2";
+        Assertions.assertTrue(FormUtils.checkIntegerIsInvalid(size));
+    }
+
+    @Test
+    void checkIntegerIsInvalid_LeadingZeros_ReturnFalse() {
+        String size = "0".repeat(10000);
+        Assertions.assertFalse(FormUtils.checkIntegerIsInvalid(size));
+    }
+
+    @Test
+    void checkIntegerIsInvalid_NotAValidIntegerString_ReturnsTrue() {
+        String size = "invalid integer obviously";
+        Assertions.assertTrue(FormUtils.checkIntegerIsInvalid(size));
     }
 }
