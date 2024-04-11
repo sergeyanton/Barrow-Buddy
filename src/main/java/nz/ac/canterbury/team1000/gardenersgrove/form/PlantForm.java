@@ -85,17 +85,5 @@ public class PlantForm {
         } else if (checkOverMaxLength(createPlantForm.getName(), 255)) { //TODO replace with constant
             errors.add("name", "Name must be 255 characters or less", createPlantForm.getName());
         }
-
-        // Validate plant count
-        if (!checkValidLocationName(createGardenForm.getLocation())) {
-            errors.add("plantCount", "Location name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes", createGardenForm.getName());
-        } else if (checkOverMaxLength(createGardenForm.getLocation(), 255)) { //TODO replace with constant
-            errors.add("plantCount", "Location must be 255 characters or less", createGardenForm.getLocation());
-        }
-
-        // Validate garden size
-        if (!checkValidDouble(createGardenForm.getSize())) {
-            errors.add("size", "Garden size must be a positive number", createGardenForm.getSize());
-        }
     }
 }
