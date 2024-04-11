@@ -8,8 +8,17 @@
     <main>
         <h1>Create plant for garden</h1>
         <div class="content">
-            <form
-                th:replace="~{fragments/formElement :: plantForm(action=@{/gardens/{gardenId}/plants/create(gardenId=${gardenId})}, actionLabel=${actionLabel}, cancel=@{'/gardens/' + ${gardenId}}, plantName=${plantName}, plantCount=${plantCount}, plantDescription=${plantDescription}, plantedOnDate=${plantedOnDate}, plantGardenId=${gardenId}, plantNameError=${plantNameError}, plantCountError=${plantCountError}, plantDescriptionError=${plantDescriptionError}, plantedOnDateError=${plantedOnDateError})}">
+            <form th:action="@{/gardens/{gardenId}/plants/create(gardenId=${gardenId})}" method="post" th:object="${createPlantForm}">
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='name', label='Plant Name: ', placeholder='Red Roses')}" />
+                <br />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='plantCount', label='How many? (optional): ', placeholder='1')}" />
+                <br />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='description', label='Description (optional): ', placeholder='Rather thorny')}" />
+                <br />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='plantedOnDate', label='Planted Date (optional): ', placeholder='15/12/2023')}" />
+                <br />
+                <button class="next" type="submit">Create</button>
+                <a class="cancel" th:href="@{.}">Cancel</a>
             </form>
         </div>
     </main>
