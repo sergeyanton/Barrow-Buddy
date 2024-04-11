@@ -58,7 +58,8 @@ public class GardensController {
     }
 
     /**
-     * Gets form to be displayed, displays results of previous form when linked to from POST request
+     * Handles GET requests from the /gardens/create endpoint.
+     * Displays results of previous form when linked to from POST request
      *
      * @param createGardenForm the CreateGardenForm object representing the new garden's details,
      *                         useful for seeing erroneous inputs of a failed POST request
@@ -98,7 +99,8 @@ public class GardensController {
     }
 
     /**
-     * Gets all form responses (gardens)
+     * Handles GET requests from the /gardens endpoint.
+     * Displays all gardens that the user owns.
      *
      * @param model (map-like) representation of results to be used by thymeleaf
      * @return thymeleaf createdGardens
@@ -111,10 +113,11 @@ public class GardensController {
     }
 
     /**
-     * Gets name of garden that was clicked on.
+     * Handles GET requests from the /gardens/{gardenId} endpoint.
+     * Displays details of the garden with the given id
      *
      * @param model (map-like) representation of results to be used by thymeleaf
-     * @return thymeleaf demoResponseTemplate
+     * @return thymeleaf gardenProfile
      */
     @GetMapping("/gardens/{gardenId}")
     public String viewGarden(@PathVariable("gardenId") Long gardenId, Model model) {
@@ -124,62 +127,83 @@ public class GardensController {
     }
 
     /**
-     * Gets form to be displayed, includes the ability to display results of previous form when
-     * linked to from POST form
+     * Handles GET requests from the /gardens/{gardenId}/edit endpoint.
+     * Displays the 'Edit Garden' form.
      *
-     * @param model (map-like) representation of garden for use in thymeleaf
+     * @param gardenId the id of the garden being got
+     * @param editGardenForm the CreateGardenForm object representing the edited garden's details,
+     *                       useful for seeing erroneous inputs of a failed POST request
      * @return thymeleaf editGarden
      */
     @GetMapping("/gardens/{gardenId}/edit")
-    public String gardenEditGet(@PathVariable("gardenId") Long gardenId, Model model) {
+    public String gardenEditGet(@PathVariable("gardenId") Long gardenId,
+                                @ModelAttribute("editGardenForm") CreateGardenForm editGardenForm,
+                                Model model) {
         logger.info("GET /gardens/" + gardenId + "/edit");
         Garden garden = gardenService.getGardenById(gardenId);
-        model.addAttribute("gardenId", gardenId);
-        model.addAttribute("gardenName", garden.getName());
-        model.addAttribute("gardenLocation", garden.getLocation());
-        model.addAttribute("gardenSize", garden.getSize());
-        model.addAttribute("actionLabel", "Edit Garden");
+//        model.addAttribute("gardenId", gardenId);
+//        model.addAttribute("gardenName", garden.getName());
+//        model.addAttribute("gardenLocation", garden.getLocation());
+//        model.addAttribute("gardenSize", garden.getSize());
+//        model.addAttribute("actionLabel", "Edit Garden");
         return "editGarden";
     }
 
     /**
-     * Posts a form response with name, location, and size of the garden
+     * Handles POST requests from the /gardens/{gardenId}/edit endpoint.
+     * Handles editing of gardens
      *
-     * @param gardenName     name of garden
-     * @param gardenLocation location of garden
-     * @param gardenSize     size of garden
-     * @param model          (map-like) representation of values for use in thymeleaf, with values being set
-     *                       to relevant parameters provided
-     * @return thymeleaf editGarden
+     * @param request           the HttpServletRequest object containing the request information
+     * @param editGardenForm    the CreateGardenForm object representing the garden's new details
+     * @param bindingResult     the BindingResult object for validation errors
+     * @param gardenId          the id of the garden being edited
+     * @return the view to display:
+     *         - If there are validation errors, stays on the 'Edit Garden' form.
+     *         - Else, redirect to the edited garden's profile page.
      */
     @PostMapping("/gardens/{gardenId}/edit")
-    public String gardenEditPost(@PathVariable("gardenId") Long gardenId,
-                                 @RequestParam(name = "gardenName") String gardenName,
-                                 @RequestParam(name = "gardenLocation") String gardenLocation,
-                                 @RequestParam(name = "gardenSize") String gardenSize, Model model) {
+    public String gardenEditPost(HttpServletRequest request,
+                                 @ModelAttribute("editGardenForm") CreateGardenForm editGardenForm,
+                                 BindingResult bindingResult,
+                                 @PathVariable("gardenId") Long gardenId) {
         logger.info("POST /gardens/" + gardenId + "/edit");
 
-        // TODO Handle error gracefully when user puts invalid id in url (do for each
-        // gardenService.getGardenById)
-        Garden garden = gardenService.getGardenById(gardenId);
-
-        if (ValidityCheck.validGardenForm(gardenName, gardenLocation, gardenSize)) {
-            garden.setName(gardenName);
-            garden.setLocation(gardenLocation);
-            garden.setSize(gardenSize);
-
-            gardenService.updateGarden(garden);
-            logger.info("Garden updated: " + garden);
-            return "redirect:/gardens/" + garden.getId();
+//        // TODO Handle error gracefully when user puts invalid id in url (do for each
+//        // gardenService.getGardenById)
+//        Garden garden = gardenService.getGardenById(gardenId);
+//
+//        if (ValidityCheck.validGardenForm(gardenName, gardenLocation, gardenSize)) {
+//            garden.setName(gardenName);
+//            garden.setLocation(gardenLocation);
+//            garden.setSize(gardenSize);
+//
+//            gardenService.updateGarden(garden);
+//            logger.info("Garden updated: " + garden);
+//            return "redirect:/gardens/" + garden.getId();
+//        }
+//        model.addAttribute("actionLabel", "Edit Garden");
+//        model.addAttribute("gardenId", gardenId);
+//        model.addAttribute("gardenSize", gardenSize);
+//        model.addAttribute("gardenLocation", gardenLocation);
+//        model.addAttribute("gardenName", gardenName);
+//
+//        displayGardenFormErrors(gardenName, gardenLocation, gardenSize, model);
+//        return "editGarden";
+        CreateGardenForm.validate(editGardenForm, bindingResult);
+        if (bindingResult.hasErrors()) {
+            return "editGarden";
         }
-        model.addAttribute("actionLabel", "Edit Garden");
-        model.addAttribute("gardenId", gardenId);
-        model.addAttribute("gardenSize", gardenSize);
-        model.addAttribute("gardenLocation", gardenLocation);
-        model.addAttribute("gardenName", gardenName);
 
-        displayGardenFormErrors(gardenName, gardenLocation, gardenSize, model);
-        return "editGarden";
+        Garden garden = gardenService.getGardenById(gardenId);
+        Garden edit = editGardenForm.getGarden();
+        garden.setName(edit.getName());
+        garden.setLocation(edit.getLocation());
+        garden.setSize(edit.getSize());
+
+        gardenService.updateGarden(garden);
+
+        logger.info("Garden edited: " + garden);
+        return "redirect:/gardens/" + garden.getId();
     }
 
 
