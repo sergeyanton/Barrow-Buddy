@@ -1,7 +1,5 @@
 package nz.ac.canterbury.team1000.gardenersgrove.form;
 
-import com.fasterxml.jackson.datatype.jsr310.deser.key.LocalDateKeyDeserializer;
-import net.bytebuddy.asm.Advice;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -130,15 +128,15 @@ public class RegistrationFormTest {
     @Test
     void validate_WithEmailExactlyMaxLength_AddsError() {
         String ext = "@gmail.com";
-        registrationFormForm.setEmail("a".repeat(FormUtils.MAX_DB_STR_LEN - ext.length()) + ext);
-        RegistrationForm.validate(registrationFormForm, bindingResult);
+        registrationForm.setEmail("a".repeat(FormUtils.MAX_DB_STR_LEN - ext.length()) + ext);
+        RegistrationForm.validate(registrationForm, bindingResult);
         Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
     }
     @Test
     void validate_WithEmailTooLong_AddsError() {
         String ext = "@gmail.com";
-        registrationFormForm.setEmail("a".repeat(FormUtils.MAX_DB_STR_LEN - ext.length() + 1) + ext);
-        RegistrationForm.validate(registrationFormForm, bindingResult);
+        registrationForm.setEmail("a".repeat(FormUtils.MAX_DB_STR_LEN - ext.length() + 1) + ext);
+        RegistrationForm.validate(registrationForm, bindingResult);
         Mockito.verify(bindingResult).addError(Mockito.any());
     }
 
@@ -204,8 +202,8 @@ public class RegistrationFormTest {
 
     @Test
     void validate_WithBlankDob_DoesNotAddError() {
-        registrationFormForm.setDob("");
-        RegistrationForm.validate(registrationFormForm, bindingResult);
+        registrationForm.setDob("");
+        RegistrationForm.validate(registrationForm, bindingResult);
         Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
     }
 }

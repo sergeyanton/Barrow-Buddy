@@ -115,6 +115,17 @@ public class User {
         return dateOfBirth;
     }
 
+    /**
+     * Returns the date of birth as a string in the format DD/MM/YYYY.
+     * 
+     * @return The date of birth as a string in the format DD/MM/YYYY.
+     */
+    public String getDateOfBirthString() {
+        // return date in DD/MM/YYYY format
+        return String.format("%02d/%02d/%04d", dateOfBirth.getDayOfMonth(),
+                dateOfBirth.getMonthValue(), dateOfBirth.getYear());
+    }
+
     public void setFname(String fname) {
         this.fname = fname;
     }
