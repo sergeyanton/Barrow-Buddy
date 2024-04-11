@@ -3,7 +3,6 @@ package nz.ac.canterbury.team1000.gardenersgrove.entity;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
-import nz.ac.canterbury.team1000.gardenersgrove.entity.Garden;
 
 public class GardenEntityTest {
     @Test

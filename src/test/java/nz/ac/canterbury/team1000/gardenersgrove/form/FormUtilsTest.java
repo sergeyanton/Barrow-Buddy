@@ -119,7 +119,7 @@ public class FormUtilsTest {
     }
 
     @Test
-    void checkDateNotInCorrectFormat_WithDayMontYeardate_ReturnsFalse() {
+    void checkDateNotInCorrectFormat_WithDayMonthYearDate_ReturnsFalse() {
         Assertions.assertFalse(FormUtils.checkDateNotInCorrectFormat("28/01/2000"));
     }
 
@@ -129,13 +129,27 @@ public class FormUtilsTest {
     }
 
     @Test
-    void checkDateWithinBoundary_DateLaterThan13YearsAgo_ReturnsFalse() {
-        Assertions.assertFalse(FormUtils.checkDateBefore("02/12/2011", LocalDate.now().minusYears(13).plusDays(1)));
+    void checkDateNotInCorrectFormat_LeapDayWrongYear_ReturnsTrue() {
+        Assertions.assertTrue(FormUtils.checkDateNotInCorrectFormat("29/02/2003"));
+    }
+    @Test
+    void checkDateNotInCorrectFormat_LeapDayRightYear_ReturnsFalse() {
+        Assertions.assertFalse(FormUtils.checkDateNotInCorrectFormat("29/02/2004"));
     }
 
     @Test
-    void checkDateWithinBoundary_Date120YearsAgo_ReturnsTrue() {
-        Assertions.assertTrue(FormUtils.checkDateBefore("01/04/1904", LocalDate.now().minusYears(120).plusDays(1)));
+    void checkDateWithinBoundary_DateAfter_ReturnsFalse() {
+        Assertions.assertFalse(FormUtils.checkDateBefore("03/01/2011", LocalDate.of(2011, 1, 2)));
+    }
+
+    @Test
+    void checkDateWithinBoundary_DateEqual_ReturnsFalse() {
+        Assertions.assertFalse(FormUtils.checkDateBefore("02/01/2011", LocalDate.of(2011, 1, 2)));
+    }
+
+    @Test
+    void checkDateWithinBoundary_DateBefore_ReturnsTrue() {
+        Assertions.assertTrue(FormUtils.checkDateBefore("01/01/2011", LocalDate.of(2011, 1, 2)));
     }
 
     @Test

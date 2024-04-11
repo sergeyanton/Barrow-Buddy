@@ -1,9 +1,6 @@
 package nz.ac.canterbury.team1000.gardenersgrove.entity;
 
-import java.util.Optional;
-
 import jakarta.persistence.*;
-import nz.ac.canterbury.team1000.gardenersgrove.classes.ValidityCheck;
 
 /**
  * Entity class reflecting an entry of name, location, and size of a garden Note the @link{Entity}
