@@ -86,10 +86,10 @@ public class GardenForm {
 
         // Validate garden size (if there is one)
         if (!checkBlank(createGardenForm.getSize())) {
-            if (!checkValidDouble(createGardenForm.getSize())) {
+            if (checkDoubleIsInvalid(createGardenForm.getSize())) {
                 errors.add("size", "Garden size must be a positive number", createGardenForm.getSize());
             } else if (checkDoubleTooBig(createGardenForm.getSize())) {
-                errors.add("size", "Garden size must be at most " + Integer.MAX_VALUE + "m²", createGardenForm.getSize());
+                errors.add("size", "Garden size must be at most " + Integer.MAX_VALUE + " m²", createGardenForm.getSize());
             }
         }
     }

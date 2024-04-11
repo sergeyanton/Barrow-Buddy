@@ -176,66 +176,84 @@ public class FormUtilsTest {
     }
 
     @Test
-    void checkValidDouble_WithValidZero_ReturnsTrue() {
+    void checkDoubleIsInvalid_WithValidZero_ReturnsFalse() {
         String size = "0";
-        Assertions.assertTrue(FormUtils.checkValidDouble(size));
+        Assertions.assertFalse(FormUtils.checkDoubleIsInvalid(size));
     }
 
     @Test
-    void checkValidDouble_WithValidInteger_ReturnsTrue() {
+    void checkDoubleIsInvalid_WithValidInteger_ReturnsFalse() {
         String size = "32";
-        Assertions.assertTrue(FormUtils.checkValidDouble(size));
+        Assertions.assertFalse(FormUtils.checkDoubleIsInvalid(size));
     }
 
     @Test
-    void checkValidDouble_WithValidDecimal_ReturnsTrue() {
+    void checkDoubleIsInvalid_WithValidDecimal_ReturnsFalse() {
         String size = "5.5";
-        Assertions.assertTrue(FormUtils.checkValidDouble(size));
+        Assertions.assertFalse(FormUtils.checkDoubleIsInvalid(size));
     }
 
     @Test
-    void checkValidDouble_WithValidComma_ReturnsTrue() {
+    void checkDoubleIsInvalid_WithValidComma_ReturnsFalse() {
         String size = "5,3";
-        Assertions.assertTrue(FormUtils.checkValidDouble(size));
+        Assertions.assertFalse(FormUtils.checkDoubleIsInvalid(size));
     }
 
     @Test
-    void checkValidDouble_WithValidDecimalNoIntegerPart_ReturnsTrue() {
+    void checkDoubleIsInvalid_WithValidDecimalNoIntegerPart_ReturnsFalse() {
         String size = ".123";
-        Assertions.assertTrue(FormUtils.checkValidDouble(size));
+        Assertions.assertFalse(FormUtils.checkDoubleIsInvalid(size));
     }
     @Test
-    void checkValidDouble_WithValidCommaNoIntegerPart_ReturnsTrue() {
+    void checkDoubleIsInvalid_WithValidCommaNoIntegerPart_ReturnsFalse() {
         String size = ",123";
-        Assertions.assertTrue(FormUtils.checkValidDouble(size));
+        Assertions.assertFalse(FormUtils.checkDoubleIsInvalid(size));
     }
 
     @Test
-    void checkValidDouble_BadString_ReturnsFalse() {
+    void checkDoubleIsInvalid_BadString_ReturnsTrue() {
         String size = "3 m^2";
-        Assertions.assertFalse(FormUtils.checkValidDouble(size));
+        Assertions.assertTrue(FormUtils.checkDoubleIsInvalid(size));
     }
     @Test
-    void checkValidDouble_OverMaximumIntegerValue_ReturnsTrue() {
+    void checkDoubleIsInvalid_OverMaximumIntegerValue_ReturnsFalse() {
         String size = "2147483647.1";
-        Assertions.assertTrue(FormUtils.checkValidDouble(size));
+        Assertions.assertFalse(FormUtils.checkDoubleIsInvalid(size));
     }
 
     @Test
     void checkDoubleTooBig_MaximumIntegerValue_ReturnsFalse() {
         String size = "2147483647"; // maximum integer value
-        Assertions.assertTrue(FormUtils.checkValidDouble(size));
+        Assertions.assertFalse(FormUtils.checkDoubleTooBig(size));
     }
 
     @Test
     void checkDoubleTooBig_OverMaximumIntegerValue_ReturnsTrue() {
         String size = "2147483647.1";
-        Assertions.assertTrue(FormUtils.checkValidDouble(size));
+        Assertions.assertTrue(FormUtils.checkDoubleTooBig(size));
     }
 
     @Test
     void checkDoubleTooBig_NotAValidDoubleString_ReturnsFalse() {
         String size = "invalid double obviously";
-        Assertions.assertFalse(FormUtils.checkValidDouble(size));
+        Assertions.assertFalse(FormUtils.checkDoubleTooBig(size));
+    }
+
+    @Test
+    void checkIntegerTooBig_MaximumIntegerValue_ReturnsFalse() {
+        String size = "2147483647"; // maximum integer value
+        Assertions.assertFalse(FormUtils.checkIntegerTooBig(size));
+    }
+
+    @Test
+    void checkIntegerTooBig_OverMaximumIntegerValue_ReturnsTrue() {
+        String size = "2147483648";
+        Assertions.assertTrue(FormUtils.checkIntegerTooBig(size));
+    }
+
+    @Test
+    void checkIntegerTooBig_NotAValidIntegerString_ReturnsFalse() {
+        String size = "invalid integer obviously";
+        Assertions.assertFalse(FormUtils.checkIntegerTooBig(size));
     }
 }

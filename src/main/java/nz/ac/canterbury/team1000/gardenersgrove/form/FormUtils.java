@@ -87,6 +87,23 @@ public class FormUtils {
     }
 
     /**
+     * Checks if the given string represents an integer bigger than the maximum integer value in java.
+     * NOTE: Returns false if the string doesn't represent a valid integer. Only call this method with
+     * valid strings.
+     *
+     * @param string the string representation of the double to check
+     * @return  true if the represented integer is greater than the maximum java Integer value,
+     *          false if the represented integer is not too big, or if the string doesn't represent a valid integer
+     */
+    public static boolean checkIntegerTooBig (String string) {
+        try {
+            return new BigDecimal(string).compareTo(BigDecimal.valueOf(Integer.MAX_VALUE)) > 0;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    /**
      * Checks if the given string contains only letters, spaces, hyphens, or apostrophes.
      *
      * @param string the string to check
@@ -130,15 +147,27 @@ public class FormUtils {
     }
 
     /**
-     * Checks if the given string represents a valid Double, where the decimal point can also be a comma.
+     * Checks if the given string doesn't represent a valid non-negative Double, where the decimal point can also be a comma.
      * NOTE: Does NOT check upper bound for the number.
-     * NOTE: Returns false for blank strings.
+     * NOTE: Returns true for blank strings.
      *
      * @param string the string to check
-     * @return true if the string is non-blank and valid double (supports comma use instead of a period)
+     * @return true if the string does not represent a valid double, including blank strings
      */
-    public static boolean checkValidDouble (String string) {
-        return string.matches("^\\d*[,.]?\\d+$");
+    public static boolean checkDoubleIsInvalid (String string) {
+        return checkNotMatchesRegex(string,"^\\d*[,.]?\\d+$");
+    }
+
+    /**
+     * Checks if the given string doesn't represent a valid non-negative Integer
+     * NOTE: Does NOT check upper bound for the number.
+     * NOTE: Returns true for blank strings.
+     *
+     * @param string the string to check
+     * @return true if the string does not represent a valid integer, including blank strings
+     */
+    public static boolean checkIntegerIsInvalid (String string) {
+        return checkNotMatchesRegex(string,"^[0-9]+$");
     }
 
     /**
