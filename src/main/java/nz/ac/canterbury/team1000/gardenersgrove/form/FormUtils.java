@@ -53,6 +53,13 @@ public class FormUtils {
     private static DateTimeFormatter validDateFormat = DateTimeFormatter.ofPattern("dd/MM/uuuu").withResolverStyle(ResolverStyle.STRICT);
 
     /**
+     * The default maximum length of strings in the database.
+     * Some data might have a lower maximum (first/last name) or a higher maximum (garden description).
+     */
+    public static final int MAX_DB_STR_LEN = 255;
+
+
+    /**
      * Checks if the given string is blank.
      *
      * @param string the string to check

@@ -128,6 +128,21 @@ public class RegistrationFormTest {
     }
 
     @Test
+    void validate_WithEmailExactlyMaxLength_AddsError() {
+        String ext = "@gmail.com";
+        registrationFormForm.setEmail("a".repeat(FormUtils.MAX_DB_STR_LEN - ext.length()) + ext);
+        RegistrationForm.validate(registrationFormForm, bindingResult);
+        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
+    @Test
+    void validate_WithEmailTooLong_AddsError() {
+        String ext = "@gmail.com";
+        registrationFormForm.setEmail("a".repeat(FormUtils.MAX_DB_STR_LEN - ext.length() + 1) + ext);
+        RegistrationForm.validate(registrationFormForm, bindingResult);
+        Mockito.verify(bindingResult).addError(Mockito.any());
+    }
+
+    @Test
     void validate_WithPasswordAndRetypePasswordMismatch_AddsError() {
         registrationForm.setPassword("password");
         registrationForm.setRetypePassword("password1");
