@@ -1,12 +1,20 @@
 package nz.ac.canterbury.team1000.gardenersgrove.form;
 
+import com.fasterxml.jackson.datatype.jsr310.deser.key.LocalDateKeyDeserializer;
+import net.bytebuddy.asm.Advice;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.validation.BindingResult;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 
 public class RegistrationFormTest {
     RegistrationForm registrationForm = new EditUserForm();
@@ -14,11 +22,16 @@ public class RegistrationFormTest {
     @Mock
     BindingResult bindingResult;
 
+    private static MockedStatic<Clock> mockedClock;
     private static final LocalDate APRIL_3_2024 = LocalDate.of(2024, 4, 3);
 
     @BeforeEach
     void setUp() {
-
+        Instant instant = APRIL_3_2024.atStartOfDay(ZoneId.systemDefault()).toInstant();
+        Clock fixedClock = Clock.fixed(instant, ZoneId.systemDefault());
+        mockedClock = Mockito.mockStatic(Clock.class);
+        mockedClock.when(Clock::systemDefaultZone).thenReturn(fixedClock);
+        
         // set the registration form to a new user with valid data
         registrationForm.setFirstName("John");
         registrationForm.setLastName("Doe");
@@ -34,6 +47,16 @@ public class RegistrationFormTest {
             Mockito.when(bindingResult.hasErrors()).thenReturn(true);
             return null;
         }).when(bindingResult).addError(Mockito.any());
+    }
+
+    @AfterEach
+    void tear_down() {
+        mockedClock.close();
+    }
+
+    @Test
+    void verify_setUp() {
+        Assertions.assertEquals(APRIL_3_2024, LocalDate.now());
     }
 
     @Test
