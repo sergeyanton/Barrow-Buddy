@@ -1,11 +1,8 @@
 package nz.ac.canterbury.team1000.gardenersgrove.entity;
 
 import org.junit.jupiter.api.Test;
-import nz.ac.canterbury.team1000.gardenersgrove.entity.Plant;
 import java.time.DateTimeException;
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PlantEntityTest {

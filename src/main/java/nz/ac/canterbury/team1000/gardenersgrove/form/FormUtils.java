@@ -5,6 +5,7 @@ import org.springframework.validation.FieldError;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 
 /**
  * Helper class for adding validation errors to a BindingResult.
@@ -42,8 +43,21 @@ class ErrorAdder {
  * Utility class for validating form data.
  */
 public class FormUtils {
-    // Date format for validation
-    private static DateTimeFormatter validDateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+    /**
+     * A date formatter used to parse strings of the form "DD/MM/YYYY" into LocalDate objects.
+     * Using 'y' here doesn't work well with the STRICT resolver style unlike 'u'.
+     * We have to use a STRICT resolver style to reject invalid month lengths.
+     * By default, dates such as the 30th of February would be incorrectly accepted.
+     */
+    private static DateTimeFormatter validDateFormat = DateTimeFormatter.ofPattern("dd/MM/uuuu").withResolverStyle(ResolverStyle.STRICT);
+
+    /**
+     * The default maximum length of strings in the database.
+     * Some data might have a lower maximum (first/last name) or a higher maximum (garden description).
+     */
+    public static final int MAX_DB_STR_LEN = 255;
+
 
     /**
      * Checks if the given string is blank.
