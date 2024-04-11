@@ -153,35 +153,35 @@ public class RegistrationFormTest {
     }
 
     @Test
-    void validate_WithValidDOB_DoesNotAddError() {
+    void validate_WithValidDOB20YearsOld_DoesNotAddError() {
         registrationForm.setDob("03/04/2003");
         RegistrationForm.validate(registrationForm, bindingResult);
         Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
     }
 
     @Test
-    void validate_WithJust13yo_DoesNotAddError() {
+    void validate_WithJust13YearsOld_DoesNotAddError() {
         registrationForm.setDob("03/04/2011");
         RegistrationForm.validate(registrationForm, bindingResult);
         Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
     }
 
     @Test
-    void validate_WithJust120yo_DoesNotAddError() {
+    void validate_WithJust120YearsOld_DoesNotAddError() {
         registrationForm.setDob("03/04/1904");
         RegistrationForm.validate(registrationForm, bindingResult);
         Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
     }
 
     @Test
-    void validate_WithYoungerThan13yo_AddsError() {
+    void validate_WithYoungerThan13YearsOld_AddsError() {
         registrationForm.setDob("03/04/2012");
         RegistrationForm.validate(registrationForm, bindingResult);
         Mockito.verify(bindingResult).addError(Mockito.any());
     }
 
     @Test
-    void validate_WithOlderThan120yo_AddsError() {
+    void validate_WithOlderThan120YearsOld_AddsError() {
         registrationForm.setDob("03/04/1903");
         RegistrationForm.validate(registrationForm, bindingResult);
         Mockito.verify(bindingResult).addError(Mockito.any());
