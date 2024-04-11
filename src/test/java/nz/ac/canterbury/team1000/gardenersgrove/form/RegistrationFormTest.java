@@ -18,11 +18,10 @@ import java.time.ZoneId;
 
 public class RegistrationFormTest {
     RegistrationForm registrationForm = new EditUserForm();
-    
     @Mock
     BindingResult bindingResult;
-
     private static MockedStatic<Clock> mockedClock;
+    // Mocking the date to 2024 April 3rd just to test the dob
     private static final LocalDate APRIL_3_2024 = LocalDate.of(2024, 4, 3);
 
     @BeforeEach
@@ -31,7 +30,9 @@ public class RegistrationFormTest {
         Clock fixedClock = Clock.fixed(instant, ZoneId.systemDefault());
         mockedClock = Mockito.mockStatic(Clock.class);
         mockedClock.when(Clock::systemDefaultZone).thenReturn(fixedClock);
-        
+        // Checking if the date is actually mocked to the date we set it to be
+        Assertions.assertEquals(APRIL_3_2024, LocalDate.now());
+
         // set the registration form to a new user with valid data
         registrationForm.setFirstName("John");
         registrationForm.setLastName("Doe");
@@ -49,14 +50,10 @@ public class RegistrationFormTest {
         }).when(bindingResult).addError(Mockito.any());
     }
 
+    // Closing the mocked clock for the other tests
     @AfterEach
     void tear_down() {
         mockedClock.close();
-    }
-
-    @Test
-    void verify_setUp() {
-        Assertions.assertEquals(APRIL_3_2024, LocalDate.now());
     }
 
     @Test
