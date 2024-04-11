@@ -186,4 +186,11 @@ public class RegistrationFormTest {
         RegistrationForm.validate(registrationForm, bindingResult);
         Mockito.verify(bindingResult).addError(Mockito.any());
     }
+
+    @Test
+    void validate_WithBlankDob_DoesNotAddError() {
+        registrationFormForm.setDob("");
+        RegistrationForm.validate(registrationFormForm, bindingResult);
+        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
 }
