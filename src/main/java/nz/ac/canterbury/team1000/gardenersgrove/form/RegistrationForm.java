@@ -148,13 +148,14 @@ public class RegistrationForm {
         }
 
         // Validate date of birth
-        if (checkDateNotInCorrectFormat(registrationForm.getDob()) || checkBlank(registrationForm.getDob())) {
+        if (checkBlank(registrationForm.getDob())) {
+        } else if (checkDateNotInCorrectFormat(registrationForm.getDob())) {
             errors.add("dob", "Date in not in valid format, DD/MM/YYYY", registrationForm.getDob());
         } else if (!checkDateBefore(registrationForm.getDob(), LocalDate.now().plusDays(1))) {
             errors.add("dob", "Date cannot be in the future", registrationForm.getDob());
         } else if (!checkDateBefore(registrationForm.getDob(), LocalDate.now().minusYears(13).plusDays(1))) {
             errors.add("dob", "You must be 13 years or older to create an account", registrationForm.getDob());
-        } else if (checkDateBefore(registrationForm.getDob(), LocalDate.now().minusYears(120).plusDays(1))) {
+        } else if (checkDateBefore(registrationForm.getDob(), LocalDate.now().minusYears(120))) {
             errors.add("dob", "The maximum age allowed is 120 years", registrationForm.getDob());
         }
     }

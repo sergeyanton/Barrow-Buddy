@@ -1,28 +1,46 @@
 package nz.ac.canterbury.team1000.gardenersgrove.form;
 
+import com.fasterxml.jackson.datatype.jsr310.deser.key.LocalDateKeyDeserializer;
+import net.bytebuddy.asm.Advice;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.validation.BindingResult;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+
 public class RegistrationFormTest {
-    RegistrationForm registrationFormForm = new EditUserForm();
-    
+    RegistrationForm registrationForm = new EditUserForm();
     @Mock
     BindingResult bindingResult;
+    private static MockedStatic<Clock> mockedClock;
+    // Mocking the date to 2024 April 3rd just to test the dob
+    private static final LocalDate APRIL_3_2024 = LocalDate.of(2024, 4, 3);
 
     @BeforeEach
     void setUp() {
+        Instant instant = APRIL_3_2024.atStartOfDay(ZoneId.systemDefault()).toInstant();
+        Clock fixedClock = Clock.fixed(instant, ZoneId.systemDefault());
+        mockedClock = Mockito.mockStatic(Clock.class);
+        mockedClock.when(Clock::systemDefaultZone).thenReturn(fixedClock);
+        // Checking if the date is actually mocked to the date we set it to be
+        Assertions.assertEquals(APRIL_3_2024, LocalDate.now());
 
         // set the registration form to a new user with valid data
-        registrationFormForm.setFirstName("John");
-        registrationFormForm.setLastName("Doe");
-        registrationFormForm.setEmail("john@doe.com");
-        registrationFormForm.setPassword("MorganLikesDogs1234!");
-        registrationFormForm.setRetypePassword("MorganLikesDogs1234!");
-        registrationFormForm.setNoSurnameCheckBox(false);
-        registrationFormForm.setDob("01/01/2000");
+        registrationForm.setFirstName("John");
+        registrationForm.setLastName("Doe");
+        registrationForm.setEmail("john@doe.com");
+        registrationForm.setPassword("MorganLikesDogs1234!");
+        registrationForm.setRetypePassword("MorganLikesDogs1234!");
+        registrationForm.setNoSurnameCheckBox(false);
+        registrationForm.setDob("01/01/2000");
 
         bindingResult = Mockito.mock(BindingResult.class);
         Mockito.when(bindingResult.hasErrors()).thenReturn(false);
@@ -32,134 +50,147 @@ public class RegistrationFormTest {
         }).when(bindingResult).addError(Mockito.any());
     }
 
+    // Closing the mocked clock for the other tests
+    @AfterEach
+    void tear_down() {
+        mockedClock.close();
+    }
+
     @Test
     void validate_WithBlankFirstName_AddsError() {
-        registrationFormForm.setFirstName("");
-        RegistrationForm.validate(registrationFormForm, bindingResult);
+        registrationForm.setFirstName("");
+        RegistrationForm.validate(registrationForm, bindingResult);
         Mockito.verify(bindingResult).addError(Mockito.any());
     }
 
     @Test
     void validate_WithFirstNameOver64Characters_AddsError() {
-        registrationFormForm.setFirstName("a".repeat(65));
-        RegistrationForm.validate(registrationFormForm, bindingResult);
+        registrationForm.setFirstName("a".repeat(65));
+        RegistrationForm.validate(registrationForm, bindingResult);
         Mockito.verify(bindingResult).addError(Mockito.any());
     }
 
     @Test
     void validate_WithFirstNameExactly64Characters_DoesNotAddError() {
-        registrationFormForm.setFirstName("a".repeat(64));
-        RegistrationForm.validate(registrationFormForm, bindingResult);
+        registrationForm.setFirstName("a".repeat(64));
+        RegistrationForm.validate(registrationForm, bindingResult);
         Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
     }
 
     @Test
     void validate_WithFirstNameWithInvalidCharacters_AddsError() {
-        registrationFormForm.setFirstName("John123");
-        RegistrationForm.validate(registrationFormForm, bindingResult);
+        registrationForm.setFirstName("John123");
+        RegistrationForm.validate(registrationForm, bindingResult);
         Mockito.verify(bindingResult).addError(Mockito.any());
     }
 
     @Test
     void validate_WithBlankLastName_AddsError() {
-        registrationFormForm.setLastName("");
-        RegistrationForm.validate(registrationFormForm, bindingResult);
+        registrationForm.setLastName("");
+        RegistrationForm.validate(registrationForm, bindingResult);
         Mockito.verify(bindingResult).addError(Mockito.any());
     }
 
     @Test
     void validate_WithLastNameOver64Characters_AddsError() {
-        registrationFormForm.setLastName("a".repeat(65));
-        RegistrationForm.validate(registrationFormForm, bindingResult);
+        registrationForm.setLastName("a".repeat(65));
+        RegistrationForm.validate(registrationForm, bindingResult);
         Mockito.verify(bindingResult).addError(Mockito.any());
     }
 
     @Test
     void validate_WithLastNameWithInvalidCharacters_AddsError() {
-        registrationFormForm.setLastName("Doe123");
-        RegistrationForm.validate(registrationFormForm, bindingResult);
+        registrationForm.setLastName("Doe123");
+        RegistrationForm.validate(registrationForm, bindingResult);
         Mockito.verify(bindingResult).addError(Mockito.any());
     }
 
     @Test
     void validate_WithBlankLastNameAndNoSurnameCheckBox_DoesNotAddError() {
-        registrationFormForm.setLastName("");
-        registrationFormForm.setNoSurnameCheckBox(true);
-        RegistrationForm.validate(registrationFormForm, bindingResult);
+        registrationForm.setLastName("");
+        registrationForm.setNoSurnameCheckBox(true);
+        RegistrationForm.validate(registrationForm, bindingResult);
         Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
     }
 
     @Test
     void validate_WithBlankEmail_AddsError() {
-        registrationFormForm.setEmail("");
-        RegistrationForm.validate(registrationFormForm, bindingResult);
+        registrationForm.setEmail("");
+        RegistrationForm.validate(registrationForm, bindingResult);
         Mockito.verify(bindingResult).addError(Mockito.any());
     }
 
     @Test
     void validate_WithInvalidEmail_AddsError() {
-        registrationFormForm.setEmail("john@doe");
-        RegistrationForm.validate(registrationFormForm, bindingResult);
+        registrationForm.setEmail("john@doe");
+        RegistrationForm.validate(registrationForm, bindingResult);
         Mockito.verify(bindingResult).addError(Mockito.any());
     }
 
     @Test
     void validate_WithPasswordAndRetypePasswordMismatch_AddsError() {
-        registrationFormForm.setPassword("password");
-        registrationFormForm.setRetypePassword("password1");
-        RegistrationForm.validate(registrationFormForm, bindingResult);
+        registrationForm.setPassword("password");
+        registrationForm.setRetypePassword("password1");
+        RegistrationForm.validate(registrationForm, bindingResult);
         Mockito.verify(bindingResult, Mockito.times(2)).addError(Mockito.any());
     }
 
     @Test
     void validate_WithBlankPasswordButRetypePassword_AddsError() {
-        registrationFormForm.setPassword("");
-        registrationFormForm.setRetypePassword("password");
-        RegistrationForm.validate(registrationFormForm, bindingResult);
+        registrationForm.setPassword("");
+        registrationForm.setRetypePassword("password");
+        RegistrationForm.validate(registrationForm, bindingResult);
         // error should be added for password and retypePassword
         Mockito.verify(bindingResult, Mockito.times(2)).addError(Mockito.any());
     }
 
     @Test
     void validate_WithMatchingPasswordUnder8Characters_AddsError() {
-        registrationFormForm.setPassword("pass");
-        registrationFormForm.setRetypePassword("pass");
-        RegistrationForm.validate(registrationFormForm, bindingResult);
+        registrationForm.setPassword("pass");
+        registrationForm.setRetypePassword("pass");
+        RegistrationForm.validate(registrationForm, bindingResult);
         Mockito.verify(bindingResult).addError(Mockito.any());
     }
 
     @Test
-    void validate_PlantedOnDateValid_DoesNotAddError() {
-        registrationFormForm.setDob("01/01/2001");
-        RegistrationForm.validate(registrationFormForm, bindingResult);
+    void validate_WithValidDOB20YearsOld_DoesNotAddError() {
+        registrationForm.setDob("03/04/2003");
+        RegistrationForm.validate(registrationForm, bindingResult);
         Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
     }
 
     @Test
-    void validate_PlantedOnDateInvalid_AddsError() {
-        registrationFormForm.setDob("bad");
-        RegistrationForm.validate(registrationFormForm, bindingResult);
-        Mockito.verify(bindingResult).addError(Mockito.any());
-    }
-
-    @Test
-    void validate_PlantedOnDateInvalidLeapDay_AddsError() {
-        registrationFormForm.setDob("29/02/2003");
-        RegistrationForm.validate(registrationFormForm, bindingResult);
-        Mockito.verify(bindingResult).addError(Mockito.any());
-    }
-
-    @Test
-    void validate_PlantedOnDateValidLeapDay_DoesNotAddError() {
-        registrationFormForm.setDob("29/02/2004");
-        RegistrationForm.validate(registrationFormForm, bindingResult);
+    void validate_WithJust13YearsOld_DoesNotAddError() {
+        registrationForm.setDob("03/04/2011");
+        RegistrationForm.validate(registrationForm, bindingResult);
         Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
     }
 
     @Test
-    void validate_PlantedOnDateLocalDateFormat_AddsError() {
-        registrationFormForm.setDob("2003-02-02");
-        RegistrationForm.validate(registrationFormForm, bindingResult);
+    void validate_WithJust120YearsOld_DoesNotAddError() {
+        registrationForm.setDob("03/04/1904");
+        RegistrationForm.validate(registrationForm, bindingResult);
+        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
+
+    @Test
+    void validate_WithYoungerThan13YearsOld_AddsError() {
+        registrationForm.setDob("03/04/2012");
+        RegistrationForm.validate(registrationForm, bindingResult);
         Mockito.verify(bindingResult).addError(Mockito.any());
+    }
+
+    @Test
+    void validate_WithOlderThan120YearsOld_AddsError() {
+        registrationForm.setDob("03/04/1903");
+        RegistrationForm.validate(registrationForm, bindingResult);
+        Mockito.verify(bindingResult).addError(Mockito.any());
+    }
+
+    @Test
+    void validate_WithBlankDob_DoesNotAddError() {
+        registrationFormForm.setDob("");
+        RegistrationForm.validate(registrationFormForm, bindingResult);
+        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
     }
 }
