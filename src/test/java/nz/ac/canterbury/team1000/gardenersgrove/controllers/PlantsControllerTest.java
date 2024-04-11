@@ -38,8 +38,7 @@ public class PlantsControllerTest {
     private GardenService gardenService;
 
     @MockBean
-    private PlantService plantService; // this is required because the real GardensController has
-                                       // one
+    private PlantService plantService; // this is required because the real GardensController has one
 
     private Plant testPlant;
 
