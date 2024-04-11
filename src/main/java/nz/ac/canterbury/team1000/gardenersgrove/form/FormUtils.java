@@ -70,6 +70,23 @@ public class FormUtils {
     }
 
     /**
+     * Checks if the given string represents a double bigger than the maximum integer value in java.
+     * NOTE: Returns false if the string doesn't represent a valid double. Only call this method with
+     * valid strings.
+     *
+     * @param string the string representation of the double to check
+     * @return  true if the represented double is greater than the maximum java Integer value,
+     *          false if the represented double is not too big, or if the string doesn't represent a valid double
+     */
+    public static boolean checkDoubleTooBig (String string) {
+        try {
+            return new BigDecimal(string.replace(",", ".")).compareTo(BigDecimal.valueOf(Integer.MAX_VALUE)) > 0;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    /**
      * Checks if the given string contains only letters, spaces, hyphens, or apostrophes.
      *
      * @param string the string to check
@@ -98,26 +115,30 @@ public class FormUtils {
      * @return true if the string contains only valid characters, false otherwise
      */
     public static boolean checkValidLocationName (String string) {
-        return !checkNotMatchesRegex(string, "^[\\p{L}0-9\\s,.'-]+$");
+        return checkValidGardenName(string); // may have different definition later
     }
 
     /**
-     * Checks if the given string represents a valid Double, where the decimal point can also be a comma. And the
-     * value doesn't exceed the maximum integer value
+     * Checks if the given string is only made up of alphanumeric characters, commas,
+     * dots, hyphens, and apostrophes.
      *
      * @param string the string to check
-     * @return true if the string is valid, false otherwise
+     * @return true if the string contains only valid characters, false otherwise
+     */
+    public static boolean checkValidPlantName (String string) {
+        return checkValidGardenName(string); // may have different definition later
+    }
+
+    /**
+     * Checks if the given string represents a valid Double, where the decimal point can also be a comma.
+     * NOTE: Does NOT check upper bound for the number.
+     * NOTE: Returns false for blank strings.
+     *
+     * @param string the string to check
+     * @return true if the string is non-blank and valid double (supports comma use instead of a period)
      */
     public static boolean checkValidDouble (String string) {
-        if (string.isBlank()) {
-            return true;
-        }
-        boolean isNumber = string.matches("^\\d*[,.]?\\d+$");
-        if (isNumber) {
-            boolean tooBig = new BigDecimal(string.replace(",", ".")).compareTo(BigDecimal.valueOf(Integer.MAX_VALUE)) > 0;
-            return !tooBig;
-        }
-        return false;
+        return string.matches("^\\d*[,.]?\\d+$");
     }
 
     /**

@@ -3,9 +3,7 @@ package nz.ac.canterbury.team1000.gardenersgrove.controller;
 import java.util.List;
 import java.util.Optional;
 
-import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
-import nz.ac.canterbury.team1000.gardenersgrove.form.CreateGardenForm;
-import nz.ac.canterbury.team1000.gardenersgrove.form.RegistrationForm;
+import nz.ac.canterbury.team1000.gardenersgrove.form.GardenForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,12 +59,12 @@ public class GardensController {
      * Handles GET requests from the /gardens/create endpoint.
      * Displays results of previous form when linked to from POST request
      *
-     * @param createGardenForm the CreateGardenForm object representing the new garden's details,
+     * @param createGardenForm the GardenForm object representing the new garden's details,
      *                         useful for seeing erroneous inputs of a failed POST request
      * @return the view to display, 'createGarden', which contains a form
      */
     @GetMapping("/gardens/create")
-    public String gardenCreateGet(@ModelAttribute("createGardenForm") CreateGardenForm createGardenForm) {
+    public String gardenCreateGet(@ModelAttribute("createGardenForm") GardenForm createGardenForm) {
         logger.info("GET /gardens/create");
         return "createGarden";
     }
@@ -76,7 +74,7 @@ public class GardensController {
      * Handles creation of new gardens
      *
      * @param request           the HttpServletRequest object containing the request information
-     * @param createGardenForm  the CreateGardenForm object representing the new garden's details
+     * @param createGardenForm  the GardenForm object representing the new garden's details
      * @param bindingResult     the BindingResult object for validation errors
      * @return the view to display:
      *         - If there are validation errors, stays on the 'Create Garden' form.
@@ -84,10 +82,10 @@ public class GardensController {
      */
     @PostMapping("/gardens/create")
     public String gardenCreatePost(HttpServletRequest request,
-                                   @ModelAttribute("createGardenForm") CreateGardenForm createGardenForm,
+                                   @ModelAttribute("createGardenForm") GardenForm createGardenForm,
                                    BindingResult bindingResult) {
         logger.info("POST /gardens/create");
-        CreateGardenForm.validate(createGardenForm, bindingResult);
+        GardenForm.validate(createGardenForm, bindingResult);
         if (bindingResult.hasErrors()) {
             return "createGarden";
         }
@@ -131,13 +129,13 @@ public class GardensController {
      * Displays the 'Edit Garden' form.
      *
      * @param gardenId the id of the garden being got
-     * @param editGardenForm the CreateGardenForm object representing the edited garden's details,
+     * @param editGardenForm the GardenForm object representing the edited garden's details,
      *                       useful for seeing erroneous inputs of a failed POST request
      * @return thymeleaf editGarden
      */
     @GetMapping("/gardens/{gardenId}/edit")
     public String gardenEditGet(@PathVariable("gardenId") Long gardenId,
-                                @ModelAttribute("editGardenForm") CreateGardenForm editGardenForm) {
+                                @ModelAttribute("editGardenForm") GardenForm editGardenForm) {
         logger.info("GET /gardens/" + gardenId + "/edit");
         Garden garden = gardenService.getGardenById(gardenId);
         editGardenForm.setName(garden.getName());
@@ -151,7 +149,7 @@ public class GardensController {
      * Handles editing of gardens
      *
      * @param request           the HttpServletRequest object containing the request information
-     * @param editGardenForm    the CreateGardenForm object representing the garden's new details
+     * @param editGardenForm    the GardenForm object representing the garden's new details
      * @param bindingResult     the BindingResult object for validation errors
      * @param gardenId          the id of the garden being edited
      * @return the view to display:
@@ -160,11 +158,11 @@ public class GardensController {
      */
     @PostMapping("/gardens/{gardenId}/edit")
     public String gardenEditPost(HttpServletRequest request,
-                                 @ModelAttribute("editGardenForm") CreateGardenForm editGardenForm,
+                                 @ModelAttribute("editGardenForm") GardenForm editGardenForm,
                                  BindingResult bindingResult,
                                  @PathVariable("gardenId") Long gardenId) {
         logger.info("POST /gardens/" + gardenId + "/edit");
-        CreateGardenForm.validate(editGardenForm, bindingResult);
+        GardenForm.validate(editGardenForm, bindingResult);
         if (bindingResult.hasErrors()) {
             return "editGarden";
         }
@@ -180,7 +178,6 @@ public class GardensController {
         logger.info("Garden edited: " + garden);
         return "redirect:/gardens/" + garden.getId();
     }
-
 
     /**
      * Gets form to be displayed, includes the ability to display results of previous form when

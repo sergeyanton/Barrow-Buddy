@@ -3,9 +3,11 @@ package nz.ac.canterbury.team1000.gardenersgrove.form;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Garden;
 import org.springframework.validation.BindingResult;
 
+import java.math.BigDecimal;
+
 import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.*;
 
-public class CreateGardenForm {
+public class GardenForm {
     protected String name;
     protected String location;
     protected String size;
@@ -57,16 +59,16 @@ public class CreateGardenForm {
     /**
      * Validates the 'New Garden' form data and adds validation errors to the BindingResult.
      *
-     * @param createGardenForm the CreateGardenForm object representing the details of the garden being created
+     * @param createGardenForm the GardenForm object representing the details of the garden being created
      * @param bindingResult    the BindingResult object for validation errors
      */
-    public static void validate(CreateGardenForm createGardenForm, BindingResult bindingResult) {
+    public static void validate(GardenForm createGardenForm, BindingResult bindingResult) {
         // Create an ErrorAdder instance with the BindingResult and object name
         ErrorAdder errors = new ErrorAdder(bindingResult, "createGardenForm");
 
         // Validate garden name
         if (checkBlank(createGardenForm.getName())) {
-            errors.add("name", "Plant name must not be empty", createGardenForm.getName());
+            errors.add("name", "Garden name must not be empty", createGardenForm.getName());
         } else if (!checkValidGardenName(createGardenForm.getName())) {
             errors.add("name", "Garden name must only include letters, numbers, spaces, dots, hyphens or apostrophes", createGardenForm.getName());
         } else if (checkOverMaxLength(createGardenForm.getName(), 255)) { //TODO replace with constant
@@ -82,9 +84,13 @@ public class CreateGardenForm {
             errors.add("location", "Location must be 255 characters or less", createGardenForm.getLocation());
         }
 
-        // Validate garden size
-        if (!checkValidDouble(createGardenForm.getSize())) {
-            errors.add("size", "Garden size must be a positive number", createGardenForm.getSize());
+        // Validate garden size (if there is one)
+        if (!checkBlank(createGardenForm.getSize())) {
+            if (!checkValidDouble(createGardenForm.getSize())) {
+                errors.add("size", "Garden size must be a positive number", createGardenForm.getSize());
+            } else if (checkDoubleTooBig(createGardenForm.getSize())) {
+                errors.add("size", "Garden size must be at most " + Integer.MAX_VALUE + "m²", createGardenForm.getSize());
+            }
         }
     }
 }
