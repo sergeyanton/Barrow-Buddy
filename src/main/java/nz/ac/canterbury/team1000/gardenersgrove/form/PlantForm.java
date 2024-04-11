@@ -4,6 +4,8 @@ import nz.ac.canterbury.team1000.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Plant;
 import org.springframework.validation.BindingResult;
 
+import java.time.LocalDate;
+
 import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.*;
 
 public class PlantForm {
@@ -84,6 +86,31 @@ public class PlantForm {
             errors.add("name", "Plant name must only include letters, numbers, spaces, dots, hyphens or apostrophes", createPlantForm.getName());
         } else if (checkOverMaxLength(createPlantForm.getName(), 255)) { //TODO replace with constant
             errors.add("name", "Name must be 255 characters or less", createPlantForm.getName());
+        }
+
+        // Validate plant count (if there is one)
+        if (!checkBlank(createPlantForm.getPlantCount())) {
+            if (checkIntegerIsInvalid(createPlantForm.getPlantCount())) {
+                errors.add("plantCount", "Plant count must be a positive integer", createPlantForm.getPlantCount());
+            } else if (checkIntegerTooBig(createPlantForm.getPlantCount())) {
+                errors.add("plantCount", "Plant count must be at most " + Integer.MAX_VALUE, createPlantForm.getPlantCount());
+            }
+        }
+
+        // Validate description (if there is one)
+        if (!checkBlank(createPlantForm.getDescription())) {
+            if (checkOverMaxLength(createPlantForm.getPlantCount(), 512)) {
+                errors.add("description", "Plant description must be less than 512 characters", createPlantForm.getDescription());
+            }
+        }
+
+        // Validate date of birth (if there is one)
+        if (!checkBlank(createPlantForm.getPlantedOnDate())) {
+            if (checkDateNotInCorrectFormat(createPlantForm.getPlantedOnDate())) {
+                errors.add("plantedOnDate", "Date is not in valid format, DD/MM/YYYY", createPlantForm.getPlantedOnDate());
+            } else if (!checkDateBefore(createPlantForm.getPlantedOnDate(), LocalDate.now().plusDays(1))) {
+                errors.add("plantedOnDate", "Date cannot be in the future", createPlantForm.getPlantedOnDate());
+            }
         }
     }
 }
