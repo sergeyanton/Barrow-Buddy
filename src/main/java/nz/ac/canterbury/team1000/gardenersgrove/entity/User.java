@@ -58,8 +58,6 @@ public class User {
         this.fname = fname;
         this.lname = lname;
         this.email = email;
-        System.out.println(password.length());
-        System.out.println(password);
         this.password = password;
         this.dateOfBirth = dateOfBirth;
     }

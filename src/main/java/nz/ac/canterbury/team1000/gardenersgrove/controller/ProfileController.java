@@ -76,13 +76,21 @@ public class ProfileController {
         if (bindingResult.hasErrors()) {
             return "pages/editProfilePage";
         }
+        System.out.println("Current: " + currentUser.getPassword());
+        User edit = editUserForm.getUser();
+        System.out.println("form: " + Password.hashPassword(editUserForm.getPassword()));
 
-        currentUser.setFname(editUserForm.getFirstName());
-        currentUser.setLname(editUserForm.getLastName());
-        currentUser.setEmail(editUserForm.getEmail());
+
+        currentUser.setFname(edit.getFname());
+        currentUser.setLname(edit.getLname());
+        currentUser.setEmail(edit.getEmail());
         if (!editUserForm.getPassword().isEmpty()) {
-            currentUser.setPassword(Password.hashPassword(editUserForm.getPassword()));
+            currentUser.setPassword(edit.getPassword());
+            System.out.println("Not empty");
         }
+        System.out.println("New: " + currentUser.getPassword());
+
+        currentUser.setDateOfBirth(edit.getDateOfBirth());
 
         userService.updateUserByEmail(oldEmail, currentUser);
         userService.authenticateUser(authenticationManager, currentUser, request);

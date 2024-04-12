@@ -59,8 +59,7 @@ public class RegistrationForm {
 
     public LocalDate getDobLocalDate() {
         try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            return LocalDate.parse(dob, formatter);
+            return LocalDate.parse(dob, VALID_DATE_FORMAT);
         } catch (DateTimeParseException e) {
             return null;
         }
