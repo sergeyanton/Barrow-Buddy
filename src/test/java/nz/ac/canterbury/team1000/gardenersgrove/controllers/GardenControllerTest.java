@@ -50,19 +50,16 @@ public class GardenControllerTest {
     private GardenForm gardenForm;
 
     @BeforeEach
-    public void beforeEach() {
+    public void BeforeEach() {
         gardenMock = Mockito.mock(Garden.class);
         Mockito.when(gardenMock.getId()).thenReturn(1L);
-        Mockito.when(gardenMock.getName()).thenReturn("Hamilton Gardens");
-        Mockito.when(gardenMock.getLocation()).thenReturn("Hamilton");
-        Mockito.when(gardenMock.getSize()).thenReturn(42.5);
 
         gardenForm = new GardenForm();
-        gardenForm.setName(gardenMock.getName());
-        gardenForm.setLocation(gardenMock.getLocation());
-        gardenForm.setSize(gardenMock.getSize().toString());
+        gardenForm.setName("Hamilton Gardens");
+        gardenForm.setLocation("Hamilton");
+        gardenForm.setSize("46.2");
 
-        // Mock addGarden(), updateGarden(), and getGardenById to always simply use id = 1
+        // Mock addGarden(), updateGarden(), and getPlantById to always simply use id = 1
         Mockito.when(gardenService.addGarden(Mockito.any(Garden.class))).thenAnswer(invocation -> {
             Garden addedGarden = invocation.getArgument(0);
             addedGarden.setId(1L);
