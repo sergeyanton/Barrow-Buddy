@@ -16,12 +16,12 @@ public class VerificationTokenService {
         this.verificationTokenRepository = verificationTokenRepository;
     }
 
-    public VerificationToken getVerificationTokenByUserId(String userId) {
+    public VerificationToken getVerificationTokenByUserId(Long userId) {
         Optional<VerificationToken> verificationToken = verificationTokenRepository.findByUserId(userId);
         return verificationToken.orElse(null);
     }
 
-    public void deleteVerificationTokenByUserId(String userId) {
+    public void deleteVerificationTokenByUserId(Long userId) {
         Optional<VerificationToken> verificationToken = verificationTokenRepository.findByUserId(userId);
         verificationToken.ifPresent(verificationTokenRepository::delete);
     }

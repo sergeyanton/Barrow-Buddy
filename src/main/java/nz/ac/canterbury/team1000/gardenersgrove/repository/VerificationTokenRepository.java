@@ -12,5 +12,5 @@ import java.util.Optional;
  */
 @Repository
 public interface VerificationTokenRepository extends CrudRepository<VerificationToken, Long> {
-    Optional<VerificationToken> findByUserId(String userId);
+    Optional<VerificationToken> findByUserId(Long userId);
 }

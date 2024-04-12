@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import static nz.ac.canterbury.team1000.gardenersgrove.util.Password.verifyPassword;
+
 import java.time.format.DateTimeFormatter;
 
 @Controller
@@ -38,7 +39,7 @@ public class AccountController {
     /**
      * Gets the thymeleaf page representing the /profile page, displaying the currently logged-in
      * user's account details. Will only work if the user is logged in.
-     * 
+     *
      * @return thymeleaf profilePage
      */
     @GetMapping("/profile")
@@ -67,8 +68,8 @@ public class AccountController {
      * @param registrationForm the RegistrationForm object representing the user's registration data,
      *                         useful for seeing erroneous inputs of a failed POST request
      * @return the view to display:
-     *         - If the user is signed in, redirect to the home page
-     *         - Else, go to the registration page, where the user can create a new account
+     * - If the user is signed in, redirect to the home page
+     * - Else, go to the registration page, where the user can create a new account
      */
     @GetMapping("/register")
     public String getRegisterPage(@ModelAttribute RegistrationForm registrationForm) {
@@ -81,12 +82,12 @@ public class AccountController {
      * Handles POST requests to the /register endpoint.
      * Handles the registration process for new users.
      *
-     * @param request           the HttpServletRequest object containing the request information
-     * @param registrationForm  the RegistrationForm object representing the user's registration data
-     * @param bindingResult     the BindingResult object for validation errors
+     * @param request          the HttpServletRequest object containing the request information
+     * @param registrationForm the RegistrationForm object representing the user's registration data
+     * @param bindingResult    the BindingResult object for validation errors
      * @return the view to display after registration:
-     *         - If there are validation errors, returns the registration page to display errors.
-     *         - If registration is successful, redirects to the user's profile page.
+     * - If there are validation errors, returns the registration page to display errors.
+     * - If registration is successful, redirects to the user's profile page.
      */
     @PostMapping("/register")
     public String register(HttpServletRequest request, @ModelAttribute("registrationForm") RegistrationForm registrationForm, BindingResult bindingResult) {
@@ -105,14 +106,15 @@ public class AccountController {
         userService.registerUser(newUser);
         userService.authenticateUser(authenticationManager, newUser, request);
 
-        return "redirect:/profile";
+//        return "redirect:/profile";
+        return "pages/registrationVerificationPage";
     }
 
 
     /**
      * Gets the thymeleaf page representing the /login page Will only work if the user is not logged
      * in, otherwise it will redirect to the home page
-     * 
+     *
      * @return thymeleaf loginPage
      */
     @GetMapping("/login")
@@ -124,13 +126,13 @@ public class AccountController {
     /**
      * Handles POST requests to the /login endpoint.
      * Logs in the user, or shows an error message if the login details are invalid.
-     * 
-     * @param request the HttpServletRequest object containing the request information
-     * @param loginForm the LoginForm object representing the user's login data
+     *
+     * @param request       the HttpServletRequest object containing the request information
+     * @param loginForm     the LoginForm object representing the user's login data
      * @param bindingResult the BindingResult object for validation errors
      * @return a String representing the view to display after login:
-     *      *  *         - If there are validation errors, returns the login page to display errors.
-     *      *  *         - If login is successful, redirects to the application's home page.
+     * *  *         - If there are validation errors, returns the login page to display errors.
+     * *  *         - If login is successful, redirects to the application's home page.
      */
     @PostMapping("/login")
     public String login(HttpServletRequest request, @ModelAttribute("loginForm") LoginForm loginForm, BindingResult bindingResult) {
