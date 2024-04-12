@@ -66,7 +66,9 @@ public class ProfileController {
      * @return A string that represents the link to the profile page
      */
     @PostMapping("/editProfile")
-    public String editProfile(HttpServletRequest request, EditUserForm editUserForm, BindingResult bindingResult) {
+    public String editProfile(HttpServletRequest request,
+                              @ModelAttribute("editUserForm") EditUserForm editUserForm,
+                              BindingResult bindingResult) {
         logger.info("POST /editProfile");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();

@@ -26,8 +26,10 @@ public class EditUserFormTest {
         editUserForm.setFirstName(existingUser.getFname());
         editUserForm.setLastName(existingUser.getLname());
         editUserForm.setEmail(existingUser.getEmail());
-        if (existingUser.getDateOfBirth() != null) editUserForm.setDob(existingUser.getDateOfBirthString());
+        editUserForm.setDob(existingUser.getDateOfBirth() != null ? existingUser.getDateOfBirthString() : "");
         editUserForm.setNoSurnameCheckBox(editUserForm.getLastName() == null || editUserForm.getLastName().isEmpty());
+        editUserForm.setPassword("");
+        editUserForm.setRetypePassword("");
 
         bindingResult = Mockito.mock(BindingResult.class);
         Mockito.when(bindingResult.hasErrors()).thenReturn(false);
@@ -142,10 +144,10 @@ public class EditUserFormTest {
     }
 
     @Test
-    void validate_WithBlankDateOfBirth_AddsError() {
+    void validate_WithBlankDateOfBirth_DoesNotAddError() {
         editUserForm.setDob("");
         EditUserForm.validate(editUserForm, bindingResult, existingUser);
-        Mockito.verify(bindingResult).addError(Mockito.any());
+        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
     }
 
     @Test
