@@ -25,10 +25,11 @@ public class VerificationTokenService {
         Optional<VerificationToken> verificationToken = verificationTokenRepository.findByUserId(userId);
         verificationToken.ifPresent(verificationTokenRepository::delete);
     }
-    
+
     public VerificationToken addVerificationToken(VerificationToken verificationToken) {
         return verificationTokenRepository.save(verificationToken);
     }
+
 
 }
 
