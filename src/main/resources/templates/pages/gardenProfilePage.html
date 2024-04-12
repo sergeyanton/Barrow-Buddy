@@ -29,7 +29,7 @@
                     <td colspan="4">No plants yet</td>
                 </tr>
                 <tr th:each="plant : ${plants}">
-                    <td><span th:text="Image"></span></td>
+                    <td><img th:src="@{/images/defaultPlantPic.png}" alt="Plant Image" style="max-width: 100px; max-height: 100px;" /></td>
                     <td><span th:text="${plant.name}"></span></td>
                     <td><span th:text="${plant.plantCount}"></span></td>
                     <td><span th:text="${plant.description}"></span></td>
