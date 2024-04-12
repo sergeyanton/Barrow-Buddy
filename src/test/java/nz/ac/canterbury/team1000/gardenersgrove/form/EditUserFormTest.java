@@ -23,7 +23,12 @@ public class EditUserFormTest {
 
     @BeforeEach
     void setUp() {
-        editUserForm.setFromUser(existingUser);
+        editUserForm.setFirstName(existingUser.getFname());
+        editUserForm.setLastName(existingUser.getLname());
+        editUserForm.setEmail(existingUser.getEmail());
+        if (existingUser.getDateOfBirth() != null) editUserForm.setDob(existingUser.getDateOfBirthString());
+        editUserForm.setNoSurnameCheckBox(editUserForm.getLastName() == null || editUserForm.getLastName().isEmpty());
+
         bindingResult = Mockito.mock(BindingResult.class);
         Mockito.when(bindingResult.hasErrors()).thenReturn(false);
         Mockito.doAnswer(invocation -> {

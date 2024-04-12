@@ -5,6 +5,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -119,9 +120,7 @@ public class User {
      * @return The date of birth as a string in the format DD/MM/YYYY.
      */
     public String getDateOfBirthString() {
-        // return date in DD/MM/YYYY format
-        return String.format("%02d/%02d/%04d", dateOfBirth.getDayOfMonth(),
-                dateOfBirth.getMonthValue(), dateOfBirth.getYear());
+        return dateOfBirth.format(DateTimeFormatter.ofPattern("dd/MM/uuuu"));
     }
 
     public void setFname(String fname) {

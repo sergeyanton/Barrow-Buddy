@@ -7,16 +7,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class EditUserForm extends RegistrationForm {
-    public void setFromUser(User user) {
-        this.firstName = user.getFname();
-        this.lastName = user.getLname();
-        this.email = user.getEmail();
-        this.dob = user.getDateOfBirth() != null ? user.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd/MM/uuuu")) : "";
-        this.noSurnameCheckBox = this.lastName == null || this.lastName.isEmpty();
-        this.password = "";
-        this.retypePassword = "";
-    }
-
     /**
      * Validates the EditUserForm object and adds any errors to the BindingResult.
      * 
