@@ -6,8 +6,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.validation.BindingResult;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class GardenFormTest {
     GardenForm gardenForm = new GardenForm();
 

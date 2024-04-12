@@ -3,8 +3,6 @@ package nz.ac.canterbury.team1000.gardenersgrove.form;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Garden;
 import org.springframework.validation.BindingResult;
 
-import java.math.BigDecimal;
-
 import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.*;
 
 public class GardenForm {

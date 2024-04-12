@@ -1,7 +1,5 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controllers;
 
-import nz.ac.canterbury.team1000.gardenersgrove.entity.Garden;
-import nz.ac.canterbury.team1000.gardenersgrove.form.GardenForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PlantForm;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,7 +20,6 @@ import nz.ac.canterbury.team1000.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.PlantService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import java.time.LocalDate;
 
 @WebMvcTest(controllers = GardensController.class)
 @AutoConfigureMockMvc

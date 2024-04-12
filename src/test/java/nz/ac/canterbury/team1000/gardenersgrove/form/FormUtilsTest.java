@@ -3,9 +3,6 @@ package nz.ac.canterbury.team1000.gardenersgrove.form;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FormUtilsTest {
     @Test

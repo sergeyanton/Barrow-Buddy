@@ -1,8 +1,6 @@
 package nz.ac.canterbury.team1000.gardenersgrove.form;
 
-import nz.ac.canterbury.team1000.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Plant;
-import org.springframework.data.repository.query.Param;
 import org.springframework.validation.BindingResult;
 
 import java.time.LocalDate;

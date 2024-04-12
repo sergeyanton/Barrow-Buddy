@@ -1,7 +1,5 @@
 package nz.ac.canterbury.team1000.gardenersgrove.service;
 
-import nz.ac.canterbury.team1000.gardenersgrove.entity.Garden;
-import org.h2.table.Plan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Plant;
