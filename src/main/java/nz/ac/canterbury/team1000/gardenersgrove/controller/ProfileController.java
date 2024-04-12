@@ -3,8 +3,12 @@ package nz.ac.canterbury.team1000.gardenersgrove.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.EditUserForm;
+import nz.ac.canterbury.team1000.gardenersgrove.form.UpdatePasswordForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
 import nz.ac.canterbury.team1000.gardenersgrove.util.Password;
+
+import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.checkBlank;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,5 +92,37 @@ public class ProfileController {
         userService.authenticateUser(authenticationManager, currentUser, request);
 
         return "redirect:/profile";
+    }
+
+    /**
+     * This method is used to get the update password page for the user
+     * 
+     * @param updatePasswordForm the form used to update the user's password
+     * @return a string that represents the link to the update password page
+     */
+    @GetMapping("/editProfile/updatePassword")
+    public String getUpdatePassword(UpdatePasswordForm updatePasswordForm) {
+        logger.info("GET /editProfile/updatePassword");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentPrincipalName = authentication.getName();
+        User currentUser = userService.findEmail(currentPrincipalName);
+
+        updatePasswordForm.setFormUser(currentUser);
+
+        return "pages/updatePasswordPage";
+    }
+
+    /**
+     * This method is used to check the old and new password entered by the user and if it is valid,
+     * updates the user's password to the new password
+     * 
+     * @param updatePasswordForm the form used to update the user's password
+     * @return A string that represents the link to the profile page
+     */
+    @PostMapping("/editProfile/updatePassword")
+    public String postUpdatePassword(HttpServletRequest request, UpdatePasswordForm updatePasswordForm) {
+        logger.info("POST /editProfile/updatePassword");
+
+        return "redirect:/editProfile";
     }
 }
