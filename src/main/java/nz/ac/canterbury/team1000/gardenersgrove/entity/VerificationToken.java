@@ -47,12 +47,12 @@ public class VerificationToken {
 
 
     /**
-     * Calculates the expiry date of the token which is 15 minutes from the request time.
+     * Calculates the expiry date of the token which is 10 minutes from the request time.
      *
      * @return the expiry date of the token
      */
     private LocalDateTime calculateExpiryDate() {
-        return LocalDateTime.now().plusMinutes(15);
+        return LocalDateTime.now().plusMinutes(10);
     }
 
     public Long getId() {
