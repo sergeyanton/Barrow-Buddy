@@ -63,13 +63,16 @@ public class AccountController {
     /**
      * Gets the thymeleaf page representing the /register page Will only work if the user is not
      * logged in, otherwise it will redirect to the home page
-     * 
-     * @return thymeleaf registrationPage
+     *
+     * @param registrationForm the RegistrationForm object representing the user's registration data,
+     *                         useful for seeing erroneous inputs of a failed POST request
+     * @return the view to display:
+     *         - If the user is signed in, redirect to the home page
+     *         - Else, go to the registration page, where the user can create a new account
      */
     @GetMapping("/register")
-    public String getRegisterPage(RegistrationForm registrationForm) {
-//        logger.info("GET /register");
-
+    public String getRegisterPage(@ModelAttribute RegistrationForm registrationForm) {
+        logger.info("GET /register");
         return userService.isSignedIn() ? "redirect:/" : "pages/registrationPage";
     }
 
@@ -81,9 +84,9 @@ public class AccountController {
      * @param request           the HttpServletRequest object containing the request information
      * @param registrationForm  the RegistrationForm object representing the user's registration data
      * @param bindingResult     the BindingResult object for validation errors
-     * @return a String representing the view to display after registration:
-     *  *         - If there are validation errors, returns the registration page to display errors.
-     *  *         - If registration is successful, redirects to the user's profile page.
+     * @return the view to display after registration:
+     *         - If there are validation errors, returns the registration page to display errors.
+     *         - If registration is successful, redirects to the user's profile page.
      */
     @PostMapping("/register")
     public String register(HttpServletRequest request, @ModelAttribute("registrationForm") RegistrationForm registrationForm, BindingResult bindingResult) {
@@ -97,10 +100,7 @@ public class AccountController {
             return "pages/registrationPage";
         }
 
-        // form was submitted with valid data
-        // create the user and log them in
         User newUser = registrationForm.getUser();
-        // Give them the role of user
         newUser.grantAuthority("ROLE_USER");
         userService.registerUser(newUser);
         userService.authenticateUser(authenticationManager, newUser, request);

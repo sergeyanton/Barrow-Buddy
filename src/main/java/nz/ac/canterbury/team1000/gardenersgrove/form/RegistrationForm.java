@@ -86,13 +86,17 @@ public class RegistrationForm {
         this.lastName = lastName;
     }
 
+    /**
+     * Generates a User object with the values from the form.
+     * @return new User with attributes directly from the input values in the form.
+     */
     public User getUser() {
         return new User(
             this.firstName,
-                this.lastName,
-                this.email,
-                Password.hashPassword(this.password),
-                this.getDobLocalDate()
+            this.lastName,
+            this.email,
+            Password.hashPassword(this.password),
+            this.getDobLocalDate()
         );
     }
 

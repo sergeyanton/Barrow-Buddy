@@ -89,9 +89,6 @@ public class PlantServiceTest {
         plantService.addPlant(new Plant("My Plant", "1", "My plant is cool", "30/1/2021", 1L));
     }
 
-    // @Autowired
-    // private PlantService formService;
-
     @Autowired
     private PlantRepository plantRepository;
 

@@ -2,6 +2,8 @@ package nz.ac.canterbury.team1000.gardenersgrove.form;
 
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -81,6 +83,40 @@ public class FormUtils {
     }
 
     /**
+     * Checks if the given string represents a double bigger than the maximum integer value in java.
+     * NOTE: Returns false if the string doesn't represent a valid double. Only call this method with
+     * valid strings.
+     *
+     * @param string the string representation of the double to check
+     * @return  true if the represented double is greater than the maximum java Integer value,
+     *          false if the represented double is not too big, or if the string doesn't represent a valid double
+     */
+    public static boolean checkDoubleTooBig (String string) {
+        try {
+            return new BigDecimal(string.replace(",", ".")).compareTo(BigDecimal.valueOf(Integer.MAX_VALUE)) > 0;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Checks if the given string represents an integer bigger than the maximum integer value in java.
+     * NOTE: Returns false if the string doesn't represent a valid integer. Only call this method with
+     * valid strings.
+     *
+     * @param string the string representation of the double to check
+     * @return  true if the represented integer is greater than the maximum java Integer value,
+     *          false if the represented integer is not too big, or if the string doesn't represent a valid integer
+     */
+    public static boolean checkIntegerTooBig (String string) {
+        try {
+            return new BigDecimal(string).compareTo(BigDecimal.valueOf(Integer.MAX_VALUE)) > 0;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    /**
      * Checks if the given string contains only letters, spaces, hyphens, or apostrophes.
      *
      * @param string the string to check
@@ -88,6 +124,63 @@ public class FormUtils {
      */
     public static boolean checkOnlyHasLettersSpacesHyphensApostrophes (String string) {
         return !checkNotMatchesRegex(string, "^[a-zA-Z\\s'-]+$");
+    }
+
+    /**
+     * Checks if the given string is only made up of alphanumeric characters, commas,
+     * dots, hyphens, and apostrophes.
+     *
+     * @param string the string to check
+     * @return true if the string contains only valid characters, false otherwise
+     */
+    public static boolean checkValidGardenName (String string) {
+        return !checkNotMatchesRegex(string, "^[\\p{L}0-9\\s,.'-]+$");
+    }
+
+    /**
+     * Checks if the given string is only made up of alphanumeric characters, commas,
+     * dots, hyphens, and apostrophes.
+     *
+     * @param string the string to check
+     * @return true if the string contains only valid characters, false otherwise
+     */
+    public static boolean checkValidLocationName (String string) {
+        return checkValidGardenName(string); // may have different definition later
+    }
+
+    /**
+     * Checks if the given string is only made up of alphanumeric characters, commas,
+     * dots, hyphens, and apostrophes.
+     *
+     * @param string the string to check
+     * @return true if the string contains only valid characters, false otherwise
+     */
+    public static boolean checkValidPlantName (String string) {
+        return checkValidGardenName(string); // may have different definition later
+    }
+
+    /**
+     * Checks if the given string doesn't represent a valid non-negative Double, where the decimal point can also be a comma.
+     * NOTE: Does NOT check upper bound for the number.
+     * NOTE: Returns true for blank strings.
+     *
+     * @param string the string to check
+     * @return true if the string does not represent a valid double, including blank strings
+     */
+    public static boolean checkDoubleIsInvalid (String string) {
+        return checkNotMatchesRegex(string,"^\\d*[,.]?\\d+$");
+    }
+
+    /**
+     * Checks if the given string doesn't represent a valid non-negative Integer
+     * NOTE: Does NOT check upper bound for the number.
+     * NOTE: Returns true for blank strings.
+     *
+     * @param string the string to check
+     * @return true if the string does not represent a valid integer, including blank strings
+     */
+    public static boolean checkIntegerIsInvalid (String string) {
+        return checkNotMatchesRegex(string,"^[0-9]+$");
     }
 
     /**

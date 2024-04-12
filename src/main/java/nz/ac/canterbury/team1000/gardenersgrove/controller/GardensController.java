@@ -1,20 +1,19 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
 import java.util.List;
-import java.util.Optional;
-
+import nz.ac.canterbury.team1000.gardenersgrove.form.GardenForm;
+import nz.ac.canterbury.team1000.gardenersgrove.form.PlantForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.servlet.http.HttpServletRequest;
-import nz.ac.canterbury.team1000.gardenersgrove.classes.ValidityCheck;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.team1000.gardenersgrove.service.GardenService;
@@ -48,314 +47,193 @@ public class GardensController {
         return request.getRequestURI() + "?" + request.getQueryString();
     }
 
+
+    /**
+     * Necessary for being able to display each garden in the nav bar
+     * @return all gardens currently in the database
+     */
     @ModelAttribute("allGardens")
     private List<Garden> getAllGardens() {
         return gardenService.getGardens();
     }
 
     /**
-     * Gets form to be displayed, includes the ability to display results of previous form when
-     * linked to from POST form
+     * Handles GET requests from the /gardens/create endpoint.
+     * Displays results of previous form when linked to from POST request
      *
-     * @param gardenName     previous garden name entered into form to be displayed
-     * @param gardenLocation previous garden location entered into form to be displayed
-     * @param gardenSize     previous garden size entered into form to be displayed
-     * @param model          (map-like) representation of gardenName, gardenLocation, garden Size and
-     *                       isValidName & isValidLocation boolean for use in thymeleaf
-     * @return thymeleaf demoFormTemplate
+     * @param createGardenForm the GardenForm object representing the new garden's details,
+     *                         useful for seeing erroneous inputs of a failed POST request
+     * @return the view to display, 'pages/createGardenPage', which contains a form
      */
     @GetMapping("/gardens/create")
-    public String gardenCreateGet(HttpServletRequest request,
-                                  @RequestParam(name = "gardenName", required = false,
-                                          defaultValue = "") String gardenName,
-                                  @RequestParam(name = "gardenLocation", required = false,
-                                          defaultValue = "") String gardenLocation,
-                                  @RequestParam(name = "gardenSize", required = false,
-                                          defaultValue = "") String gardenSize,
-                                  Model model) {
+    public String gardenCreateGet(@ModelAttribute("createGardenForm") GardenForm createGardenForm) {
         logger.info("GET /gardens/create");
-        model.addAttribute("gardenName", gardenName);
-        model.addAttribute("gardenLocation", gardenLocation);
-        model.addAttribute("gardenSize", gardenSize);
-        String nextDestination = Optional.ofNullable(request.getParameter("next")).orElse("/");
-        model.addAttribute("nextDestination", nextDestination);
-
-        model.addAttribute("actionLabel", "Create Garden");
-        return "createGarden";
+        return "pages/createGardenPage";
     }
 
     /**
-     * Posts a form response with name, location, and size of the garden
+     * Handles POST requests from the /gardens/create endpoint.
+     * Handles creation of new gardens
      *
-     * @param gardenName     name of garden
-     * @param gardenLocation location of garden
-     * @param gardenSize     size of garden
-     * @param model          (map-like) representation of name for use in thymeleaf, with values being set to
-     *                       relevant parameters provided
-     * @return thymeleaf demoFormTemplate
+     * @param request          the HttpServletRequest object containing the request information
+     * @param createGardenForm the GardenForm object representing the new garden's details
+     * @param bindingResult    the BindingResult object for validation errors
+     * @return the view to display:
+     * - If there are validation errors, stays on the 'Create Garden' form.
+     * - Else, redirect to the newly created garden's profile page.
      */
     @PostMapping("/gardens/create")
     public String gardenCreatePost(HttpServletRequest request,
-                                   @RequestParam(name = "gardenName") String gardenName,
-                                   @RequestParam(name = "gardenLocation") String gardenLocation,
-                                   @RequestParam(name = "gardenSize") String gardenSize, Model model) {
+                                   @ModelAttribute("createGardenForm") GardenForm createGardenForm,
+                                   BindingResult bindingResult) {
         logger.info("POST /gardens/create");
-
-        if (ValidityCheck.validGardenForm(gardenName, gardenLocation, gardenSize)) {
-            Garden addedGarden =
-                    gardenService.addGarden(new Garden(gardenName, gardenLocation, gardenSize));
-            logger.info("Garden created: " + addedGarden);
-            return "redirect:/gardens/" + addedGarden.getId();
+        GardenForm.validate(createGardenForm, bindingResult);
+        if (bindingResult.hasErrors()) {
+            return "pages/createGardenPage";
         }
 
-        model.addAttribute("actionLabel", "Create Garden");
-        String nextDestination = Optional.ofNullable(request.getParameter("next")).orElse("/");
-        model.addAttribute("nextDestination", nextDestination);
-
-        displayGardenFormErrors(gardenName, gardenLocation, gardenSize, model);
-
-        return "createGarden";
+        Garden newGarden = createGardenForm.getGarden();
+        gardenService.addGarden(newGarden);
+        logger.info("Garden created: " + newGarden);
+        return "redirect:/gardens/" + newGarden.getId();
     }
 
     /**
-     * Gets all form responses (gardens)
+     * Handles GET requests from the /gardens endpoint.
+     * Displays all gardens that the user owns.
      *
      * @param model (map-like) representation of results to be used by thymeleaf
-     * @return thymeleaf createdGardens
+     * @return thymeleaf pages/gardensPage
      */
     @GetMapping("/gardens")
     public String viewGardens(Model model) {
         logger.info("GET /gardens");
         model.addAttribute("gardens", gardenService.getGardens());
-        return "createdGardens";
+        return "pages/gardensPage";
     }
 
     /**
-     * Gets name of garden that was clicked on.
+     * Handles GET requests from the /gardens/{gardenId} endpoint.
+     * Displays details of the garden with the given id
      *
      * @param model (map-like) representation of results to be used by thymeleaf
-     * @return thymeleaf demoResponseTemplate
+     * @return thymeleaf pages/gardenProfilePage
      */
     @GetMapping("/gardens/{gardenId}")
     public String viewGarden(@PathVariable("gardenId") Long gardenId, Model model) {
         logger.info("GET /gardens/" + gardenId);
         model.addAttribute("garden", gardenService.getGardenById(gardenId));
-        return "gardenProfile";
+        return "pages/gardenProfilePage";
     }
 
     /**
-     * Gets form to be displayed, includes the ability to display results of previous form when
-     * linked to from POST form
+     * Handles GET requests from the /gardens/{gardenId}/edit endpoint.
+     * Displays the 'Edit Garden' form.
      *
-     * @param model (map-like) representation of garden for use in thymeleaf
-     * @return thymeleaf editGarden
+     * @param gardenId       the id of the garden being got
+     * @param editGardenForm the GardenForm object representing the edited garden's details,
+     *                       useful for seeing erroneous inputs of a failed POST request
+     * @return thymeleaf pages/editGardenPage
      */
     @GetMapping("/gardens/{gardenId}/edit")
-    public String gardenEditGet(@PathVariable("gardenId") Long gardenId, Model model) {
+    public String gardenEditGet(@PathVariable("gardenId") Long gardenId,
+                                @ModelAttribute("editGardenForm") GardenForm editGardenForm) {
         logger.info("GET /gardens/" + gardenId + "/edit");
+
         Garden garden = gardenService.getGardenById(gardenId);
-        model.addAttribute("gardenId", gardenId);
-        model.addAttribute("gardenName", garden.getName());
-        model.addAttribute("gardenLocation", garden.getLocation());
-        model.addAttribute("gardenSize", garden.getSize());
-        model.addAttribute("actionLabel", "Edit Garden");
-        return "editGarden";
+        editGardenForm.setName(garden.getName());
+        editGardenForm.setLocation(garden.getLocation());
+        if (garden.getSize() != null) editGardenForm.setSize(garden.getSize().toString());
+
+        return "pages/editGardenPage";
     }
 
     /**
-     * Posts a form response with name, location, and size of the garden
+     * Handles POST requests from the /gardens/{gardenId}/edit endpoint.
+     * Handles editing of gardens
      *
-     * @param gardenName     name of garden
-     * @param gardenLocation location of garden
-     * @param gardenSize     size of garden
-     * @param model          (map-like) representation of values for use in thymeleaf, with values being set
-     *                       to relevant parameters provided
-     * @return thymeleaf editGarden
+     * @param request        the HttpServletRequest object containing the request information
+     * @param editGardenForm the GardenForm object representing the garden's new details
+     * @param bindingResult  the BindingResult object for validation errors
+     * @param gardenId       the id of the garden being edited
+     * @return the view to display:
+     * - If there are validation errors, stays on the 'Edit Garden' form.
+     * - Else, redirect to the edited garden's profile page.
      */
     @PostMapping("/gardens/{gardenId}/edit")
-    public String gardenEditPost(@PathVariable("gardenId") Long gardenId,
-                                 @RequestParam(name = "gardenName") String gardenName,
-                                 @RequestParam(name = "gardenLocation") String gardenLocation,
-                                 @RequestParam(name = "gardenSize") String gardenSize, Model model) {
+    public String gardenEditPost(HttpServletRequest request,
+                                 @ModelAttribute("editGardenForm") GardenForm editGardenForm,
+                                 BindingResult bindingResult,
+                                 @PathVariable("gardenId") Long gardenId) {
         logger.info("POST /gardens/" + gardenId + "/edit");
 
-        // TODO Handle error gracefully when user puts invalid id in url (do for each
-        // gardenService.getGardenById)
-        Garden garden = gardenService.getGardenById(gardenId);
-
-        if (ValidityCheck.validGardenForm(gardenName, gardenLocation, gardenSize)) {
-            garden.setName(gardenName);
-            garden.setLocation(gardenLocation);
-            garden.setSize(gardenSize);
-
-            gardenService.updateGarden(garden);
-            logger.info("Garden updated: " + garden);
-            return "redirect:/gardens/" + garden.getId();
+        GardenForm.validate(editGardenForm, bindingResult);
+        if (bindingResult.hasErrors()) {
+            return "pages/editGardenPage";
         }
-        model.addAttribute("actionLabel", "Edit Garden");
-        model.addAttribute("gardenId", gardenId);
-        model.addAttribute("gardenSize", gardenSize);
-        model.addAttribute("gardenLocation", gardenLocation);
-        model.addAttribute("gardenName", gardenName);
 
-        displayGardenFormErrors(gardenName, gardenLocation, gardenSize, model);
-        return "editGarden";
+        Garden garden = gardenService.getGardenById(gardenId);
+        Garden edit = editGardenForm.getGarden();
+        garden.setName(edit.getName());
+        garden.setLocation(edit.getLocation());
+        garden.setSize(edit.getSize());
+
+        gardenService.updateGarden(garden);
+
+        logger.info("Garden edited: " + garden);
+        return "redirect:/gardens/" + garden.getId();
     }
 
-
     /**
-     * Gets form to be displayed, includes the ability to display results of previous form when
-     * linked to from POST form
+     * Handles GET requests from the /gardens/{gardenId}/edit endpoint.
+     * Displays the 'Edit Garden' form.
      *
-     * @param gardenId         id of garden that this plant belongs to
-     * @param plantName        the name of the plant
-     * @param plantCount       the amount of this plant in the garden
-     * @param plantDescription a short description of the plant
-     * @param plantedOnDate    the date that the plant was planted on
-     * @param model            (map-like) representation of values for use in thymeleaf, with values being set
-     *                         to relevant parameters provided
-     * @return thymeleaf createPlant
+     * @param gardenId        id of garden that this plant belongs to
+     * @param createPlantForm the PlantForm object representing the plant's details,
+     *                        useful for seeing erroneous inputs of a failed POST request
+     * @return thymeleaf pages/createPlantPage
      */
     @GetMapping("/gardens/{gardenId}/plants/create")
     public String gardenCreatePlantGet(@PathVariable("gardenId") Long gardenId,
-                                       @RequestParam(name = "plantName", required = false, defaultValue = "") String plantName,
-                                       @RequestParam(name = "plantCount", required = false,
-                                               defaultValue = "") String plantCount,
-                                       @RequestParam(name = "plantDescription", required = false,
-                                               defaultValue = "") String plantDescription,
-                                       @RequestParam(name = "plantedOnDate", required = false,
-                                               defaultValue = "") String plantedOnDate,
-                                       Model model) {
+                                       @ModelAttribute("createPlantForm") PlantForm createPlantForm) {
         logger.info("GET /gardens/" + gardenId + "/plants/create");
-
-        // TODO handle when the gardenId is not for an existing garden (.getGardenById)
-
-        model.addAttribute("gardenId", gardenId);
-        model.addAttribute("plantName", plantName);
-        model.addAttribute("plantCount", plantCount);
-        model.addAttribute("plantDescription", plantDescription);
-        model.addAttribute("plantedOnDate", plantedOnDate);
-
-        model.addAttribute("actionLabel", "Create Plant");
-        return "createPlant";
+        return "pages/createPlantPage";
     }
 
+    // TODO handle when the gardenId is not for an existing garden (.getGardenById)
+
     /**
-     * Posts a form response with name, location, and size of the garden
+     * Handles POST requests from the /gardens/{gardenId}/plants/create endpoint.
+     * Handles creation of plants
      *
-     * @param gardenId         id of garden that this plant belongs to
-     * @param plantName        the name of the plant
-     * @param plantCount       the amount of this plant in the garden
-     * @param plantDescription a short description of the plant
-     * @param plantedOnDate    the date that the plant was planted on
-     * @param model            (map-like) representation of values for use in thymeleaf, with values being set
-     *                         to relevant parameters provided
-     * @return thymeleaf createPlant if invalid form, gardens/{gardenId} if valid
+     * @param request the HttpServletRequest object containing the request information
+     * @param createPlantForm the PlantForm object representing the garden's new details
+     * @param bindingResult the BindingResult object for validation errors
+     * @param gardenId the id of the garden that the plant is being added to
+     * @return  the view to display:
+     *          - If there are validation errors, stays on the 'Create Plant' form.
+     *          - Else, redirect to the plant's garden's profile page.
      */
     @PostMapping("/gardens/{gardenId}/plants/create")
-    public String gardenCreatePlantPost(@PathVariable("gardenId") Long gardenId,
-                                        @RequestParam(name = "plantName") String plantName,
-                                        @RequestParam(name = "plantCount") String plantCount,
-                                        @RequestParam(name = "plantDescription") String plantDescription,
-                                        @RequestParam(name = "plantedOnDate") String plantedOnDate, Model model) {
+    public String gardenCreatePlantPost(HttpServletRequest request,
+                                        @ModelAttribute("createPlantForm") PlantForm createPlantForm,
+                                        BindingResult bindingResult,
+                                        @PathVariable("gardenId") Long gardenId) {
         logger.info("POST /gardens/" + gardenId + "/plants/create");
 
-        if (ValidityCheck.validPlantForm(plantName, plantCount, plantDescription, plantedOnDate)) {
-            plantedOnDate = plantedOnDate.isBlank() ? ""
-                    : plantedOnDate.split("-")[2] + "/" + plantedOnDate.split("-")[1] + "/"
-                    + plantedOnDate.split("-")[0]; // maybe not necessary
-            Plant addedPlant = plantService.addPlant(
-                    new Plant(plantName, plantCount, plantDescription, plantedOnDate, gardenId));
-            logger.info("Plant created: " + addedPlant);
-            return "redirect:/gardens/" + gardenId;
+        PlantForm.validate(createPlantForm, bindingResult);
+        if (bindingResult.hasErrors()) {
+            return "pages/createPlantPage";
         }
 
-        displayPlantFormErrors(plantName, plantCount, plantDescription, plantedOnDate, model);
+        // this line is actually not strictly needed as spring MVC does this implicitly, but I have left it for the sake
+        // of understanding how the plant 'knows' what garden it belongs to. It appears to be magic otherwise
+        createPlantForm.setGardenId(gardenId);
 
-        model.addAttribute("actionLabel", "Create Plant");
+        Plant plant = createPlantForm.getPlant();
+        plantService.addPlant(plant);
 
-        return "createPlant";
-    }
-
-    /**
-     * A helper function to avoid duplication of code. Both the create & edit forms for a garden
-     * have the exact same error messages so this code is used in both POSTs.
-     *
-     * @param gardenName     name of the garden
-     * @param gardenLocation location of the garden
-     * @param gardenSize     size of the garden
-     * @param model          (map-like) representation of values for use in thymeleaf, with values being set
-     *                       to relevant parameters provided
-     */
-    private void displayGardenFormErrors(String gardenName, String gardenLocation,
-                                         String gardenSize, Model model) {
-        model.addAttribute("gardenName", gardenName);
-        model.addAttribute("gardenLocation", gardenLocation);
-        model.addAttribute("gardenSize", gardenSize);
-
-        Optional<String> validGardenNameCheck = ValidityCheck.validGardenName(gardenName);
-        Optional<String> validGardenLocationCheck =
-                ValidityCheck.validGardenLocation(gardenLocation);
-        Optional<String> validGardenSizeCheck = ValidityCheck.validateGardenSize(gardenSize);
-
-        if (validGardenNameCheck.isPresent()) {
-            model.addAttribute("gardenNameError", validGardenNameCheck.get());
-        } else {
-            model.addAttribute("gardenNameError", "");
-        }
-        if (validGardenLocationCheck.isPresent()) {
-            model.addAttribute("gardenLocationError", validGardenLocationCheck.get());
-        } else {
-            model.addAttribute("gardenLocationError", "");
-        }
-        if (validGardenSizeCheck.isPresent()) {
-            model.addAttribute("gardenSizeError", validGardenSizeCheck.get());
-        } else {
-            model.addAttribute("gardenSizeError", "");
-        }
-    }
-
-    /**
-     * A helper function to avoid duplication of code.
-     *
-     * @param plantName        the name of the plant
-     * @param plantCount       the amount of plants in the garden
-     * @param plantDescription a short description of the plant
-     * @param plantedOnDate    the date that the plant was planted
-     * @param model            (map-like) representation of values for use in thymeleaf, with values being set
-     *                         to relevant parameters provided
-     */
-    private void displayPlantFormErrors(String plantName, String plantCount,
-                                        String plantDescription, String plantedOnDate, Model model) {
-        model.addAttribute("plantName", plantName);
-        model.addAttribute("plantCount", plantCount);
-        model.addAttribute("plantDescription", plantDescription);
-        model.addAttribute("plantedOnDate", plantedOnDate);
-
-        Optional<String> validPlantNameCheck = ValidityCheck.validatePlantName(plantName);
-        Optional<String> validPlantCountCheck = ValidityCheck.validatePlantCount(plantCount);
-        Optional<String> validPlantDescription = ValidityCheck.validatePlantDescription(plantDescription);
-        Optional<String> validPlantedOnDate = ValidityCheck.validateDate(plantedOnDate);
-
-        if (validPlantNameCheck.isPresent()) {
-            model.addAttribute("plantNameError", validPlantNameCheck.get());
-        } else {
-            model.addAttribute("plantNameError", "");
-        }
-        if (validPlantCountCheck.isPresent()) {
-            model.addAttribute("plantCountError", validPlantCountCheck.get());
-        } else {
-            model.addAttribute("plantCountError", "");
-        }
-        if (validPlantDescription.isPresent()) {
-            model.addAttribute("plantDescriptionError", validPlantDescription.get());
-        } else {
-            model.addAttribute("plantDescriptionError", "");
-        }
-        if (validPlantedOnDate.isPresent()) {
-            model.addAttribute("plantedOnDateError", validPlantedOnDate.get());
-        } else {
-            model.addAttribute("plantedOnDateError", "");
-        }
+        logger.info("Plant created: " + plant);
+        return "redirect:/gardens/" + gardenId;
     }
 }

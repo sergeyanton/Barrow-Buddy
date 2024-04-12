@@ -16,16 +16,12 @@
         <p th:if="${dob != null}" th:text="'Date of birth: ' + ${dob}"></p>
         <p th:if="${dob == null}" th:text="'Date of birth: '"></p>
 
-
         <form th:action="@{logout}" method="post">
             <button class=cancel type="submit">Log Out</button>
         </form>
 
         <a th:href="@{editProfile}">Edit profile</a>
-
         <a class="next" th:href="@{.}">Home</a>
-
     </div>
 </body>
-
 </html>

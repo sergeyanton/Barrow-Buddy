@@ -34,7 +34,7 @@ public class PlantEntityTest {
         String newCount = "";
         Plant plant = new Plant();
         plant.setPlantCount(newCount);
-        assertEquals(null, plant.getPlantCount());
+        assertNull(plant.getPlantCount());
     }
 
     @Test
@@ -54,8 +54,8 @@ public class PlantEntityTest {
 
     @Test
     void SetPlantedOnDate_InvalidDateSet_ThrowsDateTimeException() {
-        String dateString = "35/20/2024"; // invalid as no months have 35 days and there are no more
-                                          // than 12 months in a year
+        String dateString = "35/20/2024"; /* invalid as no months have 35 days and there are no more
+                                           than 12 months in a year */
         Plant plant = new Plant();
         assertThrows(DateTimeException.class, () -> plant.setPlantedOnDate(dateString));
     }
