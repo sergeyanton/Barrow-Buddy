@@ -2,8 +2,15 @@ package nz.ac.canterbury.team1000.gardenersgrove.entity;
 
 import jakarta.persistence.*;
 
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 
+import static nz.ac.canterbury.team1000.gardenersgrove.util.Password.hashPassword;
+
+
+/**
+ * This class represents a verification token entity in the application.
+ */
 @Entity
 @Table(name = "verification_token")
 public class VerificationToken {
@@ -21,10 +28,31 @@ public class VerificationToken {
     protected VerificationToken() {
     }
 
-    public VerificationToken(Long userId, String token, LocalDateTime expiryDate) {
+    public VerificationToken(Long userId) {
         this.userId = userId;
-        this.token = token;
-        this.expiryDate = expiryDate;
+        this.token = hashPassword(generateToken());
+        this.expiryDate = calculateExpiryDate();
+    }
+
+    /**
+     * Generates a random 6-digit number for the verification token
+     *
+     * @return the generated token
+     */
+    private String generateToken() {
+        SecureRandom secureRandom = new SecureRandom();
+        int code = secureRandom.nextInt(900000) + 100000; // Generates a random 6-digit number
+        return String.valueOf(code);
+    }
+
+
+    /**
+     * Calculates the expiry date of the token which is 15 minutes from the request time.
+     *
+     * @return the expiry date of the token
+     */
+    private LocalDateTime calculateExpiryDate() {
+        return LocalDateTime.now().plusMinutes(15);
     }
 
     public Long getId() {
