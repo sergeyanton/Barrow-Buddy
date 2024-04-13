@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,15 +20,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import static nz.ac.canterbury.team1000.gardenersgrove.util.Password.verifyPassword;
 import java.time.format.DateTimeFormatter;
 
 @Controller
 public class AccountController {
     Logger logger = LoggerFactory.getLogger(AccountController.class);
     private final UserService userService;
+
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     public AccountController(UserService userService) {
@@ -54,8 +58,6 @@ public class AccountController {
             model.addAttribute("dob",
                     u.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         }
-
-
         return "pages/profilePage";
     }
 
@@ -102,11 +104,11 @@ public class AccountController {
             return "pages/registrationPage";
         }
 
-        User newUser = registrationForm.getUser();
+        User newUser = registrationForm.getUser(passwordEncoder);
         newUser.grantAuthority("ROLE_USER");
         userService.registerUser(newUser);
         userService.authenticateUser(authenticationManager, newUser, request);
-
+        logger.info("Posting user: " + newUser);
         return "redirect:/profile";
     }
 
@@ -150,7 +152,7 @@ public class AccountController {
             String invalidUserError = "The email address is unknown, or the password is invalid";
             if (user == null) {
                 bindingResult.addError(new FieldError("loginForm", "password", loginForm.getPassword(), false, null, null, invalidUserError));
-            } else if (!verifyPassword(loginForm.getPassword(), user.getPassword())) {
+            } else if (!passwordEncoder.matches(loginForm.getPassword(), user.getPassword())) {
                 bindingResult.addError(new FieldError("loginForm", "password", loginForm.getPassword(), false, null, null, invalidUserError));
             }
         }

@@ -2,10 +2,13 @@ package nz.ac.canterbury.team1000.gardenersgrove.controllers;
 
 import nz.ac.canterbury.team1000.gardenersgrove.controller.AccountController;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
+import nz.ac.canterbury.team1000.gardenersgrove.form.LoginForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.RegistrationForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -17,13 +20,11 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
-import java.time.LocalDate;
-
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 @WebMvcTest(AccountController.class)
 @AutoConfigureMockMvc
+@WithMockUser
 class AccountControllerTest {
 
     @Autowired
@@ -38,35 +39,43 @@ class AccountControllerTest {
     @MockBean
     private PasswordEncoder passwordEncoder;
 
-    private static User user;
+    @Mock
+    private User userMock;
 
-    @BeforeAll
-    public static void setup() {
-        user = new User("John", "Doe", "test@example.com", "testPassword123!",
-                LocalDate.of(1990, 1, 1));
+    private RegistrationForm registrationForm;
+
+    private LoginForm loginForm;
+
+    @BeforeEach
+    public void beforeEach() {
+        userMock = Mockito.mock(User.class);
+        Mockito.when(userMock.getFname()).thenReturn("John");
+        Mockito.when(userMock.getLname()).thenReturn("Smith");
+        Mockito.when(userMock.getEmail()).thenReturn("johnsmith@gmail.com");
+        Mockito.when(userMock.getDateOfBirthString()).thenReturn("05/05/1999");
+        Mockito.when(userMock.getPassword()).thenReturn("encoded_password");
+
+        registrationForm = new RegistrationForm();
+        registrationForm.setFirstName(userMock.getFname());
+        registrationForm.setLastName(userMock.getLname());
+        registrationForm.setEmail(userMock.getEmail());
+        registrationForm.setDob(userMock.getDateOfBirthString());
+        registrationForm.setPassword("Pass123$");
+        registrationForm.setRetypePassword("Pass123$");
+        registrationForm.setNoSurnameCheckBox(userMock.getLname() == null || userMock.getLname().isEmpty());
+        Mockito.when(userService.checkEmail(Mockito.any())).thenReturn(false);
     }
 
     @Test
-    @WithMockUser
-    public void registerPostRequest_validUserDetails_userRegisteredAndAuthenticated()
-            throws Exception {
-        RegistrationForm registrationForm = new RegistrationForm();
-        registrationForm.setEmail(user.getEmail());
-        registrationForm.setFirstName(user.getFname());
-        registrationForm.setLastName(user.getLname());
-        registrationForm.setDob(user.getDateOfBirthString());
-        registrationForm.setPassword(user.getPassword());
-        registrationForm.setRetypePassword(user.getPassword());
-        registrationForm.setNoSurnameCheckBox(false);
-
+    public void registerPostRequest_validUserDetails_userRegisteredAndAuthenticated() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
                 .flashAttr("registrationForm", registrationForm))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/profile"));
 
-
         Mockito.verify(userService).registerUser(Mockito.any());
     }
+
 
     @Test
     void login() {}

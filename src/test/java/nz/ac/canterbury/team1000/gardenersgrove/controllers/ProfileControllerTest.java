@@ -71,8 +71,6 @@ public class ProfileControllerTest {
         Mockito.when(userService.checkEmail(Mockito.any())).thenReturn(true);
 
         Mockito.when(passwordEncoder.matches(Mockito.any(), Mockito.any())).thenReturn(true);
-//        Mockito.when(passwordEncoder.encode("Pass123$")).thenReturn("encoded_password");
-
     }
 
     @Test

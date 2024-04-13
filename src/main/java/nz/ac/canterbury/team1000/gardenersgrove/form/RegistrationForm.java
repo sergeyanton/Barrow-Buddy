@@ -1,11 +1,11 @@
 package nz.ac.canterbury.team1000.gardenersgrove.form;
 
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
-import nz.ac.canterbury.team1000.gardenersgrove.util.Password;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.*;
 
@@ -90,12 +90,12 @@ public class RegistrationForm {
      *
      * @return new User with attributes directly from the input values in the form.
      */
-    public User getUser() {
+    public User getUser(PasswordEncoder passwordEncoder) {
         return new User(
                 this.firstName,
                 this.lastName,
                 this.email,
-                Password.hashPassword(this.password),
+                passwordEncoder.encode(this.password),
                 this.getDobLocalDate()
         );
     }
