@@ -1,10 +1,9 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controllers;
 
-import static org.hamcrest.Matchers.hasProperty; // for checking if the edit garden form gets populated properly
-import static org.hamcrest.Matchers.is; // for checking if the edit garden form gets populated properly
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 import nz.ac.canterbury.team1000.gardenersgrove.form.GardenForm;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -16,6 +15,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import nz.ac.canterbury.team1000.gardenersgrove.controller.GardensController;
@@ -23,6 +23,7 @@ import nz.ac.canterbury.team1000.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.team1000.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.PlantService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
+import org.springframework.web.servlet.ModelAndView;
 
 @WebMvcTest(controllers = GardensController.class)
 @AutoConfigureMockMvc
@@ -269,13 +270,15 @@ public class GardenControllerTest {
 
     @Test
     public void EditGardenGet_ValidGarden_FormIsPopulated() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/gardens/1/edit").with(csrf())
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/gardens/1/edit").with(csrf())
                         .flashAttr("editGardenForm", gardenForm))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.model().attribute("editGardenForm", hasProperty("name", is(gardenMock.getName()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("editGardenForm", hasProperty("location", is(gardenMock.getLocation()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("editGardenForm", hasProperty("size", is(gardenMock.getSize().toString()))));
-
+                        .andExpect(MockMvcResultMatchers.status().isOk())
+                        .andReturn();
+        ModelAndView modelAndView = result.getModelAndView();
+        GardenForm modelEditGardenForm = (GardenForm) modelAndView.getModel().get("editGardenForm");
+        Assertions.assertEquals(gardenMock.getName(), modelEditGardenForm.getName());
+        Assertions.assertEquals(gardenMock.getLocation(), modelEditGardenForm.getLocation());
+        Assertions.assertEquals(gardenMock.getSize(), modelEditGardenForm.getSizeDouble());
         Mockito.verify(gardenService).getGardenById(1L);
     }
 }

@@ -1,12 +1,12 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controllers;
 
-import static org.hamcrest.Matchers.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 import nz.ac.canterbury.team1000.gardenersgrove.controller.ProfileController;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.EditUserForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.UpdatePasswordForm;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -18,13 +18,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
 import org.springframework.web.servlet.ModelAndView;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 @WebMvcTest(controllers = ProfileController.class)
 @AutoConfigureMockMvc
@@ -214,20 +212,18 @@ public class ProfileControllerTest {
 
     @Test
     public void EditProfileGet_ValidDetails_FormIsPopulated() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/editProfile").with(csrf())
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/editProfile").with(csrf())
                         .flashAttr("editUserForm", editUserForm))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.model().attribute("editUserForm", hasProperty("firstName", is(userMock.getFname()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("editUserForm", hasProperty("lastName", is(userMock.getLname()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("editUserForm", hasProperty("noSurnameCheckBox", is(userMock.getLname() == null || userMock.getLname().isEmpty()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("editUserForm", hasProperty("email", is(userMock.getEmail()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("editUserForm", hasProperty("dob", is(userMock.getDateOfBirthString()))));
+                .andReturn();
 
-        System.out.println(userMock.getFname());
-        System.out.println(userMock.getLname());
-        System.out.println(userMock.getEmail());
-        System.out.println(userMock.getDateOfBirthString());
-        System.out.println(userMock.getPassword());
+        ModelAndView modelAndView = result.getModelAndView();
+        EditUserForm modelEditUserForm = (EditUserForm) modelAndView.getModel().get("editUserForm");
+        Assertions.assertEquals(userMock.getFname(), modelEditUserForm.getFirstName());
+        Assertions.assertEquals(userMock.getLname(), modelEditUserForm.getLastName());
+        Assertions.assertEquals(userMock.getEmail(), modelEditUserForm.getEmail());
+        Assertions.assertEquals(userMock.getLname() == null || userMock.getLname().isEmpty(), modelEditUserForm.getNoSurnameCheckBox());
+        Assertions.assertEquals(userMock.getDateOfBirthString(), modelEditUserForm.getDob());
         Mockito.verify(userService).getLoggedInUser();
     }
 }
