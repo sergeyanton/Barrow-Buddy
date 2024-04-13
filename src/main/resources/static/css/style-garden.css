@@ -13,33 +13,14 @@ nav {
 }
 
 nav ul {
-    max-width: 1000px;
-    margin: auto;
     display: flex;
-    gap: 25px;
+    justify-content: center;
     list-style-type: none;
 }
 
 nav ul li {
-    display: block;
+    /*display: block;*/
     position: relative;
-}
-
-nav ul li ul {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background-color: #50ce50;
-}
-
-nav ul li ul li a {
-    font-size: 16px;
-    margin: auto;
-}
-
-nav ul li:hover ul {
-    display: block;
 }
 
 nav ul li a {
@@ -55,6 +36,25 @@ nav ul li a.active {
 
 nav ul li a:hover {
     background: forestgreen;
+}
+
+nav ul li ul {
+    display: none;
+    position: absolute;
+    top: 100%;
+    background-color: #50ce50;
+}
+
+nav ul li ul li a {
+    font-size: 16px;
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+nav ul li:hover ul {
+    display: block;
 }
 
 /* Main content */
@@ -75,24 +75,12 @@ main {
     border-radius: 10px;
 }
 
-.content > *,
+h1,
+.content > div,
 input,
 button {
     padding: 5px;
     margin-bottom: 5px;
-}
-
-th {
-    text-align: left;
-    text-decoration: underline;
-}
-
-td {
-    padding: 5px 0;
-    max-width: 200px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 .form-element {
@@ -103,4 +91,47 @@ td {
 
 .error {
     color: red;
+}
+
+/* Tables */
+
+table {
+    border-spacing: 0;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+
+table thead {
+    color: white;
+    background: forestgreen;
+    position: sticky;
+    top: 0;
+}
+
+table tbody {
+    background: #e6e6e6;
+}
+
+/*table th {*/
+/*    */
+/*}*/
+
+td {
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.scroll-plants-container {
+    padding: 0 !important;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.scroll-plants-container > table {
+    width: 100%
 }
