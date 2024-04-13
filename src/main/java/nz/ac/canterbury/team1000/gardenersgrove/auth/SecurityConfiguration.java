@@ -63,7 +63,7 @@ public class SecurityConfiguration {
                         // access to
                         // stylesheets
                         .requestMatchers("/", "/gardens/**", "/hello", "/register", "/login",
-                                "/css/**")
+                                "/css/**", "/images/**")
                         .permitAll()
                         // Only allow admins to reach the "/admin" page
                         .requestMatchers("/admin")
@@ -79,6 +79,5 @@ public class SecurityConfiguration {
                 .logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/")
                         .invalidateHttpSession(true).deleteCookies("JSESSIONID"));
         return http.build();
-
     }
 }
