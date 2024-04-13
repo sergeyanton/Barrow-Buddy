@@ -15,7 +15,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import nz.ac.canterbury.team1000.gardenersgrove.controller.GardensController;
+import nz.ac.canterbury.team1000.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Plant;
+import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.PlantService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
@@ -46,18 +48,31 @@ public class PlantsControllerTest {
 
     private PlantForm plantForm;
 
+    @Mock
+    private User loggedInUser;
+
+    @Mock
+    private Garden gardenMock;
+
     @BeforeEach
     public void BeforeEach() {
+        loggedInUser = Mockito.mock(User.class);
+        Mockito.when(userService.getLoggedInUser()).thenReturn(loggedInUser);
+        Mockito.when(loggedInUser.getId()).thenReturn(1L);
+
+        gardenMock = Mockito.mock(Garden.class);
+        Mockito.when(gardenService.getGardenById(1L)).thenReturn(gardenMock);
+        Mockito.when(gardenMock.getId()).thenReturn(1L);
+        Mockito.when(gardenMock.getOwner()).thenReturn(loggedInUser);
+
         plantMock = Mockito.mock(Plant.class);
         Mockito.when(plantMock.getId()).thenReturn(1L);
-//        Mockito.when(plantMock.getGardenId()).thenReturn(1L);
 
         plantForm = new PlantForm();
         plantForm.setName("Red Rose");
         plantForm.setPlantCount("5");
         plantForm.setDescription("It is red and smells like roses");
         plantForm.setPlantedOnDate("25/12/2023");
-//        plantForm.setGardenId(1L);
 
         // Mock addPlant(), updatePlant(), and getPlantById to always simply use id = 1
         Mockito.when(plantService.addPlant(Mockito.any(Plant.class))).thenAnswer(invocation -> {

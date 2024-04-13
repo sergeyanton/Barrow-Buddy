@@ -6,14 +6,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.repository.GardenRepository;
 import nz.ac.canterbury.team1000.gardenersgrove.service.GardenService;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 @DataJpaTest
 @Import(GardenService.class)
 public class GardenServiceTest {
+    User testUser = new User(
+        "first",
+        "last",
+        "email",
+        "password",
+        LocalDate.of(2003, 8, 19)
+    );
 
     @Test
     public void simpleTest() {
@@ -85,8 +94,13 @@ public class GardenServiceTest {
             public void deleteAll() {
 
             }
+
+            @Override
+            public List<Garden> findByOwnerId(long ownerId) {
+                return null;
+            }
         });
-        gardenService.addGarden(new Garden("My Garden", "My House", 9000.0));
+        gardenService.addGarden(new Garden("My Garden", "My House", 9000.0, testUser));
     }
 
     @Autowired
@@ -95,7 +109,7 @@ public class GardenServiceTest {
     @Test
     public void simpleTest2() {
         GardenService gardenService = new GardenService(gardenRepository);
-        Garden result = gardenService.addGarden(new Garden("My Garden", "My House", 9000.0));
+        Garden result = gardenService.addGarden(new Garden("My Garden", "My House", 9000.0, testUser));
         Assertions.assertEquals(result.getName(), "My Garden");
     }
 }
