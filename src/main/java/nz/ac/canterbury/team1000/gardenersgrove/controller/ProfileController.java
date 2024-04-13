@@ -7,23 +7,18 @@ import nz.ac.canterbury.team1000.gardenersgrove.form.UpdatePasswordForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
 import nz.ac.canterbury.team1000.gardenersgrove.util.Password;
 
-import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.checkBlank;
+import static nz.ac.canterbury.team1000.gardenersgrove.util.Password.verifyPassword;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-
-import java.time.format.DateTimeFormatter;
-
 
 @Controller
 public class ProfileController {
@@ -47,9 +42,7 @@ public class ProfileController {
     @GetMapping("/editProfile")
     public String getEditProfilePage(@ModelAttribute("editUserForm") EditUserForm editUserForm) {
         logger.info("GET /editProfile");
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentPrincipalName = authentication.getName();
-        User currentUser = userService.findEmail(currentPrincipalName);
+        User currentUser = userService.getLoggedInUser();
 
         editUserForm.setFirstName(currentUser.getFname());
         editUserForm.setLastName(currentUser.getLname());
@@ -74,10 +67,7 @@ public class ProfileController {
                               @ModelAttribute("editUserForm") EditUserForm editUserForm,
                               BindingResult bindingResult) {
         logger.info("POST /editProfile");
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentPrincipalName = authentication.getName();
-
-        User currentUser = userService.findEmail(currentPrincipalName);
+        User currentUser = userService.getLoggedInUser();
         String oldEmail = currentUser.getEmail();
 
         EditUserForm.validate(editUserForm, bindingResult, currentUser);
@@ -108,27 +98,44 @@ public class ProfileController {
      * @return a string that represents the link to the update password page
      */
     @GetMapping("/editProfile/updatePassword")
-    public String getUpdatePassword(UpdatePasswordForm updatePasswordForm) {
+    public String getUpdatePassword(@ModelAttribute("updatePasswordForm") UpdatePasswordForm updatePasswordForm) {
         logger.info("GET /editProfile/updatePassword");
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentPrincipalName = authentication.getName();
-        User currentUser = userService.findEmail(currentPrincipalName);
+//        User currentUser = userService.getLoggedInUser();
 
-        updatePasswordForm.setFormUser(currentUser);
+
 
         return "pages/updatePasswordPage";
     }
 
     /**
-     * This method is used to check the old and new password entered by the user and if it is valid,
-     * updates the user's password to the new password
-     * 
-     * @param updatePasswordForm the form used to update the user's password
-     * @return A string that represents the link to the profile page
+     * Handles POST requests to the /editProfile/updatePassword endpoint.
+     * Changes the password for the user, if they enter the password they currently have.
+     *
+     * @param request the HttpServletRequest object containing the request information
+     * @param updatePasswordForm the UpdatePasswordForm object representing the password fields
+     * @param bindingResult the BindingResult object for validation errors
+     * @return a String representing the view to display after login:
+     *         - If there are validation errors, returns the login page to display errors.
+     *         - If login is successful, redirects to the application's home page.
      */
     @PostMapping("/editProfile/updatePassword")
-    public String postUpdatePassword(HttpServletRequest request, UpdatePasswordForm updatePasswordForm) {
+    public String postUpdatePassword(HttpServletRequest request,
+                                     @ModelAttribute("updatePasswordForm") UpdatePasswordForm updatePasswordForm,
+                                     BindingResult bindingResult) {
         logger.info("POST /editProfile/updatePassword");
+        User currentUser = userService.getLoggedInUser();
+        UpdatePasswordForm.validate(updatePasswordForm, bindingResult);
+
+        if (!(bindingResult.hasFieldErrors("password")) && !verifyPassword(updatePasswordForm.getPassword(), currentUser.getPassword())) {
+            bindingResult.addError(new FieldError("updatePasswordForm", "password", updatePasswordForm.getPassword(), false, null, null, "Your old password is incorrect"));
+        }
+
+        if (bindingResult.hasErrors()) {
+            return "pages/updatePasswordPage";
+        }
+
+        currentUser.setPassword(Password.hashPassword(updatePasswordForm.getNewPassword()));
+        userService.updateUserByEmail(currentUser.getEmail(), currentUser);
 
         return "redirect:/editProfile";
     }

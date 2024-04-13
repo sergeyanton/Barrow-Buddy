@@ -131,8 +131,8 @@ public class AccountController {
      * @param loginForm the LoginForm object representing the user's login data
      * @param bindingResult the BindingResult object for validation errors
      * @return a String representing the view to display after login:
-     *      *  *         - If there are validation errors, returns the login page to display errors.
-     *      *  *         - If login is successful, redirects to the application's home page.
+     *         - If there are validation errors, returns the login page to display errors.
+     *         - If login is successful, redirects to the application's home page.
      */
     @PostMapping("/login")
     public String login(HttpServletRequest request,
