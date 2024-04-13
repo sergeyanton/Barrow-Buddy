@@ -40,5 +40,22 @@
             <div><a th:href="@{/gardens}">Back to My Gardens</a></div>
         </div>
     </main>
+    <!--    TODO THIS WOULD BE VERY GOOD TO FIGURE OUT SO WE DON'T HAVE JS IN HTML FILES -->
+<!--    <script th:src="@{/js/plantsTableScrollAfter10Plants.js}" type="text/javascript"></script>-->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const container = document.querySelector(".scroll-plants-container");
+            const table = container.querySelector("table");
+            let height = table.querySelector("thead").getBoundingClientRect().height;
+
+            for (let i = 0; i < 10; i++) {
+                if (table.rows[i]) {
+                    height += table.rows[i].getBoundingClientRect().height;
+                }
+            }
+
+            container.style.maxHeight = height + "px";
+        });
+    </script>
 </body>
 </html>

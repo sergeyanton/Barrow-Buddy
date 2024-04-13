@@ -1,5 +1,14 @@
 INSERT INTO garden (name, location, size) VALUES ('GardenWith12Plants', 'Springfield', 10);
+INSERT INTO garden (name, location, size) VALUES ('GardenWith10Plants', 'Springfield', 10);
 INSERT INTO garden (name, location, size) VALUES ('TestGarden', 'TestLocation', 1);
+INSERT INTO plant (name, plant_count, description, planted_on_date, garden_id) VALUES ('Plant', 1, 'Its green', '2023-01-01', 2);
+INSERT INTO plant (name, plant_count, description, planted_on_date, garden_id) VALUES ('Plant', 1, 'Its green', '2023-01-01', 2);
+INSERT INTO plant (name, plant_count, description, planted_on_date, garden_id) VALUES ('Plant', 1, 'Its green', '2023-01-01', 2);
+INSERT INTO plant (name, plant_count, description, planted_on_date, garden_id) VALUES ('Plant', 1, 'Its green', '2023-01-01', 2);
+INSERT INTO plant (name, plant_count, description, planted_on_date, garden_id) VALUES ('Plant', 1, 'Its green', '2023-01-01', 2);
+INSERT INTO plant (name, plant_count, description, planted_on_date, garden_id) VALUES ('Plant', 1, 'Its green', '2023-01-01', 2);
+INSERT INTO plant (name, plant_count, description, planted_on_date, garden_id) VALUES ('Plant', 1, 'Its green', '2023-01-01', 2);
+INSERT INTO plant (name, plant_count, description, planted_on_date, garden_id) VALUES ('Plant', 1, 'Its green', '2023-01-01', 2);
 INSERT INTO plant (name, plant_count, description, planted_on_date, garden_id) VALUES ('Plant', 1, 'Its green', '2023-01-01', 2);
 INSERT INTO plant (name, plant_count, description, planted_on_date, garden_id) VALUES ('Plant', 1, 'Its green', '2023-01-01', 2);
 INSERT INTO garden (name, location, size) VALUES ('Woohoo', 'Yeah', 30.5);
