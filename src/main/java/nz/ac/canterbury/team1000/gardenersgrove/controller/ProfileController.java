@@ -100,10 +100,6 @@ public class ProfileController {
     @GetMapping("/editProfile/updatePassword")
     public String getUpdatePassword(@ModelAttribute("updatePasswordForm") UpdatePasswordForm updatePasswordForm) {
         logger.info("GET /editProfile/updatePassword");
-//        User currentUser = userService.getLoggedInUser();
-
-
-
         return "pages/updatePasswordPage";
     }
 

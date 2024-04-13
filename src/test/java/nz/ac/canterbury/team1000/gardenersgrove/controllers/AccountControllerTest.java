@@ -1,4 +1,4 @@
-package nz.ac.canterbury.team1000.gardenersgrove;
+package nz.ac.canterbury.team1000.gardenersgrove.controllers;
 
 import nz.ac.canterbury.team1000.gardenersgrove.controller.AccountController;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;

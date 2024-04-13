@@ -63,7 +63,7 @@ public class SecurityConfiguration {
                         // access to
                         // stylesheets
                         .requestMatchers("/", "/gardens/**", "/hello", "/register", "/login",
-                                "/css/**")
+                                "/css/**", "/editProfile")
                         .permitAll()
                         // Only allow admins to reach the "/admin" page
                         .requestMatchers("/admin")
