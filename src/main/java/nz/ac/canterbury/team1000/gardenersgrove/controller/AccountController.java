@@ -108,7 +108,6 @@ public class AccountController {
         newUser.grantAuthority("ROLE_USER");
         userService.registerUser(newUser);
         userService.authenticateUser(authenticationManager, newUser, request);
-        logger.info("Posting user: " + newUser);
         return "redirect:/profile";
     }
 
