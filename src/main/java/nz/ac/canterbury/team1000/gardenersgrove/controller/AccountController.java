@@ -71,7 +71,7 @@ public class AccountController {
      *         - Else, go to the registration page, where the user can create a new account
      */
     @GetMapping("/register")
-    public String getRegisterPage(@ModelAttribute RegistrationForm registrationForm) {
+    public String getRegisterPage(@ModelAttribute("registrationForm") RegistrationForm registrationForm) {
         logger.info("GET /register");
         return userService.isSignedIn() ? "redirect:/" : "pages/registrationPage";
     }
@@ -89,7 +89,9 @@ public class AccountController {
      *         - If registration is successful, redirects to the user's profile page.
      */
     @PostMapping("/register")
-    public String register(HttpServletRequest request, @ModelAttribute("registrationForm") RegistrationForm registrationForm, BindingResult bindingResult) {
+    public String register(HttpServletRequest request,
+                           @ModelAttribute("registrationForm") RegistrationForm registrationForm,
+                           BindingResult bindingResult) {
         RegistrationForm.validate(registrationForm, bindingResult);
 
         if (!bindingResult.hasFieldErrors("email") && userService.checkEmail(registrationForm.getEmail())) {
@@ -116,7 +118,7 @@ public class AccountController {
      * @return thymeleaf loginPage
      */
     @GetMapping("/login")
-    public String getLoginPage(LoginForm loginForm) {
+    public String getLoginPage(@ModelAttribute("loginForm") LoginForm loginForm) {
         logger.info("GET /login");
         return userService.isSignedIn() ? "redirect:/" : "pages/loginPage";
     }
@@ -133,7 +135,9 @@ public class AccountController {
      *      *  *         - If login is successful, redirects to the application's home page.
      */
     @PostMapping("/login")
-    public String login(HttpServletRequest request, @ModelAttribute("loginForm") LoginForm loginForm, BindingResult bindingResult) {
+    public String login(HttpServletRequest request,
+                        @ModelAttribute("loginForm") LoginForm loginForm,
+                        BindingResult bindingResult) {
         if (userService.isSignedIn()) {
             return "redirect:/";
         }

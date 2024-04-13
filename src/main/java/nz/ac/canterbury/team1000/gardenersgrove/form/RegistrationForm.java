@@ -59,8 +59,7 @@ public class RegistrationForm {
 
     public LocalDate getDobLocalDate() {
         try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            return LocalDate.parse(dob, formatter);
+            return LocalDate.parse(dob, VALID_DATE_FORMAT);
         } catch (DateTimeParseException e) {
             return null;
         }
@@ -88,15 +87,16 @@ public class RegistrationForm {
 
     /**
      * Generates a User object with the values from the form.
+     *
      * @return new User with attributes directly from the input values in the form.
      */
     public User getUser() {
         return new User(
-            this.firstName,
-            this.lastName,
-            this.email,
-            Password.hashPassword(this.password),
-            this.getDobLocalDate()
+                this.firstName,
+                this.lastName,
+                this.email,
+                Password.hashPassword(this.password),
+                this.getDobLocalDate()
         );
     }
 
@@ -133,8 +133,7 @@ public class RegistrationForm {
         // Validate email
         if (checkBlank(registrationForm.getEmail()) || checkEmailIsInvalid(registrationForm.getEmail())) {
             errors.add("email", "Email address must be in the form ‘jane@doe.nz’", registrationForm.getEmail());
-        }
-        else if (checkOverMaxLength(registrationForm.getEmail(), MAX_DB_STR_LEN)) {
+        } else if (checkOverMaxLength(registrationForm.getEmail(), MAX_DB_STR_LEN)) {
             errors.add("email", "Email address must be 255 characters long or less", registrationForm.getEmail());
         }
 
@@ -150,17 +149,17 @@ public class RegistrationForm {
             errors.add("retypePassword", "Passwords do not match", registrationForm.getRetypePassword());
         }
 
-        // Validate date of birth
-        if (checkBlank(registrationForm.getDob())) {
-        } else if (checkDateNotInCorrectFormat(registrationForm.getDob())) {
-            errors.add("dob", "Date in not in valid format, DD/MM/YYYY", registrationForm.getDob());
-        } else if (!checkDateBefore(registrationForm.getDob(), LocalDate.now().plusDays(1))) {
-            errors.add("dob", "Date cannot be in the future", registrationForm.getDob());
-        } else if (!checkDateBefore(registrationForm.getDob(), LocalDate.now().minusYears(13).plusDays(1))) {
-            errors.add("dob", "You must be 13 years or older to create an account", registrationForm.getDob());
-        } else if (checkDateBefore(registrationForm.getDob(), LocalDate.now().minusYears(120))) {
-            errors.add("dob", "The maximum age allowed is 120 years", registrationForm.getDob());
+        // Validate date of birth (if there is one)
+        if (!checkBlank(registrationForm.getDob())) {
+            if (checkDateNotInCorrectFormat(registrationForm.getDob())) {
+                errors.add("dob", "Date in not in valid format, DD/MM/YYYY", registrationForm.getDob());
+            } else if (!checkDateBefore(registrationForm.getDob(), LocalDate.now().plusDays(1))) {
+                errors.add("dob", "Date cannot be in the future", registrationForm.getDob());
+            } else if (!checkDateBefore(registrationForm.getDob(), LocalDate.now().minusYears(13).plusDays(1))) {
+                errors.add("dob", "You must be 13 years or older to create an account", registrationForm.getDob());
+            } else if (checkDateBefore(registrationForm.getDob(), LocalDate.now().minusYears(120))) {
+                errors.add("dob", "The maximum age allowed is 120 years", registrationForm.getDob());
+            }
         }
     }
-
 }

@@ -19,7 +19,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import java.time.format.DateTimeFormatter;
 
 
 @Controller
@@ -42,13 +45,17 @@ public class ProfileController {
      * @return A string that represents the link to the profile page
      */
     @GetMapping("/editProfile")
-    public String getEditProfilePage(EditUserForm editUserForm) {
+    public String getEditProfilePage(@ModelAttribute("editUserForm") EditUserForm editUserForm) {
         logger.info("GET /editProfile");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
         User currentUser = userService.findEmail(currentPrincipalName);
 
-        editUserForm.setFromUser(currentUser);
+        editUserForm.setFirstName(currentUser.getFname());
+        editUserForm.setLastName(currentUser.getLname());
+        editUserForm.setEmail(currentUser.getEmail());
+        if (currentUser.getDateOfBirth() != null) editUserForm.setDob(currentUser.getDateOfBirthString());
+        editUserForm.setNoSurnameCheckBox(editUserForm.getLastName() == null || editUserForm.getLastName().isEmpty());
 
         return "pages/editProfilePage";
     }
@@ -63,7 +70,9 @@ public class ProfileController {
      * @return A string that represents the link to the profile page
      */
     @PostMapping("/editProfile")
-    public String editProfile(HttpServletRequest request, EditUserForm editUserForm, BindingResult bindingResult) {
+    public String editProfile(HttpServletRequest request,
+                              @ModelAttribute("editUserForm") EditUserForm editUserForm,
+                              BindingResult bindingResult) {
         logger.info("POST /editProfile");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
@@ -81,12 +90,15 @@ public class ProfileController {
             return "pages/editProfilePage";
         }
 
-        currentUser.setFname(editUserForm.getFirstName());
-        currentUser.setLname(editUserForm.getLastName());
-        currentUser.setEmail(editUserForm.getEmail());
+        User edit = editUserForm.getUser();
+
+        currentUser.setFname(edit.getFname());
+        currentUser.setLname(edit.getLname());
+        currentUser.setEmail(edit.getEmail());
         if (!editUserForm.getPassword().isEmpty()) {
-            currentUser.setPassword(Password.hashPassword(editUserForm.getPassword()));
+            currentUser.setPassword(edit.getPassword());
         }
+        currentUser.setDateOfBirth(edit.getDateOfBirth());
 
         userService.updateUserByEmail(oldEmail, currentUser);
         userService.authenticateUser(authenticationManager, currentUser, request);

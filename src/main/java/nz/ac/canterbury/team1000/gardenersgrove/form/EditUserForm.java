@@ -7,16 +7,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class EditUserForm extends RegistrationForm {
-    public void setFromUser(User user) {
-        this.firstName = user.getFname();
-        this.lastName = user.getLname();
-        this.email = user.getEmail();
-        this.dob = user.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-        this.noSurnameCheckBox = this.lastName == null || this.lastName.isEmpty();
-        this.password = "";
-        this.retypePassword = "";
-    }
-
     /**
      * Validates the EditUserForm object and adds any errors to the BindingResult.
      * 
@@ -30,21 +20,21 @@ public class EditUserForm extends RegistrationForm {
 
         // Validate first name
         if (checkBlank(editUserForm.getFirstName())) {
-            errors.add("firstName", "{First/Last} name cannot be empty", editUserForm.getFirstName());
+            errors.add("firstName", "First name cannot be empty", editUserForm.getFirstName());
         } else if (checkOverMaxLength(editUserForm.getFirstName(), 64)) {
-            errors.add("firstName", "{First/Last} name must be 64 characters long or less", editUserForm.getFirstName());
+            errors.add("firstName", "First name must be 64 characters long or less", editUserForm.getFirstName());
         } else if (!checkOnlyHasLettersSpacesHyphensApostrophes(editUserForm.getFirstName())) {
-            errors.add("firstName", "{First/Last} name must only include letters, spaces, hyphens or apostrophes", editUserForm.getFirstName());
+            errors.add("firstName", "First name must only include letters, spaces, hyphens or apostrophes", editUserForm.getFirstName());
         }
 
         // Validate last name only if checkbox is not checked
         if (!editUserForm.getNoSurnameCheckBox()) {
             if (checkBlank(editUserForm.getLastName())) {
-                errors.add("lastName", "{First/Last} name cannot be empty", editUserForm.getLastName());
+                errors.add("lastName", "Last name cannot be empty", editUserForm.getLastName());
             } else if (checkOverMaxLength(editUserForm.getLastName(), 64)) {
-                errors.add("lastName", "{First/Last} name must be 64 characters long or less", editUserForm.getLastName());
+                errors.add("lastName", "Last name must be 64 characters long or less", editUserForm.getLastName());
             } else if (!checkOnlyHasLettersSpacesHyphensApostrophes(editUserForm.getLastName())) {
-                errors.add("lastName", "{First/Last} name must only include letters, spaces, hyphens or apostrophes", editUserForm.getLastName());
+                errors.add("lastName", "Last name must only include letters, spaces, hyphens or apostrophes", editUserForm.getLastName());
             }
         }
 
@@ -68,15 +58,17 @@ public class EditUserForm extends RegistrationForm {
             }
         }
 
-        // Validate date of birth
-        if (checkDateNotInCorrectFormat(editUserForm.getDob()) || checkBlank(editUserForm.getDob())) {
-            errors.add("dob", "Date in not in valid format, DD/MM/YYYY", editUserForm.getDob());
-        } else if (!checkDateBefore(editUserForm.getDob(), LocalDate.now().plusDays(1))) {
-            errors.add("dob", "Date cannot be in the future", editUserForm.getDob());
-        } else if (!checkDateBefore(editUserForm.getDob(), LocalDate.now().minusYears(13).plusDays(1))) {
-            errors.add("dob", "You must be 13 years or older to create an account", editUserForm.getDob());
-        } else if (checkDateBefore(editUserForm.getDob(), LocalDate.now().minusYears(120).plusDays(1))) {
-            errors.add("dob", "The maximum age allowed is 120 years", editUserForm.getDob());
+        // Validate date of birth (if there is one)
+        if (!checkBlank(editUserForm.getDob())) {
+            if (checkDateNotInCorrectFormat(editUserForm.getDob())) {
+                errors.add("dob", "Date in not in valid format, DD/MM/YYYY", editUserForm.getDob());
+            } else if (!checkDateBefore(editUserForm.getDob(), LocalDate.now().plusDays(1))) {
+                errors.add("dob", "Date cannot be in the future", editUserForm.getDob());
+            } else if (!checkDateBefore(editUserForm.getDob(), LocalDate.now().minusYears(13).plusDays(1))) {
+                errors.add("dob", "You must be 13 years or older to create an account", editUserForm.getDob());
+            } else if (checkDateBefore(editUserForm.getDob(), LocalDate.now().minusYears(120))) {
+                errors.add("dob", "The maximum age allowed is 120 years", editUserForm.getDob());
+            }
         }
     }
 }
