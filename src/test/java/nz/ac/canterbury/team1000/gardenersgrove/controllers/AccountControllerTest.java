@@ -5,7 +5,6 @@ import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.LoginForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.RegistrationForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -67,15 +66,240 @@ class AccountControllerTest {
     }
 
     @Test
-    public void registerPostRequest_validUserDetails_userRegisteredAndAuthenticated() throws Exception {
+    public void RegisterPostRequest_ValidDetails_UserRegisteredAndAuthenticated() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
                 .flashAttr("registrationForm", registrationForm))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/profile"));
 
         Mockito.verify(userService).registerUser(Mockito.any());
+        Mockito.verify(userService).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
     }
 
+    @Test
+    public void RegisterPostRequest_ValidDetailsEmptyDate_UserRegisteredAndAuthenticated() throws Exception {
+        registrationForm.setDob("");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
+                        .flashAttr("registrationForm", registrationForm))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/profile"));
+
+        Mockito.verify(userService).registerUser(Mockito.any());
+        Mockito.verify(userService).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+    @Test
+    public void RegisterPostRequest_ValidDetailsNoLastName_UserRegisteredAndAuthenticated() throws Exception {
+        registrationForm.setLastName("");
+        registrationForm.setNoSurnameCheckBox(true);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
+                        .flashAttr("registrationForm", registrationForm))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/profile"));
+
+        Mockito.verify(userService).registerUser(Mockito.any());
+        Mockito.verify(userService).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void RegisterPostRequest_InvalidFirstNameEmpty_HasFieldErrors() throws Exception {
+        registrationForm.setFirstName("");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
+                        .flashAttr("registrationForm", registrationForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/registrationPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "firstName"));
+
+        Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
+        Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void RegisterPostRequest_InvalidFirstName_HasFieldErrors() throws Exception {
+        registrationForm.setFirstName("Jeff3");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
+                        .flashAttr("registrationForm", registrationForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/registrationPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "firstName"));
+
+        Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
+        Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void RegisterPostRequest_InvalidFirstNameLong_HasFieldErrors() throws Exception {
+        registrationForm.setFirstName("J".repeat(65));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
+                        .flashAttr("registrationForm", registrationForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/registrationPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "firstName"));
+
+        Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
+        Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void RegisterPostRequest_InvalidLastName_HasFieldErrors() throws Exception {
+        registrationForm.setLastName("John6");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
+                        .flashAttr("registrationForm", registrationForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/registrationPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "lastName"));
+
+        Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
+        Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void RegisterPostRequest_InvalidLastNameLong_HasFieldErrors() throws Exception {
+        registrationForm.setLastName("J".repeat(65));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
+                        .flashAttr("registrationForm", registrationForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/registrationPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "lastName"));
+
+        Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
+        Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void RegisterPostRequest_InvalidEmailEmpty_HasFieldErrors() throws Exception {
+        registrationForm.setEmail("");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
+                        .flashAttr("registrationForm", registrationForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/registrationPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "email"));
+
+        Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
+        Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void RegisterPostRequest_InvalidEmail_HasFieldErrors() throws Exception {
+        registrationForm.setEmail("BadEmail");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
+                        .flashAttr("registrationForm", registrationForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/registrationPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "email"));
+
+        Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
+        Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void RegisterPostRequest_InvalidEmailLong_HasFieldErrors() throws Exception {
+        registrationForm.setEmail("A".repeat(246) + "@gmail.com");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
+                        .flashAttr("registrationForm", registrationForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/registrationPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "email"));
+
+        Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
+        Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void RegisterPostRequest_InvalidEmailTaken_HasFieldErrors() throws Exception {
+        Mockito.when(userService.checkEmail(Mockito.any())).thenReturn(true);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
+                        .flashAttr("registrationForm", registrationForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/registrationPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "email"));
+
+        Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
+        Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void RegisterPostRequest_InvalidDateLeapDay_HasFieldErrors() throws Exception {
+        registrationForm.setDob("29/02/2001");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
+                        .flashAttr("registrationForm", registrationForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/registrationPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "dob"));
+
+        Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
+        Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void RegisterPostRequest_InvalidDate_HasFieldErrors() throws Exception {
+        registrationForm.setDob("invaliddate");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
+                        .flashAttr("registrationForm", registrationForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/registrationPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "dob"));
+
+        Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
+        Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void RegisterPostRequest_InvalidPasswordEmpty_HasFieldErrors() throws Exception {
+        registrationForm.setPassword("");
+        registrationForm.setRetypePassword("");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
+                        .flashAttr("registrationForm", registrationForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/registrationPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "password"));
+
+        Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
+        Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void RegisterPostRequest_InvalidPassword_HasFieldErrors() throws Exception {
+        registrationForm.setPassword("weakpass123");
+        registrationForm.setRetypePassword("weakpass123");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
+                        .flashAttr("registrationForm", registrationForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/registrationPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "password"));
+
+        Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
+        Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void RegisterPostRequest_InvalidPasswordNoMatch_HasFieldErrors() throws Exception {
+        registrationForm.setPassword("GoodPass123#");
+        registrationForm.setRetypePassword("DifferentGoodPass123#");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
+                        .flashAttr("registrationForm", registrationForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/registrationPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "retypePassword"));
+
+        Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
+        Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
 
     @Test
     void login() {}

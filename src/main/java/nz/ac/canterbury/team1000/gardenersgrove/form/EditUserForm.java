@@ -1,6 +1,5 @@
 package nz.ac.canterbury.team1000.gardenersgrove.form;
 
-import nz.ac.canterbury.team1000.gardenersgrove.util.Password;
 import org.springframework.validation.BindingResult;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.*;
