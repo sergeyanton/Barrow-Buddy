@@ -5,14 +5,12 @@ import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.EditUserForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.UpdatePasswordForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
-import nz.ac.canterbury.team1000.gardenersgrove.util.Password;
-
-import static nz.ac.canterbury.team1000.gardenersgrove.util.Password.verifyPassword;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -29,6 +27,9 @@ public class ProfileController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     private final UserService userService;
 
     Logger logger = LoggerFactory.getLogger(ProfileController.class);
@@ -122,7 +123,7 @@ public class ProfileController {
         User currentUser = userService.getLoggedInUser();
         UpdatePasswordForm.validate(updatePasswordForm, bindingResult);
 
-        if (!(bindingResult.hasFieldErrors("password")) && !verifyPassword(updatePasswordForm.getPassword(), currentUser.getPassword())) {
+        if (!(bindingResult.hasFieldErrors("password")) && !passwordEncoder.matches(updatePasswordForm.getPassword(), currentUser.getPassword())) {
             bindingResult.addError(new FieldError("updatePasswordForm", "password", updatePasswordForm.getPassword(), false, null, null, "Your old password is incorrect"));
         }
 
@@ -130,9 +131,9 @@ public class ProfileController {
             return "pages/updatePasswordPage";
         }
 
-        currentUser.setPassword(Password.hashPassword(updatePasswordForm.getNewPassword()));
+        currentUser.setPassword(passwordEncoder.encode(updatePasswordForm.getNewPassword()));
         userService.updateUserByEmail(currentUser.getEmail(), currentUser);
 
-        return "redirect:/editProfile";
+        return "redirect:/profile";
     }
 }

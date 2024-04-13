@@ -54,11 +54,14 @@ public class GardenControllerTest {
     public void BeforeEach() {
         gardenMock = Mockito.mock(Garden.class);
         Mockito.when(gardenMock.getId()).thenReturn(1L);
+        Mockito.when(gardenMock.getName()).thenReturn("Hamilton Gardens");
+        Mockito.when(gardenMock.getLocation()).thenReturn("Hamilton");
+        Mockito.when(gardenMock.getSize()).thenReturn(46.2);
 
         gardenForm = new GardenForm();
-        gardenForm.setName("Hamilton Gardens");
-        gardenForm.setLocation("Hamilton");
-        gardenForm.setSize("46.2");
+        gardenForm.setName(gardenMock.getName());
+        gardenForm.setLocation(gardenMock.getLocation());
+        gardenForm.setSize(gardenMock.getSize().toString());
 
         // Mock addGarden(), updateGarden(), and getPlantById to always simply use id = 1
         Mockito.when(gardenService.addGarden(Mockito.any(Garden.class))).thenAnswer(invocation -> {
@@ -274,11 +277,12 @@ public class GardenControllerTest {
                         .flashAttr("editGardenForm", gardenForm))
                         .andExpect(MockMvcResultMatchers.status().isOk())
                         .andReturn();
-        ModelAndView modelAndView = result.getModelAndView();
-        GardenForm modelEditGardenForm = (GardenForm) modelAndView.getModel().get("editGardenForm");
+        GardenForm modelEditGardenForm = (GardenForm) result.getModelAndView().getModel().get("editGardenForm");
         Assertions.assertEquals(gardenMock.getName(), modelEditGardenForm.getName());
         Assertions.assertEquals(gardenMock.getLocation(), modelEditGardenForm.getLocation());
         Assertions.assertEquals(gardenMock.getSize(), modelEditGardenForm.getSizeDouble());
+        System.out.println(gardenMock.getSize());
+        System.out.println(modelEditGardenForm.getSizeDouble());
         Mockito.verify(gardenService).getGardenById(1L);
     }
 }
