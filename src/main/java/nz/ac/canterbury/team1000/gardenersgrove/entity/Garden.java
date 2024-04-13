@@ -50,7 +50,7 @@ public class Garden {
 
     /**
      * Creates a new garden but takes the size as a string that is then parsed to a double It can
-     * either use a , or a . as a decimal separator
+     * either use a ',' or a '.' as a decimal separator
      *
      * @param name     name of garden
      * @param location location of garden
@@ -67,6 +67,10 @@ public class Garden {
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -110,6 +114,6 @@ public class Garden {
 
     @Override
     public String toString() {
-        return "Garden{id=" + id + ", name=\'" + name + "\', size=\'" + size + "\'}";
+        return "Garden{id=" + id + ", name=" + name + "', size='" + size + "'}";
     }
 }

@@ -22,7 +22,7 @@ public class User {
     @Column(nullable = false)
     private String fname;
 
-    @Column(nullable = true)
+    @Column
     private String lname;
 
     @Column(nullable = false)
@@ -31,7 +31,7 @@ public class User {
     @Column(nullable = false)
     private String email;
 
-    @Column(nullable = true)
+    @Column
     private LocalDate dateOfBirth;
 
     @Column()

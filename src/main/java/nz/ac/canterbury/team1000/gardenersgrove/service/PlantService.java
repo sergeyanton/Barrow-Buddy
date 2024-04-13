@@ -51,4 +51,14 @@ public class PlantService {
     public Plant addPlant(Plant plant) {
         return plantRepository.save(plant);
     }
+
+    /**
+     * Updates a Plant in persistence
+     *
+     * @param plant object to update
+     * @return the saved plant object
+     */
+    public Plant updatePlant(Plant plant) {
+        return plantRepository.save(plant);
+    }
 }

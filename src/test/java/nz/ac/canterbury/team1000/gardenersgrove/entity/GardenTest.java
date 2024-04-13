@@ -1,7 +1,6 @@
 package nz.ac.canterbury.team1000.gardenersgrove.entity;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 public class GardenTest {
@@ -20,10 +19,29 @@ public class GardenTest {
     }
 
     @Test
-    void SetSize_WithValidSizeString_ReturnsGardenObjectParsedSize() {
+    void Constructor_WithValidEmptySizeString_ReturnsGardenObjectNullSize() {
+        Garden garden = new Garden("name", "location", "", testUser);
+        assertNull(garden.getSize());
+    }
+
+    @Test
+    void Constructor_WithValidBlankSizeString_ReturnsGardenObjectNullSize() {
+        Garden garden = new Garden("name", "location", " ", testUser);
+        assertNull(garden.getSize());
+    }
+
+    @Test
+    void SetSize_WithValidSizeDouble_ReturnsGardenObjectParsedSize() {
         Garden garden = new Garden("name", "location", (Double) null, testUser);
         garden.setSize("20.5");
         assertEquals(20.5, garden.getSize());
+    }
+
+    @Test
+    void SetSize_WithValidSizeStringEmptyString_ReturnsGardenObjectWithNullSize() {
+        Garden garden = new Garden("name", "location", 10.5, testUser);
+        garden.setSize("");
+        assertNull(garden.getSize());
     }
 
     @Test
@@ -35,7 +53,7 @@ public class GardenTest {
     @Test
     void Constructor_WithNoSize_ReturnsGardenObjectNullSize() {
         Garden garden = new Garden("name", "location", (Double) null, testUser);
-        assertEquals(null, garden.getSize());
+        assertNull(garden.getSize());
     }
 
     @Test

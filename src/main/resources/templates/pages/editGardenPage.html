@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head(title='Gardener\'s Grove - Edit ' + ${gardenName})}"></head>
+
+<body>
+    <div th:replace="~{fragments/header :: header}"></div>
+    <main>
+        <h1>Edit Garden Details</h1>
+        <div class="content">
+            <form th:action="@{'/gardens/' + ${gardenId} + '/edit'}" method="post" th:object="${editGardenForm}">
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='name', label='Garden Name: ', placeholder='The Hamilton Gardens')}" />
+                <br />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='location', label='Location: ', placeholder='Hungerford Crescent, Hamilton 3216')}" />
+                <br />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='size', label='Size in m&sup2; (optional): ', placeholder='540000.0')}" />
+                <br />
+                <button class="next" type="submit">Edit</button>
+                <a class="cancel" th:href="@{'/gardens/' + ${gardenId}}">Cancel</a>
+            </form>
+        </div>
+    </main>
+</body>
+</html>

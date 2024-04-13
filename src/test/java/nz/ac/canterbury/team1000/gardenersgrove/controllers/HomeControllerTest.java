@@ -19,6 +19,6 @@ public class HomeControllerTest {
     public void ClickCreateGarden_Anywhere_GoToCorrectForm() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/gardens/create"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("createGarden"));
+                .andExpect(MockMvcResultMatchers.view().name("pages/createGardenPage"));
     }
 }
