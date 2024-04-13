@@ -90,15 +90,10 @@ public class ProfileController {
             return "pages/editProfilePage";
         }
 
-        User edit = editUserForm.getUser();
-
-        currentUser.setFname(edit.getFname());
-        currentUser.setLname(edit.getLname());
-        currentUser.setEmail(edit.getEmail());
-        if (!editUserForm.getPassword().isEmpty()) {
-            currentUser.setPassword(edit.getPassword());
-        }
-        currentUser.setDateOfBirth(edit.getDateOfBirth());
+        currentUser.setFname(editUserForm.getFirstName());
+        currentUser.setLname(editUserForm.getLastName());
+        currentUser.setEmail(editUserForm.getEmail());
+        currentUser.setDateOfBirth(editUserForm.getDobLocalDate());
 
         userService.updateUserByEmail(oldEmail, currentUser);
         userService.authenticateUser(authenticationManager, currentUser, request);

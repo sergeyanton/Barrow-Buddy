@@ -23,11 +23,6 @@
             <br />
             <input th:replace="~{fragments/formElement :: formElementField(fieldName='dob', label='Date of Birth: ', placeholder='DD/MM/YYYY')}" />
             <br />
-            <input th:replace="~{fragments/formElement :: formElementField(fieldName='password', label='Password: ', placeholder='*******', type='password')}" />
-            <br />
-            <input th:replace="~{fragments/formElement :: formElementField(fieldName='retypePassword', label='Re-Type Password: ', placeholder='*******', type='password')}" />
-            <br />
-
             <button type="submit">Update Profile</button>
             <a th:href="@{editProfile/updatePassword}">Update Password</a>
             <a class="cancel" th:href="@{profile}">Cancel</a>

@@ -1,12 +1,68 @@
 package nz.ac.canterbury.team1000.gardenersgrove.form;
 
+import nz.ac.canterbury.team1000.gardenersgrove.util.Password;
 import org.springframework.validation.BindingResult;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
-public class EditUserForm extends RegistrationForm {
+public class EditUserForm {
+    protected String firstName;
+    protected String lastName;
+    protected Boolean noSurnameCheckBox;
+    protected String email;
+    protected String dob;
+
+    public String getFirstName() {
+        return this.firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return this.lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public Boolean getNoSurnameCheckBox() {
+        return noSurnameCheckBox;
+    }
+
+    public void setNoSurnameCheckBox(Boolean noSurnameCheckBox) {
+        this.noSurnameCheckBox = noSurnameCheckBox;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getDob() {
+        return dob;
+    }
+
+    public LocalDate getDobLocalDate() {
+        try {
+            return LocalDate.parse(dob, VALID_DATE_FORMAT);
+        } catch (DateTimeParseException e) {
+            return null;
+        }
+    }
+
+    public void setDob(String dob) {
+        this.dob = dob;
+    }
+
     /**
      * Validates the EditUserForm object and adds any errors to the BindingResult.
      * 
@@ -41,21 +97,6 @@ public class EditUserForm extends RegistrationForm {
         // Validate email
         if (checkBlank(editUserForm.getEmail()) || checkEmailIsInvalid(editUserForm.getEmail())) {
             errors.add("email", "Email address must be in the form ‘jane@doe.nz’", editUserForm.getEmail());
-        }
-
-        // only validate the passwords either of them are not empty
-        if (!editUserForm.getPassword().isEmpty() || !editUserForm.getRetypePassword().isEmpty()) {
-            // Validate password
-            if (checkBlank(editUserForm.getPassword())) {
-                errors.add("password", "Password cannot be empty", editUserForm.getPassword());
-            } else if (checkPasswordIsInvalid(editUserForm.getPassword())) {
-                errors.add("password", "Your password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.", editUserForm.getPassword());
-            }
-            
-            // Validate password match
-            if (!editUserForm.getPassword().equals(editUserForm.getRetypePassword())) {
-                errors.add("retypePassword", "Passwords do not match", editUserForm.getRetypePassword());
-            }
         }
 
         // Validate date of birth (if there is one)

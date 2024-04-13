@@ -17,9 +17,25 @@ public class RegistrationForm {
     protected String lastName;
     protected Boolean noSurnameCheckBox;
     protected String email;
+    protected String dob;
     protected String password;
     protected String retypePassword;
-    protected String dob;
+
+    public String getFirstName() {
+        return this.firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return this.lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
     public Boolean getNoSurnameCheckBox() {
         return noSurnameCheckBox;
@@ -35,22 +51,6 @@ public class RegistrationForm {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getRetypePassword() {
-        return retypePassword;
-    }
-
-    public void setRetypePassword(String retypePassword) {
-        this.retypePassword = retypePassword;
     }
 
     public String getDob() {
@@ -69,20 +69,20 @@ public class RegistrationForm {
         this.dob = dob;
     }
 
-    public String getFirstName() {
-        return this.firstName;
+    public String getPassword() {
+        return password;
     }
 
-    public String getLastName() {
-        return this.lastName;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public String getRetypePassword() {
+        return retypePassword;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setRetypePassword(String retypePassword) {
+        this.retypePassword = retypePassword;
     }
 
     /**
