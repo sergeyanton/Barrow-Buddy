@@ -1,5 +1,6 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controllers;
 
+import static org.hamcrest.Matchers.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 import nz.ac.canterbury.team1000.gardenersgrove.controller.ProfileController;
@@ -20,6 +21,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
+import org.springframework.web.servlet.ModelAndView;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @WebMvcTest(controllers = ProfileController.class)
 @AutoConfigureMockMvc
@@ -43,7 +48,11 @@ public class ProfileControllerTest {
     @BeforeEach
     public void BeforeEach() {
         userMock = Mockito.mock(User.class);
+        Mockito.when(userMock.getFname()).thenReturn("John");
+        Mockito.when(userMock.getLname()).thenReturn("Smith");
         Mockito.when(userMock.getEmail()).thenReturn("johnsmith@gmail.com");
+        Mockito.when(userMock.getDateOfBirthString()).thenReturn("05/05/1999");
+        Mockito.when(userMock.getPassword()).thenReturn("Pass123$");
 
         editUserForm = new EditUserForm();
         editUserForm.setFirstName("John");
@@ -52,6 +61,7 @@ public class ProfileControllerTest {
         editUserForm.setEmail("johnsmith@gmail.com");
         editUserForm.setDob("05/05/1999");
 
+        updatePasswordForm = new UpdatePasswordForm();
         updatePasswordForm.setPassword("Pass123$");
         updatePasswordForm.setNewPassword("NewPass456&");
         updatePasswordForm.setRetypeNewPassword("NewPass456&");
@@ -200,5 +210,24 @@ public class ProfileControllerTest {
 
         Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
         Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void EditProfileGet_ValidDetails_FormIsPopulated() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/editProfile").with(csrf())
+                        .flashAttr("editUserForm", editUserForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.model().attribute("editUserForm", hasProperty("firstName", is(userMock.getFname()))))
+                .andExpect(MockMvcResultMatchers.model().attribute("editUserForm", hasProperty("lastName", is(userMock.getLname()))))
+                .andExpect(MockMvcResultMatchers.model().attribute("editUserForm", hasProperty("noSurnameCheckBox", is(userMock.getLname() == null || userMock.getLname().isEmpty()))))
+                .andExpect(MockMvcResultMatchers.model().attribute("editUserForm", hasProperty("email", is(userMock.getEmail()))))
+                .andExpect(MockMvcResultMatchers.model().attribute("editUserForm", hasProperty("dob", is(userMock.getDateOfBirthString()))));
+
+        System.out.println(userMock.getFname());
+        System.out.println(userMock.getLname());
+        System.out.println(userMock.getEmail());
+        System.out.println(userMock.getDateOfBirthString());
+        System.out.println(userMock.getPassword());
+        Mockito.verify(userService).getLoggedInUser();
     }
 }
