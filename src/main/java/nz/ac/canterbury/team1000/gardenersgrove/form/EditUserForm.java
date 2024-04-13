@@ -97,6 +97,8 @@ public class EditUserForm {
         // Validate email
         if (checkBlank(editUserForm.getEmail()) || checkEmailIsInvalid(editUserForm.getEmail())) {
             errors.add("email", "Email address must be in the form ‘jane@doe.nz’", editUserForm.getEmail());
+        } else if (checkOverMaxLength(editUserForm.getEmail(), MAX_DB_STR_LEN)) {
+            errors.add("email", "Email address must be " + MAX_DB_STR_LEN + " characters long or less", editUserForm.getEmail());
         }
 
         // Validate date of birth (if there is one)

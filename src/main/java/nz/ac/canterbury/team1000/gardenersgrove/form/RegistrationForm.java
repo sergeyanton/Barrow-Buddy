@@ -134,7 +134,7 @@ public class RegistrationForm {
         if (checkBlank(registrationForm.getEmail()) || checkEmailIsInvalid(registrationForm.getEmail())) {
             errors.add("email", "Email address must be in the form ‘jane@doe.nz’", registrationForm.getEmail());
         } else if (checkOverMaxLength(registrationForm.getEmail(), MAX_DB_STR_LEN)) {
-            errors.add("email", "Email address must be 255 characters long or less", registrationForm.getEmail());
+            errors.add("email", "Email address must be " + MAX_DB_STR_LEN + " characters long or less", registrationForm.getEmail());
         }
 
         // Validate password

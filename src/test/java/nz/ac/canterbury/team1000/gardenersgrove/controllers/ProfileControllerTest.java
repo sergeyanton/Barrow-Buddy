@@ -166,6 +166,34 @@ public class ProfileControllerTest {
     }
 
     @Test
+    public void EditUserPost_WithInvalidLastName_HasFieldErrors() throws Exception {
+        editUserForm.setLastName("James&&&");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/editProfile").with(csrf())
+                        .flashAttr("editUserForm", editUserForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/editProfilePage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editUserForm", "lastName"));
+
+        Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
+        Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void EditUserPost_WithInvalidLastNameLong_HasFieldErrors() throws Exception {
+        editUserForm.setLastName("B".repeat(65));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/editProfile").with(csrf())
+                        .flashAttr("editUserForm", editUserForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/editProfilePage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editUserForm", "lastName"));
+
+        Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
+        Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
     public void EditUserPost_WithInvalidEmailEmpty_HasFieldErrors() throws Exception {
         editUserForm.setEmail("");
         Mockito.when(userService.checkEmail(Mockito.any())).thenReturn(false);
@@ -196,15 +224,57 @@ public class ProfileControllerTest {
     }
 
     @Test
-    public void EditUserPost_WithInvalidEmailTaken_HasFieldErrors() throws Exception {
-        editUserForm.setEmail("takenEmail@hotmail.com");
-        Mockito.when(userService.checkEmail(Mockito.any())).thenReturn(true);
+    public void EditUserPost_WithInvalidEmailLong_HasFieldErrors() throws Exception {
+        editUserForm.setEmail("A".repeat(246) + "@gmail.com");
+        Mockito.when(userService.checkEmail(Mockito.any())).thenReturn(false);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/editProfile").with(csrf())
                         .flashAttr("editUserForm", editUserForm))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("pages/editProfilePage"))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editUserForm", "email"));
+
+        Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
+        Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void EditUserPost_WithInvalidEmailTaken_HasFieldErrors() throws Exception {
+        editUserForm.setEmail("takenEmail@hotmail.com");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/editProfile").with(csrf())
+                        .flashAttr("editUserForm", editUserForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/editProfilePage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editUserForm", "email"));
+
+        Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
+        Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void EditUserPost_WithInvalidDateLeapDay_HasFieldErrors() throws Exception {
+        editUserForm.setDob("29/02/2003");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/editProfile").with(csrf())
+                        .flashAttr("editUserForm", editUserForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/editProfilePage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editUserForm", "dob"));
+
+        Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
+        Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void EditUserPost_WithInvalidDate_HasFieldErrors() throws Exception {
+        editUserForm.setDob("BadDate");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/editProfile").with(csrf())
+                        .flashAttr("editUserForm", editUserForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/editProfilePage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editUserForm", "dob"));
 
         Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
         Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
