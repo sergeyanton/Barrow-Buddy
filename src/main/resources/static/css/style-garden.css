@@ -5,58 +5,6 @@
     margin: 0;
 }
 
-/* Navbar */
-
-nav {
-    background-color: darkgreen;
-    color: #fff;
-}
-
-nav ul {
-    display: flex;
-    justify-content: center;
-    list-style-type: none;
-}
-
-nav ul li {
-    /*display: block;*/
-    position: relative;
-}
-
-nav ul li a {
-    display: block;
-    padding: 10px;
-    color: #fff;
-    font-size: 25px;
-}
-
-nav ul li a.active {
-    background: green;
-}
-
-nav ul li a:hover {
-    background: forestgreen;
-}
-
-nav ul li ul {
-    display: none;
-    position: absolute;
-    top: 100%;
-    background-color: #50ce50;
-}
-
-nav ul li ul li a {
-    font-size: 16px;
-    max-width: 200px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-nav ul li:hover ul {
-    display: block;
-}
-
 /* Main content */
 
 main {
@@ -134,4 +82,57 @@ td {
 
 .scroll-plants-container > table {
     width: 100%
+}
+
+/* Navbar */
+
+nav {
+    background-color: darkgreen;
+    color: #fff;
+}
+
+nav ul {
+    display: flex;
+    justify-content: center;
+    list-style-type: none;
+    z-index: 9999; /* render the navbar in front of everything else */
+}
+
+nav ul li {
+    /*display: block;*/
+    position: relative;
+}
+
+nav ul li a {
+    display: block;
+    padding: 10px;
+    color: #fff;
+    font-size: 25px;
+}
+
+nav ul li a.active {
+    background: green;
+}
+
+nav ul li a:hover {
+    background: forestgreen;
+}
+
+nav ul li ul {
+    display: none;
+    position: absolute;
+    top: 100%;
+    background-color: #50ce50;
+}
+
+nav ul li ul li a {
+    font-size: 16px;
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+nav ul li:hover ul {
+    display: block;
 }
