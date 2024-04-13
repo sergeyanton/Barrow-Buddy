@@ -1,14 +1,11 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controllers;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 
-import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.team1000.gardenersgrove.controller.ProfileController;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.EditUserForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.UpdatePasswordForm;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -23,10 +20,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.BindingResult;
-
-import java.time.LocalDate;
 
 @WebMvcTest(controllers = ProfileController.class)
 @AutoConfigureMockMvc
@@ -59,12 +52,61 @@ public class ProfileControllerTest {
         editUserForm.setEmail("johnsmith@gmail.com");
         editUserForm.setDob("05/05/1999");
 
+        updatePasswordForm.setPassword("Pass123$");
+        updatePasswordForm.setNewPassword("NewPass456&");
+        updatePasswordForm.setRetypeNewPassword("NewPass456&");
+
         Mockito.when(userService.getLoggedInUser()).thenReturn(userMock);
-//        Mockito.when(userService.checkEmail(Mockito.any())).thenReturn(false);
+        Mockito.when(userService.checkEmail(Mockito.any())).thenReturn(true);
     }
 
     @Test
-    public void EditUserPost_WithValidDetails_SavesToService() throws Exception {
+    public void EditUserPost_WithNoChange_SavesToService() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/editProfile").with(csrf())
+                        .flashAttr("editUserForm", editUserForm))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/profile"));
+
+        Mockito.verify(userService).updateUserByEmail(Mockito.any(), Mockito.any());
+        Mockito.verify(userService).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void EditUserPost_WithValidChange_SavesToService() throws Exception {
+        editUserForm.setFirstName("Jake");
+        editUserForm.setLastName("Thomas");
+        editUserForm.setNoSurnameCheckBox(false);
+        editUserForm.setEmail("jakethomas@hotmail.com");
+        Mockito.when(userService.checkEmail(Mockito.any())).thenReturn(false);
+        editUserForm.setDob("01/06/1998");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/editProfile").with(csrf())
+                        .flashAttr("editUserForm", editUserForm))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/profile"));
+
+        Mockito.verify(userService).updateUserByEmail(Mockito.any(), Mockito.any());
+        Mockito.verify(userService).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void EditUserPost_WithValidEmptyDate_SavesToService() throws Exception {
+        editUserForm.setDob("");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/editProfile").with(csrf())
+                        .flashAttr("editUserForm", editUserForm))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/profile"));
+
+        Mockito.verify(userService).updateUserByEmail(Mockito.any(), Mockito.any());
+        Mockito.verify(userService).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void EditUserPost_WithValidNoSurname_SavesToService() throws Exception {
+        editUserForm.setLastName("");
+        editUserForm.setNoSurnameCheckBox(true);
+
         mockMvc.perform(MockMvcRequestBuilders.post("/editProfile").with(csrf())
                         .flashAttr("editUserForm", editUserForm))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
@@ -83,6 +125,78 @@ public class ProfileControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("pages/editProfilePage"))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editUserForm", "firstName"));
+
+        Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
+        Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void EditUserPost_WithInvalidFirstName_HasFieldErrors() throws Exception {
+        editUserForm.setFirstName("Jeff3");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/editProfile").with(csrf())
+                        .flashAttr("editUserForm", editUserForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/editProfilePage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editUserForm", "firstName"));
+
+        Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
+        Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+    @Test
+    public void EditUserPost_WithInvalidFirstNameLong_HasFieldErrors() throws Exception {
+        editUserForm.setFirstName("A".repeat(65));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/editProfile").with(csrf())
+                        .flashAttr("editUserForm", editUserForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/editProfilePage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editUserForm", "firstName"));
+
+        Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
+        Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void EditUserPost_WithInvalidEmailEmpty_HasFieldErrors() throws Exception {
+        editUserForm.setEmail("");
+        Mockito.when(userService.checkEmail(Mockito.any())).thenReturn(false);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/editProfile").with(csrf())
+                        .flashAttr("editUserForm", editUserForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/editProfilePage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editUserForm", "email"));
+
+        Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
+        Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void EditUserPost_WithInvalidEmail_HasFieldErrors() throws Exception {
+        editUserForm.setEmail("notanemail");
+        Mockito.when(userService.checkEmail(Mockito.any())).thenReturn(false);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/editProfile").with(csrf())
+                        .flashAttr("editUserForm", editUserForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/editProfilePage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editUserForm", "email"));
+
+        Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
+        Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void EditUserPost_WithInvalidEmailTaken_HasFieldErrors() throws Exception {
+        editUserForm.setEmail("takenEmail@hotmail.com");
+        Mockito.when(userService.checkEmail(Mockito.any())).thenReturn(true);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/editProfile").with(csrf())
+                        .flashAttr("editUserForm", editUserForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/editProfilePage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editUserForm", "email"));
 
         Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
         Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
