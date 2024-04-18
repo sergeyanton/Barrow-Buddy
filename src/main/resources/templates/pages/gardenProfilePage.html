@@ -14,6 +14,28 @@
             <div th:text="'Location: ' + ${garden.location}"></div>
             <div th:if="${garden.size != null}" th:text="'Size: ' + ${garden.size} + ' m&sup2;'"></div>
             <div><a th:href="@{'/gardens/' + ${garden.id} + '/edit'}">Edit Garden Details</a></div>
+
+            <table>
+                <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Count</th>
+                    <th>Description</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${plants.empty}">
+                    <td colspan="4">No plants yet</td>
+                </tr>
+                <tr th:each="plant : ${plants}">
+                    <td><img th:src="@{/images/defaultPlantPic.png}" alt="Plant Image" style="max-width: 100px; max-height: 100px;" /></td>
+                    <td><span th:text="${plant.name}"></span></td>
+                    <td><span th:text="${plant.plantCount}"></span></td>
+                    <td><span th:text="${plant.description}"></span></td>
+                </tr>
+                </tbody>
+            </table>
             <div><a th:href="@{/gardens}">Back to My Gardens</a></div>
         </div>
     </main>

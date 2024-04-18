@@ -29,6 +29,11 @@ public class PlantServiceTest {
             }
 
             @Override
+            public List<Plant> findByGardenId(Long gardenId) {
+                return null;
+            }
+
+            @Override
             public <S extends Plant> S save(S entity) {
                 // assume there is some modification at the service layer that we check here
                 // instead of just the same values

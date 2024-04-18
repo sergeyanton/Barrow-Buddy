@@ -123,6 +123,7 @@ public class GardensController {
     public String viewGarden(@PathVariable("gardenId") Long gardenId, Model model) {
         logger.info("GET /gardens/" + gardenId);
         model.addAttribute("garden", gardenService.getGardenById(gardenId));
+        model.addAttribute("plants", plantService.getPlantsByGardenId(gardenId));
         return "pages/gardenProfilePage";
     }
 
