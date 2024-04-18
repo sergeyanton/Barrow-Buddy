@@ -8,6 +8,9 @@ public class ForgotPasswordForm {
     public String getEmail() {
         return email;
     }
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public static void validate(ForgotPasswordForm forgotPasswordForm, BindingResult bindingResult) {
         // Create an ErrorAdder instance with the BindingResult and object name

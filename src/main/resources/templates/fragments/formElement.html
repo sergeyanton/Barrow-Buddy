@@ -20,11 +20,6 @@
 <!--    <br>-->
 </th:block>
 
-<th:block th:fragment="forgotPasswordFormElement(fieldName)" th:with="type=${type} ? ${type} : 'text', placeholder=${placeholder} ? ${placeholder} : null">
-    <input th:field="*{__${fieldName}__}" th:placeholder="${placeholder}" th:type="${type}"><br>
-    <span class="error" th:if="${#fields.hasErrors(fieldName)}" th:errors="*{__${fieldName}__}">Errors</span>
-</th:block>
-
 <th:block
     th:fragment="gardenForm(action, actionLabel, cancel, gardenName, gardenLocation, gardenSize, gardenNameError, gardenLocationError, gardenSizeError)">
     <form th:action="${action}" method="post">
