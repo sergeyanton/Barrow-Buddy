@@ -7,6 +7,9 @@ import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,11 +18,13 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -37,7 +42,8 @@ public class ProfileController {
     private AuthenticationManager authenticationManager;
     private final UserService userService;
 
-    private static final String uploadDir = "C:/team-1000/src/main/resources/static/images/";
+    public static String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/uploads";
+//    private static final String uploadDir = "C:/team-1000/src/main/resources/static/images/";
 
 
     Logger logger = LoggerFactory.getLogger(ProfileController.class);
@@ -70,7 +76,7 @@ public class ProfileController {
      * @return A string that represents the link to the profile page
      */
     @PostMapping("/editProfile")
-    public String editProfile(HttpServletRequest request, EditUserForm editUserForm, BindingResult bindingResult, @RequestParam("profilePicture") MultipartFile profilePicture) {
+    public String editProfile(HttpServletRequest request, EditUserForm editUserForm, BindingResult bindingResult, @RequestParam("profilePicture") MultipartFile profilePicture) throws IOException {
         logger.info("POST /editProfile");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
@@ -95,17 +101,12 @@ public class ProfileController {
             currentUser.setPassword(editUserForm.getPassword());
         }
 
-        String fileName = StringUtils.cleanPath(profilePicture.getOriginalFilename());
-
+        // Profile pic handling
         if (!profilePicture.isEmpty()) {
-            try {
-                Path filePath = Paths.get(uploadDir, fileName);
-                Files.createDirectories(filePath.getParent());
-                Files.copy(profilePicture.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-                currentUser.setProfilePicturePath("/images/" + fileName);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            Path fileNameAndPath = Paths.get(UPLOAD_DIRECTORY, profilePicture.getOriginalFilename());
+            String filename = profilePicture.getOriginalFilename();
+            Files.write(fileNameAndPath, profilePicture.getBytes());
+            currentUser.setProfilePicturePath("/uploads/" + filename);
         }
 
         userService.updateUserByEmail(oldEmail, currentUser);
@@ -114,4 +115,23 @@ public class ProfileController {
         return "redirect:/profile";
     }
 
+    /**
+     * Handles POST requests to the /uploads/{imageName} endpoint.
+     * This endpoint allows us to display images stored in /uploads
+     *
+     * @param imageName the filename of the image
+     * @return a ResponseEntity instance with the image data to render
+     * @throws MalformedURLException MalformedURLException
+     */
+    @GetMapping("/uploads/{imageName}")
+    public ResponseEntity<Resource> serveImage(@PathVariable String imageName) throws MalformedURLException {
+        Path imagePath = Paths.get(UPLOAD_DIRECTORY).resolve(imageName).normalize();
+        Resource resource = new UrlResource(imagePath.toUri());
+
+        if (!resource.exists() || !resource.isReadable()) {
+            throw new RuntimeException("Image not found or cannot be read: " + imageName);
+        }
+
+        return ResponseEntity.ok().body(resource);
+    }
 }
