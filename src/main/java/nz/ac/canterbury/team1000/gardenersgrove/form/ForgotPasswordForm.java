@@ -17,7 +17,9 @@ public class ForgotPasswordForm {
         ErrorAdder errors = new ErrorAdder(bindingResult, "forgotPasswordForm");
 
         // Validate email
-        if (checkBlank(forgotPasswordForm.getEmail()) || checkEmailIsInvalid(forgotPasswordForm.getEmail())) {
+        if (checkBlank(forgotPasswordForm.getEmail())) {
+            errors.add("email", "Email address must not be empty", forgotPasswordForm.getEmail());
+        } else if (checkEmailIsInvalid(forgotPasswordForm.getEmail())) {
             errors.add("email", "Email address must be in the form ‘jane@doe.nz’", forgotPasswordForm.getEmail());
         }
     }
