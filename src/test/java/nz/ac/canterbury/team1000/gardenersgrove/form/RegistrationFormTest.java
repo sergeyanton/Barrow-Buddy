@@ -7,7 +7,7 @@ import org.mockito.Mockito;
 import org.springframework.validation.BindingResult;
 
 public class RegistrationFormTest {
-    RegistrationForm registrationFormForm = new EditUserForm();
+    RegistrationForm registrationFormForm = new RegistrationForm();
     
     @Mock
     BindingResult bindingResult;
