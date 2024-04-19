@@ -190,7 +190,7 @@ public class AccountController {
         // form was submitted with valid data
         // send a reset password email to the provided email
 
-        logger.info("SEND A RESET EMAIL TO USER!!!!!! - NOT IMPLEMENTED");
+        // TODO: "SEND A RESET EMAIL TO USER!!!!!! - NOT IMPLEMENTED");
 
 
         return "redirect:/forgotPasswordPage";
