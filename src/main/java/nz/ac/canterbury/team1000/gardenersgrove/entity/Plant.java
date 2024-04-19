@@ -18,7 +18,7 @@ public class Plant {
     private String name;
     @Column
     private Integer plantCount;
-    @Column
+    @Column(length = 512)
     private String description;
     @Column
     private LocalDate plantedOnDate;
@@ -92,6 +92,10 @@ public class Plant {
         return gardenId;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -148,7 +152,7 @@ public class Plant {
     @Override
     public String toString() {
         return "Plant{" + "id=" + id + ", name='" + name + "', count=" + plantCount
-                + ", description='" + description + "', planted on date=" + plantedOnDate
+                + ", description=" + description + ", planted on date=" + plantedOnDate
                 + ", garden id=" + gardenId + '\'' + '}';
     }
 }

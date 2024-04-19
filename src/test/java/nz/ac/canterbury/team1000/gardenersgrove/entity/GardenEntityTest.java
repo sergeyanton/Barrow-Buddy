@@ -1,9 +1,8 @@
 package nz.ac.canterbury.team1000.gardenersgrove.entity;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
-import nz.ac.canterbury.team1000.gardenersgrove.entity.Garden;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GardenEntityTest {
     @Test
@@ -33,7 +32,7 @@ public class GardenEntityTest {
     @Test
     void Constructor_WithNoSize_ReturnsGardenObjectNullSize() {
         Garden garden = new Garden("name", "location", (Double) null);
-        assertEquals(null, garden.getSize());
+        assertNull(garden.getSize());
     }
 
     @Test

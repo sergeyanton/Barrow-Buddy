@@ -29,6 +29,11 @@ public class PlantServiceTest {
             }
 
             @Override
+            public List<Plant> findByGardenId(Long gardenId) {
+                return null;
+            }
+
+            @Override
             public <S extends Plant> S save(S entity) {
                 // assume there is some modification at the service layer that we check here
                 // instead of just the same values
@@ -88,9 +93,6 @@ public class PlantServiceTest {
         });
         plantService.addPlant(new Plant("My Plant", "1", "My plant is cool", "30/1/2021", 1L));
     }
-
-    // @Autowired
-    // private PlantService formService;
 
     @Autowired
     private PlantRepository plantRepository;

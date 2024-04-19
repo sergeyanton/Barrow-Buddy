@@ -1,6 +1,5 @@
 <th:block th:fragment="headerA(href, text)">
-    <a th:href="${href}" th:class="${currentUrl == href ? 'active' : ''}" th:text="${text}">
-    </a>
+    <a th:href="${href}" th:class="${currentUrl == href ? 'active' : ''}" th:text="${text}"></a>
 </th:block>
 
 <header th:fragment="header">

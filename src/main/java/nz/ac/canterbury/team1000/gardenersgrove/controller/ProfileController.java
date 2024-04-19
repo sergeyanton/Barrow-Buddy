@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.EditUserForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
+import nz.ac.canterbury.team1000.gardenersgrove.util.Password;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,7 +99,7 @@ public class ProfileController {
         currentUser.setLname(editUserForm.getLastName());
         currentUser.setEmail(editUserForm.getEmail());
         if (!editUserForm.getPassword().isEmpty()) {
-            currentUser.setPassword(editUserForm.getPassword());
+            currentUser.setPassword(Password.hashPassword(editUserForm.getPassword()));
         }
 
         // Profile pic handling

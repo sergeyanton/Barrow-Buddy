@@ -22,7 +22,7 @@ public class User {
     @Column(nullable = false)
     private String fname;
 
-    @Column(nullable = true)
+    @Column
     private String lname;
 
     @Column(nullable = false)
@@ -31,7 +31,7 @@ public class User {
     @Column(nullable = false)
     private String email;
 
-    @Column(nullable = true)
+    @Column
     private LocalDate dateOfBirth;
 
     @Column(nullable = true)
@@ -114,6 +114,17 @@ public class User {
 
     public LocalDate getDateOfBirth() {
         return dateOfBirth;
+    }
+
+    /**
+     * Returns the date of birth as a string in the format DD/MM/YYYY.
+     *
+     * @return The date of birth as a string in the format DD/MM/YYYY.
+     */
+    public String getDateOfBirthString() {
+        // return date in DD/MM/YYYY format
+        return String.format("%02d/%02d/%04d", dateOfBirth.getDayOfMonth(),
+                dateOfBirth.getMonthValue(), dateOfBirth.getYear());
     }
 
     public String getProfilePicturePath() {

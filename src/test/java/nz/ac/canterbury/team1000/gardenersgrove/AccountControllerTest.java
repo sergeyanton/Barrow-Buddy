@@ -1,24 +1,16 @@
 package nz.ac.canterbury.team1000.gardenersgrove;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import nz.ac.canterbury.team1000.gardenersgrove.controller.AccountController;
-import nz.ac.canterbury.team1000.gardenersgrove.controller.dataCollection.RegistrationData;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
+import nz.ac.canterbury.team1000.gardenersgrove.form.RegistrationForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
-import nz.ac.canterbury.team1000.gardenersgrove.validation.InputValidation;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -58,12 +50,20 @@ class AccountControllerTest {
     @WithMockUser
     public void registerPostRequest_validUserDetails_userRegisteredAndAuthenticated()
             throws Exception {
+        RegistrationForm registrationForm = new RegistrationForm();
+        registrationForm.setEmail(user.getEmail());
+        registrationForm.setFirstName(user.getFname());
+        registrationForm.setLastName(user.getLname());
+        registrationForm.setDob(user.getDateOfBirthString());
+        registrationForm.setPassword(user.getPassword());
+        registrationForm.setRetypePassword(user.getPassword());
+        registrationForm.setNoSurnameCheckBox(false);
+
         mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
-                .param("email", user.getEmail()).param("fName", user.getFname())
-                .param("lName", user.getLname()).param("dob", user.getDateOfBirth().toString())
-                .param("password", user.getPassword()).param("retypePassword", user.getPassword()))
+                .flashAttr("registrationForm", registrationForm))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/profile"));
+
 
         Mockito.verify(userService).registerUser(Mockito.any());
     }

@@ -1,9 +1,6 @@
 package nz.ac.canterbury.team1000.gardenersgrove.repository;
 
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import java.util.Optional;
@@ -11,7 +8,7 @@ import java.util.Optional;
 /**
  * User repository interface that interacts with the user table in the H2 database. Spring Data
  * derived query methods are used instead of SQL. See
- * https://www.baeldung.com/spring-data-derived-queries for info on how these work.
+ * <a href="https://www.baeldung.com/spring-data-derived-queries">...</a> for info on how these work.
  */
 @Repository
 public interface UserRepository extends CrudRepository<User, Long> {

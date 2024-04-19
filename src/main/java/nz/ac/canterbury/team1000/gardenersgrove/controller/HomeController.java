@@ -38,6 +38,10 @@ public class HomeController {
         return request.getRequestURI() + "?" + request.getQueryString();
     }
 
+    /**
+     * Necessary for being able to display each garden in the nav bar
+     * @return all gardens currently in the database
+     */
     @ModelAttribute("allGardens")
     private List<Garden> getAllGardens() {
         return gardenService.getGardens();
