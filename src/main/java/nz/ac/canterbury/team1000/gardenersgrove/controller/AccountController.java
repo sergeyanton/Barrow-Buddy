@@ -178,9 +178,13 @@ public class AccountController {
     @PostMapping("/forgotPassword")
     public String forgotPassword(HttpServletRequest request, @ModelAttribute("forgotPasswordForm") ForgotPasswordForm forgotPasswordForm, BindingResult bindingResult) {
         ForgotPasswordForm.validate(forgotPasswordForm, bindingResult);
+        User user = userService.findEmail(forgotPasswordForm.getEmail());
 
-        if (!bindingResult.hasFieldErrors("email") && !userService.checkEmail(forgotPasswordForm.getEmail())) {
-            bindingResult.addError(new FieldError("forgotPasswordForm", "email", forgotPasswordForm.getEmail(), false, null, null, "Email does not exist"));
+        if (user == null) {
+            bindingResult.addError(new FieldError("forgotPasswordForm", "email", forgotPasswordForm.getEmail(), false, null, null, "An email was sent to the address if it was recognised"));
+
+        } else if (!bindingResult.hasFieldErrors("email") && !userService.checkEmail(forgotPasswordForm.getEmail())) {
+            bindingResult.addError(new FieldError("forgotPasswordForm", "email", forgotPasswordForm.getEmail(), false, null, null, "Invalid email format"));
         }
 
         if (bindingResult.hasErrors()) {
@@ -190,7 +194,7 @@ public class AccountController {
         // form was submitted with valid data
         // send a reset password email to the provided email
 
-        // TODO: "SEND A RESET EMAIL TO USER!!!!!! - NOT IMPLEMENTED");
+        // TODO: "SEND A RESET EMAIL TO USER!!!!!! - NOT IMPLEMENTED";
 
 
         return "redirect:/forgotPasswordPage";
