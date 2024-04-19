@@ -62,8 +62,8 @@ public class SecurityConfiguration {
                         // Allow "/", "/register", and "/login" to anyone (permitAll) - Also allow
                         // access to
                         // stylesheets
-                        .requestMatchers("/", "/gardens/**", "/register", "/login", "/forgotPassword",
-                                "/css/**")
+                        .requestMatchers("/", "/gardens/**", "/hello", "/register", "/login", "/forgotPassword",
+                                "/css/**", "/images/**")
                         .permitAll()
                         // Only allow admins to reach the "/admin" page
                         .requestMatchers("/admin")
@@ -79,6 +79,5 @@ public class SecurityConfiguration {
                 .logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/")
                         .invalidateHttpSession(true).deleteCookies("JSESSIONID"));
         return http.build();
-
     }
 }

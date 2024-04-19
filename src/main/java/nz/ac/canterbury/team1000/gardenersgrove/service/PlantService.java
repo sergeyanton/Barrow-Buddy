@@ -34,6 +34,16 @@ public class PlantService {
     }
 
     /**
+     * Gets a plant from persistence by searching for the id
+     *
+     * @param id id to look for
+     * @return the appropriate plant
+     */
+    public List<Plant> getPlantsByGardenId(long id) {
+        return plantRepository.findByGardenId(id);
+    }
+
+    /**
      * Gets all plants from persistence
      * 
      * @return all plants currently saved in persistence
@@ -49,6 +59,16 @@ public class PlantService {
      * @return the saved plant object
      */
     public Plant addPlant(Plant plant) {
+        return plantRepository.save(plant);
+    }
+
+    /**
+     * Updates a Plant in persistence
+     *
+     * @param plant object to update
+     * @return the saved plant object
+     */
+    public Plant updatePlant(Plant plant) {
         return plantRepository.save(plant);
     }
 }

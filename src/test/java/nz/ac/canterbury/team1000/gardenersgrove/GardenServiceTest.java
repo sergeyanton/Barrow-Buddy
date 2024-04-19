@@ -89,9 +89,6 @@ public class GardenServiceTest {
         gardenService.addGarden(new Garden("My Garden", "My House", 9000.0));
     }
 
-    // @Autowired
-    // private GardenService formService;
-
     @Autowired
     private GardenRepository gardenRepository;
 

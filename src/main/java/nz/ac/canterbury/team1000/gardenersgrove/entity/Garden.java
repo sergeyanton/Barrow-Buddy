@@ -1,8 +1,6 @@
 package nz.ac.canterbury.team1000.gardenersgrove.entity;
 
-import java.util.Optional;
 import jakarta.persistence.*;
-import nz.ac.canterbury.team1000.gardenersgrove.classes.ValidityCheck;
 
 /**
  * Entity class reflecting an entry of name, location, and size of a garden Note the @link{Entity}
@@ -24,14 +22,15 @@ public class Garden {
     /**
      * JPA required no-args constructor
      */
-    protected Garden() {}
+    protected Garden() {
+    }
 
     /**
      * Creates a new Garden object
      *
-     * @param name name of garden
+     * @param name     name of garden
      * @param location location of garden
-     * @param size size of garden
+     * @param size     size of garden
      */
     public Garden(String name, String location, Double size) {
         this.name = name;
@@ -46,11 +45,11 @@ public class Garden {
 
     /**
      * Creates a new garden but takes the size as a string that is then parsed to a double It can
-     * either use a , or a . as a decimal separator
-     * 
-     * @param name name of garden
+     * either use a ',' or a '.' as a decimal separator
+     *
+     * @param name     name of garden
      * @param location location of garden
-     * @param size size of garden
+     * @param size     size of garden
      */
     public Garden(String name, String location, String size) {
         this.name = name;
@@ -61,6 +60,10 @@ public class Garden {
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -93,6 +96,6 @@ public class Garden {
 
     @Override
     public String toString() {
-        return "Garden{id=" + id + ", name=\'" + name + "\', size=\'" + size + "\'}";
+        return "Garden{id=" + id + ", name=" + name + "', size='" + size + "'}";
     }
 }
