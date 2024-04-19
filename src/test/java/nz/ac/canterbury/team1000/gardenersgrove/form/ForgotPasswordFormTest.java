@@ -37,6 +37,4 @@ public class ForgotPasswordFormTest {
         Mockito.verify(bindingResult).addError(Mockito.any());
     }
 
-    // Add tests later - check if provided email exists in the database
-    // If it does not exist, do we return error?
 }
