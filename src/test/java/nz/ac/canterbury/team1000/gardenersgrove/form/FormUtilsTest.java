@@ -2,6 +2,7 @@ package nz.ac.canterbury.team1000.gardenersgrove.form;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import java.time.LocalDate;
 
 public class FormUtilsTest {
     @Test
@@ -122,5 +123,15 @@ public class FormUtilsTest {
     @Test
     void checkDateNotInCorrectFormat_WithDayMonthYear5DigitYearDate_ReturnsTrue() {
         Assertions.assertTrue(FormUtils.checkDateNotInCorrectFormat("28/01/20000"));
+    }
+
+    @Test
+    void checkDateWithinBoundary_DateLaterThan13YearsAgo_ReturnsFalse() {
+        Assertions.assertFalse(FormUtils.checkDateBefore("02/12/2011", LocalDate.now().minusYears(13).plusDays(1)));
+    }
+
+    @Test
+    void checkDateWithinBoundary_Date120YearsAgo_ReturnsTrue() {
+        Assertions.assertTrue(FormUtils.checkDateBefore("01/04/1904", LocalDate.now().minusYears(120).plusDays(1)));
     }
 }
