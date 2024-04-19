@@ -1,7 +1,10 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import nz.ac.canterbury.team1000.gardenersgrove.controller.dataCollection.LogInData;
+import nz.ac.canterbury.team1000.gardenersgrove.controller.dataCollection.ResetPasswordData;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
+import nz.ac.canterbury.team1000.gardenersgrove.form.ForgotPasswordForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.LoginForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.RegistrationForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
@@ -20,6 +23,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import static nz.ac.canterbury.team1000.gardenersgrove.util.Password.verifyPassword;
+// import static nz.ac.canterbury.team1000.gardenersgrove.validation.InputValidation.checkResetPasswordData;
+
+import java.io.Console;
 import java.time.format.DateTimeFormatter;
 
 @Controller
@@ -74,6 +80,12 @@ public class AccountController {
     public String getRegisterPage(@ModelAttribute RegistrationForm registrationForm) {
         logger.info("GET /register");
         return userService.isSignedIn() ? "redirect:/" : "pages/registrationPage";
+    }
+
+    @GetMapping("/forgotPassword")
+    public String getForgotPasswordPage(ForgotPasswordForm forgotPasswordForm) {
+        logger.info("GET /forgotPassword");
+        return "pages/forgotPasswordPage";
     }
 
 
@@ -162,4 +174,26 @@ public class AccountController {
 
         return "redirect:/";
     }
+
+    @PostMapping("/forgotPassword")
+    public String forgotPassword(HttpServletRequest request, @ModelAttribute("forgotPasswordForm") ForgotPasswordForm forgotPasswordForm, BindingResult bindingResult) {
+        ForgotPasswordForm.validate(forgotPasswordForm, bindingResult);
+
+        if (!bindingResult.hasFieldErrors("email") && !userService.checkEmail(forgotPasswordForm.getEmail())) {
+            bindingResult.addError(new FieldError("forgotPasswordForm", "email", forgotPasswordForm.getEmail(), false, null, null, "Email does not exist"));
+        }
+
+        if (bindingResult.hasErrors()) {
+            return "pages/forgotPasswordPage";
+        }
+
+        // form was submitted with valid data
+        // send a reset password email to the provided email
+
+        // TODO: "SEND A RESET EMAIL TO USER!!!!!! - NOT IMPLEMENTED");
+
+
+        return "redirect:/forgotPasswordPage";
+    }
+
 }
