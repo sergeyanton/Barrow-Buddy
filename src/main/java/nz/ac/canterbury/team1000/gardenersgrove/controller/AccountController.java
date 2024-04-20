@@ -4,10 +4,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.team1000.gardenersgrove.controller.dataCollection.LogInData;
 import nz.ac.canterbury.team1000.gardenersgrove.controller.dataCollection.ResetPasswordData;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
+import nz.ac.canterbury.team1000.gardenersgrove.form.EditUserForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.ForgotPasswordForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.LoginForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.RegistrationForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
+import nz.ac.canterbury.team1000.gardenersgrove.util.Password;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +23,17 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import static nz.ac.canterbury.team1000.gardenersgrove.util.Password.verifyPassword;
 // import static nz.ac.canterbury.team1000.gardenersgrove.validation.InputValidation.checkResetPasswordData;
 
 import java.io.Console;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
 
 @Controller
@@ -39,32 +47,6 @@ public class AccountController {
     public AccountController(UserService userService) {
         this.userService = userService;
     }
-
-
-    /**
-     * Gets the thymeleaf page representing the /profile page, displaying the currently logged-in
-     * user's account details. Will only work if the user is logged in.
-     * 
-     * @return thymeleaf profilePage
-     */
-    @GetMapping("/profile")
-    public String getProfilePage(Model model) {
-        logger.info("GET /profile");
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentPrincipalName = authentication.getName();
-        User u = userService.findEmail(currentPrincipalName);
-        model.addAttribute("fName", u.getFname());
-        model.addAttribute("lName", u.getLname());
-        model.addAttribute("email", u.getEmail());
-        model.addAttribute("profilePictureUrl", u.getProfilePicturePath());
-        if (u.getDateOfBirth() != null) {
-            model.addAttribute("dob",
-                    u.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-        }
-
-        return "pages/profilePage";
-    }
-
 
     /**
      * Gets the thymeleaf page representing the /register page Will only work if the user is not

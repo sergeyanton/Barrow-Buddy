@@ -15,6 +15,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -30,6 +31,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.format.DateTimeFormatter;
 
 
 @Controller
@@ -38,16 +40,55 @@ public class ProfileController {
     public ProfileController(UserService userService) {
         this.userService = userService;
     }
-
     @Autowired
     private AuthenticationManager authenticationManager;
     private final UserService userService;
-
     public static String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/uploads";
-//    private static final String uploadDir = "C:/team-1000/src/main/resources/static/images/";
-
-
     Logger logger = LoggerFactory.getLogger(ProfileController.class);
+
+    /**
+     * Gets the thymeleaf page representing the /profile page, displaying the currently logged-in
+     * user's account details. Will only work if the user is logged in.
+     *
+     * @return thymeleaf profilePage
+     */
+    @GetMapping("/profile")
+    public String getProfilePage(Model model) {
+        logger.info("GET /profile");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentPrincipalName = authentication.getName();
+        User currentUser = userService.findEmail(currentPrincipalName);
+        model.addAttribute("fName", currentUser.getFname());
+        model.addAttribute("lName", currentUser.getLname());
+        model.addAttribute("email", currentUser.getEmail());
+        model.addAttribute("profilePictureUrl", currentUser.getProfilePicturePath());
+        if (currentUser.getDateOfBirth() != null) {
+            model.addAttribute("dob",
+                    currentUser.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        }
+
+        return "pages/profilePage";
+    }
+
+    @PostMapping("/profile")
+    public String handleProfilePictureUpload(HttpServletRequest request,
+                                             @RequestParam("newProfilePicture") MultipartFile profilePicture) throws IOException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentPrincipalName = authentication.getName();
+        User currentUser = userService.findEmail(currentPrincipalName);
+
+        if (!profilePicture.isEmpty()) {
+            Path fileNameAndPath = Paths.get(UPLOAD_DIRECTORY, profilePicture.getOriginalFilename());
+            String filename = profilePicture.getOriginalFilename();
+            Files.write(fileNameAndPath, profilePicture.getBytes());
+            currentUser.setProfilePicturePath("/uploads/" + filename);
+        }
+
+        userService.updateUserByEmail(currentUser.getEmail(), currentUser);
+        userService.authenticateUser(authenticationManager, currentUser, request);
+
+        return "redirect:/profile";
+    }
 
     /**
      * This method is used to get the profile page for the user
@@ -77,7 +118,10 @@ public class ProfileController {
      * @return A string that represents the link to the profile page
      */
     @PostMapping("/editProfile")
-    public String editProfile(HttpServletRequest request, EditUserForm editUserForm, BindingResult bindingResult, @RequestParam("profilePicture") MultipartFile profilePicture) throws IOException {
+    public String editProfile(HttpServletRequest request,
+                              EditUserForm editUserForm,
+                              BindingResult bindingResult,
+                              @RequestParam("profilePicture") MultipartFile profilePicture) throws IOException {
         logger.info("POST /editProfile");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
