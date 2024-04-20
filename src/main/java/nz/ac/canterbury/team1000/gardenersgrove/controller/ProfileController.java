@@ -94,7 +94,7 @@ public class ProfileController {
      */
     @PostMapping("/profile")
     public String handleProfilePictureUpload(HttpServletRequest request,
-                                             @RequestParam("newProfilePicture") MultipartFile profilePicture) throws IOException {
+                                             @RequestParam("profilePicture") MultipartFile profilePicture) throws IOException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
         User currentUser = userService.findEmail(currentPrincipalName);

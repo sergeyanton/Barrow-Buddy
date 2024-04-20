@@ -94,12 +94,6 @@ td {
     text-overflow: ellipsis;
 }
 
-.form-element {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
 .error {
     color: red;
 }

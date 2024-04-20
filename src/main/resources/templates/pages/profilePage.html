@@ -14,9 +14,9 @@
             <img class="profile-picture" id="profileImage" th:src="${profilePictureUrl}" alt="Profile Picture">
         </div>
 
-        <form class="uploadImage" th:action="@{/profile}" method="post" enctype="multipart/form-data">
+        <form class="upload-image" th:action="@{/profile}" method="post" enctype="multipart/form-data">
             <label id="profileImagePickerLabel" class="file-upload-label" for="profileImagePicker">Edit Profile Picture</label>
-            <input type="file" id="profileImagePicker" name="newProfilePicture" onchange="validateImage(this)">
+            <input type="file" id="profileImagePicker" name="profilePicture" onchange="validateImage(this)">
             <button type="button" id="cancelButton" class="cancelMinor" style="display: none;" onclick="cancelSelection()">Undo</button>
             <button type="submit" id="submitButton" style="display: none;">Save Profile Picture</button>
         </form>
@@ -55,8 +55,8 @@
                 return false;
             }
             document.getElementById('profileImagePickerLabel').style.display = 'none';
-            document.getElementById('cancelButton').style.display = 'block';
-            document.getElementById('submitButton').style.display = 'block';
+            document.getElementById('cancelButton').style.display = 'inline-block';
+            document.getElementById('submitButton').style.display = 'inline-block';
 
             if (input.files && input.files[0]) {
                 const fileReader = new FileReader();
@@ -72,7 +72,7 @@
         function cancelSelection() {
             document.getElementById('profileImagePicker').value = '';
             document.getElementById('profileImage').src = initialProfilePictureUrl;
-            document.getElementById('profileImagePickerLabel').style.display = 'block';
+            document.getElementById('profileImagePickerLabel').style.display = 'inline-block';
             document.getElementById('cancelButton').style.display = 'none';
             document.getElementById('submitButton').style.display = 'none';
         }
