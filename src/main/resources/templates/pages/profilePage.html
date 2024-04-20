@@ -16,7 +16,7 @@
 
         <form class="upload-image" th:action="@{/profile}" method="post" enctype="multipart/form-data">
             <label id="profileImagePickerLabel" class="file-upload-label" for="profileImagePicker">Edit Profile Picture</label>
-            <input type="file" id="profileImagePicker" name="profilePicture" onchange="validateImage(this)">
+            <input type="file" id="profileImagePicker" name="profilePicture" onchange="validateImage(this)" accept="image/png, image/jpeg, image/svg+xml">
             <button type="button" id="cancelButton" class="cancelMinor" style="display: none;" onclick="cancelSelection()">Undo</button>
             <button type="submit" id="submitButton" style="display: none;">Save Profile Picture</button>
         </form>
