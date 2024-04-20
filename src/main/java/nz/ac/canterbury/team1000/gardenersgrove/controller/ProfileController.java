@@ -71,19 +71,6 @@ public class ProfileController {
     }
 
     /**
-     * Handles POST requests from the /gardens/create endpoint.
-     * Handles creation of new gardens
-     *
-     * @param request          the HttpServletRequest object containing the request information
-     * @param createGardenForm the GardenForm object representing the new garden's details
-     * @param bindingResult    the BindingResult object for validation errors
-     * @return the view to display:
-     * - If there are validation errors, stays on the 'Create Garden' form.
-     * - Else, redirect to the newly created garden's profile page.
-     */
-
-
-    /**
      * Handles POST requests from the /profile endpoint.
      * Specifically, this handles the uploading of a new profile picture.
      *
@@ -100,9 +87,19 @@ public class ProfileController {
         User currentUser = userService.findEmail(currentPrincipalName);
 
         if (!profilePicture.isEmpty()) {
-            Path fileNameAndPath = Paths.get(UPLOAD_DIRECTORY, profilePicture.getOriginalFilename());
+            Path uploadDirectoryPath = Paths.get(UPLOAD_DIRECTORY);
+
+            if (!Files.exists(uploadDirectoryPath)) {
+                try {
+                    Files.createDirectories(uploadDirectoryPath);
+                } catch (IOException e) {
+                    throw new IOException("Failed to create upload directory", e);
+                }
+            }
+
             String filename = profilePicture.getOriginalFilename();
-            Files.write(fileNameAndPath, profilePicture.getBytes());
+            Path filePath = uploadDirectoryPath.resolve(filename);
+            Files.write(filePath, profilePicture.getBytes());
             currentUser.setProfilePicturePath("/uploads/" + filename);
         }
 
@@ -172,11 +169,20 @@ public class ProfileController {
             currentUser.setPassword(Password.hashPassword(editUserForm.getPassword()));
         }
 
-        // Profile pic handling
         if (!profilePicture.isEmpty()) {
-            Path fileNameAndPath = Paths.get(UPLOAD_DIRECTORY, profilePicture.getOriginalFilename());
+            Path uploadDirectoryPath = Paths.get(UPLOAD_DIRECTORY);
+
+            if (!Files.exists(uploadDirectoryPath)) {
+                try {
+                    Files.createDirectories(uploadDirectoryPath);
+                } catch (IOException e) {
+                    throw new IOException("Failed to create upload directory", e);
+                }
+            }
+
             String filename = profilePicture.getOriginalFilename();
-            Files.write(fileNameAndPath, profilePicture.getBytes());
+            Path filePath = uploadDirectoryPath.resolve(filename);
+            Files.write(filePath, profilePicture.getBytes());
             currentUser.setProfilePicturePath("/uploads/" + filename);
         }
 
