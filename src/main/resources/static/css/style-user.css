@@ -40,6 +40,11 @@ form button.cancel {
     box-shadow: 0 0 1rem rgba(0, 0, 0, 0.5);
 }
 
+form.uploadImage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
 .cancel{
     padding: 8px 18px;
@@ -71,7 +76,16 @@ button.cancel{
     background-color: darkred;
 }
 
+.cancelMinor {
+    color: #FAF9F6;
+    background-color: darkred;
+}
+
 .cancel:hover {
+    background-color: rgba(139, 0, 0, 0.55);
+}
+
+.cancelMinor:hover {
     background-color: rgba(139, 0, 0, 0.55);
 }
 
@@ -97,7 +111,20 @@ button.cancel:hover {
 }
 
 /* Button styles */
-button, .next {
+button {
+    padding: 8px 18px;
+    margin-top: 8px;
+    font-size: 16px;
+    border-radius: 10px;
+    color: #FAF9F6;
+
+    background-color: #023020;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.next {
     padding: 8px 18px;
     font-size: 16px;
     border-radius: 10px;
@@ -140,5 +167,23 @@ input {
 .profile-picture {
     width: 100px;
     height: auto;
+}
+
+#profileImagePicker {
+    display: none;
+}
+
+.file-upload-label {
+    color: #FAF9F6;
+    background-color: #023020;
+    padding: 8px 18px;
+    font-size: 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 8px;
+}
+
+.file-upload-label:hover {
+    background-color: rgba(4, 65, 42, 0.71);
 }
 
