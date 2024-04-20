@@ -14,13 +14,17 @@
         <form th:action="@{/editProfile}" method="post" th:object="${editUserForm}" enctype="multipart/form-data">
             <img id="profileImage" th:src="${editUserForm.getProfilePictureUrl()}" alt="Profile Picture" class="profile-picture">
             <br />
+
             <input type="file" name="profilePicture" accept="image/png, image/jpeg, image/svg+xml" onchange="validateImage(this)">
             <br />
+
             <input th:replace="~{fragments/formElement :: formElementField(fieldName='firstName', label='First Name: ', placeholder='Fabian')}" />
             <input th:replace="~{fragments/formElement :: formElementField(fieldName='lastName', label='Last Name: ', placeholder='Gilson')}" />
-            <input type="checkbox" class="form-control" id="noSurnameCheckBox" th:field="*{noSurnameCheckBox}" onclick="toggleInput()">
+
             <label for="noSurnameCheckBox"> I have no surname </label>
+            <input type="checkbox" class="form-control" id="noSurnameCheckBox" th:field="*{noSurnameCheckBox}" onclick="toggleInput()">
             <br />
+
             <input th:replace="~{fragments/formElement :: formElementField(fieldName='email', label='Email: ', placeholder='jane@doe.nz')}" />
             <input th:replace="~{fragments/formElement :: formElementField(fieldName='dob', label='Date of Birth: ', placeholder='DD/MM/YYYY')}" />
             <input th:replace="~{fragments/formElement :: formElementField(fieldName='password', label='Password: ', placeholder='*******', type='password')}" />

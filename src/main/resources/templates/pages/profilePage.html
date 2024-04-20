@@ -10,7 +10,13 @@
 <body>
     <div class="basic">
         <h1>My Profile</h1>
-        <img th:src="${profilePictureUrl}" alt="Profile Picture" class="profile-picture">
+        <img id="profileImage" th:src="${profilePictureUrl}" alt="Profile Picture" class="profile-picture">
+
+        <form th:action="@{updateProfilePicture}" method="post" enctype="multipart/form-data">
+            <input type="file" name="newProfilePicture" onchange="validateImage(this)">
+            <button type="submit" style="display: none;">Upload</button>
+        </form>
+
         <p th:text="'First Name: ' + ${fName}"></p>
         <p th:text="'Last Name: ' + ${lName}"></p>
         <p th:text="'Email: ' + ${email}"></p>
@@ -24,5 +30,45 @@
         <a th:href="@{editProfile}">Edit profile</a>
         <a class="next" th:href="@{.}">Home</a>
     </div>
+    <script>
+        function previewProfilePicture(event) {
+            var input = event.target;
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    document.querySelector('.profile-picture').src = e.target.result;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function validateImage(input) {
+            const file = input.files[0];
+            const validTypes = ["image/png", "image/jpeg", "image/svg+xml"];
+            const maxFileSize = 10 * 1024 * 1024; // 10MB
+
+            if (!validTypes.includes(file.type)) {
+                alert("Image must be of type png, jpg or svg");
+                input.value = '';
+                return false;
+            }
+
+            if (file.size > maxFileSize) {
+                alert("Image must be less than 10MB");
+                input.value = '';
+                return false;
+            }
+
+            if (input.files && input.files[0]) {
+                const fileReader = new FileReader();
+
+                fileReader.onload = function (e) {
+                    document.getElementById('profileImage').src = e.target.result;
+                }
+
+                fileReader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
 </body>
 </html>
