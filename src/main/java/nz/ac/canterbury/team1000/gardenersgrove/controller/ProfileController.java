@@ -70,6 +70,28 @@ public class ProfileController {
         return "pages/profilePage";
     }
 
+    /**
+     * Handles POST requests from the /gardens/create endpoint.
+     * Handles creation of new gardens
+     *
+     * @param request          the HttpServletRequest object containing the request information
+     * @param createGardenForm the GardenForm object representing the new garden's details
+     * @param bindingResult    the BindingResult object for validation errors
+     * @return the view to display:
+     * - If there are validation errors, stays on the 'Create Garden' form.
+     * - Else, redirect to the newly created garden's profile page.
+     */
+
+
+    /**
+     * Handles POST requests from the /profile endpoint.
+     * Specifically, this handles the uploading of a new profile picture.
+     *
+     * @param request           the HttpServletRequest object containing the request information
+     * @param profilePicture    image (png, jpg or svg) to be saved to the file system
+     * @return a redirect to the /profile endpoint (GET)
+     * @throws IOException IOException
+     */
     @PostMapping("/profile")
     public String handleProfilePictureUpload(HttpServletRequest request,
                                              @RequestParam("newProfilePicture") MultipartFile profilePicture) throws IOException {
@@ -109,13 +131,17 @@ public class ProfileController {
     }
 
     /**
-     * This method is used to check the data passed in by the user and then if it is valid, update
-     * the user's data
-     * 
-     * @param request the request object
-     * @param editUserForm the form used to edit the user's profile
-     * @param bindingResult the binding result for binding the form errors
-     * @return A string that represents the link to the profile page
+     * Handles POST requests from the /editProfile endpoint.
+     * Checks for errors and accordingly edits the user's details.
+     *
+     * @param request           the HttpServletRequest object containing the request information
+     * @param editUserForm      the EditUserForm object containing the form's user inputs
+     * @param bindingResult     the BindingResult object for validation errors
+     * @param profilePicture    image (png, jpg or svg) to be saved to the file system
+     * @return the view to display:
+     * - If there are validation errors, stays on the 'Edit Profile' form.
+     * - Else, redirect to the user's (edited) profile page.
+     * @throws IOException IOException
      */
     @PostMapping("/editProfile")
     public String editProfile(HttpServletRequest request,

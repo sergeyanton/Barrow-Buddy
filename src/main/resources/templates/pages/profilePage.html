@@ -10,7 +10,9 @@
 <body>
     <div class="basic">
         <h1>My Profile</h1>
-        <img id="profileImage" th:src="${profilePictureUrl}" alt="Profile Picture" class="profile-picture">
+        <div class="profile-picture-wrapper">
+            <img class="profile-picture" id="profileImage" th:src="${profilePictureUrl}" alt="Profile Picture">
+        </div>
 
         <form class="uploadImage" th:action="@{/profile}" method="post" enctype="multipart/form-data">
             <label id="profileImagePickerLabel" class="file-upload-label" for="profileImagePicker">Edit Profile Picture</label>
