@@ -95,7 +95,6 @@ public class GardenForm {
                 getSizeDouble() //TODO could get rid of some constructor redundancy in either Garden or User
         );
     }
-
     /**
      * Validates the 'New Garden' form data and adds validation errors to the BindingResult.
      *

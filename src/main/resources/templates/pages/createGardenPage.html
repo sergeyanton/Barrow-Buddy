@@ -11,8 +11,9 @@
             <form th:action="@{/gardens/create}" method="post" th:object="${createGardenForm}">
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='name', label='Garden Name: ', placeholder='The Hamilton Gardens')}" />
                 <br />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='size', label='Size in m&sup2; (optional): ', placeholder='540000.0')}" />
 
-
+                <h2>Garden Location</h2>
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='street', label='Street: ', placeholder='Hungerford Crescent')}" />
                 <br />
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='streetNumber', label='Street Number: ', placeholder='23')}" />
@@ -26,8 +27,6 @@
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='country', label='Country: ', placeholder='New Zealand')}" />
                 <br />
 
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='size', label='Size in m&sup2; (optional): ', placeholder='540000.0')}" />
-                <br />
                 <button class="next" type="submit">Create</button>
                 <a class="cancel" th:href="@{/gardens}">Cancel</a> <!--TODO cancel back to the previous page-->
 <!--                <a class="cancel" href="#" onclick="window.history.back();">Cancel</a>-->

@@ -39,7 +39,12 @@ public class Garden {
      * Creates a new Garden object
      *
      * @param name     name of garden
-     * @param location location of garden
+     * @param street street name of garden's location
+     * @param streetNumber street number of garden's location
+     * @param suburb suburb of garden's location
+     * @param city city of garden's location
+     * @param postcode postcode of garden's location
+     * @param country country of garden's location
      * @param size     size of garden
      */
     public Garden(String name, String street, String streetNumber, String suburb, String city, String postcode, String country, Double size) {
@@ -64,7 +69,12 @@ public class Garden {
      * either use a ',' or a '.' as a decimal separator
      *
      * @param name     name of garden
-     * @param location location of garden
+     * @param street street name of garden's location
+     * @param streetNumber street number of garden's location
+     * @param suburb suburb of garden's location
+     * @param city city of garden's location
+     * @param postcode postcode of garden's location
+     * @param country country of garden's location
      * @param size     size of garden
      */
     public Garden(String name, String street, String streetNumber, String suburb, String city, String postcode, String country, String size) {
@@ -119,10 +129,6 @@ public class Garden {
         name = newName;
     }
 
-//    public void setLocation(String newLocation) {
-//        location = newLocation;
-//    }
-
     public void setSize(Double newSize) {
         size = newSize;
     }
@@ -134,5 +140,9 @@ public class Garden {
     @Override
     public String toString() {
         return "Garden{id=" + id + ", name=" + name + "', size='" + size + "'}";
+    }
+
+    public String getLocationString() {
+        return streetNumber + " " + street + ", " + suburb + ", " + city + " " + postcode + ", " + country;
     }
 }
