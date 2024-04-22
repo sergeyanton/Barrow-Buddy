@@ -12,10 +12,10 @@
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='name', label='Garden Name: ', placeholder='The Hamilton Gardens')}" />
                 <br />
 
-                // Locations
+
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='street', label='Street: ', placeholder='Hungerford Crescent')}" />
                 <br />
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='number', label='Street Number: ', placeholder='23')}" />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='streetNumber', label='Street Number: ', placeholder='23')}" />
                 <br />
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='suburb', label='Suburb: ', placeholder='Ilam')}" />
                 <br />
@@ -30,6 +30,8 @@
                 <br />
                 <button class="next" type="submit">Create</button>
                 <a class="cancel" th:href="@{/gardens}">Cancel</a> <!--TODO cancel back to the previous page-->
+<!--                <a class="cancel" href="#" onclick="window.history.back();">Cancel</a>-->
+
             </form>
         </div>
     </main>

@@ -11,8 +11,21 @@
             <form th:action="@{'/gardens/' + ${gardenId} + '/edit'}" method="post" th:object="${editGardenForm}">
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='name', label='Garden Name: ', placeholder='The Hamilton Gardens')}" />
                 <br />
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='location', label='Location: ', placeholder='Hungerford Crescent, Hamilton 3216')}" />
+
+                // Locations
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='street', label='Street: ', placeholder='Hungerford Crescent')}" />
                 <br />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='streetNumber', label='Street Number: ', placeholder='23')}" />
+                <br />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='suburb', label='Suburb: ', placeholder='Ilam')}" />
+                <br />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='city', label='City: ', placeholder='Christchurch')}" />
+                <br />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='postcode', label='Postcode: ', placeholder='3216')}" />
+                <br />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='country', label='Country: ', placeholder='New Zealand')}" />
+                <br />
+
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='size', label='Size in m&sup2; (optional): ', placeholder='540000.0')}" />
                 <br />
                 <button class="next" type="submit">Edit</button>

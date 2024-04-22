@@ -23,10 +23,6 @@ public class GardenForm {
         this.name = name;
     }
 
-//    public String getLocation() {
-//        return location;
-//    }
-
     public String getStreet() {
         return street;
     }
