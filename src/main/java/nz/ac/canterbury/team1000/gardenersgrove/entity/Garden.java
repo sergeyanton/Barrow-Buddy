@@ -116,7 +116,6 @@ public class Garden {
     public String getPostcode() {
         return postcode;
     }
-
     public String getCountry() {
         return country;
     }
@@ -128,6 +127,13 @@ public class Garden {
     public void setName(String newName) {
         name = newName;
     }
+    public void setStreet(String newStreet) { street = newStreet; }
+    public void setStreetNumber(String newStreetNumber) { streetNumber = newStreetNumber;}
+    public void setSuburb(String newSuburb) {suburb = newSuburb;
+    }
+    public void setCity(String newCity) { city = newCity; }
+    public void setPostcode(String newPostcode) { postcode = newPostcode; }
+    public void setCountry(String newCountry) { country = newCountry; }
 
     public void setSize(Double newSize) {
         size = newSize;

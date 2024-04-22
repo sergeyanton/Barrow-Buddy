@@ -11,7 +11,9 @@
             <form th:action="@{'/gardens/' + ${gardenId} + '/edit'}" method="post" th:object="${editGardenForm}">
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='name', label='Garden Name: ', placeholder='The Hamilton Gardens')}" />
                 <br />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='size', label='Size in m&sup2; (optional): ', placeholder='540000.0')}" />
 
+                <h2>Edit Garden Location</h2>
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='street', label='Street: ', placeholder='Hungerford Crescent')}" />
                 <br />
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='streetNumber', label='Street Number: ', placeholder='23')}" />
@@ -25,8 +27,6 @@
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='country', label='Country: ', placeholder='New Zealand')}" />
                 <br />
 
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='size', label='Size in m&sup2; (optional): ', placeholder='540000.0')}" />
-                <br />
                 <button class="next" type="submit">Edit</button>
                 <a class="cancel" th:href="@{'/gardens/' + ${gardenId}}">Cancel</a>
             </form>

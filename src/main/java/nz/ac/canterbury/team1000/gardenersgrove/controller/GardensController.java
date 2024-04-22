@@ -180,19 +180,9 @@ public class GardensController {
         }
 
         Garden garden = gardenService.getGardenById(gardenId);
-        Garden edit = editGardenForm.getGarden();
-        garden.setName(edit.getName());
+        Garden updatedGarden = editGardenForm.getGarden();
 
-        editGardenForm.setStreet(edit.getStreet());
-        editGardenForm.setStreetNumber(edit.getStreetNumber());
-        editGardenForm.setSuburb(edit.getSuburb());
-        editGardenForm.setCity(edit.getCity());
-        editGardenForm.setPostcode(edit.getPostcode());
-        editGardenForm.setCountry(edit.getCountry());
-
-        garden.setSize(edit.getSize());
-
-        gardenService.updateGarden(garden);
+        gardenService.updateGardenById(garden.getId(), updatedGarden);
 
         logger.info("Garden edited: " + garden);
         return "redirect:/gardens/" + garden.getId();
