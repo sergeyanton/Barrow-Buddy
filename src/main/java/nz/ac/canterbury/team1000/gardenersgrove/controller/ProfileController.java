@@ -147,7 +147,8 @@ public class ProfileController {
     public String editProfile(HttpServletRequest request,
                               @ModelAttribute("editUserForm") EditUserForm editUserForm,
                               BindingResult bindingResult,
-                              @RequestParam("profilePicture") MultipartFile profilePicture) throws IOException {
+                              @RequestParam("profilePicture") MultipartFile profilePicture,
+                              Model model) throws IOException {
         logger.info("POST /editProfile");
         User currentUser = userService.getLoggedInUser();
         String oldEmail = currentUser.getEmail();
@@ -158,22 +159,7 @@ public class ProfileController {
             bindingResult.addError(new FieldError("registrationForm", "email", editUserForm.getEmail(), false, null, null, "Email address is already in use"));
         }
 
-        if (bindingResult.hasErrors()) {
-            if (!profilePicture.isEmpty()) {
-                String imageToRender = "data:" + profilePicture.getContentType() + ";base64," + Base64.getEncoder().encodeToString(profilePicture.getBytes());
-                System.out.println(imageToRender);
-                editUserForm.setProfilePictureUrl(imageToRender);
-            } else {
-                editUserForm.setProfilePictureUrl(currentUser.getProfilePicturePath());
-            }
-            return "pages/editProfilePage";
-        }
-
-        currentUser.setFname(editUserForm.getFirstName());
-        currentUser.setLname(editUserForm.getLastName());
-        currentUser.setEmail(editUserForm.getEmail());
-        currentUser.setDateOfBirth(editUserForm.getDobLocalDate());
-
+        // save image
         if (!profilePicture.isEmpty()) {
             Path uploadDirectoryPath = Paths.get(UPLOAD_DIRECTORY);
 
@@ -184,12 +170,21 @@ public class ProfileController {
                     throw new IOException("Failed to create upload directory", e);
                 }
             }
-
-            String filename = profilePicture.getOriginalFilename();
-            Path filePath = uploadDirectoryPath.resolve(filename);
+            Path filePath = uploadDirectoryPath.resolve(profilePicture.getOriginalFilename());
             Files.write(filePath, profilePicture.getBytes());
-            currentUser.setProfilePicturePath("/uploads/" + filename);
         }
+
+        if (bindingResult.hasErrors()) {
+            // make sure the uploaded image is still rendered properly
+            if (!profilePicture.isEmpty()) model.addAttribute("uploadedProfileImageOnError", "/uploads/" + profilePicture.getOriginalFilename());
+            return "pages/editProfilePage";
+        }
+
+        currentUser.setFname(editUserForm.getFirstName());
+        currentUser.setLname(editUserForm.getLastName());
+        currentUser.setEmail(editUserForm.getEmail());
+        currentUser.setDateOfBirth(editUserForm.getDobLocalDate());
+        if (!profilePicture.isEmpty()) currentUser.setProfilePicturePath("/uploads/" + profilePicture.getOriginalFilename());
 
         userService.updateUserByEmail(oldEmail, currentUser);
         userService.authenticateUser(authenticationManager, currentUser, request);

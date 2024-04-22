@@ -9,10 +9,11 @@
 
 <body>
     <div class="basic">
-
         <h1>Edit My Profile</h1>
         <div class="profile-picture-wrapper">
-            <img class="profile-picture" id="profileImage" th:src="${editUserForm.getProfilePictureUrl()}" alt="Profile Picture">
+            <img class="profile-picture" id="profileImage"
+                 th:src="${uploadedProfileImageOnError != null ? uploadedProfileImageOnError : editUserForm.getProfilePictureUrl()}"
+                 alt="Profile Picture">
         </div>
 
         <form class="upload-image" th:action="@{/editProfile}" method="post" th:object="${editUserForm}" enctype="multipart/form-data">
