@@ -1,8 +1,6 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import nz.ac.canterbury.team1000.gardenersgrove.controller.dataCollection.LogInData;
-import nz.ac.canterbury.team1000.gardenersgrove.controller.dataCollection.ResetPasswordData;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.ForgotPasswordForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.LoginForm;
