@@ -125,6 +125,7 @@ public class ProfileController {
         editUserForm.setEmail(currentUser.getEmail());
         if (currentUser.getDateOfBirth() != null) editUserForm.setDob(currentUser.getDateOfBirthString());
         editUserForm.setNoSurnameCheckBox(editUserForm.getLastName() == null || editUserForm.getLastName().isEmpty());
+        //TODO there is a chance that the profile picture url is not necessary to have in the form classes, and instead just have it as a regular attribute
         editUserForm.setProfilePictureUrl(currentUser.getProfilePicturePath());
 
         return "pages/editProfilePage";

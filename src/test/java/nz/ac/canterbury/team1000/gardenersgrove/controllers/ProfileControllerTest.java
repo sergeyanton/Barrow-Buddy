@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -43,6 +44,8 @@ public class ProfileControllerTest {
 
     @Mock
     private User userMock;
+    private MockMultipartFile imageFile;
+    private final MockMultipartFile emptyFile = new MockMultipartFile("profilePicture", new byte[0]);
     private EditUserForm editUserForm;
     private UpdatePasswordForm updatePasswordForm;
 
@@ -54,6 +57,10 @@ public class ProfileControllerTest {
         Mockito.when(userMock.getEmail()).thenReturn("johnsmith@gmail.com");
         Mockito.when(userMock.getDateOfBirthString()).thenReturn("05/05/1999");
         Mockito.when(userMock.getPassword()).thenReturn("encoded_password");
+        Mockito.when(userMock.getProfilePicturePath()).thenReturn("/uploads/example.png");
+
+        imageFile = new MockMultipartFile(
+                "profilePicture", "newPfp.png", "image/png", "file contents".getBytes());
 
         editUserForm = new EditUserForm();
         editUserForm.setFirstName(userMock.getFname());
@@ -61,6 +68,7 @@ public class ProfileControllerTest {
         editUserForm.setNoSurnameCheckBox(userMock.getLname() == null || userMock.getLname().isEmpty());
         editUserForm.setEmail(userMock.getEmail());
         editUserForm.setDob(userMock.getDateOfBirthString());
+        editUserForm.setProfilePictureUrl(userMock.getProfilePicturePath());
 
         updatePasswordForm = new UpdatePasswordForm();
         updatePasswordForm.setPassword("Pass123$");
@@ -75,7 +83,9 @@ public class ProfileControllerTest {
 
     @Test
     public void EditUserPost_WithNoChange_SavesToService() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/editProfile").with(csrf())
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/editProfile")
+                        .file(emptyFile)
+                        .with(csrf())
                         .flashAttr("editUserForm", editUserForm))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/profile"));
@@ -93,7 +103,9 @@ public class ProfileControllerTest {
         Mockito.when(userService.checkEmail(Mockito.any())).thenReturn(false);
         editUserForm.setDob("01/06/1998");
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/editProfile").with(csrf())
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/editProfile")
+                        .file(imageFile)
+                        .with(csrf())
                         .flashAttr("editUserForm", editUserForm))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/profile"));
