@@ -175,12 +175,26 @@ public class AccountController {
         return "redirect:/";
     }
 
+    /**
+     * Handles POST requests to the /forgotPassword endpoint.
+     * Let the user type an email address that they forgot the password of, and send them a reset email, or show an error message if the email address is invalid.
+     *
+     * @param request the HttpServletRequest object containing the request information
+     * @param forgotPasswordForm the ForgotPasswordForm object representing the 'forgot password' data
+     * @param bindingResult the BindingResult object for validation errors
+     * @return a String representing the view to display after entering the 'forgot password email':
+     *      *  *         - Whatever the result is (error or no error), returns/redirects the forgot password page.
+     */
     @PostMapping("/forgotPassword")
     public String forgotPassword(HttpServletRequest request, @ModelAttribute("forgotPasswordForm") ForgotPasswordForm forgotPasswordForm, BindingResult bindingResult) {
         ForgotPasswordForm.validate(forgotPasswordForm, bindingResult);
+        User user = userService.findEmail(forgotPasswordForm.getEmail());
 
-        if (!bindingResult.hasFieldErrors("email") && !userService.checkEmail(forgotPasswordForm.getEmail())) {
-            bindingResult.addError(new FieldError("forgotPasswordForm", "email", forgotPasswordForm.getEmail(), false, null, null, "Email does not exist"));
+        if (user == null) {
+            bindingResult.addError(new FieldError("forgotPasswordForm", "email", forgotPasswordForm.getEmail(), false, null, null, "An email was sent to the address if it was recognised"));
+
+        } else if (!bindingResult.hasFieldErrors("email") && !userService.checkEmail(forgotPasswordForm.getEmail())) {
+            bindingResult.addError(new FieldError("forgotPasswordForm", "email", forgotPasswordForm.getEmail(), false, null, null, "Invalid email format"));
         }
 
         if (bindingResult.hasErrors()) {
@@ -190,7 +204,7 @@ public class AccountController {
         // form was submitted with valid data
         // send a reset password email to the provided email
 
-        // TODO: "SEND A RESET EMAIL TO USER!!!!!! - NOT IMPLEMENTED");
+        // TODO: "SEND A RESET EMAIL TO USER!!!!!! - NOT IMPLEMENTED";
 
 
         return "redirect:/forgotPasswordPage";
