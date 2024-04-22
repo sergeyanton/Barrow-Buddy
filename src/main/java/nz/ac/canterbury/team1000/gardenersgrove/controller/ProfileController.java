@@ -31,6 +31,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
+import java.util.Base64;
 
 @Controller
 public class ProfileController {
@@ -158,6 +159,13 @@ public class ProfileController {
         }
 
         if (bindingResult.hasErrors()) {
+            if (!profilePicture.isEmpty()) {
+                String imageToRender = "data:" + profilePicture.getContentType() + ";base64," + Base64.getEncoder().encodeToString(profilePicture.getBytes());
+                System.out.println(imageToRender);
+                editUserForm.setProfilePictureUrl(imageToRender);
+            } else {
+                editUserForm.setProfilePictureUrl(currentUser.getProfilePicturePath());
+            }
             return "pages/editProfilePage";
         }
 
