@@ -33,6 +33,7 @@
                         <td><span th:text="${plant.name}"></span></td>
                         <td><span th:text="${plant.plantCount}"></span></td>
                         <td><span th:text="${plant.description}"></span></td>
+                        <td><a th:href="@{'/gardens/' + ${garden.id} + '/plants/' + ${plant.id} + '/edit'}">Edit Plant</a></td>
                     </tr>
                     </tbody>
                 </table>
