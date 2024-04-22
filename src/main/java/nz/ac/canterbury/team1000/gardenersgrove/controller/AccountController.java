@@ -1,21 +1,19 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import nz.ac.canterbury.team1000.gardenersgrove.controller.dataCollection.LogInData;
-import nz.ac.canterbury.team1000.gardenersgrove.controller.dataCollection.ResetPasswordData;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.EditUserForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.ForgotPasswordForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.LoginForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.RegistrationForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
-import nz.ac.canterbury.team1000.gardenersgrove.util.Password;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,9 +23,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-
-import static nz.ac.canterbury.team1000.gardenersgrove.util.Password.verifyPassword;
-// import static nz.ac.canterbury.team1000.gardenersgrove.validation.InputValidation.checkResetPasswordData;
 
 import java.io.Console;
 import java.io.IOException;
@@ -40,8 +35,12 @@ import java.time.format.DateTimeFormatter;
 public class AccountController {
     Logger logger = LoggerFactory.getLogger(AccountController.class);
     private final UserService userService;
+
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     public AccountController(UserService userService) {
@@ -59,7 +58,7 @@ public class AccountController {
      *         - Else, go to the registration page, where the user can create a new account
      */
     @GetMapping("/register")
-    public String getRegisterPage(@ModelAttribute RegistrationForm registrationForm) {
+    public String getRegisterPage(@ModelAttribute("registrationForm") RegistrationForm registrationForm) {
         logger.info("GET /register");
         return userService.isSignedIn() ? "redirect:/" : "pages/registrationPage";
     }
@@ -83,7 +82,9 @@ public class AccountController {
      *         - If registration is successful, redirects to the user's profile page.
      */
     @PostMapping("/register")
-    public String register(HttpServletRequest request, @ModelAttribute("registrationForm") RegistrationForm registrationForm, BindingResult bindingResult) {
+    public String register(HttpServletRequest request,
+                           @ModelAttribute("registrationForm") RegistrationForm registrationForm,
+                           BindingResult bindingResult) {
         RegistrationForm.validate(registrationForm, bindingResult);
 
         if (!bindingResult.hasFieldErrors("email") && userService.checkEmail(registrationForm.getEmail())) {
@@ -94,7 +95,7 @@ public class AccountController {
             return "pages/registrationPage";
         }
 
-        User newUser = registrationForm.getUser();
+        User newUser = registrationForm.getUser(passwordEncoder);
         newUser.setProfilePicturePath("/images/default_pic.jpg");
         // Give them the role of user
         newUser.grantAuthority("ROLE_USER");
@@ -112,7 +113,7 @@ public class AccountController {
      * @return thymeleaf loginPage
      */
     @GetMapping("/login")
-    public String getLoginPage(LoginForm loginForm) {
+    public String getLoginPage(@ModelAttribute("loginForm") LoginForm loginForm) {
         logger.info("GET /login");
         return userService.isSignedIn() ? "redirect:/" : "pages/loginPage";
     }
@@ -125,11 +126,13 @@ public class AccountController {
      * @param loginForm the LoginForm object representing the user's login data
      * @param bindingResult the BindingResult object for validation errors
      * @return a String representing the view to display after login:
-     *      *  *         - If there are validation errors, returns the login page to display errors.
-     *      *  *         - If login is successful, redirects to the application's home page.
+     *         - If there are validation errors, returns the login page to display errors.
+     *         - If login is successful, redirects to the application's home page.
      */
     @PostMapping("/login")
-    public String login(HttpServletRequest request, @ModelAttribute("loginForm") LoginForm loginForm, BindingResult bindingResult) {
+    public String login(HttpServletRequest request,
+                        @ModelAttribute("loginForm") LoginForm loginForm,
+                        BindingResult bindingResult) {
         if (userService.isSignedIn()) {
             return "redirect:/";
         }
@@ -142,7 +145,7 @@ public class AccountController {
             String invalidUserError = "The email address is unknown, or the password is invalid";
             if (user == null) {
                 bindingResult.addError(new FieldError("loginForm", "password", loginForm.getPassword(), false, null, null, invalidUserError));
-            } else if (!verifyPassword(loginForm.getPassword(), user.getPassword())) {
+            } else if (!passwordEncoder.matches(loginForm.getPassword(), user.getPassword())) {
                 bindingResult.addError(new FieldError("loginForm", "password", loginForm.getPassword(), false, null, null, invalidUserError));
             }
         }
@@ -159,12 +162,26 @@ public class AccountController {
         return "redirect:/";
     }
 
+    /**
+     * Handles POST requests to the /forgotPassword endpoint.
+     * Let the user type an email address that they forgot the password of, and send them a reset email, or show an error message if the email address is invalid.
+     *
+     * @param request the HttpServletRequest object containing the request information
+     * @param forgotPasswordForm the ForgotPasswordForm object representing the 'forgot password' data
+     * @param bindingResult the BindingResult object for validation errors
+     * @return a String representing the view to display after entering the 'forgot password email':
+     *         - Whatever the result is (error or no error), returns/redirects the forgot password page.
+     */
     @PostMapping("/forgotPassword")
     public String forgotPassword(HttpServletRequest request, @ModelAttribute("forgotPasswordForm") ForgotPasswordForm forgotPasswordForm, BindingResult bindingResult) {
         ForgotPasswordForm.validate(forgotPasswordForm, bindingResult);
+        User user = userService.findEmail(forgotPasswordForm.getEmail());
 
-        if (!bindingResult.hasFieldErrors("email") && !userService.checkEmail(forgotPasswordForm.getEmail())) {
-            bindingResult.addError(new FieldError("forgotPasswordForm", "email", forgotPasswordForm.getEmail(), false, null, null, "Email does not exist"));
+        if (user == null) {
+            bindingResult.addError(new FieldError("forgotPasswordForm", "email", forgotPasswordForm.getEmail(), false, null, null, "An email was sent to the address if it was recognised"));
+
+        } else if (!bindingResult.hasFieldErrors("email") && !userService.checkEmail(forgotPasswordForm.getEmail())) {
+            bindingResult.addError(new FieldError("forgotPasswordForm", "email", forgotPasswordForm.getEmail(), false, null, null, "Invalid email format"));
         }
 
         if (bindingResult.hasErrors()) {
@@ -174,7 +191,7 @@ public class AccountController {
         // form was submitted with valid data
         // send a reset password email to the provided email
 
-        // TODO: "SEND A RESET EMAIL TO USER!!!!!! - NOT IMPLEMENTED");
+        // TODO: "SEND A RESET EMAIL TO USER!!!!!! - NOT IMPLEMENTED";
 
 
         return "redirect:/forgotPasswordPage";

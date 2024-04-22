@@ -8,6 +8,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -19,6 +21,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebSecurity
 @ComponentScan("com.baeldung.security")
 public class SecurityConfiguration {
+
     /**
      * Our Custom Authentication Provider {@link CustomAuthenticationProvider}
      */
@@ -79,5 +82,10 @@ public class SecurityConfiguration {
                 .logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/")
                         .invalidateHttpSession(true).deleteCookies("JSESSIONID"));
         return http.build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

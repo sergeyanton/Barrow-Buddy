@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Edit Profile</title>
-    <link rel="stylesheet" type="text/css" th:href="@{/css/style-user.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/styles-user.css}">
 </head>
 
 <body>
@@ -35,6 +35,7 @@
             <input th:replace="~{fragments/formElement :: formElementField(fieldName='retypePassword', label='Re-Type Password: ', placeholder='*******', type='password')}" />
 
             <button type="submit">Update Profile</button>
+            <a th:href="@{editProfile/updatePassword}">Update Password</a>
             <a class="cancel" th:href="@{profile}">Cancel</a>
         </form>
     </div>

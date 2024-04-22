@@ -23,7 +23,12 @@ public class EditUserFormTest {
 
     @BeforeEach
     void setUp() {
-        editUserForm.setFromUser(existingUser);
+        editUserForm.setFirstName(existingUser.getFname());
+        editUserForm.setLastName(existingUser.getLname());
+        editUserForm.setEmail(existingUser.getEmail());
+        editUserForm.setDob(existingUser.getDateOfBirth() != null ? existingUser.getDateOfBirthString() : "");
+        editUserForm.setNoSurnameCheckBox(editUserForm.getLastName() == null || editUserForm.getLastName().isEmpty());
+
         bindingResult = Mockito.mock(BindingResult.class);
         Mockito.when(bindingResult.hasErrors()).thenReturn(false);
         Mockito.doAnswer(invocation -> {
@@ -104,43 +109,10 @@ public class EditUserFormTest {
     }
 
     @Test
-    void validate_WithBlankPasswordAndBlankRetypePassword_DoesNotAddError() {
-        editUserForm.setPassword("");
-        editUserForm.setRetypePassword("");
-        EditUserForm.validate(editUserForm, bindingResult, existingUser);
-        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
-    }
-
-    @Test
-    void validate_WithPasswordAndRetypePasswordMismatch_AddsError() {
-        editUserForm.setPassword("password");
-        editUserForm.setRetypePassword("password1");
-        EditUserForm.validate(editUserForm, bindingResult, existingUser);
-        Mockito.verify(bindingResult, Mockito.times(2)).addError(Mockito.any());
-    }
-
-    @Test
-    void validate_WithBlankPasswordButRetypePassword_AddsError() {
-        editUserForm.setPassword("");
-        editUserForm.setRetypePassword("password");
-        EditUserForm.validate(editUserForm, bindingResult, existingUser);
-        // error should be added for password and retypePassword
-        Mockito.verify(bindingResult, Mockito.times(2)).addError(Mockito.any());
-    }
-
-    @Test
-    void validate_WithMatchingPasswordUnder8Characters_AddsError() {
-        editUserForm.setPassword("pass");
-        editUserForm.setRetypePassword("pass");
-        EditUserForm.validate(editUserForm, bindingResult, existingUser);
-        Mockito.verify(bindingResult).addError(Mockito.any());
-    }
-
-    @Test
-    void validate_WithBlankDateOfBirth_AddsError() {
+    void validate_WithBlankDateOfBirth_DoesNotAddError() {
         editUserForm.setDob("");
         EditUserForm.validate(editUserForm, bindingResult, existingUser);
-        Mockito.verify(bindingResult).addError(Mockito.any());
+        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
     }
 
     @Test

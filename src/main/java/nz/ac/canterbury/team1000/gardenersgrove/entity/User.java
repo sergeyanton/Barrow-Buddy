@@ -5,6 +5,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -118,13 +119,11 @@ public class User {
 
     /**
      * Returns the date of birth as a string in the format DD/MM/YYYY.
-     *
+     * 
      * @return The date of birth as a string in the format DD/MM/YYYY.
      */
     public String getDateOfBirthString() {
-        // return date in DD/MM/YYYY format
-        return String.format("%02d/%02d/%04d", dateOfBirth.getDayOfMonth(),
-                dateOfBirth.getMonthValue(), dateOfBirth.getYear());
+        return dateOfBirth.format(DateTimeFormatter.ofPattern("dd/MM/uuuu"));
     }
 
     public String getProfilePicturePath() {
@@ -153,5 +152,11 @@ public class User {
 
     public void setProfilePicturePath(String profilePicturePath) {
         this.profilePicturePath = profilePicturePath;
+    }
+
+    @Override
+    public String toString() {
+        return "User{id=" + id + ", fname=" + fname + ", lname=" + lname + ", email=" + email +
+                ", dob="  + dateOfBirth + ", password=" + password + "}";
     }
 }
