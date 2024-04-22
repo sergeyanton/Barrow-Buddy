@@ -20,7 +20,6 @@ public class RegistrationForm {
     protected String dob;
     protected String password;
     protected String retypePassword;
-    protected String dob;
     protected String profilePictureUrl;
 
     public String getFirstName() {

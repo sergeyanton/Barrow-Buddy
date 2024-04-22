@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Edit Profile</title>
-    <link rel="stylesheet" type="text/css" th:href="@{/css/styles-user.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style-user.css}">
 </head>
 
 <body>
@@ -31,8 +31,6 @@
 
             <input th:replace="~{fragments/formElement :: formElementField(fieldName='email', label='Email: ', placeholder='jane@doe.nz')}" />
             <input th:replace="~{fragments/formElement :: formElementField(fieldName='dob', label='Date of Birth: ', placeholder='DD/MM/YYYY')}" />
-            <input th:replace="~{fragments/formElement :: formElementField(fieldName='password', label='Password: ', placeholder='*******', type='password')}" />
-            <input th:replace="~{fragments/formElement :: formElementField(fieldName='retypePassword', label='Re-Type Password: ', placeholder='*******', type='password')}" />
 
             <button type="submit">Update Profile</button>
             <a th:href="@{editProfile/updatePassword}">Update Password</a>

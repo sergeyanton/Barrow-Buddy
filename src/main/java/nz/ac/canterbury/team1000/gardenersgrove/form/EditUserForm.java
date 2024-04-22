@@ -4,7 +4,6 @@ import org.springframework.validation.BindingResult;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.*;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 public class EditUserForm {
@@ -13,6 +12,7 @@ public class EditUserForm {
     protected Boolean noSurnameCheckBox;
     protected String email;
     protected String dob;
+    protected String profilePictureUrl;
 
     public String getFirstName() {
         return this.firstName;
@@ -60,6 +60,13 @@ public class EditUserForm {
 
     public void setDob(String dob) {
         this.dob = dob;
+    }
+
+    public void setProfilePictureUrl(String profilePictureUrl) {
+        this.profilePictureUrl = profilePictureUrl;
+    }
+    public String getProfilePictureUrl() {
+        return this.profilePictureUrl;
     }
 
     /**

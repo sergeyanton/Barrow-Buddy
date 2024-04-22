@@ -13,11 +13,9 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,7 +30,6 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.time.format.DateTimeFormatter;
 
 @Controller
@@ -60,9 +57,8 @@ public class ProfileController {
     @GetMapping("/profile")
     public String getProfilePage(Model model) {
         logger.info("GET /profile");
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentPrincipalName = authentication.getName();
-        User currentUser = userService.findEmail(currentPrincipalName);
+        User currentUser = userService.getLoggedInUser();
+
         model.addAttribute("fName", currentUser.getFname());
         model.addAttribute("lName", currentUser.getLname());
         model.addAttribute("email", currentUser.getEmail());
@@ -87,9 +83,7 @@ public class ProfileController {
     @PostMapping("/profile")
     public String handleProfilePictureUpload(HttpServletRequest request,
                                              @RequestParam("profilePicture") MultipartFile profilePicture) throws IOException {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentPrincipalName = authentication.getName();
-        User currentUser = userService.findEmail(currentPrincipalName);
+        User currentUser = userService.getLoggedInUser();
 
         if (!profilePicture.isEmpty()) {
             Path uploadDirectoryPath = Paths.get(UPLOAD_DIRECTORY);
@@ -130,6 +124,7 @@ public class ProfileController {
         editUserForm.setEmail(currentUser.getEmail());
         if (currentUser.getDateOfBirth() != null) editUserForm.setDob(currentUser.getDateOfBirthString());
         editUserForm.setNoSurnameCheckBox(editUserForm.getLastName() == null || editUserForm.getLastName().isEmpty());
+        editUserForm.setProfilePictureUrl(currentUser.getProfilePicturePath());
 
         return "pages/editProfilePage";
     }
