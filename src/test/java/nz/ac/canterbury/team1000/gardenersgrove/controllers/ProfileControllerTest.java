@@ -115,10 +115,44 @@ public class ProfileControllerTest {
     }
 
     @Test
+    public void EditUserPost_WithNewJpegProfileImage_SavesToService() throws Exception {
+        imageFile = new MockMultipartFile(
+                "profilePicture", "newPfp.jpeg", "image/jpeg", "file contents".getBytes());
+
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/editProfile")
+                        .file(imageFile)
+                        .with(csrf())
+                        .flashAttr("editUserForm", editUserForm))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/profile"));
+
+        Mockito.verify(userService).updateUserByEmail(Mockito.any(), Mockito.any());
+        Mockito.verify(userService).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void EditUserPost_WithNewSvgProfileImage_SavesToService() throws Exception {
+        imageFile = new MockMultipartFile(
+                "profilePicture", "newPfp.svg", "image/svg+xml", "file contents".getBytes());
+
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/editProfile")
+                        .file(imageFile)
+                        .with(csrf())
+                        .flashAttr("editUserForm", editUserForm))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/profile"));
+
+        Mockito.verify(userService).updateUserByEmail(Mockito.any(), Mockito.any());
+        Mockito.verify(userService).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
     public void EditUserPost_WithValidEmptyDate_SavesToService() throws Exception {
         editUserForm.setDob("");
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/editProfile").with(csrf())
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/editProfile")
+                        .file(emptyFile)
+                        .with(csrf())
                         .flashAttr("editUserForm", editUserForm))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/profile"));
@@ -132,7 +166,9 @@ public class ProfileControllerTest {
         editUserForm.setLastName("");
         editUserForm.setNoSurnameCheckBox(true);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/editProfile").with(csrf())
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/editProfile")
+                        .file(emptyFile)
+                        .with(csrf())
                         .flashAttr("editUserForm", editUserForm))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/profile"));
@@ -145,7 +181,9 @@ public class ProfileControllerTest {
     public void EditUserPost_WithInvalidFirstNameEmpty_HasFieldErrors() throws Exception {
         editUserForm.setFirstName("");
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/editProfile").with(csrf())
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/editProfile")
+                        .file(emptyFile)
+                        .with(csrf())
                         .flashAttr("editUserForm", editUserForm))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("pages/editProfilePage"))
@@ -159,7 +197,9 @@ public class ProfileControllerTest {
     public void EditUserPost_WithInvalidFirstName_HasFieldErrors() throws Exception {
         editUserForm.setFirstName("Jeff3");
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/editProfile").with(csrf())
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/editProfile")
+                        .file(emptyFile)
+                        .with(csrf())
                         .flashAttr("editUserForm", editUserForm))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("pages/editProfilePage"))
@@ -173,7 +213,9 @@ public class ProfileControllerTest {
     public void EditUserPost_WithInvalidFirstNameLong_HasFieldErrors() throws Exception {
         editUserForm.setFirstName("A".repeat(65));
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/editProfile").with(csrf())
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/editProfile")
+                        .file(emptyFile)
+                        .with(csrf())
                         .flashAttr("editUserForm", editUserForm))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("pages/editProfilePage"))
@@ -187,7 +229,9 @@ public class ProfileControllerTest {
     public void EditUserPost_WithInvalidLastName_HasFieldErrors() throws Exception {
         editUserForm.setLastName("James&&&");
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/editProfile").with(csrf())
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/editProfile")
+                        .file(emptyFile)
+                        .with(csrf())
                         .flashAttr("editUserForm", editUserForm))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("pages/editProfilePage"))
@@ -201,7 +245,9 @@ public class ProfileControllerTest {
     public void EditUserPost_WithInvalidLastNameLong_HasFieldErrors() throws Exception {
         editUserForm.setLastName("B".repeat(65));
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/editProfile").with(csrf())
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/editProfile")
+                        .file(emptyFile)
+                        .with(csrf())
                         .flashAttr("editUserForm", editUserForm))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("pages/editProfilePage"))
@@ -216,7 +262,9 @@ public class ProfileControllerTest {
         editUserForm.setEmail("");
         Mockito.when(userService.checkEmail(Mockito.any())).thenReturn(false);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/editProfile").with(csrf())
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/editProfile")
+                        .file(emptyFile)
+                        .with(csrf())
                         .flashAttr("editUserForm", editUserForm))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("pages/editProfilePage"))
@@ -231,7 +279,9 @@ public class ProfileControllerTest {
         editUserForm.setEmail("notanemail");
         Mockito.when(userService.checkEmail(Mockito.any())).thenReturn(false);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/editProfile").with(csrf())
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/editProfile")
+                        .file(emptyFile)
+                        .with(csrf())
                         .flashAttr("editUserForm", editUserForm))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("pages/editProfilePage"))
@@ -246,7 +296,9 @@ public class ProfileControllerTest {
         editUserForm.setEmail("A".repeat(246) + "@gmail.com");
         Mockito.when(userService.checkEmail(Mockito.any())).thenReturn(false);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/editProfile").with(csrf())
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/editProfile")
+                        .file(emptyFile)
+                        .with(csrf())
                         .flashAttr("editUserForm", editUserForm))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("pages/editProfilePage"))
@@ -260,7 +312,9 @@ public class ProfileControllerTest {
     public void EditUserPost_WithInvalidEmailTaken_HasFieldErrors() throws Exception {
         editUserForm.setEmail("takenEmail@hotmail.com");
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/editProfile").with(csrf())
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/editProfile")
+                        .file(emptyFile)
+                        .with(csrf())
                         .flashAttr("editUserForm", editUserForm))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("pages/editProfilePage"))
@@ -274,7 +328,9 @@ public class ProfileControllerTest {
     public void EditUserPost_WithInvalidDateLeapDay_HasFieldErrors() throws Exception {
         editUserForm.setDob("29/02/2003");
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/editProfile").with(csrf())
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/editProfile")
+                        .file(emptyFile)
+                        .with(csrf())
                         .flashAttr("editUserForm", editUserForm))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("pages/editProfilePage"))
@@ -288,11 +344,31 @@ public class ProfileControllerTest {
     public void EditUserPost_WithInvalidDate_HasFieldErrors() throws Exception {
         editUserForm.setDob("BadDate");
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/editProfile").with(csrf())
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/editProfile")
+                        .file(emptyFile)
+                        .with(csrf())
                         .flashAttr("editUserForm", editUserForm))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("pages/editProfilePage"))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editUserForm", "dob"));
+
+        Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
+        Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void EditUserPost_WithInvalidFileType_HasFieldErrors() throws Exception {
+        imageFile = new MockMultipartFile(
+                "profilePicture", "newPfp.webp", "image/webp", "file contents".getBytes());
+
+
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/editProfile")
+                        .file(imageFile)
+                        .with(csrf())
+                        .flashAttr("editUserForm", editUserForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/editProfilePage"));
+//                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editUserForm", "dob"));
 
         Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
         Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
