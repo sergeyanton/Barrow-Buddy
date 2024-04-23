@@ -44,8 +44,6 @@ public class ProfileControllerTest {
 
     @Mock
     private User userMock;
-    private MockMultipartFile imageFile;
-    private final MockMultipartFile emptyFile = new MockMultipartFile("pictureFile", new byte[0]);
     private EditUserForm editUserForm;
     private UpdatePasswordForm updatePasswordForm;
 
@@ -59,9 +57,6 @@ public class ProfileControllerTest {
         Mockito.when(userMock.getPassword()).thenReturn("encoded_password");
         Mockito.when(userMock.getPicturePath()).thenReturn("/uploads/example.png");
 
-        imageFile = new MockMultipartFile(
-                "pictureFile", "newPfp.png", "image/png", "file contents".getBytes());
-
         editUserForm = new EditUserForm();
         editUserForm.setFirstName(userMock.getFname());
         editUserForm.setLastName(userMock.getLname());
@@ -69,7 +64,7 @@ public class ProfileControllerTest {
         editUserForm.setEmail(userMock.getEmail());
         editUserForm.setDob(userMock.getDateOfBirthString());
         editUserForm.setPicturePath(userMock.getPicturePath());
-        editUserForm.setPictureFile(emptyFile);
+        editUserForm.setPictureFile(new MockMultipartFile("pictureFile", new byte[0]));
 
         updatePasswordForm = new UpdatePasswordForm();
         updatePasswordForm.setPassword("Pass123$");
@@ -101,7 +96,8 @@ public class ProfileControllerTest {
         editUserForm.setEmail("jakethomas@hotmail.com");
         Mockito.when(userService.checkEmail(Mockito.any())).thenReturn(false);
         editUserForm.setDob("01/06/1998");
-        editUserForm.setPictureFile(imageFile);
+        editUserForm.setPictureFile(new MockMultipartFile(
+                "pictureFile", "newPfp.png", "image/png", "file contents".getBytes()));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/editProfile").with(csrf())
                         .flashAttr("editUserForm", editUserForm))
@@ -114,9 +110,8 @@ public class ProfileControllerTest {
 
     @Test
     public void EditUserPost_WithNewJpegProfileImage_SavesToService() throws Exception {
-        imageFile = new MockMultipartFile(
-                "pictureFile", "newPfp.jpeg", "image/jpeg", "file contents".getBytes());
-        editUserForm.setPictureFile(imageFile);
+        editUserForm.setPictureFile(new MockMultipartFile(
+                "pictureFile", "newPfp.jpeg", "image/jpeg", "file contents".getBytes()));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/editProfile").with(csrf())
                         .flashAttr("editUserForm", editUserForm))
@@ -129,9 +124,8 @@ public class ProfileControllerTest {
 
     @Test
     public void EditUserPost_WithNewSvgProfileImage_SavesToService() throws Exception {
-        imageFile = new MockMultipartFile(
-                "pictureFile", "newPfp.svg", "image/svg+xml", "file contents".getBytes());
-        editUserForm.setPictureFile(imageFile);
+        editUserForm.setPictureFile(new MockMultipartFile(
+                "pictureFile", "newPfp.svg", "image/svg+xml", "file contents".getBytes()));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/editProfile").with(csrf())
                         .flashAttr("editUserForm", editUserForm))
@@ -328,9 +322,8 @@ public class ProfileControllerTest {
 
     @Test
     public void EditUserPost_WithInvalidFileType_HasFieldErrors() throws Exception {
-        imageFile = new MockMultipartFile(
-                "pictureFile", "newPfp.webp", "image/webp", "file contents".getBytes());
-        editUserForm.setPictureFile(imageFile);
+        editUserForm.setPictureFile(new MockMultipartFile(
+                "pictureFile", "newPfp.webp", "image/webp", "file contents".getBytes()));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/editProfile").with(csrf())
                         .flashAttr("editUserForm", editUserForm))

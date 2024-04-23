@@ -21,9 +21,6 @@ public class EditUserFormTest {
     
     @Mock
     BindingResult bindingResult;
-    private MockMultipartFile imageFile;
-    private final MockMultipartFile emptyFile = new MockMultipartFile("profilePicture", new byte[0]);
-
 
     @BeforeEach
     void setUp() {
@@ -32,7 +29,7 @@ public class EditUserFormTest {
         editUserForm.setEmail(existingUser.getEmail());
         editUserForm.setDob(existingUser.getDateOfBirth() != null ? existingUser.getDateOfBirthString() : "");
         editUserForm.setNoSurnameCheckBox(editUserForm.getLastName() == null || editUserForm.getLastName().isEmpty());
-        imageFile = emptyFile;
+        editUserForm.setPictureFile(new MockMultipartFile("pictureFile", new byte[0]));
 
         bindingResult = Mockito.mock(BindingResult.class);
         Mockito.when(bindingResult.hasErrors()).thenReturn(false);
@@ -132,5 +129,37 @@ public class EditUserFormTest {
         editUserForm.setDob("28/10/2000");
         EditUserForm.validate(editUserForm, bindingResult, existingUser);
         Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
+
+    @Test
+    void validate_WithPngImage_DoesNotAddError() {
+        editUserForm.setPictureFile(new MockMultipartFile(
+                "pictureFile", "newPfp.png", "image/png", "file contents".getBytes()));
+        EditUserForm.validate(editUserForm, bindingResult, existingUser);
+        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
+
+    @Test
+    void validate_WithJpegImage_DoesNotAddError() {
+        editUserForm.setPictureFile(new MockMultipartFile(
+                "pictureFile", "newPfp.jpeg", "image/jpeg", "file contents".getBytes()));
+        EditUserForm.validate(editUserForm, bindingResult, existingUser);
+        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
+
+    @Test
+    void validate_WithSvgImage_DoesNotAddError() {
+        editUserForm.setPictureFile(new MockMultipartFile(
+                "pictureFile", "newPfp.svg", "image/svg+xml", "file contents".getBytes()));
+        EditUserForm.validate(editUserForm, bindingResult, existingUser);
+        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
+
+    @Test
+    void validate_WithWrongImageType_AddsError() {
+        editUserForm.setPictureFile(new MockMultipartFile(
+                "pictureFile", "newPfp.webp", "image/webp", "file contents".getBytes()));
+        EditUserForm.validate(editUserForm, bindingResult, existingUser);
+        Mockito.verify(bindingResult).addError(Mockito.any());
     }
 }
