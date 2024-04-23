@@ -145,36 +145,41 @@ public class ProfileController {
     @PostMapping("/editProfile")
     public String editProfile(HttpServletRequest request,
                               @ModelAttribute("editUserForm") EditUserForm editUserForm,
-                              BindingResult bindingResult/*,
-                              @RequestParam("profilePicture") MultipartFile profilePicture*/) throws IOException {
+                              BindingResult bindingResult,
+                              Model model) throws IOException {
         logger.info("POST /editProfile");
         User currentUser = userService.getLoggedInUser();
         String oldEmail = currentUser.getEmail();
 
-        System.out.println(editUserForm.getProfilePictureFile().getOriginalFilename());
-//        EditUserForm.validate(editUserForm, bindingResult, profilePicture, currentUser);
-//
-//        if (!bindingResult.hasFieldErrors("email") && !editUserForm.getEmail().equals(oldEmail) && userService.checkEmail(editUserForm.getEmail())) {
-//            bindingResult.addError(new FieldError("editUserForm", "email", editUserForm.getEmail(), false, null, null, "Email address is already in use"));
-//        }
-//
-        String imageUrl = currentUser.getProfilePicturePath();
-//        if (!profilePicture.isEmpty() && !bindingResult.hasFieldErrors("profilePictureUrl")) {
-//            Path uploadDirectoryPath = Paths.get(UPLOAD_DIRECTORY);
-//            if (!Files.exists(uploadDirectoryPath)) {
-//                try {
-//                    Files.createDirectories(uploadDirectoryPath);
-//                } catch (IOException e) {
-//                    throw new IOException("Failed to create upload directory", e);
-//                }
-//            }
-//            Path filePath = uploadDirectoryPath.resolve(profilePicture.getOriginalFilename());
-//            Files.write(filePath, profilePicture.getBytes());
-//            // ensure the uploaded image is still render upon error elsewhere
-//            imageUrl = "/uploads/" + profilePicture.getOriginalFilename();
+        EditUserForm.validate(editUserForm, bindingResult, currentUser);
+
+        if (!bindingResult.hasFieldErrors("email") && !editUserForm.getEmail().equals(oldEmail) && userService.checkEmail(editUserForm.getEmail())) {
+            bindingResult.addError(new FieldError("editUserForm", "email", editUserForm.getEmail(), false, null, null, "Email address is already in use"));
+        }
+
+        if (!editUserForm.getProfilePictureFile().isEmpty() && !bindingResult.hasFieldErrors("profilePictureUrl")) {
+            Path uploadDirectoryPath = Paths.get(UPLOAD_DIRECTORY);
+            if (!Files.exists(uploadDirectoryPath)) {
+                try {
+                    Files.createDirectories(uploadDirectoryPath);
+                } catch (IOException e) {
+                    throw new IOException("Failed to create upload directory", e);
+                }
+            }
+            Path filePath = uploadDirectoryPath.resolve(editUserForm.getProfilePictureFile().getOriginalFilename());
+            Files.write(filePath, editUserForm.getProfilePictureFile().getBytes());
+            // ensure the uploaded image is still render upon error elsewhere
+//            model.addAttribute("uploadedProfilePic", "/uploads/" + editUserForm.getProfilePictureFile().getOriginalFilename());
+
+            editUserForm.setProfilePictureUrl("/uploads/" + editUserForm.getProfilePictureFile().getOriginalFilename());
+        }
+
+//        if (model.containsAttribute("uploadedProfilePic")) {
+//            editUserForm.setProfilePictureUrl((String) model.getAttribute("uploadedProfilePic"));
+//        } else {
+//            editUserForm.setProfilePictureUrl(currentUser.getProfilePicturePath());
 //        }
 
-        editUserForm.setProfilePictureUrl(imageUrl);
 
         if (bindingResult.hasErrors()) {
             // make sure the original image is still rendered properly

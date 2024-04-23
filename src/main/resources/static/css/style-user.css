@@ -179,7 +179,7 @@ button:hover {
     object-fit: cover;
 }
 
-#profileImagePicker {
+input[type="file"] {
     display: none;
 }
 

@@ -90,7 +90,7 @@ public class EditUserForm {
      * @param bindingResult the BindingResult object to which errors will be added
      * @param existingUser the User object representing the user being edited
      */
-    public static void validate(EditUserForm editUserForm, BindingResult bindingResult, MultipartFile profilePicture, User existingUser) {
+    public static void validate(EditUserForm editUserForm, BindingResult bindingResult, User existingUser) {
         // Create an ErrorAdder instance with the BindingResult and object name
         ErrorAdder errors = new ErrorAdder(bindingResult, "editUserForm");
 
@@ -135,11 +135,11 @@ public class EditUserForm {
         }
 
         // validate image
-        if (!profilePicture.isEmpty()) {
-            if (!ALLOWED_IMAGE_TYPES.contains(profilePicture.getContentType())) {
-                errors.add("profilePictureUrl", "Image must be of type png, jpg or svg", null);
-            } else if (profilePicture.getSize() > MAX_IMAGE_SIZE_BYTES) {
-                errors.add("profilePictureUrl", "Image must be less than 10MB", null);
+        if (!editUserForm.getProfilePictureFile().isEmpty()) {
+            if (!ALLOWED_IMAGE_TYPES.contains(editUserForm.getProfilePictureFile().getContentType())) {
+                errors.add("profilePictureFile", "Image must be of type png, jpg or svg", null);
+            } else if (editUserForm.getProfilePictureFile().getSize() > MAX_IMAGE_SIZE_BYTES) {
+                errors.add("profilePictureFile", "Image must be less than 10MB", null);
             }
         }
     }

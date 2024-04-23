@@ -10,17 +10,18 @@
 <body>
     <div class="basic">
         <h1>Edit My Profile</h1>
-        <div class="profile-picture-wrapper">
-            <img class="profile-picture" id="profileImage"
-                 th:src="${editUserForm.getProfilePictureUrl()}"
-                 alt="Profile Picture">
-        </div>
 
         <form class="upload-image" th:action="@{/editProfile}" method="post" th:object="${editUserForm}" enctype="multipart/form-data">
+            <div class="profile-picture-wrapper">
+                <input th:field="*{profilePictureUrl}" type="hidden"/>
+                <img class="profile-picture" id="profileImage"
+                     th:src="${uploadedProfilePic != null ? uploadedProfilePic : editUserForm.getProfilePictureUrl()}"
+                     alt="Profile Picture">
+            </div>
+
             <div class="form-element">
                 <label class="file-upload-label" th:for="profilePictureFile">Edit Profile Picture</label>
                 <input th:field="*{profilePictureFile}" type="file" onchange="validateImage(this)" accept="image/png, image/jpeg, image/svg+xml"><br>
-<!--                <input type="file" id="profileImagePicker" name="profilePicture" onchange="validateImage(this)" accept="image/png, image/jpeg, image/svg+xml">-->
                 <span class="error" th:if="${#fields.hasErrors('profilePictureFile')}" th:errors="*{profilePictureFile}"></span>
             </div>
 
