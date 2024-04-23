@@ -1,16 +1,14 @@
 package nz.ac.canterbury.team1000.gardenersgrove.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 @Component
 public class EmailService {
 
     //    @Autowired
-    private JavaMailSender emailSender;
+    private final JavaMailSender emailSender;
 
     public EmailService(JavaMailSender emailSender) {
         this.emailSender = emailSender;

@@ -118,10 +118,12 @@ public class AccountController {
     }
 
     private void sendVerificationEmail(User user) {
+        logger.info("Sending verification email to " + user.getEmail());
         VerificationToken token = new VerificationToken(user.getId());
         verificationTokenService.addVerificationToken(token);
-        emailService.sendSimpleMessage(user.getEmail(), "Gardeners Grove Account Verification",token.getToken());
+        emailService.sendSimpleMessage(user.getEmail(), "Gardeners Grove Account Verification", token.getToken());
     }
+
     /**
      * Gets the thymeleaf page representing the /login page Will only work if the user is not logged
      * in, otherwise it will redirect to the home page
