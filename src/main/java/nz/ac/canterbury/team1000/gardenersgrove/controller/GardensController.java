@@ -2,10 +2,13 @@ package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+
 import nz.ac.canterbury.team1000.gardenersgrove.form.GardenForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PlantForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +24,7 @@ import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.PlantService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * This is the controller for the gardens page.
@@ -133,12 +137,23 @@ public class GardensController {
     @GetMapping("/gardens/{gardenId}")
     public String viewGarden(@PathVariable("gardenId") Long gardenId, Model model) {
         logger.info("GET /gardens/" + gardenId);
-        Garden garden = gardenService.getGardenById(gardenId);
+        Garden garden = null;
+        try {
+            garden = gardenService.getGardenById(gardenId);
+        } catch (IllegalArgumentException exception) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Garden not found"
+            );
+        }
         User loggedInUser = userService.getLoggedInUser();
         // check that the garden belongs to the logged in user
-        if (garden.getOwner().getId() != loggedInUser.getId()) {
+        if (!Objects.equals(garden.getOwner().getId(), loggedInUser.getId())) {
             // respond with 403 Forbidden
-            return "error/403";
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "You don't own own this garden"
+            );
         }
         model.addAttribute("garden", garden);
         model.addAttribute("plants", plantService.getPlantsByGardenId(garden.getId()));
