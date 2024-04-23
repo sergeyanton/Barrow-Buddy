@@ -16,8 +16,8 @@ public class EditUserForm {
     protected Boolean noSurnameCheckBox;
     protected String email;
     protected String dob;
-    protected String profilePictureUrl;
-    protected MultipartFile profilePictureFile;
+    protected String picturePath;
+    protected MultipartFile pictureFile;
 
     public String getFirstName() {
         return this.firstName;
@@ -55,32 +55,36 @@ public class EditUserForm {
         return dob;
     }
 
+    public void setDob(String dob) {
+        this.dob = dob;
+    }
+
+    public String getPicturePath() {
+        return picturePath;
+    }
+
+    public void setPicturePath(String picturePath) {
+        this.picturePath = picturePath;
+    }
+
+    public MultipartFile getPictureFile() {
+        return pictureFile;
+    }
+
+    public void setPictureFile(MultipartFile pictureFile) {
+        this.pictureFile = pictureFile;
+    }
+
+    /**
+     * Gets the date of birth as a LocalDate object and not a string.
+     * @return entered date of birth as a LocalDate
+     */
     public LocalDate getDobLocalDate() {
         try {
             return LocalDate.parse(dob, VALID_DATE_FORMAT);
         } catch (DateTimeParseException e) {
             return null;
         }
-    }
-
-    public void setDob(String dob) {
-        this.dob = dob;
-    }
-
-    public void setProfilePictureUrl(String profilePictureUrl) {
-        this.profilePictureUrl = profilePictureUrl;
-    }
-    public String getProfilePictureUrl() {
-        return this.profilePictureUrl;
-    }
-
-
-    public MultipartFile getProfilePictureFile() {
-        return profilePictureFile;
-    }
-
-    public void setProfilePictureFile(MultipartFile profilePictureFile) {
-        this.profilePictureFile = profilePictureFile;
     }
 
     /**
@@ -135,11 +139,11 @@ public class EditUserForm {
         }
 
         // validate image
-        if (!editUserForm.getProfilePictureFile().isEmpty()) {
-            if (!ALLOWED_IMAGE_TYPES.contains(editUserForm.getProfilePictureFile().getContentType())) {
-                errors.add("profilePictureFile", "Image must be of type png, jpg or svg", null);
-            } else if (editUserForm.getProfilePictureFile().getSize() > MAX_IMAGE_SIZE_BYTES) {
-                errors.add("profilePictureFile", "Image must be less than 10MB", null);
+        if (!editUserForm.getPictureFile().isEmpty()) {
+            if (!ALLOWED_IMAGE_TYPES.contains(editUserForm.getPictureFile().getContentType())) {
+                errors.add("pictureFile", "Image must be of type png, jpg or svg", null);
+            } else if (editUserForm.getPictureFile().getSize() > MAX_IMAGE_SIZE_BYTES) {
+                errors.add("pictureFile", "Image must be less than 10MB", null);
             }
         }
     }

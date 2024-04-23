@@ -10,19 +10,18 @@
 <body>
     <div class="basic">
         <h1>Edit My Profile</h1>
-
         <form class="upload-image" th:action="@{/editProfile}" method="post" th:object="${editUserForm}" enctype="multipart/form-data">
             <div class="profile-picture-wrapper">
-                <input th:field="*{profilePictureUrl}" type="hidden"/>
+                <input th:field="*{picturePath}" type="hidden"/>
                 <img class="profile-picture" id="profileImage"
-                     th:src="${uploadedProfilePic != null ? uploadedProfilePic : editUserForm.getProfilePictureUrl()}"
+                     th:src="${editUserForm.getPicturePath()}"
                      alt="Profile Picture">
             </div>
 
             <div class="form-element">
-                <label class="file-upload-label" th:for="profilePictureFile">Edit Profile Picture</label>
-                <input th:field="*{profilePictureFile}" type="file" onchange="validateImage(this)" accept="image/png, image/jpeg, image/svg+xml"><br>
-                <span class="error" th:if="${#fields.hasErrors('profilePictureFile')}" th:errors="*{profilePictureFile}"></span>
+                <label class="file-upload-label" th:for="pictureFile">Edit Profile Picture</label>
+                <input th:field="*{pictureFile}" type="file" onchange="validateImage(this)" accept="image/png, image/jpeg, image/svg+xml"><br>
+                <span class="error" th:if="${#fields.hasErrors('pictureFile')}" th:errors="*{pictureFile}"></span>
             </div>
 
             <input th:replace="~{fragments/formElement :: formElementField(fieldName='firstName', label='First Name: ', placeholder='Fabian')}" />

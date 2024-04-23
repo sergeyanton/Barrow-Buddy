@@ -11,7 +11,7 @@
     <div class="basic">
         <h1>My Profile</h1>
         <div class="profile-picture-wrapper">
-            <img class="profile-picture" id="profileImage" th:src="${profilePictureUrl}" alt="Profile Picture">
+            <img class="profile-picture" id="profileImage" th:src="${picturePath}" alt="Profile Picture">
         </div>
 
         <form class="upload-image" th:action="@{/profile}" method="post" enctype="multipart/form-data">
@@ -37,7 +37,7 @@
     <script th:inline="javascript">
 
         // THYMELEAF SYNTAX FOR GETTING MODEL ATTRIBUTES INTO INLINE JS. The comment matters.
-        const initialProfilePictureUrl = /*[[${profilePictureUrl}]]*/ '';
+        const initialProfilePictureUrl = /*[[${picturePath}]]*/ '';
         function validateImage(input) {
             const file = input.files[0];
             const validTypes = ["image/png", "image/jpeg", "image/svg+xml"];

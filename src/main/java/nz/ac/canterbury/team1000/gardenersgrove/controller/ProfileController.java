@@ -1,7 +1,6 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.EditUserForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.UpdatePasswordForm;
@@ -28,9 +27,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.List;
 
 @Controller
 public class ProfileController {
@@ -62,7 +58,7 @@ public class ProfileController {
         model.addAttribute("fName", currentUser.getFname());
         model.addAttribute("lName", currentUser.getLname());
         model.addAttribute("email", currentUser.getEmail());
-        model.addAttribute("profilePictureUrl", currentUser.getProfilePicturePath());
+        model.addAttribute("picturePath", currentUser.getPicturePath());
         if (currentUser.getDateOfBirth() != null) {
             model.addAttribute("dob",
                     currentUser.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
@@ -99,7 +95,7 @@ public class ProfileController {
             String filename = profilePicture.getOriginalFilename();
             Path filePath = uploadDirectoryPath.resolve(filename);
             Files.write(filePath, profilePicture.getBytes());
-            currentUser.setProfilePicturePath("/uploads/" + filename);
+            currentUser.setPicturePath("/uploads/" + filename);
         }
 
         userService.updateUserByEmail(currentUser.getEmail(), currentUser);
@@ -124,7 +120,7 @@ public class ProfileController {
         editUserForm.setEmail(currentUser.getEmail());
         if (currentUser.getDateOfBirth() != null) editUserForm.setDob(currentUser.getDateOfBirthString());
         editUserForm.setNoSurnameCheckBox(editUserForm.getLastName() == null || editUserForm.getLastName().isEmpty());
-        editUserForm.setProfilePictureUrl(currentUser.getProfilePicturePath());
+        editUserForm.setPicturePath(currentUser.getPicturePath());
 
         return "pages/editProfilePage";
     }
@@ -136,7 +132,6 @@ public class ProfileController {
      * @param request           the HttpServletRequest object containing the request information
      * @param editUserForm      the EditUserForm object containing the form's user inputs
      * @param bindingResult     the BindingResult object for validation errors
-//     * @param profilePicture    image (png, jpg or svg) to be saved to the file system
      * @return the view to display:
      * - If there are validation errors, stays on the 'Edit Profile' form.
      * - Else, redirect to the user's (edited) profile page.
@@ -145,8 +140,7 @@ public class ProfileController {
     @PostMapping("/editProfile")
     public String editProfile(HttpServletRequest request,
                               @ModelAttribute("editUserForm") EditUserForm editUserForm,
-                              BindingResult bindingResult,
-                              Model model) throws IOException {
+                              BindingResult bindingResult) throws IOException {
         logger.info("POST /editProfile");
         User currentUser = userService.getLoggedInUser();
         String oldEmail = currentUser.getEmail();
@@ -157,7 +151,7 @@ public class ProfileController {
             bindingResult.addError(new FieldError("editUserForm", "email", editUserForm.getEmail(), false, null, null, "Email address is already in use"));
         }
 
-        if (!editUserForm.getProfilePictureFile().isEmpty() && !bindingResult.hasFieldErrors("profilePictureUrl")) {
+        if (!editUserForm.getPictureFile().isEmpty() && !bindingResult.hasFieldErrors("picturePath")) {
             Path uploadDirectoryPath = Paths.get(UPLOAD_DIRECTORY);
             if (!Files.exists(uploadDirectoryPath)) {
                 try {
@@ -166,23 +160,13 @@ public class ProfileController {
                     throw new IOException("Failed to create upload directory", e);
                 }
             }
-            Path filePath = uploadDirectoryPath.resolve(editUserForm.getProfilePictureFile().getOriginalFilename());
-            Files.write(filePath, editUserForm.getProfilePictureFile().getBytes());
-            // ensure the uploaded image is still render upon error elsewhere
-//            model.addAttribute("uploadedProfilePic", "/uploads/" + editUserForm.getProfilePictureFile().getOriginalFilename());
-
-            editUserForm.setProfilePictureUrl("/uploads/" + editUserForm.getProfilePictureFile().getOriginalFilename());
+            Path filePath = uploadDirectoryPath.resolve(editUserForm.getPictureFile().getOriginalFilename());
+            Files.write(filePath, editUserForm.getPictureFile().getBytes());
+            editUserForm.setPicturePath("/uploads/" + editUserForm.getPictureFile().getOriginalFilename());
         }
 
-//        if (model.containsAttribute("uploadedProfilePic")) {
-//            editUserForm.setProfilePictureUrl((String) model.getAttribute("uploadedProfilePic"));
-//        } else {
-//            editUserForm.setProfilePictureUrl(currentUser.getProfilePicturePath());
-//        }
-
-
         if (bindingResult.hasErrors()) {
-            // make sure the original image is still rendered properly
+            if (bindingResult.hasFieldErrors("pictureFile")) editUserForm.setPicturePath(currentUser.getPicturePath());
             return "pages/editProfilePage";
         }
 
@@ -190,7 +174,7 @@ public class ProfileController {
         currentUser.setLname(editUserForm.getLastName());
         currentUser.setEmail(editUserForm.getEmail());
         currentUser.setDateOfBirth(editUserForm.getDobLocalDate());
-        currentUser.setProfilePicturePath(editUserForm.getProfilePictureUrl());
+        currentUser.setPicturePath(editUserForm.getPicturePath());
 
         userService.updateUserByEmail(oldEmail, currentUser);
         userService.authenticateUser(authenticationManager, currentUser, request);

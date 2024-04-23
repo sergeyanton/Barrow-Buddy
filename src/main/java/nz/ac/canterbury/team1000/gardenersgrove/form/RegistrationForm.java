@@ -20,7 +20,7 @@ public class RegistrationForm {
     protected String dob;
     protected String password;
     protected String retypePassword;
-    protected String profilePictureUrl;
+    protected String picturePath;
 
     public String getFirstName() {
         return this.firstName;
@@ -86,11 +86,11 @@ public class RegistrationForm {
         this.retypePassword = retypePassword;
     }
 
-    public void setProfilePictureUrl(String profilePictureUrl) {
-        this.profilePictureUrl = profilePictureUrl;
+    public void setProfilePictureUrl(String picturePath) {
+        this.picturePath = picturePath;
     }
     public String getProfilePictureUrl() {
-        return this.profilePictureUrl;
+        return this.picturePath;
     }
 
     /**

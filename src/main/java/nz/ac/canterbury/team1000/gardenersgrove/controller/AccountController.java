@@ -96,7 +96,7 @@ public class AccountController {
         }
 
         User newUser = registrationForm.getUser(passwordEncoder);
-        newUser.setProfilePicturePath("/images/default_pic.jpg");
+        newUser.setPicturePath("/images/default_pic.jpg");
         // Give them the role of user
         newUser.grantAuthority("ROLE_USER");
         userService.registerUser(newUser);

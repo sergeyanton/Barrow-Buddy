@@ -57,7 +57,7 @@ public class ProfileControllerTest {
         Mockito.when(userMock.getEmail()).thenReturn("johnsmith@gmail.com");
         Mockito.when(userMock.getDateOfBirthString()).thenReturn("05/05/1999");
         Mockito.when(userMock.getPassword()).thenReturn("encoded_password");
-        Mockito.when(userMock.getProfilePicturePath()).thenReturn("/uploads/example.png");
+        Mockito.when(userMock.getPicturePath()).thenReturn("/uploads/example.png");
 
         imageFile = new MockMultipartFile(
                 "profilePicture", "newPfp.png", "image/png", "file contents".getBytes());
@@ -68,7 +68,7 @@ public class ProfileControllerTest {
         editUserForm.setNoSurnameCheckBox(userMock.getLname() == null || userMock.getLname().isEmpty());
         editUserForm.setEmail(userMock.getEmail());
         editUserForm.setDob(userMock.getDateOfBirthString());
-        editUserForm.setProfilePictureUrl(userMock.getProfilePicturePath());
+        editUserForm.setPicturePath(userMock.getPicturePath());
 
         updatePasswordForm = new UpdatePasswordForm();
         updatePasswordForm.setPassword("Pass123$");

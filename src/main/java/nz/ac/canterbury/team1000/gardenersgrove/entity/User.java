@@ -35,8 +35,8 @@ public class User {
     @Column
     private LocalDate dateOfBirth;
 
-    @Column(nullable = true)
-    private String profilePicturePath;
+    @Column
+    private String picturePath;
 
     @Column()
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -126,8 +126,8 @@ public class User {
         return dateOfBirth.format(DateTimeFormatter.ofPattern("dd/MM/uuuu"));
     }
 
-    public String getProfilePicturePath() {
-        return profilePicturePath;
+    public String getPicturePath() {
+        return picturePath;
     }
 
     public void setFname(String fname) {
@@ -150,8 +150,8 @@ public class User {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public void setProfilePicturePath(String profilePicturePath) {
-        this.profilePicturePath = profilePicturePath;
+    public void setPicturePath(String picturePath) {
+        this.picturePath = picturePath;
     }
 
     @Override
