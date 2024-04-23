@@ -336,6 +336,22 @@ public class ProfileControllerTest {
     }
 
     @Test
+    public void EditUserPost_WithTooBigFile_HasFieldErrors() throws Exception {
+        byte[] over10mb = new byte[10 * 1024 * 1024 + 1];
+        editUserForm.setPictureFile(new MockMultipartFile(
+                "pictureFile", "newPfp.webp", "image/webp", over10mb));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/editProfile").with(csrf())
+                        .flashAttr("editUserForm", editUserForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/editProfilePage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editUserForm", "pictureFile"));
+
+        Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
+        Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
     public void EditProfileGet_ValidDetails_FormIsPopulated() throws Exception {
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/editProfile").with(csrf())
                         .flashAttr("editUserForm", editUserForm))
