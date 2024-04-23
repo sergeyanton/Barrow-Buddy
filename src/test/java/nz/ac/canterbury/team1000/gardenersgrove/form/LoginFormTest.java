@@ -74,5 +74,4 @@ public class LoginFormTest {
         LoginForm.validate(loginForm, bindingResult);
         Mockito.verify(bindingResult).addError(Mockito.any());
     }
-
 }

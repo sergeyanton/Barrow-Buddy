@@ -1,4 +1,4 @@
-package nz.ac.canterbury.team1000.gardenersgrove;
+package nz.ac.canterbury.team1000.gardenersgrove.service;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

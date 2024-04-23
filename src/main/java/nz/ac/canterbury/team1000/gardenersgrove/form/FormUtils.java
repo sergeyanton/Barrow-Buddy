@@ -52,7 +52,7 @@ public class FormUtils {
      * We have to use a STRICT resolver style to reject invalid month lengths.
      * By default, dates such as the 30th of February would be incorrectly accepted.
      */
-    private static DateTimeFormatter validDateFormat = DateTimeFormatter.ofPattern("dd/MM/uuuu").withResolverStyle(ResolverStyle.STRICT);
+    public static final DateTimeFormatter VALID_DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/uuuu").withResolverStyle(ResolverStyle.STRICT);
 
     /**
      * The default maximum length of strings in the database.
@@ -222,7 +222,7 @@ public class FormUtils {
      */
     public static boolean checkDateNotInCorrectFormat(String dateString) {
         try {
-            LocalDate.parse(dateString, validDateFormat);
+            LocalDate.parse(dateString, VALID_DATE_FORMAT);
         } catch (DateTimeParseException e) {
             // date is incorrect format
             return true;
@@ -240,7 +240,7 @@ public class FormUtils {
      */
     public static boolean checkDateBefore(String dateString, LocalDate before) {
         try {
-            LocalDate date = LocalDate.parse(dateString, validDateFormat);
+            LocalDate date = LocalDate.parse(dateString, VALID_DATE_FORMAT);
             return date.isBefore(before);
         } catch (DateTimeParseException e) {
             return false;

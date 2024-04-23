@@ -3,18 +3,20 @@ package nz.ac.canterbury.team1000.gardenersgrove.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.EditUserForm;
+import nz.ac.canterbury.team1000.gardenersgrove.form.UpdatePasswordForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
-import nz.ac.canterbury.team1000.gardenersgrove.util.Password;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-
 
 @Controller
 public class ProfileController {
@@ -25,6 +27,9 @@ public class ProfileController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     private final UserService userService;
 
     Logger logger = LoggerFactory.getLogger(ProfileController.class);
@@ -36,11 +41,15 @@ public class ProfileController {
      * @return A string that represents the link to the profile page
      */
     @GetMapping("/editProfile")
-    public String getEditProfilePage(EditUserForm editUserForm) {
+    public String getEditProfilePage(@ModelAttribute("editUserForm") EditUserForm editUserForm) {
         logger.info("GET /editProfile");
         User currentUser = userService.getLoggedInUser();
 
-        editUserForm.setFromUser(currentUser);
+        editUserForm.setFirstName(currentUser.getFname());
+        editUserForm.setLastName(currentUser.getLname());
+        editUserForm.setEmail(currentUser.getEmail());
+        if (currentUser.getDateOfBirth() != null) editUserForm.setDob(currentUser.getDateOfBirthString());
+        editUserForm.setNoSurnameCheckBox(editUserForm.getLastName() == null || editUserForm.getLastName().isEmpty());
 
         return "pages/editProfilePage";
     }
@@ -55,15 +64,16 @@ public class ProfileController {
      * @return A string that represents the link to the profile page
      */
     @PostMapping("/editProfile")
-    public String editProfile(HttpServletRequest request, EditUserForm editUserForm, BindingResult bindingResult) {
+    public String editProfile(HttpServletRequest request,
+                              @ModelAttribute("editUserForm") EditUserForm editUserForm,
+                              BindingResult bindingResult) {
         logger.info("POST /editProfile");
-
         User currentUser = userService.getLoggedInUser();
         String oldEmail = currentUser.getEmail();
 
         EditUserForm.validate(editUserForm, bindingResult, currentUser);
 
-        if (!bindingResult.hasFieldErrors("email") && !currentUser.getEmail().equals(oldEmail) && userService.checkEmail(editUserForm.getEmail())) {
+        if (!bindingResult.hasFieldErrors("email") && !editUserForm.getEmail().equals(oldEmail) && userService.checkEmail(editUserForm.getEmail())) {
             bindingResult.addError(new FieldError("registrationForm", "email", editUserForm.getEmail(), false, null, null, "Email address is already in use"));
         }
 
@@ -74,12 +84,55 @@ public class ProfileController {
         currentUser.setFname(editUserForm.getFirstName());
         currentUser.setLname(editUserForm.getLastName());
         currentUser.setEmail(editUserForm.getEmail());
-        if (!editUserForm.getPassword().isEmpty()) {
-            currentUser.setPassword(Password.hashPassword(editUserForm.getPassword()));
-        }
+        currentUser.setDateOfBirth(editUserForm.getDobLocalDate());
 
         userService.updateUserByEmail(oldEmail, currentUser);
         userService.authenticateUser(authenticationManager, currentUser, request);
+
+        return "redirect:/profile";
+    }
+
+    /**
+     * This method is used to get the update password page for the user
+     *
+     * @param updatePasswordForm the form used to update the user's password
+     * @return a string that represents the link to the update password page
+     */
+    @GetMapping("/editProfile/updatePassword")
+    public String getUpdatePassword(@ModelAttribute("updatePasswordForm") UpdatePasswordForm updatePasswordForm) {
+        logger.info("GET /editProfile/updatePassword");
+        return "pages/updatePasswordPage";
+    }
+
+    /**
+     * Handles POST requests to the /editProfile/updatePassword endpoint.
+     * Changes the password for the user, if they enter the password they currently have.
+     *
+     * @param request the HttpServletRequest object containing the request information
+     * @param updatePasswordForm the UpdatePasswordForm object representing the password fields
+     * @param bindingResult the BindingResult object for validation errors
+     * @return a String representing the view to display after login:
+     *         - If there are validation errors, returns the login page to display errors.
+     *         - If login is successful, redirects to the application's home page.
+     */
+    @PostMapping("/editProfile/updatePassword")
+    public String postUpdatePassword(HttpServletRequest request,
+                                     @ModelAttribute("updatePasswordForm") UpdatePasswordForm updatePasswordForm,
+                                     BindingResult bindingResult) {
+        logger.info("POST /editProfile/updatePassword");
+        User currentUser = userService.getLoggedInUser();
+        UpdatePasswordForm.validate(updatePasswordForm, bindingResult);
+
+        if (!(bindingResult.hasFieldErrors("password")) && !passwordEncoder.matches(updatePasswordForm.getPassword(), currentUser.getPassword())) {
+            bindingResult.addError(new FieldError("updatePasswordForm", "password", updatePasswordForm.getPassword(), false, null, null, "Your old password is incorrect"));
+        }
+
+        if (bindingResult.hasErrors()) {
+            return "pages/updatePasswordPage";
+        }
+
+        currentUser.setPassword(passwordEncoder.encode(updatePasswordForm.getNewPassword()));
+        userService.updateUserByEmail(currentUser.getEmail(), currentUser);
 
         return "redirect:/profile";
     }

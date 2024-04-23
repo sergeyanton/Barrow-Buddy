@@ -33,7 +33,7 @@ public class GardensController {
     private final UserService userService;
     private final AuthenticationManager authenticationManager;
 
-    
+
     public GardensController(GardenService gardenService, PlantService plantService,
                              UserService userService, AuthenticationManager authenticationManager) {
         this.gardenService = gardenService;
@@ -95,12 +95,12 @@ public class GardensController {
                                    @ModelAttribute("createGardenForm") GardenForm createGardenForm,
                                    BindingResult bindingResult) {
         logger.info("POST /gardens/create");
-        
+
         GardenForm.validate(createGardenForm, bindingResult);
         if (bindingResult.hasErrors()) {
             return "pages/createGardenPage";
         }
-        
+
         User loggedInUser = userService.getLoggedInUser();
         Garden newGarden = createGardenForm.getGarden(loggedInUser);
         gardenService.addGarden(newGarden);
@@ -141,6 +141,7 @@ public class GardensController {
             return "error/403";
         }
         model.addAttribute("garden", garden);
+        model.addAttribute("plants", plantService.getPlantsByGardenId(garden.getId()));
         return "pages/gardenProfilePage";
     }
 
@@ -157,7 +158,7 @@ public class GardensController {
     public String gardenEditGet(@PathVariable("gardenId") Long gardenId,
                                 @ModelAttribute("editGardenForm") GardenForm editGardenForm) {
         logger.info("GET /gardens/" + gardenId + "/edit");
-        
+
         User loggedInUser = userService.getLoggedInUser();
         Garden garden = gardenService.getGardenById(gardenId);
 
@@ -191,10 +192,10 @@ public class GardensController {
                                  BindingResult bindingResult,
                                  @PathVariable("gardenId") Long gardenId) {
         logger.info("POST /gardens/" + gardenId + "/edit");
-        
+
         User loggedInUser = userService.getLoggedInUser();
         Garden garden = gardenService.getGardenById(gardenId);
-        
+
         if (garden.getOwner().getId() != loggedInUser.getId()) {
             // respond with 403 Forbidden
             return "error/403";
@@ -205,7 +206,8 @@ public class GardensController {
             return "pages/editGardenPage";
         }
 
-        Garden edit = editGardenForm.getGarden(loggedInUser);
+        Garden garden = gardenService.getGardenById(gardenId);
+        Garden edit =  editGardenForm.getGarden(loggedInUser);
         garden.setName(edit.getName());
         garden.setLocation(edit.getLocation());
         garden.setSize(edit.getSize());
@@ -232,7 +234,7 @@ public class GardensController {
 
         User loggedInUser = userService.getLoggedInUser();
         Garden garden = gardenService.getGardenById(gardenId);
-        
+
         if (garden.getOwner().getId() != loggedInUser.getId()) {
             // respond with 403 Forbidden
             return "error/403";
@@ -260,7 +262,7 @@ public class GardensController {
                                         BindingResult bindingResult,
                                         @PathVariable("gardenId") Long gardenId) {
         logger.info("POST /gardens/" + gardenId + "/plants/create");
-        
+
         User loggedInUser = userService.getLoggedInUser();
         Garden garden = gardenService.getGardenById(gardenId);
 
