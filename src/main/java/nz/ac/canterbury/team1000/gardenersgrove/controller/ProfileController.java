@@ -1,6 +1,7 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.EditUserForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.UpdatePasswordForm;
@@ -18,11 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -127,7 +124,6 @@ public class ProfileController {
         editUserForm.setEmail(currentUser.getEmail());
         if (currentUser.getDateOfBirth() != null) editUserForm.setDob(currentUser.getDateOfBirthString());
         editUserForm.setNoSurnameCheckBox(editUserForm.getLastName() == null || editUserForm.getLastName().isEmpty());
-        //TODO there is a chance that the profile picture url is not necessary to have in the form classes, and instead just have it as a regular attribute
         editUserForm.setProfilePictureUrl(currentUser.getProfilePicturePath());
 
         return "pages/editProfilePage";
@@ -151,7 +147,7 @@ public class ProfileController {
                               @ModelAttribute("editUserForm") EditUserForm editUserForm,
                               BindingResult bindingResult,
                               @RequestParam("profilePicture") MultipartFile profilePicture,
-                              Model model) throws IOException {
+                              HttpSession session) throws IOException {
         logger.info("POST /editProfile");
         User currentUser = userService.getLoggedInUser();
         String oldEmail = currentUser.getEmail();
@@ -162,7 +158,7 @@ public class ProfileController {
             bindingResult.addError(new FieldError("editUserForm", "email", editUserForm.getEmail(), false, null, null, "Email address is already in use"));
         }
 
-        if (!profilePicture.isEmpty() && !bindingResult.hasFieldErrors("image")) {
+        if (!profilePicture.isEmpty() && !bindingResult.hasFieldErrors("profilePictureUrl")) {
             Path uploadDirectoryPath = Paths.get(UPLOAD_DIRECTORY);
             if (!Files.exists(uploadDirectoryPath)) {
                 try {
@@ -173,12 +169,19 @@ public class ProfileController {
             }
             Path filePath = uploadDirectoryPath.resolve(profilePicture.getOriginalFilename());
             Files.write(filePath, profilePicture.getBytes());
+            // ensure the uploaded image is still render upon error elsewhere
+            session.setAttribute("uploadedProfileImageUrl", "/uploads/" + profilePicture.getOriginalFilename());
+        }
 
+        if (session.getAttribute("uploadedProfileImageUrl") == null) {
+            editUserForm.setProfilePictureUrl(currentUser.getProfilePicturePath());
+        } else {
+            editUserForm.setProfilePictureUrl((String) session.getAttribute("uploadedProfileImageUrl"));
+            System.out.println(editUserForm.getProfilePictureUrl());
         }
 
         if (bindingResult.hasErrors()) {
-            // make sure the uploaded image is still rendered properly
-//            if (!profilePicture.isEmpty()) model.addAttribute("uploadedProfileImageOnError", "/uploads/" + profilePicture.getOriginalFilename());
+            // make sure the original image is still rendered properly
             return "pages/editProfilePage";
         }
 
@@ -186,11 +189,12 @@ public class ProfileController {
         currentUser.setLname(editUserForm.getLastName());
         currentUser.setEmail(editUserForm.getEmail());
         currentUser.setDateOfBirth(editUserForm.getDobLocalDate());
-        if (!profilePicture.isEmpty()) currentUser.setProfilePicturePath("/uploads/" + profilePicture.getOriginalFilename());
+        currentUser.setProfilePicturePath(editUserForm.getProfilePictureUrl());
 
         userService.updateUserByEmail(oldEmail, currentUser);
         userService.authenticateUser(authenticationManager, currentUser, request);
 
+        session.removeAttribute("uploadedProfileImageUrl");
         return "redirect:/profile";
     }
 

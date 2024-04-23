@@ -12,14 +12,15 @@
         <h1>Edit My Profile</h1>
         <div class="profile-picture-wrapper">
             <img class="profile-picture" id="profileImage"
-                 th:src="${uploadedProfileImageOnError != null ? uploadedProfileImageOnError : editUserForm.getProfilePictureUrl()}"
+                 th:src="${session.uploadedProfileImageUrl != null ? session.uploadedProfileImageUrl : editUserForm.profilePictureUrl}"
                  alt="Profile Picture">
         </div>
 
         <form class="upload-image" th:action="@{/editProfile}" method="post" th:object="${editUserForm}" enctype="multipart/form-data">
             <div class="form-element">
-            <label class="file-upload-label" for="profileImagePicker">Edit Profile Picture</label>
-            <input type="file" id="profileImagePicker" name="profilePicture" onchange="validateImage(this)" accept="image/png, image/jpeg, image/svg+xml">
+                <label class="file-upload-label" for="profileImagePicker">Edit Profile Picture</label>
+                <input type="file" id="profileImagePicker" name="profilePicture" onchange="validateImage(this)" accept="image/png, image/jpeg, image/svg+xml">
+                <span class="error" th:if="${#fields.hasErrors('profilePictureUrl')}" th:errors="*{profilePictureUrl}"></span>
             </div>
 
             <input th:replace="~{fragments/formElement :: formElementField(fieldName='firstName', label='First Name: ', placeholder='Fabian')}" />
@@ -58,21 +59,21 @@
         };
 
         function validateImage(input) {
-            const file = input.files[0];
-            const validTypes = ["image/png", "image/jpeg", "image/svg+xml"];
-            const maxFileSize = 10 * 1024 * 1024; // 10MB
-
-            if (!validTypes.includes(file.type)) {
-                alert("Image must be of type png, jpg or svg");
-                input.value = '';
-                return false;
-            }
-
-            if (file.size > maxFileSize) {
-                alert("Image must be less than 10MB");
-                input.value = '';
-                return false;
-            }
+            // const file = input.files[0];
+            // const validTypes = ["image/png", "image/jpeg", "image/svg+xml"];
+            // const maxFileSize = 10 * 1024 * 1024; // 10MB
+            //
+            // if (!validTypes.includes(file.type)) {
+            //     alert("Image must be of type png, jpg or svg");
+            //     input.value = '';
+            //     return false;
+            // }
+            //
+            // if (file.size > maxFileSize) {
+            //     alert("Image must be less than 10MB");
+            //     input.value = '';
+            //     return false;
+            // }
 
             if (input.files && input.files[0]) {
                 const fileReader = new FileReader();

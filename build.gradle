@@ -19,7 +19,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'com.h2database:h2'
-	implementation 'org.mindrot:jbcrypt:0.4'
+	implementation 'org.mindrot:jbcrypt:0.4' //TODO remove
 	implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
 	implementation 'org.springframework.boot:spring-boot-starter-validation:3.2.4'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'

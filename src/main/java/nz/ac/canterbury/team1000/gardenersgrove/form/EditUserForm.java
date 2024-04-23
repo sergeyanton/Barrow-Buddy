@@ -7,10 +7,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.*;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
@@ -131,9 +127,9 @@ public class EditUserForm {
         // validate image
         if (!profilePicture.isEmpty()) {
             if (!ALLOWED_IMAGE_TYPES.contains(profilePicture.getContentType())) {
-                errors.add("image", "Image must be of type png, jpg or svg", null);
+                errors.add("profilePictureUrl", "Image must be of type png, jpg or svg", null);
             } else if (profilePicture.getSize() > MAX_IMAGE_SIZE_BYTES) {
-                errors.add("image", "Image must be less than 10MB", null);
+                errors.add("profilePictureUrl", "Image must be less than 10MB", null);
             }
         }
     }
