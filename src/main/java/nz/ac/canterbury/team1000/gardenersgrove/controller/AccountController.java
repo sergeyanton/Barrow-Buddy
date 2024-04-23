@@ -2,9 +2,12 @@ package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
+import nz.ac.canterbury.team1000.gardenersgrove.entity.VerificationToken;
 import nz.ac.canterbury.team1000.gardenersgrove.form.LoginForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.RegistrationForm;
+import nz.ac.canterbury.team1000.gardenersgrove.service.EmailService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
+import nz.ac.canterbury.team1000.gardenersgrove.service.VerificationTokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +30,16 @@ import java.time.format.DateTimeFormatter;
 public class AccountController {
     Logger logger = LoggerFactory.getLogger(AccountController.class);
     private final UserService userService;
+    private final VerificationTokenService verificationTokenService;
+    private final EmailService emailService;
     @Autowired
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    public AccountController(UserService userService) {
+    public AccountController(UserService userService, VerificationTokenService verificationTokenService, EmailService emailService) {
         this.userService = userService;
+        this.verificationTokenService = verificationTokenService;
+        this.emailService = emailService;
     }
 
 
@@ -105,12 +112,16 @@ public class AccountController {
         newUser.grantAuthority("ROLE_USER");
         userService.registerUser(newUser);
         userService.authenticateUser(authenticationManager, newUser, request);
+        sendVerificationEmail(newUser);
 
-//        return "redirect:/profile";
         return "pages/registrationVerificationPage";
     }
 
-
+    private void sendVerificationEmail(User user) {
+        VerificationToken token = new VerificationToken(user.getId());
+        verificationTokenService.addVerificationToken(token);
+        emailService.sendSimpleMessage(user.getEmail(), "Gardeners Grove Account Verification",token.getToken());
+    }
     /**
      * Gets the thymeleaf page representing the /login page Will only work if the user is not logged
      * in, otherwise it will redirect to the home page

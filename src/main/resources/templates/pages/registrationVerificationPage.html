@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" type="text/css" th:href="@{/css/styles-user.css}">
     <title>Log in</title>
 </head>
@@ -10,16 +10,16 @@
 <body>
 <div class="basic">
     <div>
-        <p>We have sent you an email with a 6-digit verification code, please enter it below </a></p>
+        <p>We have sent you an email with a 6-digit verification code, please enter it below</p>
     </div>
-    <form th:action="@{registrationVerification}" method="post" th:object="${verificationForm}">
-        <input th:replace="~{fragments/formElement :: formElementField(fieldName='verificationCode', label='verificationCode: ', placeholder='XXXXXX')}"/>
-        <br/>
-
-
+    <form th:action="@{registrationVerification}" method="post">
+        <label for="verificationCode">Verification Code:</label>
+        <input type="text" id="verificationCode" name="verificationCode" placeholder="XXXXXX" />
+        <br />
         <button type="submit">Sign In</button>
         <a class="cancel" th:href="@{.}">Cancel</a>
     </form>
 </div>
 </body>
+
 </html>
