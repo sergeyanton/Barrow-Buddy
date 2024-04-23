@@ -17,6 +17,7 @@ public class EditUserForm {
     protected String email;
     protected String dob;
     protected String profilePictureUrl;
+    protected MultipartFile profilePictureFile;
 
     public String getFirstName() {
         return this.firstName;
@@ -71,6 +72,15 @@ public class EditUserForm {
     }
     public String getProfilePictureUrl() {
         return this.profilePictureUrl;
+    }
+
+
+    public MultipartFile getProfilePictureFile() {
+        return profilePictureFile;
+    }
+
+    public void setProfilePictureFile(MultipartFile profilePictureFile) {
+        this.profilePictureFile = profilePictureFile;
     }
 
     /**
