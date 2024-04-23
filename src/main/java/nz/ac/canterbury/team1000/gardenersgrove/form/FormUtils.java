@@ -127,6 +127,17 @@ public class FormUtils {
     }
 
     /**
+     * Checks if the given string contains only letters, accented characters, macrons,
+     * spaces, hyphens, or apostrophes.
+     *
+     * @param string the string to check
+     * @return true if the string contains only valid characters, false otherwise
+     */
+    public static boolean checkOnlyHasLettersMacronsSpacesHyphensApostrophes (String string) {
+        return !checkNotMatchesRegex(string, "^[\\p{L}’'-]+(?:\\s[\\p{L}’'-]+)*$");
+    }
+
+    /**
      * Checks if the given string is only made up of alphanumeric characters, commas,
      * dots, hyphens, and apostrophes.
      *
