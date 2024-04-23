@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.validation.BindingResult;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import java.time.LocalDate;
@@ -20,6 +21,9 @@ public class EditUserFormTest {
     
     @Mock
     BindingResult bindingResult;
+    private MockMultipartFile imageFile;
+    private final MockMultipartFile emptyFile = new MockMultipartFile("profilePicture", new byte[0]);
+
 
     @BeforeEach
     void setUp() {
@@ -28,6 +32,7 @@ public class EditUserFormTest {
         editUserForm.setEmail(existingUser.getEmail());
         editUserForm.setDob(existingUser.getDateOfBirth() != null ? existingUser.getDateOfBirthString() : "");
         editUserForm.setNoSurnameCheckBox(editUserForm.getLastName() == null || editUserForm.getLastName().isEmpty());
+        imageFile = emptyFile;
 
         bindingResult = Mockito.mock(BindingResult.class);
         Mockito.when(bindingResult.hasErrors()).thenReturn(false);
@@ -40,49 +45,49 @@ public class EditUserFormTest {
     @Test
     void validate_WithBlankFirstName_AddsError() {
         editUserForm.setFirstName("");
-        EditUserForm.validate(editUserForm, bindingResult, existingUser);
+        EditUserForm.validate(editUserForm, bindingResult, imageFile, existingUser);
         Mockito.verify(bindingResult).addError(Mockito.any());
     }
 
     @Test
     void validate_WithFirstNameOver64Characters_AddsError() {
         editUserForm.setFirstName("a".repeat(65));
-        EditUserForm.validate(editUserForm, bindingResult, existingUser);
+        EditUserForm.validate(editUserForm, bindingResult, imageFile, existingUser);
         Mockito.verify(bindingResult).addError(Mockito.any());
     }
 
     @Test
     void validate_WithFirstNameExactly64Characters_DoesNotAddError() {
         editUserForm.setFirstName("a".repeat(64));
-        EditUserForm.validate(editUserForm, bindingResult, existingUser);
+        EditUserForm.validate(editUserForm, bindingResult, imageFile, existingUser);
         Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
     }
 
     @Test
     void validate_WithFirstNameWithInvalidCharacters_AddsError() {
         editUserForm.setFirstName("John123");
-        EditUserForm.validate(editUserForm, bindingResult, existingUser);
+        EditUserForm.validate(editUserForm, bindingResult, imageFile, existingUser);
         Mockito.verify(bindingResult).addError(Mockito.any());
     }
 
     @Test
     void validate_WithBlankLastName_AddsError() {
         editUserForm.setLastName("");
-        EditUserForm.validate(editUserForm, bindingResult, existingUser);
+        EditUserForm.validate(editUserForm, bindingResult, imageFile, existingUser);
         Mockito.verify(bindingResult).addError(Mockito.any());
     }
 
     @Test
     void validate_WithLastNameOver64Characters_AddsError() {
         editUserForm.setLastName("a".repeat(65));
-        EditUserForm.validate(editUserForm, bindingResult, existingUser);
+        EditUserForm.validate(editUserForm, bindingResult, imageFile, existingUser);
         Mockito.verify(bindingResult).addError(Mockito.any());
     }
 
     @Test
     void validate_WithLastNameWithInvalidCharacters_AddsError() {
         editUserForm.setLastName("Doe123");
-        EditUserForm.validate(editUserForm, bindingResult, existingUser);
+        EditUserForm.validate(editUserForm, bindingResult, imageFile, existingUser);
         Mockito.verify(bindingResult).addError(Mockito.any());
     }
 
@@ -90,42 +95,42 @@ public class EditUserFormTest {
     void validate_WithBlankLastNameAndNoSurnameCheckBox_DoesNotAddError() {
         editUserForm.setLastName("");
         editUserForm.setNoSurnameCheckBox(true);
-        EditUserForm.validate(editUserForm, bindingResult, existingUser);
+        EditUserForm.validate(editUserForm, bindingResult, imageFile, existingUser);
         Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
     }
 
     @Test
     void validate_WithBlankEmail_AddsError() {
         editUserForm.setEmail("");
-        EditUserForm.validate(editUserForm, bindingResult, existingUser);
+        EditUserForm.validate(editUserForm, bindingResult, imageFile, existingUser);
         Mockito.verify(bindingResult).addError(Mockito.any());
     }
 
     @Test
     void validate_WithInvalidEmail_AddsError() {
         editUserForm.setEmail("john@doe");
-        EditUserForm.validate(editUserForm, bindingResult, existingUser);
+        EditUserForm.validate(editUserForm, bindingResult, imageFile, existingUser);
         Mockito.verify(bindingResult).addError(Mockito.any());
     }
 
     @Test
     void validate_WithBlankDateOfBirth_DoesNotAddError() {
         editUserForm.setDob("");
-        EditUserForm.validate(editUserForm, bindingResult, existingUser);
+        EditUserForm.validate(editUserForm, bindingResult, imageFile, existingUser);
         Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
     }
 
     @Test
     void validate_WithNonDayMonthYearDateOfBirth_AddsError() {
         editUserForm.setDob("10/28/2000");
-        EditUserForm.validate(editUserForm, bindingResult, existingUser);
+        EditUserForm.validate(editUserForm, bindingResult, imageFile, existingUser);
         Mockito.verify(bindingResult).addError(Mockito.any());
     }
 
     @Test
     void validate_WithDayMonthYearDateOfBirth_DoesNotAddError() {
         editUserForm.setDob("28/10/2000");
-        EditUserForm.validate(editUserForm, bindingResult, existingUser);
+        EditUserForm.validate(editUserForm, bindingResult, imageFile, existingUser);
         Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
     }
 }

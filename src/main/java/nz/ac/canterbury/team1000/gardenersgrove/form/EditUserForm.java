@@ -2,7 +2,15 @@ package nz.ac.canterbury.team1000.gardenersgrove.form;
 
 import org.springframework.validation.BindingResult;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
+import org.springframework.validation.FieldError;
+import org.springframework.web.multipart.MultipartFile;
+
 import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.*;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
@@ -76,9 +84,9 @@ public class EditUserForm {
      * @param bindingResult the BindingResult object to which errors will be added
      * @param existingUser the User object representing the user being edited
      */
-    public static void validate(EditUserForm editUserForm, BindingResult bindingResult, User existingUser) {
+    public static void validate(EditUserForm editUserForm, BindingResult bindingResult, MultipartFile profilePicture, User existingUser) {
         // Create an ErrorAdder instance with the BindingResult and object name
-        ErrorAdder errors = new ErrorAdder(bindingResult, "registrationForm");
+        ErrorAdder errors = new ErrorAdder(bindingResult, "editUserForm");
 
         // Validate first name
         if (checkBlank(editUserForm.getFirstName())) {
@@ -117,6 +125,15 @@ public class EditUserForm {
                 errors.add("dob", "You must be 13 years or older to create an account", editUserForm.getDob());
             } else if (checkDateBefore(editUserForm.getDob(), LocalDate.now().minusYears(120))) {
                 errors.add("dob", "The maximum age allowed is 120 years", editUserForm.getDob());
+            }
+        }
+
+        // validate image
+        if (!profilePicture.isEmpty()) {
+            if (!ALLOWED_IMAGE_TYPES.contains(profilePicture.getContentType())) {
+                errors.add("image", "Image must be of type png, jpg or svg", null);
+            } else if (profilePicture.getSize() > MAX_IMAGE_SIZE_BYTES) {
+                errors.add("image", "Image must be less than 10MB", null);
             }
         }
     }

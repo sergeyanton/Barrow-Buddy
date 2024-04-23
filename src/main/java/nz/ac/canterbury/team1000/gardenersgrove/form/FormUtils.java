@@ -8,6 +8,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Helper class for adding validation errors to a BindingResult.
@@ -59,6 +61,17 @@ public class FormUtils {
      * Some data might have a lower maximum (first/last name) or a higher maximum (garden description).
      */
     public static final int MAX_DB_STR_LEN = 255;
+
+    /**
+     * The allowed MIME types for uploaded images.
+     */
+    public static final List<String> ALLOWED_IMAGE_TYPES = Arrays.asList("image/jpeg", "image/png", "image/svg+xml");
+
+    /**
+     * The maximum size allowed for an image that the user can upload.
+     */
+    public static final int MAX_IMAGE_SIZE_BYTES  = 10 * 1024 * 1024;
+
 
 
     /**

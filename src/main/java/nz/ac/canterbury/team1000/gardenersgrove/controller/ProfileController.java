@@ -31,7 +31,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.List;
 
 @Controller
 public class ProfileController {
@@ -46,7 +48,7 @@ public class ProfileController {
     @Autowired
     private PasswordEncoder passwordEncoder;
     private final UserService userService;
-    public static String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/uploads";
+    public final static String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/uploads";
     Logger logger = LoggerFactory.getLogger(ProfileController.class);
 
     /**
@@ -154,16 +156,14 @@ public class ProfileController {
         User currentUser = userService.getLoggedInUser();
         String oldEmail = currentUser.getEmail();
 
-        EditUserForm.validate(editUserForm, bindingResult, currentUser);
+        EditUserForm.validate(editUserForm, bindingResult, profilePicture, currentUser);
 
         if (!bindingResult.hasFieldErrors("email") && !editUserForm.getEmail().equals(oldEmail) && userService.checkEmail(editUserForm.getEmail())) {
-            bindingResult.addError(new FieldError("registrationForm", "email", editUserForm.getEmail(), false, null, null, "Email address is already in use"));
+            bindingResult.addError(new FieldError("editUserForm", "email", editUserForm.getEmail(), false, null, null, "Email address is already in use"));
         }
 
-        // save image
-        if (!profilePicture.isEmpty()) {
+        if (!profilePicture.isEmpty() && !bindingResult.hasFieldErrors("image")) {
             Path uploadDirectoryPath = Paths.get(UPLOAD_DIRECTORY);
-
             if (!Files.exists(uploadDirectoryPath)) {
                 try {
                     Files.createDirectories(uploadDirectoryPath);
@@ -173,11 +173,12 @@ public class ProfileController {
             }
             Path filePath = uploadDirectoryPath.resolve(profilePicture.getOriginalFilename());
             Files.write(filePath, profilePicture.getBytes());
+
         }
 
         if (bindingResult.hasErrors()) {
             // make sure the uploaded image is still rendered properly
-            if (!profilePicture.isEmpty()) model.addAttribute("uploadedProfileImageOnError", "/uploads/" + profilePicture.getOriginalFilename());
+//            if (!profilePicture.isEmpty()) model.addAttribute("uploadedProfileImageOnError", "/uploads/" + profilePicture.getOriginalFilename());
             return "pages/editProfilePage";
         }
 
