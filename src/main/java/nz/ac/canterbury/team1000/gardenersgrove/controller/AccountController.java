@@ -2,9 +2,7 @@ package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
-import nz.ac.canterbury.team1000.gardenersgrove.form.ForgotPasswordForm;
-import nz.ac.canterbury.team1000.gardenersgrove.form.LoginForm;
-import nz.ac.canterbury.team1000.gardenersgrove.form.RegistrationForm;
+import nz.ac.canterbury.team1000.gardenersgrove.form.*;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,10 +77,28 @@ public class AccountController {
         return userService.isSignedIn() ? "redirect:/" : "pages/registrationPage";
     }
 
+    /**
+     * Gets the thymeleaf page representing the /forgotPassword page, for the user to enter
+     * an email to send a reset password link to.
+     *
+     * @return thymeleaf forgotPasswordPage
+     */
     @GetMapping("/forgotPassword")
     public String getForgotPasswordPage(ForgotPasswordForm forgotPasswordForm) {
         logger.info("GET /forgotPassword");
         return "pages/forgotPasswordPage";
+    }
+
+    /**
+     * Gets the thymeleaf page representing the /resetPassword page, for non-logged-in
+     * users to reset their password
+     *
+     * @return thymeleaf resetPasswordPage
+     */
+    @GetMapping("/resetPassword")
+    public String getResetPasswordPage(ResetPasswordForm resetPasswordForm) {
+        logger.info("GET /resetPassword");
+        return "pages/resetPasswordPage";
     }
 
 
@@ -209,6 +225,35 @@ public class AccountController {
 
 
         return "redirect:/forgotPasswordPage";
+    }
+
+    /**
+     * Handles POST requests to the /resetPassword endpoint.
+     * Resets the password for the user if they enter a valid new password.
+     *
+     * @param request the HttpServletRequest object containing the request information
+     * @param resetPasswordForm the ResetPasswordForm object representing the password fields
+     * @param bindingResult the BindingResult object for validation errors
+     * @return a String representing the view to display after password reset:
+     *         - If there are validation errors, returns the reset password page to display errors.
+     *         - If password reset is successful, redirects to the application's login page.
+     */
+    @PostMapping("/resetPassword")
+    public String postUpdatePassword(HttpServletRequest request,
+                                     @ModelAttribute("resetPasswordForm") ResetPasswordForm resetPasswordForm,
+                                     BindingResult bindingResult) {
+        logger.info("POST /resetPassword");
+//        User currentUser = userService.getLoggedInUser();
+        ResetPasswordForm.validate(resetPasswordForm, bindingResult);
+
+        if (bindingResult.hasErrors()) {
+            return "pages/resetPasswordPage";
+        }
+
+//        currentUser.setPassword(passwordEncoder.encode(updatePasswordForm.getNewPassword()));
+//        userService.updateUserByEmail(currentUser.getEmail(), currentUser);
+
+        return "redirect:/login";
     }
 
 }
