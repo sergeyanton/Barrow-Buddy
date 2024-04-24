@@ -23,7 +23,6 @@ import nz.ac.canterbury.team1000.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.team1000.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.PlantService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
-import org.springframework.web.servlet.ModelAndView;
 
 @WebMvcTest(controllers = GardensController.class)
 @AutoConfigureMockMvc
