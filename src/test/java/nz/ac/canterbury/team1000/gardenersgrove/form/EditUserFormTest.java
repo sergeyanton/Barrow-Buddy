@@ -167,7 +167,7 @@ public class EditUserFormTest {
     void validate_WithExactlyBigImage_DoesNotAddError() {
         byte[] exactly10mb = new byte[10 * 1024 * 1024];
         editUserForm.setPictureFile(new MockMultipartFile(
-                "pictureFile", "newPfp.svg", "image/svg+xml", exactly10mb));
+                "pictureFile", "newPfp.jpeg", "image/jpeg", exactly10mb));
         EditUserForm.validate(editUserForm, bindingResult, existingUser);
         Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
     }
@@ -176,7 +176,7 @@ public class EditUserFormTest {
     void validate_WithTooBigImage_AddsError() {
         byte[] over10mb = new byte[10 * 1024 * 1024 + 1];
         editUserForm.setPictureFile(new MockMultipartFile(
-                "pictureFile", "newPfp.webp", "image/webp", over10mb));
+                "pictureFile", "newPfp.jpeg", "image/jpeg", over10mb));
         EditUserForm.validate(editUserForm, bindingResult, existingUser);
         Mockito.verify(bindingResult).addError(Mockito.any());
     }

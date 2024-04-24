@@ -15,8 +15,8 @@
         </div>
 
         <form class="upload-image" th:action="@{/profile}" method="post" enctype="multipart/form-data">
-            <label id="profileImagePickerLabel" class="file-upload-label" for="profileImagePicker">Edit Profile Picture</label>
-            <input type="file" id="profileImagePicker" name="profilePicture" onchange="validateImage(this)" accept="image/png, image/jpeg, image/svg+xml">
+            <label id="pictureFileLabel" class="file-upload-label" for="pictureFile">Edit Profile Picture</label>
+            <input type="file" id="pictureFile" name="profilePicture" onchange="validateImage(this)" accept="image/png, image/jpeg, image/svg+xml">
             <button type="button" id="cancelButton" class="cancelMinor" style="display: none;" onclick="cancelSelection()">Undo</button>
             <button type="submit" id="submitButton" style="display: none;">Save Profile Picture</button>
         </form>
@@ -39,22 +39,22 @@
         // THYMELEAF SYNTAX FOR GETTING MODEL ATTRIBUTES INTO INLINE JS. The comment matters.
         const initialProfilePictureUrl = /*[[${picturePath}]]*/ '';
         function validateImage(input) {
-            const file = input.files[0];
-            const validTypes = ["image/png", "image/jpeg", "image/svg+xml"];
-            const maxFileSize = 10 * 1024 * 1024; // 10MB
-
-            if (!validTypes.includes(file.type)) {
-                alert("Image must be of type png, jpg or svg");
-                input.value = '';
-                return false;
-            }
-
-            if (file.size > maxFileSize) {
-                alert("Image must be less than 10MB");
-                input.value = '';
-                return false;
-            }
-            document.getElementById('profileImagePickerLabel').style.display = 'none';
+            // const file = input.files[0];
+            // const validTypes = ["image/png", "image/jpeg", "image/svg+xml"];
+            // const maxFileSize = 10 * 1024 * 1024; // 10MB
+            //
+            // if (!validTypes.includes(file.type)) {
+            //     alert("Image must be of type png, jpg or svg");
+            //     input.value = '';
+            //     return false;
+            // }
+            //
+            // if (file.size > maxFileSize) {
+            //     alert("Image must be less than 10MB");
+            //     input.value = '';
+            //     return false;
+            // }
+            document.getElementById('pictureFileLabel').style.display = 'none';
             document.getElementById('cancelButton').style.display = 'inline-block';
             document.getElementById('submitButton').style.display = 'inline-block';
 
@@ -70,9 +70,9 @@
         }
 
         function cancelSelection() {
-            document.getElementById('profileImagePicker').value = '';
+            document.getElementById('pictureFile').value = '';
             document.getElementById('profileImage').src = initialProfilePictureUrl;
-            document.getElementById('profileImagePickerLabel').style.display = 'inline-block';
+            document.getElementById('pictureFileLabel').style.display = 'inline-block';
             document.getElementById('cancelButton').style.display = 'none';
             document.getElementById('submitButton').style.display = 'none';
         }

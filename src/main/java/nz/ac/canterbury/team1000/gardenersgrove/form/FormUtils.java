@@ -2,6 +2,7 @@ package nz.ac.canterbury.team1000.gardenersgrove.form;
 
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -71,8 +72,6 @@ public class FormUtils {
      * The maximum size allowed for an image that the user can upload.
      */
     public static final int MAX_IMAGE_SIZE_BYTES  = 10 * 1024 * 1024;
-
-
 
     /**
      * Checks if the given string is blank.
@@ -258,5 +257,25 @@ public class FormUtils {
         } catch (DateTimeParseException e) {
             return false;
         }
+    }
+
+    /**
+     * Checks if the given image file is an accepted type
+     *
+     * @param image the image file to check
+     * @return true if the image is NOT an accepted type
+     */
+    public static boolean checkImageWrongType(MultipartFile image) {
+        return !ALLOWED_IMAGE_TYPES.contains(image.getContentType());
+    }
+
+    /**
+     * Checks if the given image file is too big
+     *
+     * @param image the image file to check
+     * @return true if the image is over the size limit
+     */
+    public static boolean checkImageTooBig(MultipartFile image) {
+        return image.getSize() > MAX_IMAGE_SIZE_BYTES;
     }
 }

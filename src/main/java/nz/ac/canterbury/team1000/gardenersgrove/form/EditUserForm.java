@@ -140,9 +140,9 @@ public class EditUserForm {
 
         // validate image
         if (!editUserForm.getPictureFile().isEmpty()) {
-            if (!ALLOWED_IMAGE_TYPES.contains(editUserForm.getPictureFile().getContentType())) {
+            if (checkImageWrongType(editUserForm.getPictureFile())) {
                 errors.add("pictureFile", "Image must be of type png, jpg or svg", null);
-            } else if (editUserForm.getPictureFile().getSize() > MAX_IMAGE_SIZE_BYTES) {
+            } else if (checkImageTooBig(editUserForm.getPictureFile())) {
                 errors.add("pictureFile", "Image must be less than 10MB", null);
             }
         }

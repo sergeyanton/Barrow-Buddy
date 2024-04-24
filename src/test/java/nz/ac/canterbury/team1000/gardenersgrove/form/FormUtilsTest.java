@@ -2,6 +2,9 @@ package nz.ac.canterbury.team1000.gardenersgrove.form;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.time.LocalDate;
 
 public class FormUtilsTest {
@@ -295,5 +298,48 @@ public class FormUtilsTest {
     void checkIntegerIsInvalid_NotAValidIntegerString_ReturnsTrue() {
         String size = "invalid integer obviously";
         Assertions.assertTrue(FormUtils.checkIntegerIsInvalid(size));
+    }
+
+    @Test
+    void checkImageWrongType_ValidPng_ReturnsFalse() {
+        MultipartFile image = new MockMultipartFile(
+                "pictureFile", "newPfp.png", "image/png", "file contents".getBytes());
+        Assertions.assertFalse(FormUtils.checkImageWrongType(image));
+    }
+
+    @Test
+    void checkImageWrongType_ValidJpeg_ReturnsFalse() {
+        MultipartFile image = new MockMultipartFile(
+                "pictureFile", "newPfp.jpeg", "image/jpeg", "file contents".getBytes());
+        Assertions.assertFalse(FormUtils.checkImageWrongType(image));
+    }
+
+    @Test
+    void checkImageWrongType_ValidSvg_ReturnsFalse() {
+        MultipartFile image = new MockMultipartFile(
+                "pictureFile", "newPfp.svg", "image/svg+xml", "file contents".getBytes());
+        Assertions.assertFalse(FormUtils.checkImageWrongType(image));
+    }
+    @Test
+    void checkImageWrongType_InvalidType_ReturnsTrue() {
+        MultipartFile image = new MockMultipartFile(
+                "pictureFile", "newPfp.webp", "image/webp", "file contents".getBytes());
+        Assertions.assertTrue(FormUtils.checkImageWrongType(image));
+    }
+
+    @Test
+    void checkImageTooBig_BoundarySize_ReturnsFalse() {
+        byte[] exactly10mb = new byte[10 * 1024 * 1024];
+        MultipartFile image = new MockMultipartFile(
+                "pictureFile", "newPfp.png", "image/png", exactly10mb);
+        Assertions.assertFalse(FormUtils.checkImageTooBig(image));
+    }
+
+    @Test
+    void checkImageTooBig_OverSizeLimit_ReturnsTrue() {
+        byte[] over10mb = new byte[10 * 1024 * 1024 + 1];
+        MultipartFile image = new MockMultipartFile(
+                "pictureFile", "newPfp.png", "image/png", over10mb);
+        Assertions.assertTrue(FormUtils.checkImageTooBig(image));
     }
 }

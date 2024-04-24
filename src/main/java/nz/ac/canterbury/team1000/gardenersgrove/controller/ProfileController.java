@@ -41,7 +41,8 @@ public class ProfileController {
     @Autowired
     private PasswordEncoder passwordEncoder;
     private final UserService userService;
-    public final static String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/uploads";
+
+    private final static String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/uploads";
     Logger logger = LoggerFactory.getLogger(ProfileController.class);
 
     /**
@@ -80,6 +81,15 @@ public class ProfileController {
     public String handleProfilePictureUpload(HttpServletRequest request,
                                              @RequestParam("profilePicture") MultipartFile profilePicture) throws IOException {
         User currentUser = userService.getLoggedInUser();
+
+        // validate image
+        if (!profilePicture.isEmpty()) {
+            if (!ALLOWED_IMAGE_TYPES.contains(editUserForm.getPictureFile().getContentType())) {
+                errors.add("pictureFile", "Image must be of type png, jpg or svg", null);
+            } else if (editUserForm.getPictureFile().getSize() > MAX_IMAGE_SIZE_BYTES) {
+                errors.add("pictureFile", "Image must be less than 10MB", null);
+            }
+        }
 
         if (!profilePicture.isEmpty()) {
             Path uploadDirectoryPath = Paths.get(UPLOAD_DIRECTORY);
@@ -151,7 +161,7 @@ public class ProfileController {
             bindingResult.addError(new FieldError("editUserForm", "email", editUserForm.getEmail(), false, null, null, "Email address is already in use"));
         }
 
-        if (!editUserForm.getPictureFile().isEmpty() && !bindingResult.hasFieldErrors("picturePath")) {
+        if (!editUserForm.getPictureFile().isEmpty() && !bindingResult.hasFieldErrors("pictureFile")) {
             Path uploadDirectoryPath = Paths.get(UPLOAD_DIRECTORY);
             if (!Files.exists(uploadDirectoryPath)) {
                 try {

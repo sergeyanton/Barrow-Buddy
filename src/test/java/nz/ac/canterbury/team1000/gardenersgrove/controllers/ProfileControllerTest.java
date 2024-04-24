@@ -339,7 +339,7 @@ public class ProfileControllerTest {
     public void EditUserPost_WithTooBigFile_HasFieldErrors() throws Exception {
         byte[] over10mb = new byte[10 * 1024 * 1024 + 1];
         editUserForm.setPictureFile(new MockMultipartFile(
-                "pictureFile", "newPfp.webp", "image/webp", over10mb));
+                "pictureFile", "newPfp.png", "image/png", over10mb));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/editProfile").with(csrf())
                         .flashAttr("editUserForm", editUserForm))
@@ -363,6 +363,7 @@ public class ProfileControllerTest {
         Assertions.assertEquals(userMock.getEmail(), modelEditUserForm.getEmail());
         Assertions.assertEquals(userMock.getLname() == null || userMock.getLname().isEmpty(), modelEditUserForm.getNoSurnameCheckBox());
         Assertions.assertEquals(userMock.getDateOfBirthString(), modelEditUserForm.getDob());
+        Assertions.assertEquals(userMock.getPicturePath(), modelEditUserForm.getPicturePath());
         Mockito.verify(userService).getLoggedInUser();
     }
 
