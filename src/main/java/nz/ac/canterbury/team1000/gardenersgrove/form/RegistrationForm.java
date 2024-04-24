@@ -104,7 +104,8 @@ public class RegistrationForm {
                 this.lastName,
                 this.email,
                 passwordEncoder.encode(this.password),
-                this.getDobLocalDate()
+                this.getDobLocalDate(),
+                "/images/default_pic.jpg"
         );
     }
 

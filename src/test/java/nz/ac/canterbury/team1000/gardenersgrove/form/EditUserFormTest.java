@@ -15,7 +15,8 @@ public class EditUserFormTest {
         "Doe",
         "john@doe.com",
         "password",
-        LocalDate.of(2000, 1, 1)
+        LocalDate.of(2000, 1, 1),
+            "/images/default_pic.jpg"
     );
     EditUserForm editUserForm = new EditUserForm();
     
