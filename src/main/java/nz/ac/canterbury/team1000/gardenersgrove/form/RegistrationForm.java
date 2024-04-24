@@ -124,7 +124,7 @@ public class RegistrationForm {
             errors.add("firstName", "First name cannot be empty", registrationForm.getFirstName());
         } else if (checkOverMaxLength(registrationForm.getFirstName(), 64)) {
             errors.add("firstName", "First name must be 64 characters long or less", registrationForm.getFirstName());
-        } else if (!checkOnlyHasLettersSpacesHyphensApostrophes(registrationForm.getFirstName())) {
+        } else if (!checkOnlyHasLettersMacronsSpacesHyphensApostrophes(registrationForm.getFirstName())) {
             errors.add("firstName", "First name must only include letters, spaces, hyphens or apostrophes", registrationForm.getFirstName());
         }
 
@@ -134,7 +134,7 @@ public class RegistrationForm {
                 errors.add("lastName", "Last name cannot be empty", registrationForm.getLastName());
             } else if (checkOverMaxLength(registrationForm.getLastName(), 64)) {
                 errors.add("lastName", "Last name must be 64 characters long or less", registrationForm.getLastName());
-            } else if (!checkOnlyHasLettersSpacesHyphensApostrophes(registrationForm.getLastName())) {
+            } else if (!checkOnlyHasLettersMacronsSpacesHyphensApostrophes(registrationForm.getLastName())) {
                 errors.add("lastName", "Last name must only include letters, spaces, hyphens or apostrophes", registrationForm.getLastName());
             }
         }

@@ -129,13 +129,14 @@ public class FormUtils {
     }
 
     /**
-     * Checks if the given string contains only letters, spaces, hyphens, or apostrophes.
+     * Checks if the given string contains only letters, accented characters, macrons,
+     * spaces, hyphens, or apostrophes.
      *
      * @param string the string to check
      * @return true if the string contains only valid characters, false otherwise
      */
-    public static boolean checkOnlyHasLettersSpacesHyphensApostrophes (String string) {
-        return !checkNotMatchesRegex(string, "^[a-zA-Z\\s'-]+$");
+    public static boolean checkOnlyHasLettersMacronsSpacesHyphensApostrophes (String string) {
+        return !checkNotMatchesRegex(string, "^[\\p{L}’'-]+(?:\\s[\\p{L}’'-]+)*$");
     }
 
     /**
