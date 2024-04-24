@@ -66,6 +66,20 @@ public class EditUserFormTest {
     }
 
     @Test
+    void validate_FirstNameContainsAccentedCharacters_DoesNotAddError() {
+        editUserForm.setFirstName("María");
+        EditUserForm.validate(editUserForm, bindingResult, existingUser);
+        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
+
+    @Test
+    void validate_FirstNameContainsMacron_DoesNotAddError() {
+        editUserForm.setFirstName("Mārama");
+        EditUserForm.validate(editUserForm, bindingResult, existingUser);
+        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
+
+    @Test
     void validate_WithBlankLastName_AddsError() {
         editUserForm.setLastName("");
         EditUserForm.validate(editUserForm, bindingResult, existingUser);
@@ -90,6 +104,20 @@ public class EditUserFormTest {
     void validate_WithBlankLastNameAndNoSurnameCheckBox_DoesNotAddError() {
         editUserForm.setLastName("");
         editUserForm.setNoSurnameCheckBox(true);
+        EditUserForm.validate(editUserForm, bindingResult, existingUser);
+        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
+
+    @Test
+    void validate_LastNameContainsAccentedCharacters_DoesNotAddError() {
+        editUserForm.setLastName("María");
+        EditUserForm.validate(editUserForm, bindingResult, existingUser);
+        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
+
+    @Test
+    void validate_LastNameContainsMacron_DoesNotAddError() {
+        editUserForm.setLastName("Mārama");
         EditUserForm.validate(editUserForm, bindingResult, existingUser);
         Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
     }
