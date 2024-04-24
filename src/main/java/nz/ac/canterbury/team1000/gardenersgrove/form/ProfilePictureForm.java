@@ -27,7 +27,7 @@ public class ProfilePictureForm {
      */
     public static void validate(ProfilePictureForm profilePictureForm, BindingResult bindingResult, User existingUser) {
         // Create an ErrorAdder instance with the BindingResult and object name
-        ErrorAdder errors = new ErrorAdder(bindingResult, "editUserForm");
+        ErrorAdder errors = new ErrorAdder(bindingResult, "profilePictureForm");
 
         // validate image
         if (!profilePictureForm.getPictureFile().isEmpty()) {

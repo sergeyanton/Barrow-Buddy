@@ -5,6 +5,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import nz.ac.canterbury.team1000.gardenersgrove.controller.ProfileController;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.EditUserForm;
+import nz.ac.canterbury.team1000.gardenersgrove.form.ProfilePictureForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.UpdatePasswordForm;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +18,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -24,6 +26,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
+
+import java.time.LocalDate;
 
 @WebMvcTest(controllers = ProfileController.class)
 @AutoConfigureMockMvc
@@ -44,6 +48,8 @@ public class ProfileControllerTest {
 
     @Mock
     private User userMock;
+    private ProfilePictureForm profilePictureForm;
+
     private EditUserForm editUserForm;
     private UpdatePasswordForm updatePasswordForm;
 
@@ -53,9 +59,13 @@ public class ProfileControllerTest {
         Mockito.when(userMock.getFname()).thenReturn("John");
         Mockito.when(userMock.getLname()).thenReturn("Smith");
         Mockito.when(userMock.getEmail()).thenReturn("johnsmith@gmail.com");
+        Mockito.when(userMock.getDateOfBirth()).thenReturn(LocalDate.of(1999,5,5));
         Mockito.when(userMock.getDateOfBirthString()).thenReturn("05/05/1999");
         Mockito.when(userMock.getPassword()).thenReturn("encoded_password");
         Mockito.when(userMock.getPicturePath()).thenReturn("/uploads/example.png");
+
+        profilePictureForm = new ProfilePictureForm();
+        profilePictureForm.setPictureFile(new MockMultipartFile("pictureFile", new byte[0]));
 
         editUserForm = new EditUserForm();
         editUserForm.setFirstName(userMock.getFname());
@@ -75,6 +85,113 @@ public class ProfileControllerTest {
         Mockito.when(userService.checkEmail(Mockito.any())).thenReturn(true);
 
         Mockito.when(passwordEncoder.matches(Mockito.any(), Mockito.any())).thenReturn(true);
+    }
+
+    @Test
+    public void ProfilePost_WithNoChange_SavesToService() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/profile").with(csrf())
+                        .flashAttr("profilePictureForm", profilePictureForm))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/profile"));
+
+        Mockito.verify(userService).updateUserByEmail(Mockito.any(), Mockito.any());
+        Mockito.verify(userService).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void ProfilePost_WithValidPng_SavesToService() throws Exception {
+        profilePictureForm.setPictureFile(new MockMultipartFile(
+                "pictureFile", "newPfp.png", "image/png", "file contents".getBytes()));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/profile").with(csrf())
+                        .flashAttr("profilePictureForm", profilePictureForm))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/profile"));
+
+        Mockito.verify(userService).updateUserByEmail(Mockito.any(), Mockito.any());
+        Mockito.verify(userService).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void ProfilePost_WithValidJpeg_SavesToService() throws Exception {
+        profilePictureForm.setPictureFile(new MockMultipartFile(
+                "pictureFile", "newPfp.jpeg", "image/jpeg", "file contents".getBytes()));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/profile").with(csrf())
+                        .flashAttr("profilePictureForm", profilePictureForm))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/profile"));
+
+        Mockito.verify(userService).updateUserByEmail(Mockito.any(), Mockito.any());
+        Mockito.verify(userService).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void ProfilePost_WithValidSvg_SavesToService() throws Exception {
+        profilePictureForm.setPictureFile(new MockMultipartFile(
+                "pictureFile", "newPfp.svg", "image/svg+xml", "file contents".getBytes()));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/profile").with(csrf())
+                        .flashAttr("profilePictureForm", profilePictureForm))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/profile"));
+
+        Mockito.verify(userService).updateUserByEmail(Mockito.any(), Mockito.any());
+        Mockito.verify(userService).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void ProfilePost_WithInvalidFileType_HasFieldErrors() throws Exception {
+        profilePictureForm.setPictureFile(new MockMultipartFile(
+                "pictureFile", "newPfp.webp", "image/webp", "file contents".getBytes()));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/profile").with(csrf())
+                        .flashAttr("profilePictureForm", profilePictureForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.model().attribute("fName", userMock.getFname()))
+                .andExpect(MockMvcResultMatchers.model().attribute("lName", userMock.getLname()))
+                .andExpect(MockMvcResultMatchers.model().attribute("email", userMock.getEmail()))
+                .andExpect(MockMvcResultMatchers.model().attribute("dob", userMock.getDateOfBirthString()))
+                .andExpect(MockMvcResultMatchers.model().attribute("picturePath", userMock.getPicturePath()))
+                .andExpect(MockMvcResultMatchers.view().name("pages/profilePage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("profilePictureForm", "pictureFile"));
+
+        Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
+        Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void ProfilePost_WithTooBigFile_HasFieldErrors() throws Exception {
+        byte[] over10mb = new byte[10 * 1024 * 1024 + 1];
+        profilePictureForm.setPictureFile(new MockMultipartFile(
+                "pictureFile", "newPfp.png", "image/png", over10mb));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/profile").with(csrf())
+                        .flashAttr("profilePictureForm", profilePictureForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.model().attribute("fName", userMock.getFname()))
+                .andExpect(MockMvcResultMatchers.model().attribute("lName", userMock.getLname()))
+                .andExpect(MockMvcResultMatchers.model().attribute("email", userMock.getEmail()))
+                .andExpect(MockMvcResultMatchers.model().attribute("dob", userMock.getDateOfBirthString()))
+                .andExpect(MockMvcResultMatchers.model().attribute("picturePath", userMock.getPicturePath()))
+                .andExpect(MockMvcResultMatchers.view().name("pages/profilePage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("profilePictureForm", "pictureFile"));
+
+        Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
+        Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void ProfileGet_Valid_IsPopulated() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/profile").with(csrf())
+                        .flashAttr("profilePictureForm", profilePictureForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.model().attribute("fName", userMock.getFname()))
+                .andExpect(MockMvcResultMatchers.model().attribute("lName", userMock.getLname()))
+                .andExpect(MockMvcResultMatchers.model().attribute("email", userMock.getEmail()))
+                .andExpect(MockMvcResultMatchers.model().attribute("dob", userMock.getDateOfBirthString()))
+                .andExpect(MockMvcResultMatchers.model().attribute("picturePath", userMock.getPicturePath()));
+        Mockito.verify(userService).getLoggedInUser();
     }
 
     @Test
