@@ -13,8 +13,7 @@
         <p>We have sent you an email with a 6-digit verification code, please enter it below</p>
     </div>
     <form th:action="@{registrationVerification}" method="post">
-        <label for="verificationCode">Verification Code:</label>
-        <input type="text" id="verificationCode" name="verificationCode" placeholder="XXXXXX" />
+        <input th:replace="~{fragments/formElement :: formElementField(fieldName='verificationCode', label='Verification Code: ', placeholder='XXXXXX')}" />
         <br />
         <button type="submit">Sign In</button>
         <a class="cancel" th:href="@{.}">Cancel</a>

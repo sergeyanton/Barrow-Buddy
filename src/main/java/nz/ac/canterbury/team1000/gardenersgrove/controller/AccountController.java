@@ -5,6 +5,7 @@ import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.VerificationToken;
 import nz.ac.canterbury.team1000.gardenersgrove.form.LoginForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.RegistrationForm;
+import nz.ac.canterbury.team1000.gardenersgrove.form.VerificationTokenForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.EmailService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.VerificationTokenService;
@@ -113,6 +114,17 @@ public class AccountController {
         userService.registerUser(newUser);
         userService.authenticateUser(authenticationManager, newUser, request);
         sendVerificationEmail(newUser);
+
+        return "pages/registrationVerificationPage";
+    }
+
+    @PostMapping("/registrationVerificationPage")
+    public String registerVerification(HttpServletRequest request, @ModelAttribute("verificationTokenForm") VerificationTokenForm verificationTokenForm, BindingResult bindingResult) {
+        VerificationTokenForm.validate(verificationTokenForm, bindingResult);
+
+        if (bindingResult.hasErrors()) {
+            return "pages/registrationVerificationPage";
+        }
 
         return "pages/registrationVerificationPage";
     }
