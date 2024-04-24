@@ -3,6 +3,7 @@ package nz.ac.canterbury.team1000.gardenersgrove.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.EditUserForm;
+import nz.ac.canterbury.team1000.gardenersgrove.form.ProfilePictureForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.UpdatePasswordForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
 
@@ -52,18 +53,18 @@ public class ProfileController {
      * @return thymeleaf profilePage
      */
     @GetMapping("/profile")
-    public String getProfilePage(Model model) {
+    public String getProfilePage(Model model, @ModelAttribute("profilePictureForm") ProfilePictureForm profilePictureForm) {
         logger.info("GET /profile");
         User currentUser = userService.getLoggedInUser();
 
         model.addAttribute("fName", currentUser.getFname());
         model.addAttribute("lName", currentUser.getLname());
         model.addAttribute("email", currentUser.getEmail());
-        model.addAttribute("picturePath", currentUser.getPicturePath());
         if (currentUser.getDateOfBirth() != null) {
             model.addAttribute("dob",
                     currentUser.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         }
+        model.addAttribute("picturePath", currentUser.getPicturePath());
 
         return "pages/profilePage";
     }
@@ -72,26 +73,24 @@ public class ProfileController {
      * Handles POST requests from the /profile endpoint.
      * Specifically, this handles the uploading of a new profile picture.
      *
-     * @param request           the HttpServletRequest object containing the request information
-     * @param pictureFile    image (png, jpg or svg) to be saved to the file system
-     * @return a redirect to the /profile endpoint (GET)
+     * @param request            the HttpServletRequest object containing the request information
+     * @param profilePictureForm the ProfilePictureForm object containing the form's user inputted image file
+     * @param bindingResult      the BindingResult object for validation errors
+     * @return the view to display:
+     * - If there are validation errors with the image, stays on the form but render the user's actual profile picture.
+     * - Else, redirect to the user's (edited) profile page with the new profile picture.
      * @throws IOException IOException
      */
     @PostMapping("/profile")
     public String handleProfilePictureUpload(HttpServletRequest request,
-                                             @RequestParam("pictureFile") MultipartFile pictureFile) throws IOException {
+                                             @ModelAttribute("profilePictureForm") ProfilePictureForm profilePictureForm,
+                                             BindingResult bindingResult,
+                                             Model model) throws IOException {
         User currentUser = userService.getLoggedInUser();
 
-        // validate image
-//        if (!profilePicture.isEmpty()) {
-//            if (!ALLOWED_IMAGE_TYPES.contains(editUserForm.getPictureFile().getContentType())) {
-//                errors.add("pictureFile", "Image must be of type png, jpg or svg", null);
-//            } else if (editUserForm.getPictureFile().getSize() > MAX_IMAGE_SIZE_BYTES) {
-//                errors.add("pictureFile", "Image must be less than 10MB", null);
-//            }
-//        }
+        ProfilePictureForm.validate(profilePictureForm, bindingResult, currentUser);
 
-        if (!pictureFile.isEmpty()) {
+        if (!profilePictureForm.getPictureFile().isEmpty() && !bindingResult.hasFieldErrors("pictureFile")) {
             Path uploadDirectoryPath = Paths.get(UPLOAD_DIRECTORY);
 
             if (!Files.exists(uploadDirectoryPath)) {
@@ -102,10 +101,22 @@ public class ProfileController {
                 }
             }
 
-            String filename = pictureFile.getOriginalFilename();
+            String filename = profilePictureForm.getPictureFile().getOriginalFilename();
             Path filePath = uploadDirectoryPath.resolve(filename);
-            Files.write(filePath, pictureFile.getBytes());
+            Files.write(filePath, profilePictureForm.getPictureFile().getBytes());
             currentUser.setPicturePath("/uploads/" + filename);
+        }
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("fName", currentUser.getFname());
+            model.addAttribute("lName", currentUser.getLname());
+            model.addAttribute("email", currentUser.getEmail());
+            if (currentUser.getDateOfBirth() != null) {
+                model.addAttribute("dob",
+                        currentUser.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+            }
+            model.addAttribute("picturePath", currentUser.getPicturePath());
+            return "pages/profilePage";
         }
 
         userService.updateUserByEmail(currentUser.getEmail(), currentUser);

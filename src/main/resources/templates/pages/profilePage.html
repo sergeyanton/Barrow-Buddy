@@ -14,19 +14,13 @@
             <img class="profile-picture" id="profileImage" th:src="${picturePath}" alt="Profile Picture">
         </div>
 
-        <form class="upload-image" th:action="@{/profile}" method="post" enctype="multipart/form-data">
-            <label id="pictureFileLabel" class="file-upload-label" for="pictureFile">Edit Profile Picture</label>
-            <input type="file" id="pictureFile" name="pictureFile" onchange="validateImage(this)" accept="image/png, image/jpeg, image/svg+xml"><br>
-<!--            <span class="error" th:if="${#fields.hasErrors('pictureFile')}" th:errors="*{pictureFile}"></span>-->
+        <form th:action="@{/profile}" th:object="${profilePictureForm}" method="post" enctype="multipart/form-data">
+            <label id="pictureFileLabel" class="file-upload-label" th:for="pictureFile">Edit Profile Picture</label>
+            <input th:field="*{pictureFile}" type="file" onchange="validateImage(this)" accept="image/png, image/jpeg, image/svg+xml">
             <button type="button" id="cancelButton" class="cancelMinor" style="display: none;" onclick="cancelSelection()">Undo</button>
             <button type="submit" id="submitButton" style="display: none;">Save Profile Picture</button>
+            <br><span class="error" th:if="${#fields.hasErrors('pictureFile')}" th:errors="*{pictureFile}"></span>
         </form>
-<!--        <form th:action="@{/profile}" method="post" enctype="multipart/form-data">-->
-<!--            <label id="pictureFileLabel" class="file-upload-label" th:for="pictureFile">Edit Profile Picture</label>-->
-<!--            <input th:field="*{pictureFile}" type="file" onchange="validateImage(this)" accept="image/png, image/jpeg, image/svg+xml">-->
-<!--            <button type="button" id="cancelButton" class="cancelMinor" style="display: none;" onclick="cancelSelection()">Undo</button>-->
-<!--            <button type="submit" id="submitButton" style="display: none;">Save Profile Picture</button>-->
-<!--        </form>-->
 
         <p th:text="'First Name: ' + ${fName}"></p>
         <p th:text="'Last Name: ' + ${lName}"></p>
@@ -62,6 +56,7 @@
             //     return false;
             // }
             document.getElementById('pictureFileLabel').style.display = 'none';
+            // document.getElementById('pictureFileError').style.display = 'none';
             document.getElementById('cancelButton').style.display = 'inline-block';
             document.getElementById('submitButton').style.display = 'inline-block';
 
@@ -80,6 +75,7 @@
             document.getElementById('pictureFile').value = '';
             document.getElementById('profileImage').src = initialProfilePictureUrl;
             document.getElementById('pictureFileLabel').style.display = 'inline-block';
+            // document.getElementById('pictureFileError').style.display = 'inline-block';
             document.getElementById('cancelButton').style.display = 'none';
             document.getElementById('submitButton').style.display = 'none';
         }
