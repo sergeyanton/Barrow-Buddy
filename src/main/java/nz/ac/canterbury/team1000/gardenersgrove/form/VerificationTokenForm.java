@@ -6,21 +6,21 @@ import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.checkBlank
 import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.checkEmailIsInvalid;
 
 public class VerificationTokenForm {
-    protected String verificationCode;
-    public String getVerificationCode() {
-        return verificationCode;
+    protected String verificationToken;
+    public String getVerificationToken() {
+        return verificationToken;
     }
 
-    public void setVerificationCode(String verificationCode) {
-        this.verificationCode = verificationCode;
+    public void setVerificationToken(String verificationToken) {
+        this.verificationToken = verificationToken;
     }
 
     public static void validate(VerificationTokenForm verificationTokenForm, BindingResult bindingResult) {
-        ErrorAdder errors = new ErrorAdder(bindingResult, "loginForm");
+        ErrorAdder errors = new ErrorAdder(bindingResult, "verificationTokenForm");
 
         // validate verification code
-        if (checkBlank(verificationTokenForm.getVerificationCode())) {
-            errors.add("verificationCode", "The verification code is invalid", verificationTokenForm.getVerificationCode());
+        if (checkBlank(verificationTokenForm.getVerificationToken())) {
+            errors.add("verificationToken", "The verification code is invalid", verificationTokenForm.getVerificationToken());
         }
     }
 

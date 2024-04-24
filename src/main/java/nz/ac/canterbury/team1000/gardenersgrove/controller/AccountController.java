@@ -115,29 +115,29 @@ public class AccountController {
         userService.authenticateUser(authenticationManager, newUser, request);
         sendVerificationEmail(newUser);
 
-        return "pages/registrationVerificationPage";
+        return "pages/verificationPage";
     }
     @GetMapping("/register/verification")
     public String getRegisterVerificationPage(@ModelAttribute("VerificationTokenForm") VerificationTokenForm verificationTokenForm) {
         logger.info("GET /register/verification");
-        return "pages/registrationVerificationPage";
+        return "pages/verificationPage";
     }
 
     @PostMapping("/register/verification")
     public String registerVerification(HttpServletRequest request, @ModelAttribute("verificationTokenForm") VerificationTokenForm verificationTokenForm, BindingResult bindingResult) {
         VerificationTokenForm.validate(verificationTokenForm, bindingResult);
 
-        if (!bindingResult.hasFieldErrors("verificationCode")) {
-            bindingResult.addError(new FieldError("verificationTokenForm", "verificationCode", verificationTokenForm.getVerificationCode(), false, null, null, "Invalid token"));
+        if (!bindingResult.hasFieldErrors("verificationToken")) {
+            bindingResult.addError(new FieldError("verificationTokenForm", "verificationToken", verificationTokenForm.getVerificationToken(), false, null, null, "Invalid token"));
         }
-
 
         if (bindingResult.hasErrors()) {
-            return "pages/registrationVerificationPage";
+            return "pages/verificationPage";
         }
 
-        return "pages/registrationVerificationPage";
+        return "pages/verificationPage";
     }
+
 
     private void sendVerificationEmail(User user) {
         logger.info("Sending verification email to " + user.getEmail());
