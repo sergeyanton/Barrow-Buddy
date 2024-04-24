@@ -12,7 +12,7 @@
     <div>
         <p>We have sent you an email with a 6-digit verification code, please enter it below</p>
     </div>
-    <form th:action="@{registrationVerification}" method="post">
+    <form th:action="@{/register/verification}" method="post" th:object="${verificationTokenForm}">
         <input th:replace="~{fragments/formElement :: formElementField(fieldName='verificationCode', label='Verification Code: ', placeholder='XXXXXX')}" />
         <br />
         <button type="submit">Sign In</button>
