@@ -4,6 +4,9 @@ import org.springframework.validation.BindingResult;
 
 import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.checkBlank;
 
+/**
+ * Represents the form data for a verification token input by the user.
+ */
 public class VerificationTokenForm {
     protected String verificationToken;
     public String getVerificationToken() {
@@ -28,8 +31,4 @@ public class VerificationTokenForm {
             errors.add("verificationToken", "The verification token is invalid", verificationTokenForm.getVerificationToken());
         }
     }
-
-
-
-
 }
