@@ -121,7 +121,7 @@ public class AccountController {
         logger.info("Sending verification email to " + user.getEmail());
         VerificationToken token = new VerificationToken(user.getId());
         verificationTokenService.addVerificationToken(token);
-        emailService.sendSimpleMessage(user.getEmail(), "Gardeners Grove Account Verification", token.getToken());
+        emailService.sendSimpleMessage(user.getEmail(), "Gardeners Grove Account Verification", token.getPlainToken());
     }
 
     /**

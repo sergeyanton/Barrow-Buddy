@@ -24,13 +24,16 @@ public class VerificationToken {
 
     @Column(nullable = false)
     private LocalDateTime expiryDate;
+    @Transient
+    private String plainToken;
 
     protected VerificationToken() {
     }
 
     public VerificationToken(Long userId) {
         this.userId = userId;
-        this.token = hashPassword(generateToken());
+        this.plainToken = generateToken(); // Store the plain token temporarily
+        this.token = hashPassword(plainToken); // Store the hashed version of the token
         this.expiryDate = calculateExpiryDate();
     }
 
@@ -63,9 +66,13 @@ public class VerificationToken {
         return userId;
     }
 
-    public String getToken() {
+    public String getPlainToken() {
+        return plainToken;
+    }
+    public String getHashedToken() {
         return token;
     }
+
 
     public LocalDateTime getExpiryDate() {
         return expiryDate;
