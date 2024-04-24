@@ -73,25 +73,25 @@ public class ProfileController {
      * Specifically, this handles the uploading of a new profile picture.
      *
      * @param request           the HttpServletRequest object containing the request information
-     * @param profilePicture    image (png, jpg or svg) to be saved to the file system
+     * @param pictureFile    image (png, jpg or svg) to be saved to the file system
      * @return a redirect to the /profile endpoint (GET)
      * @throws IOException IOException
      */
     @PostMapping("/profile")
     public String handleProfilePictureUpload(HttpServletRequest request,
-                                             @RequestParam("profilePicture") MultipartFile profilePicture) throws IOException {
+                                             @RequestParam("pictureFile") MultipartFile pictureFile) throws IOException {
         User currentUser = userService.getLoggedInUser();
 
         // validate image
-        if (!profilePicture.isEmpty()) {
-            if (!ALLOWED_IMAGE_TYPES.contains(editUserForm.getPictureFile().getContentType())) {
-                errors.add("pictureFile", "Image must be of type png, jpg or svg", null);
-            } else if (editUserForm.getPictureFile().getSize() > MAX_IMAGE_SIZE_BYTES) {
-                errors.add("pictureFile", "Image must be less than 10MB", null);
-            }
-        }
+//        if (!profilePicture.isEmpty()) {
+//            if (!ALLOWED_IMAGE_TYPES.contains(editUserForm.getPictureFile().getContentType())) {
+//                errors.add("pictureFile", "Image must be of type png, jpg or svg", null);
+//            } else if (editUserForm.getPictureFile().getSize() > MAX_IMAGE_SIZE_BYTES) {
+//                errors.add("pictureFile", "Image must be less than 10MB", null);
+//            }
+//        }
 
-        if (!profilePicture.isEmpty()) {
+        if (!pictureFile.isEmpty()) {
             Path uploadDirectoryPath = Paths.get(UPLOAD_DIRECTORY);
 
             if (!Files.exists(uploadDirectoryPath)) {
@@ -102,9 +102,9 @@ public class ProfileController {
                 }
             }
 
-            String filename = profilePicture.getOriginalFilename();
+            String filename = pictureFile.getOriginalFilename();
             Path filePath = uploadDirectoryPath.resolve(filename);
-            Files.write(filePath, profilePicture.getBytes());
+            Files.write(filePath, pictureFile.getBytes());
             currentUser.setPicturePath("/uploads/" + filename);
         }
 

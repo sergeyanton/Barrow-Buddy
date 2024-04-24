@@ -16,10 +16,17 @@
 
         <form class="upload-image" th:action="@{/profile}" method="post" enctype="multipart/form-data">
             <label id="pictureFileLabel" class="file-upload-label" for="pictureFile">Edit Profile Picture</label>
-            <input type="file" id="pictureFile" name="profilePicture" onchange="validateImage(this)" accept="image/png, image/jpeg, image/svg+xml">
+            <input type="file" id="pictureFile" name="pictureFile" onchange="validateImage(this)" accept="image/png, image/jpeg, image/svg+xml"><br>
+<!--            <span class="error" th:if="${#fields.hasErrors('pictureFile')}" th:errors="*{pictureFile}"></span>-->
             <button type="button" id="cancelButton" class="cancelMinor" style="display: none;" onclick="cancelSelection()">Undo</button>
             <button type="submit" id="submitButton" style="display: none;">Save Profile Picture</button>
         </form>
+<!--        <form th:action="@{/profile}" method="post" enctype="multipart/form-data">-->
+<!--            <label id="pictureFileLabel" class="file-upload-label" th:for="pictureFile">Edit Profile Picture</label>-->
+<!--            <input th:field="*{pictureFile}" type="file" onchange="validateImage(this)" accept="image/png, image/jpeg, image/svg+xml">-->
+<!--            <button type="button" id="cancelButton" class="cancelMinor" style="display: none;" onclick="cancelSelection()">Undo</button>-->
+<!--            <button type="submit" id="submitButton" style="display: none;">Save Profile Picture</button>-->
+<!--        </form>-->
 
         <p th:text="'First Name: ' + ${fName}"></p>
         <p th:text="'Last Name: ' + ${lName}"></p>
