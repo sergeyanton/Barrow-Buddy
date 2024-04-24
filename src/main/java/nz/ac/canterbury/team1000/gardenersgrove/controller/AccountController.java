@@ -118,7 +118,7 @@ public class AccountController {
         return "pages/registrationVerificationPage";
     }
     @GetMapping("/register/verification")
-    public String getRegisterVerificationPage(@ModelAttribute("VerificationTokenForm") VerificationTokenForm verificationTokenForm) {
+    public String getRegisterVerificationPage(@ModelAttribute("verificationTokenForm") VerificationTokenForm verificationTokenForm) {
         logger.info("GET /register/verification");
         return "pages/registrationVerificationPage";
     }
@@ -127,8 +127,8 @@ public class AccountController {
     public String registerVerification(HttpServletRequest request, @ModelAttribute("verificationTokenForm") VerificationTokenForm verificationTokenForm, BindingResult bindingResult) {
         VerificationTokenForm.validate(verificationTokenForm, bindingResult);
 
-        if (!bindingResult.hasFieldErrors("verificationCode")) {
-            bindingResult.addError(new FieldError("verificationTokenForm", "verificationCode", verificationTokenForm.getVerificationCode(), false, null, null, "Invalid token"));
+        if (!bindingResult.hasFieldErrors("verificationToken")) {
+            bindingResult.addError(new FieldError("verificationTokenForm", "verificationCode", verificationTokenForm.getVerificationToken(), false, null, null, "Invalid token"));
         }
 
 

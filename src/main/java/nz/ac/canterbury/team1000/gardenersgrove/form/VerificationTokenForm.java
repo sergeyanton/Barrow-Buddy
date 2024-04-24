@@ -3,24 +3,29 @@ package nz.ac.canterbury.team1000.gardenersgrove.form;
 import org.springframework.validation.BindingResult;
 
 import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.checkBlank;
-import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.checkEmailIsInvalid;
 
 public class VerificationTokenForm {
-    protected String verificationCode;
-    public String getVerificationCode() {
-        return verificationCode;
+    protected String verificationToken;
+    public String getVerificationToken() {
+        return verificationToken;
     }
 
-    public void setVerificationCode(String verificationCode) {
-        this.verificationCode = verificationCode;
+    public void setVerificationToken(String verificationToken) {
+        this.verificationToken = verificationToken;
     }
 
+    /**
+     * Validates the verificationTokenForm data and adds validation errors to the BindingResult.
+     *
+     * @param verificationTokenForm  the VerificationTokenForm object representing the entered verification token data
+     * @param bindingResult          the BindingResult object for validation errors
+     */
     public static void validate(VerificationTokenForm verificationTokenForm, BindingResult bindingResult) {
-        ErrorAdder errors = new ErrorAdder(bindingResult, "loginForm");
+        ErrorAdder errors = new ErrorAdder(bindingResult, "verificationTokenForm");
 
-        // validate verification code
-        if (checkBlank(verificationTokenForm.getVerificationCode())) {
-            errors.add("verificationCode", "The verification code is invalid", verificationTokenForm.getVerificationCode());
+        // validate verification token
+        if (checkBlank(verificationTokenForm.getVerificationToken())) {
+            errors.add("verificationToken", "The verification token is invalid", verificationTokenForm.getVerificationToken());
         }
     }
 
