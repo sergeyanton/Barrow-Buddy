@@ -37,17 +37,17 @@ public class FormUtilsTest {
 
     @Test
     void checkOnlyHasLettersSpacesHyphensApostrophes_WithLettersSpacesHyphensApostrophes_ReturnsTrue() {
-        Assertions.assertTrue(FormUtils.checkOnlyHasLettersSpacesHyphensApostrophes("abc def-ghi'jkl"));
+        Assertions.assertTrue(FormUtils.checkOnlyHasLettersMacronsSpacesHyphensApostrophes("abc def-ghi'jkl"));
     }
 
     @Test
     void checkOnlyHasLettersSpacesHyphensApostrophes_WithNumbers_ReturnsFalse() {
-        Assertions.assertFalse(FormUtils.checkOnlyHasLettersSpacesHyphensApostrophes("123"));
+        Assertions.assertFalse(FormUtils.checkOnlyHasLettersMacronsSpacesHyphensApostrophes("123"));
     }
 
     @Test
     void checkOnlyHasLettersSpacesHyphensApostrophes_WithSpecialCharacters_ReturnsFalse() {
-        Assertions.assertFalse(FormUtils.checkOnlyHasLettersSpacesHyphensApostrophes("!@#"));
+        Assertions.assertFalse(FormUtils.checkOnlyHasLettersMacronsSpacesHyphensApostrophes("!@#"));
     }
 
     @Test
