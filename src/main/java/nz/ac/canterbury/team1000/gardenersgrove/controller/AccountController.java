@@ -115,7 +115,7 @@ public class AccountController {
         userService.authenticateUser(authenticationManager, newUser, request);
         sendVerificationEmail(newUser);
 
-        return "pages/registrationVerificationPage";
+        return "redirect:/register/verification";
     }
     @GetMapping("/register/verification")
     public String getRegisterVerificationPage(@ModelAttribute("verificationTokenForm") VerificationTokenForm verificationTokenForm) {
