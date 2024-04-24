@@ -86,7 +86,7 @@ public class GardenServiceTest {
 
             }
         });
-        gardenService.addGarden(new Garden("My Garden", "My House", 9000.0));
+        gardenService.addGarden(new Garden("My Garden", "A", "B", "C", "D", "E", "F", 9000.0));
     }
 
     @Autowired
@@ -95,7 +95,7 @@ public class GardenServiceTest {
     @Test
     public void simpleTest2() {
         GardenService gardenService = new GardenService(gardenRepository);
-        Garden result = gardenService.addGarden(new Garden("My Garden", "My House", 9000.0));
+        Garden result = gardenService.addGarden(new Garden("My Garden", "A", "B", "C", "D", "E", "F", 9000.0));
         Assertions.assertEquals(result.getName(), "My Garden");
     }
 }

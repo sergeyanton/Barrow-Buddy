@@ -56,7 +56,12 @@ public class GardenControllerTest {
 
         gardenForm = new GardenForm();
         gardenForm.setName("Hamilton Gardens");
-        gardenForm.setLocation("Hamilton");
+        gardenForm.setStreet("a");
+        gardenForm.setStreetNumber("b");
+        gardenForm.setSuburb("c");
+        gardenForm.setCity("d");
+        gardenForm.setPostcode("e");
+        gardenForm.setCountry("f");
         gardenForm.setSize("46.2");
 
         // Mock addGarden(), updateGarden(), and getPlantById to always simply use id = 1
@@ -65,7 +70,7 @@ public class GardenControllerTest {
             addedGarden.setId(1L);
             return addedGarden;
         });
-        Mockito.when(gardenService.updateGarden(Mockito.any(Garden.class))).thenAnswer(invocation -> {
+        Mockito.when(gardenService.updateGardenById(gardenForm.getGarden().getId(), Mockito.any(Garden.class))).thenAnswer(invocation -> {
             Garden updatedGarden = invocation.getArgument(0);
             updatedGarden.setId(1L);
             return updatedGarden;
@@ -133,8 +138,73 @@ public class GardenControllerTest {
     }
 
     @Test
-    public void CreateGardenPost_WithInvalidGardenLocationEmptyString_ReturnsError() throws Exception {
-        gardenForm.setLocation("");
+    public void CreateGardenPost_WithInvalidGardenLocationStreetEmptyString_ReturnsError() throws Exception {
+        gardenForm.setStreet("");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/create").with(csrf())
+                        .flashAttr("createGardenForm", gardenForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/createGardenPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("createGardenForm", "location"));
+
+        Mockito.verify(gardenService, Mockito.never()).addGarden(Mockito.any());
+    }
+
+    @Test
+    public void CreateGardenPost_WithInvalidGardenLocationStreetNumberEmptyString_ReturnsError() throws Exception {
+        gardenForm.setStreetNumber("");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/create").with(csrf())
+                        .flashAttr("createGardenForm", gardenForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/createGardenPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("createGardenForm", "location"));
+
+        Mockito.verify(gardenService, Mockito.never()).addGarden(Mockito.any());
+    }
+
+    @Test
+    public void CreateGardenPost_WithInvalidGardenLocationSuburbEmptyString_ReturnsError() throws Exception {
+        gardenForm.setSuburb("");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/create").with(csrf())
+                        .flashAttr("createGardenForm", gardenForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/createGardenPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("createGardenForm", "location"));
+
+        Mockito.verify(gardenService, Mockito.never()).addGarden(Mockito.any());
+    }
+
+    @Test
+    public void CreateGardenPost_WithInvalidGardenLocationCityEmptyString_ReturnsError() throws Exception {
+        gardenForm.setCity("");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/create").with(csrf())
+                        .flashAttr("createGardenForm", gardenForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/createGardenPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("createGardenForm", "location"));
+
+        Mockito.verify(gardenService, Mockito.never()).addGarden(Mockito.any());
+    }
+
+    @Test
+    public void CreateGardenPost_WithInvalidGardenLocationPostcodeEmptyString_ReturnsError() throws Exception {
+        gardenForm.setPostcode("");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/create").with(csrf())
+                        .flashAttr("createGardenForm", gardenForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/createGardenPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("createGardenForm", "location"));
+
+        Mockito.verify(gardenService, Mockito.never()).addGarden(Mockito.any());
+    }
+
+    @Test
+    public void CreateGardenPost_WithInvalidGardenLocationCountryEmptyString_ReturnsError() throws Exception {
+        gardenForm.setCountry("");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/create").with(csrf())
                         .flashAttr("createGardenForm", gardenForm))
@@ -179,7 +249,7 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
 
-        Mockito.verify(gardenService).updateGarden(Mockito.any());
+        Mockito.verify(gardenService).updateGardenById(1, Mockito.any());
     }
 
     @Test
@@ -190,7 +260,7 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
 
-        Mockito.verify(gardenService).updateGarden(Mockito.any());
+        Mockito.verify(gardenService).updateGardenById(1, Mockito.any());
     }
 
     @Test
@@ -201,7 +271,7 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
 
-        Mockito.verify(gardenService).updateGarden(Mockito.any());
+        Mockito.verify(gardenService).updateGardenById(1, Mockito.any());
     }
 
     @Test
@@ -212,7 +282,7 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
 
-        Mockito.verify(gardenService).updateGarden(Mockito.any());
+        Mockito.verify(gardenService).updateGardenById(1, Mockito.any());
     }
 
     @Test
@@ -225,12 +295,12 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.view().name("pages/editGardenPage"))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editGardenForm", "name"));
 
-        Mockito.verify(gardenService, Mockito.never()).updateGarden(Mockito.any());
+        Mockito.verify(gardenService, Mockito.never()).updateGardenById(1, Mockito.any());
     }
 
     @Test
-    public void EditGardenPost_InvalidLocationEmptyString_ReturnsError() throws Exception {
-        gardenForm.setLocation("");
+    public void EditGardenPost_InvalidLocationStreetEmptyString_ReturnsError() throws Exception {
+        gardenForm.setStreet("");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf())
                         .flashAttr("editGardenForm", gardenForm))
@@ -238,7 +308,72 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.view().name("pages/editGardenPage"))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editGardenForm", "location"));
 
-        Mockito.verify(gardenService, Mockito.never()).updateGarden(Mockito.any());
+        Mockito.verify(gardenService, Mockito.never()).updateGardenById(1, Mockito.any());
+    }
+
+    @Test
+    public void EditGardenPost_InvalidLocationStreetNumberEmptyString_ReturnsError() throws Exception {
+        gardenForm.setStreetNumber("");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf())
+                        .flashAttr("editGardenForm", gardenForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/editGardenPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editGardenForm", "location"));
+
+        Mockito.verify(gardenService, Mockito.never()).updateGardenById(1, Mockito.any());
+    }
+
+    @Test
+    public void EditGardenPost_InvalidLocationSuburbEmptyString_ReturnsError() throws Exception {
+        gardenForm.setSuburb("");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf())
+                        .flashAttr("editGardenForm", gardenForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/editGardenPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editGardenForm", "location"));
+
+        Mockito.verify(gardenService, Mockito.never()).updateGardenById(1, Mockito.any());
+    }
+
+    @Test
+    public void EditGardenPost_InvalidLocationCityEmptyString_ReturnsError() throws Exception {
+        gardenForm.setCity("");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf())
+                        .flashAttr("editGardenForm", gardenForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/editGardenPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editGardenForm", "location"));
+
+        Mockito.verify(gardenService, Mockito.never()).updateGardenById(1, Mockito.any());
+    }
+
+    @Test
+    public void EditGardenPost_InvalidLocationPostcodeEmptyString_ReturnsError() throws Exception {
+        gardenForm.setPostcode("");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf())
+                        .flashAttr("editGardenForm", gardenForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/editGardenPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editGardenForm", "location"));
+
+        Mockito.verify(gardenService, Mockito.never()).updateGardenById(1, Mockito.any());
+    }
+
+    @Test
+    public void EditGardenPost_InvalidLocationCountryEmptyString_ReturnsError() throws Exception {
+        gardenForm.setCountry("");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf())
+                        .flashAttr("editGardenForm", gardenForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/editGardenPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editGardenForm", "location"));
+
+        Mockito.verify(gardenService, Mockito.never()).updateGardenById(1, Mockito.any());
     }
 
     @Test
@@ -251,7 +386,7 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.view().name("pages/editGardenPage"))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editGardenForm", "size"));
 
-        Mockito.verify(gardenService, Mockito.never()).updateGarden(Mockito.any());
+        Mockito.verify(gardenService, Mockito.never()).updateGardenById(1, Mockito.any());
     }
 
     @Test
@@ -264,7 +399,7 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.view().name("pages/editGardenPage"))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editGardenForm", "size"));
 
-        Mockito.verify(gardenService, Mockito.never()).updateGarden(Mockito.any());
+        Mockito.verify(gardenService, Mockito.never()).updateGardenById(1, Mockito.any());
     }
 
     @Test
@@ -273,7 +408,12 @@ public class GardenControllerTest {
                         .flashAttr("editGardenForm", gardenForm))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.model().attribute("editGardenForm", hasProperty("name", is(gardenMock.getName()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("editGardenForm", hasProperty("location", is(gardenMock.getLocation()))))
+                .andExpect(MockMvcResultMatchers.model().attribute("editGardenForm", hasProperty("street", is(gardenMock.getStreet()))))
+                .andExpect(MockMvcResultMatchers.model().attribute("editGardenForm", hasProperty("streetNumber", is(gardenMock.getStreetNumber()))))
+                .andExpect(MockMvcResultMatchers.model().attribute("editGardenForm", hasProperty("suburb", is(gardenMock.getSuburb()))))
+                .andExpect(MockMvcResultMatchers.model().attribute("editGardenForm", hasProperty("city", is(gardenMock.getCity()))))
+                .andExpect(MockMvcResultMatchers.model().attribute("editGardenForm", hasProperty("postcode", is(gardenMock.getPostcode()))))
+                .andExpect(MockMvcResultMatchers.model().attribute("editGardenForm", hasProperty("country", is(gardenMock.getCountry()))))
                 .andExpect(MockMvcResultMatchers.model().attribute("editGardenForm", hasProperty("size", is(gardenMock.getSize().toString()))));
 
         Mockito.verify(gardenService).getGardenById(1L);
