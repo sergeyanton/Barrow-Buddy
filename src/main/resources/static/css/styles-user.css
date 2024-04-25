@@ -52,6 +52,22 @@ h1 {
     box-shadow: 0 0 1rem rgba(0, 0, 0, 0.5);
 }
 
+/* Verification container styles */
+.verification {
+    padding: 1.5rem;
+    background-color: #FAF9F6;
+    border-radius: 10px;
+
+    position: relative;
+    width: 650px;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 1rem rgba(0, 0, 0, 0.5);
+}
+
 /*.cancel, button.cancel{*/
 /*    padding: 8px 18px;*/
 /*    font-size: 18px;*/
@@ -118,7 +134,7 @@ h1 {
 /*    opacity: 0.8;*/
 /*}*/
 
-.signInUpButton{
+.submitButton{
     font-size: 18px;
     border-radius: 3px;
     color: #FAF9F6;
@@ -131,7 +147,7 @@ h1 {
     padding: 5px;
 }
 
-.signInUpButton:hover {
+.submitButton:hover {
     background-color: #04492f; /* Slightly lighter red on hover */
     opacity: 0.8;
 }
