@@ -1,45 +1,47 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
 
-<head>
-    <meta charset="UTF-8">
-    <title>Edit Profile</title>
-    <link rel="stylesheet" type="text/css" th:href="@{/css/style-user.css}">
-</head>
+<head th:replace="~{fragments/head :: head(title='Gardener\'s Grove - Edit Profile:w
+')}"></head>
+
 
 <body>
-    <div class="basic">
-        <h1>Edit My Profile</h1>
-        <form class="upload-image" th:action="@{/editProfile}" method="post" th:object="${editUserForm}" enctype="multipart/form-data">
-            <div class="profile-picture-wrapper">
-                <input th:field="*{picturePath}" type="hidden"/>
-                <img class="profile-picture" id="profileImage"
-                     th:src="${editUserForm.getPicturePath()}"
-                     alt="Profile Picture">
-            </div>
+    <div th:replace="~{fragments/header :: header}"></div>
 
-            <div class="form-element">
-                <label class="file-upload-label" th:for="pictureFile">Edit Profile Picture</label>
-                <input th:field="*{pictureFile}" type="file" onchange="validateImage(this)" accept="image/png, image/jpeg, image/svg+xml">
-                <br><span id="clientSideErrorMessage" class="error"></span>
-            </div>
+    <main>
+        <div class="content">
+            <h1>Edit My Profile</h1>
+            <form class="upload-image" th:action="@{/editProfile}" method="post" th:object="${editUserForm}" enctype="multipart/form-data">
+                <div class="profile-picture-wrapper">
+                    <input th:field="*{picturePath}" type="hidden"/>
+                    <img class="profile-picture" id="profileImage"
+                         th:src="${editUserForm.getPicturePath()}"
+                         alt="Profile Picture">
+                </div>
 
-            <input th:replace="~{fragments/formElement :: formElementField(fieldName='firstName', label='First Name: ', placeholder='Fabian')}" />
-            <input th:replace="~{fragments/formElement :: formElementField(fieldName='lastName', label='Last Name: ', placeholder='Gilson')}" />
+                <div class="form-element">
+                    <label class="file-upload-label" th:for="pictureFile">Edit Profile Picture</label>
+                    <input th:field="*{pictureFile}" type="file" onchange="validateImage(this)" accept="image/png, image/jpeg, image/svg+xml">
+                    <br><span id="clientSideErrorMessage" class="error"></span>
+                </div>
 
-            <div class="form-element">
-                <label for="noSurnameCheckBox"> I have no surname </label>
-                <input type="checkbox" class="form-control" id="noSurnameCheckBox" th:field="*{noSurnameCheckBox}" onclick="toggleInput()">
-            </div>
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='firstName', label='First Name: ', placeholder='Fabian')}" />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='lastName', label='Last Name: ', placeholder='Gilson')}" />
 
-            <input th:replace="~{fragments/formElement :: formElementField(fieldName='email', label='Email: ', placeholder='jane@doe.nz')}" />
-            <input th:replace="~{fragments/formElement :: formElementField(fieldName='dob', label='Date of Birth: ', placeholder='DD/MM/YYYY')}" />
+                <div class="form-element">
+                    <label for="noSurnameCheckBox"> I have no surname </label>
+                    <input type="checkbox" class="form-control" id="noSurnameCheckBox" th:field="*{noSurnameCheckBox}" onclick="toggleInput()">
+                </div>
 
-            <button type="submit">Update Profile</button>
-            <a th:href="@{editProfile/updatePassword}">Update Password</a>
-            <a class="cancel" th:href="@{profile}">Cancel</a>
-        </form>
-    </div>
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='email', label='Email: ', placeholder='jane@doe.nz')}" />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='dob', label='Date of Birth: ', placeholder='DD/MM/YYYY')}" />
+
+                <button type="submit">Update Profile</button>
+                <a th:href="@{editProfile/updatePassword}">Update Password</a>
+                <a class="cancel button" th:href="@{profile}">Cancel</a>
+            </form>
+        </div>
+    </main>
     <script th:inline="javascript">
         // Function to disable last name input field if the 'no surname' checkbox is checked
         function toggleInput() {

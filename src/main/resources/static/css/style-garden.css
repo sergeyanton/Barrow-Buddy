@@ -25,7 +25,7 @@ nav ul li {
 
 nav ul li a {
     display: block;
-    padding: 10px;
+    padding: 10px 20px;
     color: #fff;
     font-size: 25px;
 }
@@ -69,19 +69,90 @@ main {
 }
 
 .content {
-    max-width: 800px;
+    max-width: 600px;
+    width: 80%;
     padding: 20px;
     background: lightgrey;
     border-radius: 10px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
 }
 
 h1,
 .content > div,
-input,
-button {
-    padding: 5px;
+input {
     margin-bottom: 5px;
 }
+
+/* Button styles */
+.button, button, .next, button.submit {
+    padding: 8px 18px;
+    margin-top: 8px;
+    font-size: 16px;
+    border-radius: 10px;
+    color: #FAF9F6;
+
+    background-color: #023020;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.next, button.submit {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+}
+
+button:hover {
+    background-color: rgba(4, 65, 42, 0.71);
+}
+
+.cancel {
+    color: #FAF9F6;
+    text-decoration: none; /* Remove underline */
+    background-color: darkred;
+}
+
+.cancelMinor {
+    color: #FAF9F6;
+    background-color: darkred;
+}
+
+.cancel:hover {
+    background-color: rgba(139, 0, 0, 0.55);
+}
+
+.cancelMinor:hover {
+    background-color: rgba(139, 0, 0, 0.55);
+}
+
+button.cancel:hover {
+    background-color: rgba(139, 0, 0, 0.55);
+}
+
+/* Other link styles */
+#landing a {
+    padding: 10px 22px;
+    font-size: 18px;
+    border-radius: 10px;
+    color: #FAF9F6;
+
+    text-decoration: none; /* Remove underline */
+
+    margin: 0 5px; /* Adjust margin between links */
+    background-color: #023020;
+}
+
+#landing a:hover {
+    background-color: rgba(4, 65, 42, 0.71);
+}
+
+
 
 th {
     text-align: left;
@@ -142,4 +213,47 @@ td {
 
 .scroll-plants-container > table {
     width: 100%
+}
+
+.profile-picture-wrapper {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.profile-picture {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+form.upload-image {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.file-upload-label {
+    display: inline-block;
+    color: #FAF9F6;
+    background-color: #023020;
+    padding: 8px 18px;
+    font-size: 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 8px;
+}
+
+.file-upload-label:hover {
+    background-color: rgba(4, 65, 42, 0.71);
+}
+
+.form-element {
+    margin-top: 8px;
+    width: 100%;
 }
