@@ -35,6 +35,9 @@ public class User {
     @Column
     private LocalDate dateOfBirth;
 
+    @Column
+    private String picturePath;
+
     @Column()
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
@@ -55,12 +58,13 @@ public class User {
      * @param password The password of the user.
      * @param dateOfBirth The date of birth of the user.
      */
-    public User(String fname, String lname, String email, String password, LocalDate dateOfBirth) {
+    public User(String fname, String lname, String email, String password, LocalDate dateOfBirth, String picturePath) {
         this.fname = fname;
         this.lname = lname;
         this.email = email;
         this.password = password;
         this.dateOfBirth = dateOfBirth;
+        this.picturePath = picturePath;
     }
 
     /**
@@ -123,6 +127,10 @@ public class User {
         return dateOfBirth.format(DateTimeFormatter.ofPattern("dd/MM/uuuu"));
     }
 
+    public String getPicturePath() {
+        return picturePath;
+    }
+
     public void setFname(String fname) {
         this.fname = fname;
     }
@@ -143,9 +151,13 @@ public class User {
         this.dateOfBirth = dateOfBirth;
     }
 
+    public void setPicturePath(String picturePath) {
+        this.picturePath = picturePath;
+    }
+
     @Override
     public String toString() {
         return "User{id=" + id + ", fname=" + fname + ", lname=" + lname + ", email=" + email +
-                ", dob="  + dateOfBirth + ", password=" + password + "}";
+                ", dob="  + dateOfBirth + ", picturePath=" + picturePath + ", password=" + password + "}";
     }
 }

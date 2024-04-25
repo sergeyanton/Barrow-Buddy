@@ -5,8 +5,6 @@ import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.checkPassw
 
 import org.springframework.validation.BindingResult;
 
-import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
-
 public class UpdatePasswordForm {
     protected String password;
     protected String newPassword;
