@@ -58,8 +58,9 @@
             document.getElementById('pictureFileLabel').style.display = 'none';
             document.getElementById('cancelButton').style.display = 'inline-block';
             document.getElementById('submitButton').style.display = 'inline-block';
-            document.getElementById('pictureFileError').textContent = null;
-
+            if (document.getElementById('pictureFileError')) {
+                document.getElementById('pictureFileError').textContent = null;
+            }
 
             if (input.files && input.files[0]) {
                 const fileReader = new FileReader();
