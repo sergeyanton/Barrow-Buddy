@@ -95,7 +95,7 @@ public class AccountController {
      * @param bindingResult    the BindingResult object for validation errors
      * @return the view to display after registration:
      * - If there are validation errors, returns the registration page to display errors.
-     * - If registration is successful, redirects to the user's profile page.
+     * - If registration is successful, redirects to the registrationVerification page to enter the verification token.
      */
     @PostMapping("/register")
     public String register(HttpServletRequest request, @ModelAttribute("registrationForm") RegistrationForm registrationForm, BindingResult bindingResult) {
@@ -115,30 +115,40 @@ public class AccountController {
         userService.authenticateUser(authenticationManager, newUser, request);
         sendVerificationEmail(newUser);
 
-        return "pages/verificationPage";
+        return "redirect:/register/verification";
     }
     @GetMapping("/register/verification")
-    public String getRegisterVerificationPage(@ModelAttribute("VerificationTokenForm") VerificationTokenForm verificationTokenForm) {
+    public String getRegisterVerificationPage(@ModelAttribute("verificationTokenForm") VerificationTokenForm verificationTokenForm) {
         logger.info("GET /register/verification");
-        return "pages/verificationPage";
+        return "pages/registrationVerificationPage";
     }
 
+    /**
+     * Handles POST requests to the /register/verification endpoint.
+     * Handles the registration verification process for new users.
+     *
+     * @param request          the HttpServletRequest object containing the request information
+     * @param verificationTokenForm the VerificationTokenForm object representing the user's verification token data
+     * @param bindingResult    the BindingResult object for validation errors
+     * @return the view to display after registration:
+     * - Either if there are validation errors or not, returns the registrationVerification page to display errors/ not.
+     */
     @PostMapping("/register/verification")
     public String registerVerification(HttpServletRequest request, @ModelAttribute("verificationTokenForm") VerificationTokenForm verificationTokenForm, BindingResult bindingResult) {
         VerificationTokenForm.validate(verificationTokenForm, bindingResult);
 
         if (!bindingResult.hasFieldErrors("verificationToken")) {
-            bindingResult.addError(new FieldError("verificationTokenForm", "verificationToken", verificationTokenForm.getVerificationToken(), false, null, null, "Invalid token"));
+            bindingResult.addError(new FieldError("verificationTokenForm", "verificationCode", verificationTokenForm.getVerificationToken(), false, null, null, "Invalid token"));
         }
 
         if (bindingResult.hasErrors()) {
-            return "pages/verificationPage";
+            return "pages/registrationVerificationPage";
         }
 
-        return "pages/verificationPage";
+        return "pages/registrationVerificationPage";
     }
 
-
+    // TODO: documentation - Sergey
     private void sendVerificationEmail(User user) {
         logger.info("Sending verification email to " + user.getEmail());
         VerificationToken token = new VerificationToken(user.getId());

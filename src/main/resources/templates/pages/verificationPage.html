@@ -10,10 +10,10 @@
 <body>
 <div class="basic">
     <div>
-        <p>We have sent you an email with a 6-digit verification code, please enter it below</p>
+        <p>We have emailed you with a 6-digit verification code, please enter it below</p>
     </div>
-    <form th:action="@{register/verification}" method="post" th:object="${verificationTokenForm}">
-        <input th:replace="~{fragments/formElement :: formElementField(fieldName='verificationToken', label='Verification Code: ', placeholder='XXXXXX')}" />
+    <form th:action="@{/register/verification}" method="post" th:object="${verificationTokenForm}">
+        <input th:replace="~{fragments/formElement :: formElementField(fieldName='verificationToken', label='Verification Token: ', placeholder='XXXXXX')}" />
         <br />
         <button type="submit">Sign In</button>
         <a class="cancel" th:href="@{.}">Cancel</a>

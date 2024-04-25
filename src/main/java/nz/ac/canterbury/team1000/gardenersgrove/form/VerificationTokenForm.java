@@ -3,8 +3,10 @@ package nz.ac.canterbury.team1000.gardenersgrove.form;
 import org.springframework.validation.BindingResult;
 
 import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.checkBlank;
-import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.checkEmailIsInvalid;
 
+/**
+ * Represents the form data for a verification token input by the user.
+ */
 public class VerificationTokenForm {
     protected String verificationToken;
     public String getVerificationToken() {
@@ -15,16 +17,18 @@ public class VerificationTokenForm {
         this.verificationToken = verificationToken;
     }
 
+    /**
+     * Validates the verificationTokenForm data and adds validation errors to the BindingResult.
+     *
+     * @param verificationTokenForm  the VerificationTokenForm object representing the entered verification token data
+     * @param bindingResult          the BindingResult object for validation errors
+     */
     public static void validate(VerificationTokenForm verificationTokenForm, BindingResult bindingResult) {
         ErrorAdder errors = new ErrorAdder(bindingResult, "verificationTokenForm");
 
-        // validate verification code
+        // validate verification token
         if (checkBlank(verificationTokenForm.getVerificationToken())) {
-            errors.add("verificationToken", "The verification code is invalid", verificationTokenForm.getVerificationToken());
+            errors.add("verificationToken", "The verification token is invalid", verificationTokenForm.getVerificationToken());
         }
     }
-
-
-
-
 }
