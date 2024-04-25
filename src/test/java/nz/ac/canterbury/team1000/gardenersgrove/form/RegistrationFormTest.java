@@ -15,7 +15,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 
 public class RegistrationFormTest {
-    RegistrationForm registrationForm = new RegistrationForm();
+    final RegistrationForm registrationForm = new RegistrationForm();
     @Mock
     BindingResult bindingResult;
     private static MockedStatic<Clock> mockedClock;

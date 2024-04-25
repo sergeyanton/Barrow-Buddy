@@ -5,7 +5,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
 import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.*;
-import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.checkImageTooBig;
 
 public class ProfilePictureForm {
     protected MultipartFile pictureFile;

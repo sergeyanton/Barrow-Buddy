@@ -6,7 +6,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.validation.BindingResult;
 public class ForgotPasswordFormTest {
-    ForgotPasswordForm forgotPasswordForm = new ForgotPasswordForm();
+    final ForgotPasswordForm forgotPasswordForm = new ForgotPasswordForm();
 
     @Mock
     BindingResult bindingResult;

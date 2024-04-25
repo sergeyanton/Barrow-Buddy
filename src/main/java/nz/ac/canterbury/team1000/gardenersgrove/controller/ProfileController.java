@@ -20,14 +20,12 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.format.DateTimeFormatter;
 
 @Controller
 public class ProfileController {
@@ -44,7 +42,7 @@ public class ProfileController {
     private final UserService userService;
 
     private final static String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/uploads";
-    Logger logger = LoggerFactory.getLogger(ProfileController.class);
+    final Logger logger = LoggerFactory.getLogger(ProfileController.class);
 
     /**
      * Gets the thymeleaf page representing the /profile page, displaying the currently logged-in
@@ -61,8 +59,7 @@ public class ProfileController {
         model.addAttribute("lName", currentUser.getLname());
         model.addAttribute("email", currentUser.getEmail());
         if (currentUser.getDateOfBirth() != null) {
-            model.addAttribute("dob",
-                    currentUser.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+            model.addAttribute("dob", currentUser.getDateOfBirthString());
         }
         model.addAttribute("picturePath", currentUser.getPicturePath());
 
@@ -111,8 +108,7 @@ public class ProfileController {
         model.addAttribute("lName", currentUser.getLname());
         model.addAttribute("email", currentUser.getEmail());
         if (currentUser.getDateOfBirth() != null) {
-            model.addAttribute("dob",
-                    currentUser.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+            model.addAttribute("dob", currentUser.getDateOfBirthString());
         }
         model.addAttribute("picturePath", currentUser.getPicturePath());
 

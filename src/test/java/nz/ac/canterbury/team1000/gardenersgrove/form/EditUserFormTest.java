@@ -10,7 +10,7 @@ import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import java.time.LocalDate;
 
 public class EditUserFormTest {
-    User existingUser = new User(
+    final User existingUser = new User(
         "John",
         "Doe",
         "john@doe.com",
@@ -18,7 +18,7 @@ public class EditUserFormTest {
         LocalDate.of(2000, 1, 1),
             "/images/default_pic.jpg"
     );
-    EditUserForm editUserForm = new EditUserForm();
+    final EditUserForm editUserForm = new EditUserForm();
     
     @Mock
     BindingResult bindingResult;

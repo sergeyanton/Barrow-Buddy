@@ -11,7 +11,7 @@ import org.springframework.validation.BindingResult;
 import java.time.LocalDate;
 
 public class ProfilePictureFormTest {
-    User existingUser = new User(
+    final User existingUser = new User(
             "John",
             "Doe",
             "john@doe.com",
@@ -19,7 +19,7 @@ public class ProfilePictureFormTest {
             LocalDate.of(2000, 1, 1),
             "/images/default_pic.jpg"
     );
-    ProfilePictureForm profilePictureForm = new ProfilePictureForm();
+    final ProfilePictureForm profilePictureForm = new ProfilePictureForm();
 
     @Mock
     BindingResult bindingResult;

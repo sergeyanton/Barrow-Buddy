@@ -3,7 +3,6 @@ package nz.ac.canterbury.team1000.gardenersgrove.form;
 import org.springframework.validation.BindingResult;
 
 import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.*;
-import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.MAX_DB_STR_LEN;
 
 /**
  * Entity used to parse and store the data sent through a login POST request

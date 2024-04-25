@@ -17,10 +17,10 @@ import java.util.List;
  */
 class ErrorAdder {
     // The BindingResult object to which errors will be added
-    private BindingResult bindingResult;
+    private final BindingResult bindingResult;
 
     // The name of the object associated with the errors
-    private String objectName;
+    private final String objectName;
 
     /**
      * Constructs an ErrorAdder with the specified BindingResult and object name.
