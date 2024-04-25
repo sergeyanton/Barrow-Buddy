@@ -19,7 +19,7 @@
             <input th:field="*{pictureFile}" type="file" onchange="validateImage(this)" accept="image/png, image/jpeg, image/svg+xml">
             <button type="button" id="cancelButton" class="cancelMinor" style="display: none;" onclick="cancelSelection()">Undo</button>
             <button type="submit" id="submitButton" style="display: none;">Save Profile Picture</button>
-            <br><span id="pictureFileError" class="error" th:if="${#fields.hasErrors('pictureFile')}" th:errors="*{pictureFile}"></span>
+            <br><span id="clientSideErrorMessage" class="error"></span>
         </form>
 
         <p th:text="'First Name: ' + ${fName}"></p>
@@ -36,41 +36,42 @@
         <a class="next" th:href="@{.}">Home</a>
     </div>
     <script th:inline="javascript">
-
         // THYMELEAF SYNTAX FOR GETTING MODEL ATTRIBUTES INTO INLINE JS. The comment matters.
         const initialProfilePictureUrl = /*[[${picturePath}]]*/ '';
         function validateImage(input) {
-            // const file = input.files[0];
-            // const validTypes = ["image/png", "image/jpeg", "image/svg+xml"];
-            // const maxFileSize = 10 * 1024 * 1024; // 10MB
-            //
-            // if (!validTypes.includes(file.type)) {
-            //     alert("Image must be of type png, jpg or svg");
-            //     input.value = '';
-            //     return false;
-            // }
-            //
-            // if (file.size > maxFileSize) {
-            //     alert("Image must be less than 10MB");
-            //     input.value = '';
-            //     return false;
-            // }
+            if (!(input.files && input.files[0])) {
+                return;
+            }
+            const file = input.files[0];
+            const validTypes = ["image/png", "image/jpeg", "image/svg+xml"];
+            const maxFileSize = 10 * 1024 * 1024;
+
+            if (!validTypes.includes(file.type) && file.size > maxFileSize) {
+                input.value = '';
+                document.getElementById('clientSideErrorMessage').textContent = "Image must be of type png, jpg or svg, and less than 10MB";
+                return;
+            }
+            if (!validTypes.includes(file.type)) {
+                input.value = '';
+                document.getElementById('clientSideErrorMessage').textContent = "Image must be of type png, jpg or svg";
+                return;
+            }
+            if (file.size > maxFileSize) {
+                input.value = '';
+                document.getElementById('clientSideErrorMessage').textContent = "Image must be less than 10MB";
+                return;
+            }
+
+            const fileReader = new FileReader();
+            fileReader.onload = function (e) {
+                document.getElementById('profileImage').src = e.target.result;
+            }
+            fileReader.readAsDataURL(input.files[0]);
+
             document.getElementById('pictureFileLabel').style.display = 'none';
             document.getElementById('cancelButton').style.display = 'inline-block';
             document.getElementById('submitButton').style.display = 'inline-block';
-            if (document.getElementById('pictureFileError')) {
-                document.getElementById('pictureFileError').textContent = null;
-            }
-
-            if (input.files && input.files[0]) {
-                const fileReader = new FileReader();
-
-                fileReader.onload = function (e) {
-                    document.getElementById('profileImage').src = e.target.result;
-                }
-
-                fileReader.readAsDataURL(input.files[0]);
-            }
+            document.getElementById('clientSideErrorMessage').textContent = "";
         }
 
         function cancelSelection() {

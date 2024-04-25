@@ -117,6 +117,7 @@ public class ProfileController {
         model.addAttribute("picturePath", currentUser.getPicturePath());
 
         if (bindingResult.hasErrors()) {
+            System.out.println("BAD FILE");
             return "pages/profilePage";
         }
 
