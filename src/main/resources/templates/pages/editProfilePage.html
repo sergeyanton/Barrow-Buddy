@@ -20,8 +20,8 @@
 
             <div class="form-element">
                 <label class="file-upload-label" th:for="pictureFile">Edit Profile Picture</label>
-                <input th:field="*{pictureFile}" type="file" onchange="validateImage(this)" accept="image/png, image/jpeg, image/svg+xml"><br>
-                <span class="error" th:if="${#fields.hasErrors('pictureFile')}" th:errors="*{pictureFile}"></span>
+                <input th:field="*{pictureFile}" type="file" onchange="validateImage(this)" accept="image/png, image/jpeg, image/svg+xml">
+                <br><span id="clientSideErrorMessage" class="error"></span>
             </div>
 
             <input th:replace="~{fragments/formElement :: formElementField(fieldName='firstName', label='First Name: ', placeholder='Fabian')}" />
@@ -40,7 +40,7 @@
             <a class="cancel" th:href="@{profile}">Cancel</a>
         </form>
     </div>
-    <script>
+    <script th:inline="javascript">
         // Function to disable last name input field if the 'no surname' checkbox is checked
         function toggleInput() {
             let checkbox = document.getElementById('noSurnameCheckBox');
@@ -59,32 +59,43 @@
             toggleInput();
         };
 
+        // THYMELEAF SYNTAX FOR GETTING MODEL ATTRIBUTES INTO INLINE JS. The comment matters.
+        const initialProfilePictureUrl = /*[[${editUserForm.getPicturePath()}]]*/ '';
+
         function validateImage(input) {
-            // const file = input.files[0];
-            // const validTypes = ["image/png", "image/jpeg", "image/svg+xml"];
-            // const maxFileSize = 10 * 1024 * 1024; // 10MB
-            //
-            // if (!validTypes.includes(file.type)) {
-            //     alert("Image must be of type png, jpg or svg");
-            //     input.value = '';
-            //     return false;
-            // }
-            //
-            // if (file.size > maxFileSize) {
-            //     alert("Image must be less than 10MB");
-            //     input.value = '';
-            //     return false;
-            // }
-
-            if (input.files && input.files[0]) {
-                const fileReader = new FileReader();
-
-                fileReader.onload = function (e) {
-                    document.getElementById('profileImage').src = e.target.result;
-                }
-
-                fileReader.readAsDataURL(input.files[0]);
+            if (!(input.files && input.files[0])) {
+                return;
             }
+            const file = input.files[0];
+            const validTypes = ["image/png", "image/jpeg", "image/svg+xml"];
+            const maxFileSize = 10 * 1024 * 1024;
+
+            if (!validTypes.includes(file.type) && file.size > maxFileSize) {
+                input.value = '';
+                document.getElementById('profileImage').src = initialProfilePictureUrl;
+                document.getElementById('clientSideErrorMessage').textContent = "Image must be of type png, jpg or svg, and less than 10MB";
+                return;
+            }
+            if (!validTypes.includes(file.type)) {
+                input.value = '';
+                document.getElementById('profileImage').src = initialProfilePictureUrl;
+                document.getElementById('clientSideErrorMessage').textContent = "Image must be of type png, jpg or svg";
+                return;
+            }
+            if (file.size > maxFileSize) {
+                input.value = '';
+                document.getElementById('profileImage').src = initialProfilePictureUrl;
+                document.getElementById('clientSideErrorMessage').textContent = "Image must be less than 10MB";
+                return;
+            }
+
+            const fileReader = new FileReader();
+            fileReader.onload = function (e) {
+                document.getElementById('profileImage').src = e.target.result;
+            }
+            fileReader.readAsDataURL(input.files[0]);
+
+            document.getElementById('clientSideErrorMessage').textContent = "";
         }
     </script>
 </body>
