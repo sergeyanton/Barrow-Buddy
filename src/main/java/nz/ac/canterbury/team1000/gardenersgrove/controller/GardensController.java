@@ -25,7 +25,7 @@ import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
  */
 @Controller
 public class GardensController {
-    Logger logger = LoggerFactory.getLogger(GardensController.class);
+    final Logger logger = LoggerFactory.getLogger(GardensController.class);
     private final GardenService gardenService;
     private final PlantService plantService;
     private final UserService userService;
