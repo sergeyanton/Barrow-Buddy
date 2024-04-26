@@ -366,4 +366,113 @@ public class FormUtilsTest {
         String dateString = FormUtils.dateToString(date);
         assertEquals("", dateString);
     }
+
+    @Test
+    void checkIntegerOutsideRange_WithIntegerStringWithinRange_ReturnsFalse() {
+        String value = "5";
+        int min = 0;
+        int max = 10;
+
+        Assertions.assertFalse(FormUtils.checkIntegerOutsideRange(value, min, max));
+    }
+
+    @Test
+    void checkIntegerOutsideRange_WithIntegerStringEqualToMin_ReturnsFalse() {
+        String value = "0";
+        int min = 0;
+        int max = 10;
+
+        Assertions.assertFalse(FormUtils.checkIntegerOutsideRange(value, min, max));
+    }
+
+    @Test
+    void checkIntegerOutsideRange_WithIntegerStringEqualToMax_ReturnsFalse() {
+        String value = "10";
+        int min = 0;
+        int max = 10;
+
+        Assertions.assertFalse(FormUtils.checkIntegerOutsideRange(value, min, max));
+    }
+
+    @Test
+    void checkIntegerOutsideRange_WithIntegerStringBelowMin_ReturnsTrue() {
+        String value = "-1";
+        int min = 0;
+        int max = 10;
+
+        Assertions.assertTrue(FormUtils.checkIntegerOutsideRange(value, min, max));
+    }
+
+    @Test
+    void checkIntegerOutsideRange_WithIntegerStringAboveMax_ReturnsTrue() {
+        String value = "11";
+        int min = 0;
+        int max = 10;
+
+        Assertions.assertTrue(FormUtils.checkIntegerOutsideRange(value, min, max));
+    }
+
+    @Test
+    void checkIntegerOutsideRange_WithNonIntegerString_ReturnsTrue() {
+        String value = "abc";
+        int min = 0;
+        int max = 10;
+
+        Assertions.assertTrue(FormUtils.checkIntegerOutsideRange(value, min, max));
+    }
+
+    @Test
+    void checkIntegerOutsideRange_WithNoUpperBoundAndIntegerStringAboveLowerBound_ReturnsFalse() {
+        String value = "5";
+        int min = 0;
+
+        Assertions.assertFalse(FormUtils.checkIntegerOutsideRange(value, min, null));
+    }
+
+    @Test
+    void checkIntegerOutsideRange_WithNoUpperBoundAndIntegerStringEqualToLowerBound_ReturnsFalse() {
+        String value = "0";
+        int min = 0;
+
+        Assertions.assertFalse(FormUtils.checkIntegerOutsideRange(value, min, null));
+    }
+
+    @Test
+    void checkIntegerOutsideRange_WithNoUpperBoundAndIntegerStringBelowLowerBound_ReturnsTrue() {
+        String value = "-1";
+        int min = 0;
+
+        Assertions.assertTrue(FormUtils.checkIntegerOutsideRange(value, min, null));
+    }
+
+    @Test
+    void checkIntegerOutsideRange_WithNoLowerBoundAndIntegerStringBelowUpperBound_ReturnsFalse() {
+        String value = "5";
+        int max = 10;
+
+        Assertions.assertFalse(FormUtils.checkIntegerOutsideRange(value, null, max));
+    }
+
+    @Test
+    void checkIntegerOutsideRange_WithNoLowerBoundAndIntegerStringEqualToUpperBound_ReturnsFalse() {
+        String value = "10";
+        int max = 10;
+
+        Assertions.assertFalse(FormUtils.checkIntegerOutsideRange(value, null, max));
+    }
+
+    @Test
+    void checkIntegerOutsideRange_WithNoLowerBoundAndIntegerStringAboveUpperBound_ReturnsTrue() {
+        String value = "11";
+        int max = 10;
+
+        Assertions.assertTrue(FormUtils.checkIntegerOutsideRange(value, null, max));
+    }
+
+    @Test
+    void checkIntegerOutsideRange_WithNoBoundsAndNonIntegerString_ReturnsTrue() {
+        String value = "abc";
+
+        Assertions.assertTrue(FormUtils.checkIntegerOutsideRange(value, null, null));
+    }
 }

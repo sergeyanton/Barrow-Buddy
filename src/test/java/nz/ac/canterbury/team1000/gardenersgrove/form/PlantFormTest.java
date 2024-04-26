@@ -182,6 +182,13 @@ class PlantFormTest {
     }
 
     @Test
+    void validate_PlantCountIsZero_AddsError() {
+        plantForm.setPlantCount("0");
+        PlantForm.validate(plantForm, bindingResult);
+        Mockito.verify(bindingResult).addError(Mockito.any());
+    }
+
+    @Test
     void fromPlant_NullPlant_ReturnsEmptyForm() {
         PlantForm form = PlantForm.fromPlant(null);
         assertTrue(form.getName().isBlank());

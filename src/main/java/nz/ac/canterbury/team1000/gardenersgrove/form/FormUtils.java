@@ -197,6 +197,27 @@ public class FormUtils {
     }
 
     /**
+     * Checks if an integer fits within the specified range.
+     * NOTE: Returns true for blank or invalid strings. Should not be used to check for invalid integers.
+     * 
+     * @param string the string to check
+     * @param min the minimum value allowed, or null if there is no minimum
+     * @param max the maximum value allowed, or null if there is no maximum
+     * @return true if the integer is outside the specified range, false otherwise
+     */
+    public static boolean checkIntegerOutsideRange(String string, Integer min, Integer max) {
+        try {
+            int value = Integer.parseInt(string);
+            if (min != null && value < min) return true;
+            if (max != null && value > max) return true;
+            return false;
+        } catch (NumberFormatException e) {
+            // make sure we fail if the string is not a valid integer
+            return true;
+        }
+    }
+
+    /**
      * Checks if the given email address is invalid.
      *
      * @param string the email address to check
