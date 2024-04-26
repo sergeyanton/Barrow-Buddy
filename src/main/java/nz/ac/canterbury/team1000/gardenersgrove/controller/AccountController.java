@@ -136,8 +136,10 @@ public class AccountController {
     @PostMapping("/register/verification")
     public String registerVerification(HttpServletRequest request, @ModelAttribute("verificationTokenForm") VerificationTokenForm verificationTokenForm, BindingResult bindingResult) {
         VerificationTokenForm.validate(verificationTokenForm, bindingResult);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        long userId = userService.findEmail(authentication.getName()).getId();
 
-        if (!bindingResult.hasFieldErrors("verificationToken")) {
+        if (!bindingResult.hasFieldErrors("verificationToken") && !validateToken(verificationTokenForm.getVerificationToken(), userId)) {
             bindingResult.addError(new FieldError("verificationTokenForm", "verificationToken", verificationTokenForm.getVerificationToken(), false, null, null, "Invalid token"));
         }
 
@@ -146,6 +148,16 @@ public class AccountController {
         }
 
         return "redirect:pages/verificationPage";
+    }
+
+    /**
+     *
+     * @param userInputToken the user's inputted token as a string
+     * @param userId         the user's id
+     * @return               boolean value whether the token is verified(true) or not(false)
+     */
+    private boolean validateToken(String userInputToken, long userId) {
+        return verifyPassword(userInputToken, verificationTokenService.getVerificationTokenByUserId(userId).getHashedToken());
     }
 
     // TODO: documentation - Sergey
