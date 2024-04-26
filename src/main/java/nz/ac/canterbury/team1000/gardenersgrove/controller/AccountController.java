@@ -140,7 +140,7 @@ public class AccountController {
         long userId = userService.findEmail(authentication.getName()).getId();
 
         if (!bindingResult.hasFieldErrors("verificationToken") && !validateToken(verificationTokenForm.getVerificationToken(), userId)) {
-            bindingResult.addError(new FieldError("verificationTokenForm", "verificationToken", verificationTokenForm.getVerificationToken(), false, null, null, "Invalid token"));
+            bindingResult.addError(new FieldError("verificationTokenForm", "verificationToken", verificationTokenForm.getVerificationToken(), false, null, null, "Provided verification token is invalid"));
         }
 
         if (bindingResult.hasErrors()) {
@@ -162,7 +162,7 @@ public class AccountController {
     }
 
     /**
-     * Sends a verification email to the user.\
+     * Sends a verification email to the user.
      *
      * @param user the user to send the verification email to
      */

@@ -3,6 +3,8 @@ package nz.ac.canterbury.team1000.gardenersgrove.form;
 import org.springframework.validation.BindingResult;
 
 import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.checkBlank;
+import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.checkUnderLength;
+
 
 /**
  * Represents the form data for a verification token input by the user.
@@ -28,7 +30,9 @@ public class VerificationTokenForm {
 
         // validate verification token
         if (checkBlank(verificationTokenForm.getVerificationToken())) {
-            errors.add("verificationToken", "The verification token is invalid", verificationTokenForm.getVerificationToken());
+            errors.add("verificationToken", "Provided verification token is invalid", verificationTokenForm.getVerificationToken());
+        } else if (checkUnderLength(verificationTokenForm.getVerificationToken(), 6)) {
+            errors.add("verificationToken", "Provided token must be 6 characters", verificationTokenForm.getVerificationToken());
         }
     }
 }
