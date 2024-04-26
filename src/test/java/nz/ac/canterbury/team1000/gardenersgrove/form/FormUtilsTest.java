@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.time.LocalDate;
 
 public class FormUtilsTest {
@@ -341,5 +341,21 @@ public class FormUtilsTest {
         MultipartFile image = new MockMultipartFile(
                 "pictureFile", "newPfp.png", "image/png", over10mb);
         Assertions.assertTrue(FormUtils.checkImageTooBig(image));
+    }
+
+    @Test
+    void dateToString_DateWithSingleDigitMonthAndDay_ReturnsDateStringWithZeroPrefixes() {
+        LocalDate date = LocalDate.of(2024, 4, 4);
+
+        String dateString = FormUtils.dateToString(date);
+        assertEquals("04/04/2024", dateString);
+    }
+
+    @Test
+    void dateToString_DateWithTwoDigitMonthAndDay_ReturnsDateString() {
+        LocalDate date = LocalDate.of(2024, 12, 12);
+
+        String dateString = FormUtils.dateToString(date);
+        assertEquals("12/12/2024", dateString);
     }
 }

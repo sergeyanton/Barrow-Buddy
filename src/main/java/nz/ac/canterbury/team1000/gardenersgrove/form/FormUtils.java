@@ -279,4 +279,14 @@ public class FormUtils {
     public static boolean checkImageTooBig(MultipartFile image) {
         return image.getSize() > MAX_IMAGE_SIZE_BYTES;
     }
+
+    /**
+     * Converts LocalDate to a string in the format "DD/MM/YYYY".
+     * 
+     * @param date the date to convert
+     * @return the string representation of the date
+     */
+    public static String dateToString(LocalDate date) {
+        return date.format(VALID_DATE_FORMAT);
+    }
 }
