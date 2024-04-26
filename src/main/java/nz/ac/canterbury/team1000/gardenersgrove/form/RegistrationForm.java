@@ -20,6 +20,7 @@ public class RegistrationForm {
     protected String dob;
     protected String password;
     protected String retypePassword;
+    protected String picturePath;
 
     public String getFirstName() {
         return this.firstName;
@@ -85,6 +86,13 @@ public class RegistrationForm {
         this.retypePassword = retypePassword;
     }
 
+    public void setProfilePictureUrl(String picturePath) {
+        this.picturePath = picturePath;
+    }
+    public String getProfilePictureUrl() {
+        return this.picturePath;
+    }
+
     /**
      * Generates a User object with the values from the form.
      *
@@ -96,7 +104,8 @@ public class RegistrationForm {
                 this.lastName,
                 this.email,
                 passwordEncoder.encode(this.password),
-                this.getDobLocalDate()
+                this.getDobLocalDate(),
+                "/images/default_pic.jpg"
         );
     }
 

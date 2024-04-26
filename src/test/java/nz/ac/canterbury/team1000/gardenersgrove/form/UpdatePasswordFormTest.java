@@ -7,7 +7,7 @@ import org.mockito.Mockito;
 import org.springframework.validation.BindingResult;
 
 public class UpdatePasswordFormTest {
-    UpdatePasswordForm updatePasswordForm = new UpdatePasswordForm();
+    final UpdatePasswordForm updatePasswordForm = new UpdatePasswordForm();
 
     @Mock
     BindingResult bindingResult;

@@ -8,7 +8,7 @@ import org.springframework.validation.BindingResult;
 
 class PlantFormTest {
 
-    PlantForm plantForm = new PlantForm();
+    final PlantForm plantForm = new PlantForm();
 
     @Mock
     BindingResult bindingResult;
