@@ -117,6 +117,7 @@ public class AccountController {
 
         return "redirect:/register/verification";
     }
+
     @GetMapping("/register/verification")
     public String getRegisterVerificationPage(@ModelAttribute("verificationTokenForm") VerificationTokenForm verificationTokenForm) {
         logger.info("GET /register/verification");
@@ -127,14 +128,13 @@ public class AccountController {
      * Handles POST requests to the /register/verification endpoint.
      * Handles the registration verification process for new users.
      *
-     * @param request          the HttpServletRequest object containing the request information
      * @param verificationTokenForm the VerificationTokenForm object representing the user's verification token data
-     * @param bindingResult    the BindingResult object for validation errors
+     * @param bindingResult         the BindingResult object for validation errors
      * @return the view to display after registration:
      * - Either if there are validation errors or not, returns the registrationVerification page to display errors/ not.
      */
     @PostMapping("/register/verification")
-    public String registerVerification(HttpServletRequest request, @ModelAttribute("verificationTokenForm") VerificationTokenForm verificationTokenForm, BindingResult bindingResult) {
+    public String registerVerification(@ModelAttribute("verificationTokenForm") VerificationTokenForm verificationTokenForm, BindingResult bindingResult) {
         VerificationTokenForm.validate(verificationTokenForm, bindingResult);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         long userId = userService.findEmail(authentication.getName()).getId();
@@ -147,20 +147,25 @@ public class AccountController {
             return "pages/verificationPage";
         }
 
-        return "redirect:pages/verificationPage";
+        return "redirect:/profile";
     }
 
     /**
+     * Validates the user's inputted token against the stored token in the database.
      *
      * @param userInputToken the user's inputted token as a string
      * @param userId         the user's id
-     * @return               boolean value whether the token is verified(true) or not(false)
+     * @return boolean value whether the token is verified(true) or not(false)
      */
     private boolean validateToken(String userInputToken, long userId) {
         return verifyPassword(userInputToken, verificationTokenService.getVerificationTokenByUserId(userId).getHashedToken());
     }
 
-    // TODO: documentation - Sergey
+    /**
+     * Sends a verification email to the user.\
+     *
+     * @param user the user to send the verification email to
+     */
     private void sendVerificationEmail(User user) {
         logger.info("Sending verification email to " + user.getEmail());
         VerificationToken token = new VerificationToken(user.getId());
