@@ -18,15 +18,12 @@
                 <table>
                     <thead>
                     <tr>
-                        <th>Image</th>
-                        <th>Name</th>
-                        <th>Count</th>
-                        <th>Description</th>
+                        <th colspan="5">Plants</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:if="${plants.empty}">
-                        <td colspan="4">No plants yet</td>
+                        <td colspan="5">No plants yet</td>
                     </tr>
                     <tr th:each="plant : ${plants}">
                         <td><img th:src="@{/images/defaultPlantPic.png}" alt="Plant Image" style="max-width: 100px; max-height: 100px;" /></td>
