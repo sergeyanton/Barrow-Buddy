@@ -358,4 +358,12 @@ public class FormUtilsTest {
         String dateString = FormUtils.dateToString(date);
         assertEquals("12/12/2024", dateString);
     }
+
+    @Test
+    void dateToString_NullDate_ReturnsEmptyString() {
+        LocalDate date = null;
+
+        String dateString = FormUtils.dateToString(date);
+        assertEquals("", dateString);
+    }
 }

@@ -284,9 +284,10 @@ public class FormUtils {
      * Converts LocalDate to a string in the format "DD/MM/YYYY".
      * 
      * @param date the date to convert
-     * @return the string representation of the date
+     * @return the string representation of the date in the format "DD/MM/YYYY" or an empty string if the date is null.
      */
     public static String dateToString(LocalDate date) {
+        if (date == null) return "";
         return date.format(VALID_DATE_FORMAT);
     }
 }

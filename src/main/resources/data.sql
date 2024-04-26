@@ -35,4 +35,5 @@ INSERT INTO plant (name, plant_count, description, planted_on_date, garden_id) V
 INSERT INTO plant (name, plant_count, description, planted_on_date, garden_id) VALUES ('Plant', 1, 'Its green', '2023-01-01', 1);
 INSERT INTO plant (name, plant_count, description, planted_on_date, garden_id) VALUES ('Plant', 1, 'Its green', '2023-01-01', 1);
 
-
+-- Setup a test user with password Password1234!
+INSERT INTO tab_user(id, date_of_birth, email, fName, lName, password, picture_path) VALUES (1, '2003-08-19', 'test@example.com', 'Test', 'User', '$2a$10$Ra2OyNaklSi.YcfvGPuN9urUjCT17A9Kmu57zYftXe0ydZpEqbHg.', '/images/default_pic.jpg');

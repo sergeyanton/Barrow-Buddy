@@ -113,4 +113,29 @@ public class PlantForm {
             }
         }
     }
+
+    /**
+     * Create a PlantForm from the Plant object.
+     * 
+     * @param plant the Plant object to create the form from.
+     * @return the populated PlantForm object.
+     */
+    public static PlantForm fromPlant(Plant plant) {
+        PlantForm plantForm = new PlantForm();
+
+        // set all the fields blank
+        plantForm.setName("");
+        plantForm.setPlantCount("");
+        plantForm.setDescription("");
+        plantForm.setPlantedOnDate("");
+        if (plant == null) return plantForm;
+
+        if (plant.getName() != null) plantForm.setName(plant.getName());
+        if (plant.getPlantCount() != null) plantForm.setPlantCount(plant.getPlantCount().toString());
+        if (plant.getDescription() != null) plantForm.setDescription(plant.getDescription());
+        plantForm.setPlantedOnDate(FormUtils.dateToString(plant.getPlantedOnDate()));
+        plantForm.setGardenId(plant.getGardenId());
+
+        return plantForm;
+    }
 }
