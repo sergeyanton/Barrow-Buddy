@@ -1,11 +1,11 @@
 package nz.ac.canterbury.team1000.gardenersgrove.util;
 
 import nz.ac.canterbury.team1000.gardenersgrove.entity.VerificationToken;
+import nz.ac.canterbury.team1000.gardenersgrove.repository.UserRepository;
 import nz.ac.canterbury.team1000.gardenersgrove.repository.VerificationTokenRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -24,6 +24,9 @@ public class VerificationTokenCleanup {
     Logger logger = LoggerFactory.getLogger(VerificationTokenCleanup.class);
     @Autowired
     private VerificationTokenRepository verificationTokenRepository;
+    @Autowired
+    private UserRepository userRepository;
+
 
     /**
      * Deletes all expired verification tokens from the database every minute.
@@ -32,6 +35,11 @@ public class VerificationTokenCleanup {
     public void cleanupExpiredTokens() {
         List<VerificationToken> expiredTokens = verificationTokenRepository.findByExpiryDateBefore(LocalDateTime.now());
         logger.info("Found " + expiredTokens.size() + " expired tokens");
+        for (VerificationToken token : expiredTokens) {
+            if (!token.getVerified()) {
+                userRepository.deleteById(token.getUserId());
+            }
+        }
         verificationTokenRepository.deleteAll(expiredTokens);
     }
 
