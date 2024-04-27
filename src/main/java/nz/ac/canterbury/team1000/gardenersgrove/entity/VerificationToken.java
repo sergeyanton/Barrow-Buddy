@@ -21,13 +21,10 @@ public class VerificationToken {
     private Long userId;
     @Column(nullable = false)
     private String token;
-
     @Column(nullable = false)
     private LocalDateTime expiryDate;
-
     @Column(nullable = false)
     private boolean verified = false;
-
     @Transient
     private String plainToken;
 

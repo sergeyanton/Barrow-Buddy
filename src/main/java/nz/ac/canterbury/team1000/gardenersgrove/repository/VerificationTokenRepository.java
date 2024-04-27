@@ -16,5 +16,6 @@ import java.util.Optional;
 public interface VerificationTokenRepository extends CrudRepository<VerificationToken, Long> {
     Optional<VerificationToken> findByUserId(Long userId);
 
-    List<VerificationToken> findByExpiryDateBefore(LocalDateTime expiryDate);
+    List<VerificationToken> findByExpiryDateBefore(LocalDateTime now);
+
 }

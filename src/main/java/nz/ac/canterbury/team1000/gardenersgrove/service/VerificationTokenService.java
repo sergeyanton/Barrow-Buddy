@@ -31,8 +31,8 @@ public class VerificationTokenService {
         verificationToken.ifPresent(verificationTokenRepository::delete);
     }
 
-    public VerificationToken addVerificationToken(VerificationToken verificationToken) {
-        return verificationTokenRepository.save(verificationToken);
+    public void addVerificationToken(VerificationToken verificationToken) {
+        verificationTokenRepository.save(verificationToken);
     }
 
 
