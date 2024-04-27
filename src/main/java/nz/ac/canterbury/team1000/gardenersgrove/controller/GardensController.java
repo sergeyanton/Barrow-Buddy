@@ -239,9 +239,7 @@ public class GardensController {
      * 
      * @param gardenId Id of the garden that this plant belongs to
      * @param plantId Id of the plant to edit
-     * @param editPlantForm PlantForm object on the model to display the form
-     * @param garden Garden object on the model so its name can be displayed
-     * @param plant Plant object on the model so its name can be displayed
+     * @param model the model to be used by thymeleaf
      * @return thymeleaf pages/editPlantPage
      */
     @GetMapping("/gardens/{gardenId}/plants/{plantId}/edit")
