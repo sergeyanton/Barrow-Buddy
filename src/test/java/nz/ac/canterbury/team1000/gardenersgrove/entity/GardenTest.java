@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 public class GardenTest {
 
-    User testUser = new User("fname", "lname", "email", "password", null);
+    User testUser = new User("fname", "lname", "email", "password", null, null);
 
     @Test
     void Constructor_WithValidSizeString_ReturnsGardenObjectParsedSize() {

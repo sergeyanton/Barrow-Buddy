@@ -1,6 +1,10 @@
-INSERT INTO garden (name, location, size) VALUES ('GardenWith12Plants', 'Springfield', 10);
-INSERT INTO garden (name, location, size) VALUES ('GardenWith10Plants', 'Springfield', 10);
-INSERT INTO garden (name, location, size) VALUES ('TestGarden', 'TestLocation', 1);
+
+-- Setup a test user with password Password1234!
+INSERT INTO tab_user(id, date_of_birth, email, fName, lName, password) VALUES (1, '2003-08-19', 'test@example.com', 'Test', 'User', '$2a$10$Ra2OyNaklSi.YcfvGPuN9urUjCT17A9Kmu57zYftXe0ydZpEqbHg.');
+
+INSERT INTO garden (name, location, size, owner_id) VALUES ('GardenWith12Plants', 'Springfield', 10, 1);
+INSERT INTO garden (name, location, size, owner_id) VALUES ('GardenWith10Plants', 'Springfield', 10, 1);
+INSERT INTO garden (name, location, size, owner_id) VALUES ('TestGarden', 'TestLocation', 1, 1);
 INSERT INTO plant (name, plant_count, description, planted_on_date, garden_id) VALUES ('Plant', 1, 'Its green', '2023-01-01', 2);
 INSERT INTO plant (name, plant_count, description, planted_on_date, garden_id) VALUES ('Plant', 1, 'Its green', '2023-01-01', 2);
 INSERT INTO plant (name, plant_count, description, planted_on_date, garden_id) VALUES ('Plant', 1, 'Its green', '2023-01-01', 2);
@@ -11,17 +15,17 @@ INSERT INTO plant (name, plant_count, description, planted_on_date, garden_id) V
 INSERT INTO plant (name, plant_count, description, planted_on_date, garden_id) VALUES ('Plant', 1, 'Its green', '2023-01-01', 2);
 INSERT INTO plant (name, plant_count, description, planted_on_date, garden_id) VALUES ('Plant', 1, 'Its green', '2023-01-01', 2);
 INSERT INTO plant (name, plant_count, description, planted_on_date, garden_id) VALUES ('Plant', 1, 'Its green', '2023-01-01', 2);
-INSERT INTO garden (name, location, size) VALUES ('Woohoo', 'Yeah', 30.5);
-INSERT INTO garden (name, location, size) VALUES ('The Hamilton Gardens', 'Hamilton, New Zealand', 540000);
+INSERT INTO garden (name, location, size, owner_id) VALUES ('Woohoo', 'Yeah', 30.5, 1);
+INSERT INTO garden (name, location, size, owner_id) VALUES ('The Hamilton Gardens', 'Hamilton, New Zealand', 540000, 1);
 INSERT INTO plant (name, plant_count, description, planted_on_date, garden_id) VALUES ('Rose Bush', 200, 'Fragrant, colorful garden flower.', null, 5);
 INSERT INTO plant (name, plant_count, description, planted_on_date, garden_id) VALUES ('Lavender', 50, 'Aromatic purple herb.', null, 5);
 INSERT INTO plant (name, plant_count, description, planted_on_date, garden_id) VALUES ('Sunflower ', 100, 'Tall with large yellow flowers.', null, 5);
 INSERT INTO plant (name, plant_count, description, planted_on_date, garden_id) VALUES ('Fern', 1150, 'Lush, green leafy plant.', null, 5);
 INSERT INTO plant (name, plant_count, description, planted_on_date, garden_id) VALUES ('Tomato', 40, 'Edible red fruiting plant.', null, 5);
-INSERT INTO garden (name, location, size) VALUES ('A1 .-''', 'A1 ,.-''', 123.456);
-INSERT INTO garden (name, location, size) VALUES ('Unsized Garden', 'Unsized Garden', null);
-INSERT INTO garden (name, location, size) VALUES ('Long name garden yappa yappa yappa yappa', 'Hmm', 1);
-INSERT INTO garden (name, location, size) VALUES ('Longnamegardenyappayappayappayappa', 'Hmm', 1);
+INSERT INTO garden (name, location, size, owner_id) VALUES ('A1 .-''', 'A1 ,.-''', 123.456, 1);
+INSERT INTO garden (name, location, size, owner_id) VALUES ('Unsized Garden', 'Unsized Garden', null, 1);
+INSERT INTO garden (name, location, size, owner_id) VALUES ('Long name garden yappa yappa yappa yappa', 'Hmm', 1, 1);
+INSERT INTO garden (name, location, size, owner_id) VALUES ('Longnamegardenyappayappayappayappa', 'Hmm', 1, 1);
 INSERT INTO plant (name, plant_count, description, planted_on_date, garden_id) VALUES ('Plant', 1, 'Its green', '2023-01-01', 1);
 INSERT INTO plant (name, plant_count, description, planted_on_date, garden_id) VALUES ('Plant', 1, 'Its green', '2023-01-01', 1);
 INSERT INTO plant (name, plant_count, description, planted_on_date, garden_id) VALUES ('Plant', 1, 'Its green', '2023-01-01', 1);
@@ -34,5 +38,3 @@ INSERT INTO plant (name, plant_count, description, planted_on_date, garden_id) V
 INSERT INTO plant (name, plant_count, description, planted_on_date, garden_id) VALUES ('Plant', 1, 'Its green', '2023-01-01', 1);
 INSERT INTO plant (name, plant_count, description, planted_on_date, garden_id) VALUES ('Plant', 1, 'Its green', '2023-01-01', 1);
 INSERT INTO plant (name, plant_count, description, planted_on_date, garden_id) VALUES ('Plant', 1, 'Its green', '2023-01-01', 1);
-
-

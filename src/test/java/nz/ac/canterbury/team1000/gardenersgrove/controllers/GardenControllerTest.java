@@ -1,10 +1,9 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controllers;
 
-import static org.hamcrest.Matchers.hasProperty; // for checking if the edit garden form gets populated properly
-import static org.hamcrest.Matchers.is; // for checking if the edit garden form gets populated properly
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 import nz.ac.canterbury.team1000.gardenersgrove.form.GardenForm;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -16,10 +15,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import nz.ac.canterbury.team1000.gardenersgrove.controller.GardensController;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.PlantService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
@@ -288,9 +289,7 @@ public class GardenControllerTest {
         GardenForm modelEditGardenForm = (GardenForm) result.getModelAndView().getModel().get("editGardenForm");
         Assertions.assertEquals(gardenMock.getName(), modelEditGardenForm.getName());
         Assertions.assertEquals(gardenMock.getLocation(), modelEditGardenForm.getLocation());
-        Assertions.assertEquals(gardenMock.getSize(), modelEditGardenForm.getSizeDouble());
-        System.out.println(gardenMock.getSize());
-        System.out.println(modelEditGardenForm.getSizeDouble());
+        Assertions.assertEquals(gardenMock.getSize().toString(), modelEditGardenForm.getSize());
         Mockito.verify(gardenService).getGardenById(1L);
     }
 }

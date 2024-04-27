@@ -5,6 +5,7 @@ import nz.ac.canterbury.team1000.gardenersgrove.service.PlantService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -15,7 +16,6 @@ import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
 import static org.mockito.Mockito.*;
 
 @WebMvcTest(controllers = {HomeController.class, GardensController.class})
@@ -40,7 +40,6 @@ class HomeControllerTest {
     @Test
     void getHomePageWhenUserSignedIn() throws Exception {
         when(userService.isSignedIn()).thenReturn(true);
-
         mockMvc.perform(MockMvcRequestBuilders.get("/"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("pages/homePage"));
@@ -65,9 +64,10 @@ class HomeControllerTest {
     }
 
     @Test
+    @WithAnonymousUser
     public void ClickCreateGarden_AnywhereWhenNotLoggedIn_ReturnsUserHome() throws Exception {
+
         mockMvc.perform(MockMvcRequestBuilders.get("/gardens/create"))
-                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("http://localhost/"));
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
 }
