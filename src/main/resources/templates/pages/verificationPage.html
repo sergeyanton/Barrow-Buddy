@@ -15,7 +15,7 @@
         <input th:replace="~{fragments/formElement :: formElementField(fieldName='verificationToken', label='Signup Code: ', placeholder='XXXXXX')}"/>
         <br/>
         <button class="submitButton" type="submit">Verify Email</button>
-        <a class="cancelButtonLink" th:href="@{.}">Cancel</a>
+        <a class="cancelButtonLink" th:href="@{/landing}">Cancel</a>
     </form>
 </div>
 </body>

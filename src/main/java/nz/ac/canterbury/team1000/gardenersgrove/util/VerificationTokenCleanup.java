@@ -17,6 +17,7 @@ import java.util.List;
  */
 @Component
 public class VerificationTokenCleanup {
+
     @Autowired
     private VerificationTokenRepository verificationTokenRepository;
 

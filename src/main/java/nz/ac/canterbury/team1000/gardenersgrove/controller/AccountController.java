@@ -33,6 +33,7 @@ public class AccountController {
     private final UserService userService;
     private final VerificationTokenService verificationTokenService;
     private final EmailService emailService;
+
     @Autowired
     private AuthenticationManager authenticationManager;
 
@@ -183,9 +184,10 @@ public class AccountController {
     @GetMapping("/login")
     public String getLoginPage(LoginForm loginForm) {
         logger.info("GET /login");
-//        if (verificationTokenService.getVerificationTokenByUserId(userService.getLoggedInUser().getId()).getVerified() == true) {
-//
-//        }
+
+        if (userService.getLoggedInUser() != null && !verificationTokenService.getVerificationTokenByUserId(userService.getLoggedInUser().getId()).getVerified()) {
+            return "redirect:/register/verification";
+        }
         return userService.isSignedIn() ? "redirect:/" : "pages/loginPage";
     }
 

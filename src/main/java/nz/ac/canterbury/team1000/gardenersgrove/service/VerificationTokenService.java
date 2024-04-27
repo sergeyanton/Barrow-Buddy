@@ -8,6 +8,10 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 // TODO Documentation
+
+/**
+ * This class is responsible for handling the business logic for verification tokens.
+ */
 @Service
 public class VerificationTokenService {
     private VerificationTokenRepository verificationTokenRepository;
