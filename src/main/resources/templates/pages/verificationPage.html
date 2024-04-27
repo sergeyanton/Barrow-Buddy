@@ -11,9 +11,9 @@
 <div class="verification">
     <h1>Email Verification</h1>
     <form th:action="@{/register/verification}" method="post" th:object="${verificationTokenForm}">
-        <p>We have emailed you with a 6-digit verification code, please enter it below</p>
-        <input th:replace="~{fragments/formElement :: formElementField(fieldName='verificationToken', label='Verification Token: ', placeholder='XXXXXX')}" />
-        <br />
+        <p>We have emailed you with a 6-digit signup code, please enter it below</p>
+        <input th:replace="~{fragments/formElement :: formElementField(fieldName='verificationToken', label='Signup Code: ', placeholder='XXXXXX')}"/>
+        <br/>
         <button class="submitButton" type="submit">Verify Email</button>
         <a class="cancelButtonLink" th:href="@{.}">Cancel</a>
     </form>

@@ -114,7 +114,6 @@ public class AccountController {
         userService.registerUser(newUser);
         userService.authenticateUser(authenticationManager, newUser, request);
         sendVerificationEmail(newUser);
-
         return "redirect:/register/verification";
     }
 
@@ -140,14 +139,14 @@ public class AccountController {
         long userId = userService.findEmail(authentication.getName()).getId();
 
         if (!bindingResult.hasFieldErrors("verificationToken") && !validateToken(verificationTokenForm.getVerificationToken(), userId)) {
-            bindingResult.addError(new FieldError("verificationTokenForm", "verificationToken", verificationTokenForm.getVerificationToken(), false, null, null, "Provided verification token is invalid"));
+            bindingResult.addError(new FieldError("verificationTokenForm", "verificationToken", verificationTokenForm.getVerificationToken(), false, null, null, "Signup code invalid"));
         }
 
         if (bindingResult.hasErrors()) {
             return "pages/verificationPage";
         }
-
-        return "redirect:/profile";
+        verificationTokenService.getVerificationTokenByUserId(userId).verifyUser();
+        return "redirect:/login";
     }
 
     /**
@@ -170,7 +169,9 @@ public class AccountController {
         logger.info("Sending verification email to " + user.getEmail());
         VerificationToken token = new VerificationToken(user.getId());
         verificationTokenService.addVerificationToken(token);
-        emailService.sendSimpleMessage(user.getEmail(), "Gardeners Grove Account Verification", token.getPlainToken());
+        String body = "Please verify your account by copying the following code into the prompted field: \n\n" + token.getPlainToken()
+                + "\n\nIf this was not you, you can ignore this message and the account will be deleted after 10 minutes";
+        emailService.sendSimpleMessage(user.getEmail(), "Gardeners Grove Account Verification", body);
     }
 
     /**
@@ -182,6 +183,9 @@ public class AccountController {
     @GetMapping("/login")
     public String getLoginPage(LoginForm loginForm) {
         logger.info("GET /login");
+//        if (verificationTokenService.getVerificationTokenByUserId(userService.getLoggedInUser().getId()).getVerified() == true) {
+//
+//        }
         return userService.isSignedIn() ? "redirect:/" : "pages/loginPage";
     }
 

@@ -24,6 +24,10 @@ public class VerificationToken {
 
     @Column(nullable = false)
     private LocalDateTime expiryDate;
+
+    @Column(nullable = false)
+    private boolean verified = false;
+
     @Transient
     private String plainToken;
 
@@ -34,6 +38,7 @@ public class VerificationToken {
         this.userId = userId;
         this.plainToken = generateToken(); // Store the plain token temporarily
         this.token = hashPassword(plainToken); // Store the hashed version of the token
+        this.verified = false;
         this.expiryDate = calculateExpiryDate();
     }
 
@@ -69,12 +74,22 @@ public class VerificationToken {
     public String getPlainToken() {
         return plainToken;
     }
+
     public String getHashedToken() {
         return token;
     }
 
+    public boolean getVerified() {
+        return verified;
+    }
+
+    public void verifyUser() {
+        this.verified = true;
+    }
 
     public LocalDateTime getExpiryDate() {
         return expiryDate;
     }
+
+
 }

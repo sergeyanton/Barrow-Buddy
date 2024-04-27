@@ -8,21 +8,22 @@
 </head>
 
 <body>
-    <div class="basic">
-        <h1>Log In</h1>
-        <form th:action="@{login}" method="post" th:object="${loginForm}">
-            <input th:replace="~{fragments/formElement :: formElementField(fieldName='email', label='Email: ', placeholder='jane@doe.nz')}" />
-            <br />
-            <input th:replace="~{fragments/formElement :: formElementField(fieldName='password', label='Password: ', placeholder='*******', type='password')}" />
-            <br />
-            <div>
-                <p>Not registered? <a th:href="@{register}">Create an account!</a></p>
-            </div>
+<div class="basic">
+    <h1>Log In</h1>
+    <form th:action="@{login}" method="post" th:object="${loginForm}">
+        <input th:replace="~{fragments/formElement :: formElementField(fieldName='email', label='Email: ', placeholder='jane@doe.nz')}"/>
+        <br/>
+        <input th:replace="~{fragments/formElement :: formElementField(fieldName='password', label='Password: ', placeholder='*******', type='password')}"/>
+        <br/>
+        <input type="text" id="signupCode" name="signupCode" style="display: none;">
+        <div>
+            <p>Not registered? <a th:href="@{register}">Create an account!</a></p>
+        </div>
 
-            <button class="submitButton" type="submit">Sign In</button>
-            <br />
-            <a class="cancelButtonLink" th:href="@{.}">Cancel</a>
-        </form>
-    </div>
+        <button class="submitButton" type="submit">Sign In</button>
+        <br/>
+        <a class="cancelButtonLink" th:href="@{.}">Cancel</a>
+    </form>
+</div>
 </body>
 </html>
