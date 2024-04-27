@@ -12,7 +12,7 @@ import java.util.List;
  */
 @Service
 public class GardenService {
-    private GardenRepository gardenRepository;
+    private final GardenRepository gardenRepository;
 
     @Autowired
     public GardenService(GardenRepository gardenRepository) {

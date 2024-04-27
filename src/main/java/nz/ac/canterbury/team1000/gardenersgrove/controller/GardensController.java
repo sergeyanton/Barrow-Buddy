@@ -31,7 +31,7 @@ import org.springframework.web.server.ResponseStatusException;
  */
 @Controller
 public class GardensController {
-    Logger logger = LoggerFactory.getLogger(GardensController.class);
+    final Logger logger = LoggerFactory.getLogger(GardensController.class);
     private final GardenService gardenService;
     private final PlantService plantService;
     private final UserService userService;
@@ -299,5 +299,23 @@ public class GardensController {
 
         logger.info("Plant created: " + plant);
         return "redirect:/gardens/" + gardenId;
+    }
+
+    /**
+     * Handles GET requests from the /gardens/{gardenId}/plants/{plantId}/edit endpoint.
+     * Displays the 'Edit Plant' form.
+     *
+     * @param gardenId        id of garden that this plant belongs to
+     * @param plantId         id of plant that is being edited
+     * @param editPlantForm   the PlantForm object representing the plant's details,
+     *                        useful for seeing erroneous inputs of a failed POST request
+     * @return thymeleaf pages/editPlantPage
+     */
+    @GetMapping("/gardens/{gardenId}/plants/{plantId}/edit")
+    public String gardenCreatePlantGet(@PathVariable("gardenId") Long gardenId,
+                                       @PathVariable("gardenId") Long plantId,
+                                       @ModelAttribute("editPlantForm") PlantForm editPlantForm) {
+        logger.info("GET /gardens/" + gardenId + "/plants/" + plantId + "/edit");
+        return "pages/editPlantPage";
     }
 }

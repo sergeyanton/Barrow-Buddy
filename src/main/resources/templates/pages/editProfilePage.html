@@ -4,31 +4,43 @@
 <head>
     <meta charset="UTF-8">
     <title>Edit Profile</title>
-    <link rel="stylesheet" type="text/css" th:href="@{/css/styles-user.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style-user.css}">
 </head>
 
 <body>
     <div class="basic">
-
         <h1>Edit My Profile</h1>
-        <form th:action="@{/editProfile}" method="post" th:object="${editUserForm}">
+        <form class="upload-image" th:action="@{/editProfile}" method="post" th:object="${editUserForm}" enctype="multipart/form-data">
+            <div class="profile-picture-wrapper">
+                <input th:field="*{picturePath}" type="hidden"/>
+                <img class="profile-picture" id="profileImage"
+                     th:src="${editUserForm.getPicturePath()}"
+                     alt="Profile Picture">
+            </div>
+
+            <div class="form-element">
+                <label class="file-upload-label" th:for="pictureFile">Edit Profile Picture</label>
+                <input th:field="*{pictureFile}" type="file" onchange="validateImage(this)" accept="image/png, image/jpeg, image/svg+xml">
+                <br><span id="clientSideErrorMessage" class="error"></span>
+            </div>
+
             <input th:replace="~{fragments/formElement :: formElementField(fieldName='firstName', label='First Name: ', placeholder='Fabian')}" />
-            <br />
             <input th:replace="~{fragments/formElement :: formElementField(fieldName='lastName', label='Last Name: ', placeholder='Gilson')}" />
-            <br />
-            <input type="checkbox" class="form-control" id="noSurnameCheckBox" th:field="*{noSurnameCheckBox}" onclick="toggleInput()">
-            <label for="noSurnameCheckBox"> I have no surname </label>
-            <br />
+
+            <div class="form-element">
+                <label for="noSurnameCheckBox"> I have no surname </label>
+                <input type="checkbox" class="form-control" id="noSurnameCheckBox" th:field="*{noSurnameCheckBox}" onclick="toggleInput()">
+            </div>
+
             <input th:replace="~{fragments/formElement :: formElementField(fieldName='email', label='Email: ', placeholder='jane@doe.nz')}" />
-            <br />
             <input th:replace="~{fragments/formElement :: formElementField(fieldName='dob', label='Date of Birth: ', placeholder='DD/MM/YYYY')}" />
-            <br />
+
             <button type="submit">Update Profile</button>
             <a th:href="@{editProfile/updatePassword}">Update Password</a>
             <a class="cancel" th:href="@{profile}">Cancel</a>
         </form>
     </div>
-    <script>
+    <script th:inline="javascript">
         // Function to disable last name input field if the 'no surname' checkbox is checked
         function toggleInput() {
             let checkbox = document.getElementById('noSurnameCheckBox');
@@ -46,6 +58,57 @@
         window.onload = function () {
             toggleInput();
         };
+
+        // THYMELEAF SYNTAX FOR GETTING MODEL ATTRIBUTES INTO INLINE JS. The comment matters.
+        const initialProfilePictureUrl = /*[[${editUserForm.getPicturePath()}]]*/ '';
+
+        function validateImage(input) {
+            if (!(input.files && input.files[0])) {
+                return;
+            }
+            const file = input.files[0];
+            const validTypes = ["image/png", "image/jpeg", "image/svg+xml"];
+            const maxFileSize = 10 * 1024 * 1024;
+
+            if (!validTypes.includes(file.type) && file.size > maxFileSize) {
+                input.value = '';
+                document.getElementById('profileImage').src = initialProfilePictureUrl;
+                document.getElementById('clientSideErrorMessage').textContent = "Image must be of type png, jpg or svg, and less than 10MB";
+                return;
+            }
+            if (!validTypes.includes(file.type)) {
+                input.value = '';
+                document.getElementById('profileImage').src = initialProfilePictureUrl;
+                document.getElementById('clientSideErrorMessage').textContent = "Image must be of type png, jpg or svg";
+                return;
+            }
+            if (file.size > maxFileSize) {
+                input.value = '';
+                document.getElementById('profileImage').src = initialProfilePictureUrl;
+                document.getElementById('clientSideErrorMessage').textContent = "Image must be less than 10MB";
+                return;
+            }
+
+            const fileReader = new FileReader();
+            fileReader.onload = function (e) {
+                document.getElementById('profileImage').src = e.target.result;
+            }
+            fileReader.readAsDataURL(input.files[0]);
+
+            document.getElementById('clientSideErrorMessage').textContent = "";
+        }
+
+        // inspiration from source code: https://www.tjvantoll.com/2013/01/01/enter-should-submit-forms-stop-messing-with-that/
+        // to disable early form submission using enter key
+        const elements = ['firstName', 'lastName', 'noSurnameCheckBox', 'email']
+
+        for (let i = 0; i < elements.length; i++) {
+            document.getElementById(elements[i]).addEventListener('keypress', function(event) {
+                if (event.keyCode === 13) {
+                    event.preventDefault();
+                }
+            });
+        }
     </script>
 </body>
 </html>

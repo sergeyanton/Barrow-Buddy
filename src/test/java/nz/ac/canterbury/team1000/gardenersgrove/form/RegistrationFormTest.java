@@ -15,7 +15,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 
 public class RegistrationFormTest {
-    RegistrationForm registrationForm = new RegistrationForm();
+    final RegistrationForm registrationForm = new RegistrationForm();
     @Mock
     BindingResult bindingResult;
     private static MockedStatic<Clock> mockedClock;
@@ -83,6 +83,20 @@ public class RegistrationFormTest {
     }
 
     @Test
+    void validate_FirstNameContainsAccentedCharacters_DoesNotAddError() {
+        registrationForm.setFirstName("María");
+        RegistrationForm.validate(registrationForm, bindingResult);
+        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
+
+    @Test
+    void validate_FirstNameContainsMacron_DoesNotAddError() {
+        registrationForm.setFirstName("Mārama");
+        RegistrationForm.validate(registrationForm, bindingResult);
+        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
+
+    @Test
     void validate_WithBlankLastName_AddsError() {
         registrationForm.setLastName("");
         RegistrationForm.validate(registrationForm, bindingResult);
@@ -107,6 +121,20 @@ public class RegistrationFormTest {
     void validate_WithBlankLastNameAndNoSurnameCheckBox_DoesNotAddError() {
         registrationForm.setLastName("");
         registrationForm.setNoSurnameCheckBox(true);
+        RegistrationForm.validate(registrationForm, bindingResult);
+        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
+
+    @Test
+    void validate_LastNameContainsAccentedCharacters_DoesNotAddError() {
+        registrationForm.setLastName("María");
+        RegistrationForm.validate(registrationForm, bindingResult);
+        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
+
+    @Test
+    void validate_LastNameContainsMacron_DoesNotAddError() {
+        registrationForm.setLastName("Mārama");
         RegistrationForm.validate(registrationForm, bindingResult);
         Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
     }

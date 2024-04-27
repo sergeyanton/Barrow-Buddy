@@ -20,6 +20,7 @@ public class RegistrationForm {
     protected String dob;
     protected String password;
     protected String retypePassword;
+    protected String picturePath;
 
     public String getFirstName() {
         return this.firstName;
@@ -85,6 +86,13 @@ public class RegistrationForm {
         this.retypePassword = retypePassword;
     }
 
+    public void setProfilePictureUrl(String picturePath) {
+        this.picturePath = picturePath;
+    }
+    public String getProfilePictureUrl() {
+        return this.picturePath;
+    }
+
     /**
      * Generates a User object with the values from the form.
      *
@@ -96,7 +104,8 @@ public class RegistrationForm {
                 this.lastName,
                 this.email,
                 passwordEncoder.encode(this.password),
-                this.getDobLocalDate()
+                this.getDobLocalDate(),
+                "/images/default_pic.jpg"
         );
     }
 
@@ -115,7 +124,7 @@ public class RegistrationForm {
             errors.add("firstName", "First name cannot be empty", registrationForm.getFirstName());
         } else if (checkOverMaxLength(registrationForm.getFirstName(), 64)) {
             errors.add("firstName", "First name must be 64 characters long or less", registrationForm.getFirstName());
-        } else if (!checkOnlyHasLettersSpacesHyphensApostrophes(registrationForm.getFirstName())) {
+        } else if (!checkOnlyHasLettersMacronsSpacesHyphensApostrophes(registrationForm.getFirstName())) {
             errors.add("firstName", "First name must only include letters, spaces, hyphens or apostrophes", registrationForm.getFirstName());
         }
 
@@ -125,7 +134,7 @@ public class RegistrationForm {
                 errors.add("lastName", "Last name cannot be empty", registrationForm.getLastName());
             } else if (checkOverMaxLength(registrationForm.getLastName(), 64)) {
                 errors.add("lastName", "Last name must be 64 characters long or less", registrationForm.getLastName());
-            } else if (!checkOnlyHasLettersSpacesHyphensApostrophes(registrationForm.getLastName())) {
+            } else if (!checkOnlyHasLettersMacronsSpacesHyphensApostrophes(registrationForm.getLastName())) {
                 errors.add("lastName", "Last name must only include letters, spaces, hyphens or apostrophes", registrationForm.getLastName());
             }
         }

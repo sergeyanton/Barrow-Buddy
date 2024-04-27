@@ -15,7 +15,7 @@ import java.util.List;
  */
 @Service
 public class PlantService {
-    private PlantRepository plantRepository;
+    private final PlantRepository plantRepository;
 
     @Autowired
     public PlantService(PlantRepository plantRepository) {
