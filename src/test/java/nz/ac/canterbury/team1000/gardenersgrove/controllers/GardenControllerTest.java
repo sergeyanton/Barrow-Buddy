@@ -145,7 +145,7 @@ public class GardenControllerTest {
                         .flashAttr("createGardenForm", gardenForm))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("pages/createGardenPage"))
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("createGardenForm", "location"));
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("createGardenForm", "street"));
 
         Mockito.verify(gardenService, Mockito.never()).addGarden(Mockito.any());
     }
@@ -158,7 +158,7 @@ public class GardenControllerTest {
                         .flashAttr("createGardenForm", gardenForm))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("pages/createGardenPage"))
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("createGardenForm", "location"));
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("createGardenForm", "streetNumber"));
 
         Mockito.verify(gardenService, Mockito.never()).addGarden(Mockito.any());
     }
@@ -171,7 +171,7 @@ public class GardenControllerTest {
                         .flashAttr("createGardenForm", gardenForm))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("pages/createGardenPage"))
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("createGardenForm", "location"));
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("createGardenForm", "suburb"));
 
         Mockito.verify(gardenService, Mockito.never()).addGarden(Mockito.any());
     }
@@ -184,7 +184,7 @@ public class GardenControllerTest {
                         .flashAttr("createGardenForm", gardenForm))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("pages/createGardenPage"))
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("createGardenForm", "location"));
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("createGardenForm", "city"));
 
         Mockito.verify(gardenService, Mockito.never()).addGarden(Mockito.any());
     }
@@ -197,7 +197,7 @@ public class GardenControllerTest {
                         .flashAttr("createGardenForm", gardenForm))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("pages/createGardenPage"))
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("createGardenForm", "location"));
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("createGardenForm", "postcode"));
 
         Mockito.verify(gardenService, Mockito.never()).addGarden(Mockito.any());
     }
@@ -210,7 +210,7 @@ public class GardenControllerTest {
                         .flashAttr("createGardenForm", gardenForm))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("pages/createGardenPage"))
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("createGardenForm", "location"));
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("createGardenForm", "country"));
 
         Mockito.verify(gardenService, Mockito.never()).addGarden(Mockito.any());
     }
