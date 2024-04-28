@@ -83,6 +83,7 @@ public class AccountController {
         }
 
         User newUser = registrationForm.getUser(passwordEncoder);
+        logger.warn(newUser.getPassword());
         // Give them the role of user
         newUser.grantAuthority("ROLE_USER");
         userService.registerUser(newUser);
