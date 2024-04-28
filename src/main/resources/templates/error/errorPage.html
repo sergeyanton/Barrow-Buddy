@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head(title='Gardener\'s Grove - Edit ' + ${gardenName})}"></head>
+
+<body>
+    <div th:replace="~{fragments/header :: header}"></div>
+    <main>
+        <h1 th:text="${errorMessage}"></h1>
+        <p th:text="${errorDescription}"></p>
+        <th:block th:if="${debug}">
+            <h4 th:text=" ${status} + ': ' + ${error}"></h4>
+            <p th:text="${message}"></p>
+            <a th:href="@{..}">Go back home</a>
+            <h1>Basic Thymeleaf Error Page (You may want to make something better)</h1>
+            <table>
+                <tr>
+                    <td>Date</td>
+                    <td th:text="${timestamp}" />
+                </tr>
+                <tr>
+                    <td>Path</td>
+                    <td th:text="${path}" />
+                </tr>
+                <tr>
+                    <td>Error</td>
+                    <td th:text="${error}" />
+                </tr>
+                <tr>
+                    <td>Status</td>
+                    <td th:text="${status}" />
+                </tr>
+                <tr>
+                    <td>Message</td>
+                    <td th:text="${message}" />
+                </tr>
+                <tr>
+                    <td>Exception</td>
+                    <td th:text="${exception}" />
+                </tr>
+                <tr>
+                    <td>Trace</td>
+                    <td>
+                        <pre th:text="${trace}" />
+                    </td>
+                </tr>
+            </table>
+        </th:block>
+    </main>
+</body>
+
+</html>

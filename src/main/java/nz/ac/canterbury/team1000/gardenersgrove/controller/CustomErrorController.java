@@ -8,9 +8,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Custom error controller class
  * Shows a custom error page for the error types 404 and 403
@@ -25,26 +22,18 @@ public class CustomErrorController implements ErrorController {
     @RequestMapping("/error")
     public String handleError(HttpServletRequest request, Model model) {
         Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
-        Object message = request.getAttribute(RequestDispatcher.ERROR_MESSAGE);
-
-        model.addAttribute("status", status);
-        model.addAttribute("message", message);
-
-        final Map<Integer, String> customErrorMessages = new HashMap<>() {{
-                put(HttpStatus.NOT_FOUND.value(), "Not Found");
-                put(HttpStatus.FORBIDDEN.value(), "You don't have permission to access this");
-        }};
-
-        if (status != null) {
-            // Show a custom error page if the status code is found in customErrorMessages
-            int statusCode = Integer.parseInt(status.toString());
-            if (customErrorMessages.containsKey(statusCode)) {
-                model.addAttribute("customErrorMessage", customErrorMessages.get(statusCode));
-                return "errorPages/custom";
-            }
+        model.addAttribute("debug", true);
+        if (status == null) {
+            model.addAttribute("errorMessage", "Something went wrong");
+            return "error/errorPage";
         }
+        HttpStatus statusCode = HttpStatus.valueOf(Integer.parseInt(status.toString()));
+        model.addAttribute("errorMessage", "%s - %s".formatted(statusCode.value(), statusCode.getReasonPhrase()));
+        System.out.println(model.asMap().entrySet().toString());
+        return "error/errorPage";
+    }
 
-        return "errorPages/default";
-
+    public String getErrorPath() {
+        return "/error";
     }
 }
