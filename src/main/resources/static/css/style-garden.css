@@ -201,9 +201,8 @@ table tbody {
 
 td {
     max-width: 200px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: initial;
+    word-wrap: break-word;
 }
 
 .scroll-plants-container {
