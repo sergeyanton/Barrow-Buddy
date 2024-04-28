@@ -57,7 +57,7 @@ public class VerificationToken {
      * @return the expiry date of the token
      */
     private LocalDateTime calculateExpiryDate() {
-        return LocalDateTime.now().plusMinutes(10);
+        return LocalDateTime.now().plusMinutes(2);
     }
 
     public Long getId() {
@@ -76,13 +76,14 @@ public class VerificationToken {
         return token;
     }
 
-    public boolean getVerified() {
+    public boolean isVerified() {
         return verified;
     }
 
-    public void verifyUser() {
-        this.verified = true;
+    public void setVerified(boolean verified) {
+        this.verified = verified;
     }
+
 
     public LocalDateTime getExpiryDate() {
         return expiryDate;

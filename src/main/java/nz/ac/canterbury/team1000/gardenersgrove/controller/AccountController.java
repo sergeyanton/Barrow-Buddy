@@ -137,16 +137,15 @@ public class AccountController {
     public String registerVerification(@ModelAttribute("verificationTokenForm") VerificationTokenForm verificationTokenForm, BindingResult bindingResult) {
         VerificationTokenForm.validate(verificationTokenForm, bindingResult);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        long userId = userService.findEmail(authentication.getName()).getId();
-
-        if (!bindingResult.hasFieldErrors("verificationToken") && !validateToken(verificationTokenForm.getVerificationToken(), userId)) {
+        User user = userService.findEmail(authentication.getName());
+        if (user == null || (!bindingResult.hasFieldErrors("verificationToken") && !validateToken(verificationTokenForm.getVerificationToken(), user.getId()))) {
             bindingResult.addError(new FieldError("verificationTokenForm", "verificationToken", verificationTokenForm.getVerificationToken(), false, null, null, "Signup code invalid"));
         }
 
         if (bindingResult.hasErrors()) {
             return "pages/verificationPage";
         }
-        verificationTokenService.getVerificationTokenByUserId(userId).verifyUser();
+        verificationTokenService.updateVerifiedByUserId(user.getId());
         return "redirect:/login";
     }
 
@@ -158,6 +157,9 @@ public class AccountController {
      * @return boolean value whether the token is verified(true) or not(false)
      */
     private boolean validateToken(String userInputToken, long userId) {
+        if (verificationTokenService.getVerificationTokenByUserId(userId) == null) {
+            return false;
+        }
         return verifyPassword(userInputToken, verificationTokenService.getVerificationTokenByUserId(userId).getHashedToken());
     }
 
@@ -185,7 +187,7 @@ public class AccountController {
     public String getLoginPage(LoginForm loginForm) {
         logger.info("GET /login");
 
-        if (userService.getLoggedInUser() != null && !verificationTokenService.getVerificationTokenByUserId(userService.getLoggedInUser().getId()).getVerified()) {
+        if (userService.getLoggedInUser() != null && !verificationTokenService.getVerificationTokenByUserId(userService.getLoggedInUser().getId()).isVerified()) {
             return "redirect:/register/verification";
         }
         return userService.isSignedIn() ? "redirect:/" : "pages/loginPage";

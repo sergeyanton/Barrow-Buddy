@@ -35,6 +35,15 @@ public class VerificationTokenService {
         verificationTokenRepository.save(verificationToken);
     }
 
+    public void updateVerifiedByUserId(Long userId) {
+        Optional<VerificationToken> verificationToken = verificationTokenRepository.findByUserId(userId);
+        verificationToken.ifPresent(token -> {
+            token.setVerified(true);
+            verificationTokenRepository.save(token);
+        });
+//        verificationTokenRepository.updateVerifiedByUserId(userId);
+    }
+
 
 }
 
