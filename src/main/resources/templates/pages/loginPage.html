@@ -23,5 +23,13 @@
             <a class="cancel" th:href="@{.}">Cancel</a>
         </form>
     </div>
+    <script>
+        // to disable early form submission using enter key
+        document.getElementById('email').addEventListener('keypress', function(event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+            }
+        });
+    </script>
 </body>
 </html>

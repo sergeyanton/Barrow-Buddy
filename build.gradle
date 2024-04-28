@@ -2,6 +2,8 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.2.2'
 	id 'io.spring.dependency-management' version '1.1.4'
+	id 'jacoco'
+	id 'org.sonarqube' version '4.0.0.2929'
 }
 
 group = 'nz.ac.canterbury.team1000'
@@ -21,12 +23,38 @@ dependencies {
 	implementation 'com.h2database:h2'
 	implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
 	implementation 'org.springframework.boot:spring-boot-starter-validation:3.2.4'
+
+	// https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client
+	implementation 'org.mariadb.jdbc:mariadb-java-client:3.3.3'
+
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 }
 
+jacocoTestReport {
+	dependsOn test
+
+	reports {
+		xml.required = true
+		xml.destination = file("$buildDir/jacoco/test-report.xml")
+		csv.required = false
+		html.destination = file("$buildDir/jacoco/html")
+	}
+}
+
+sonar {
+	properties {
+		property "sonar.projectKey", "seng302-2024-team1000"
+			property "sonar.projectName", "seng302-2024-teamX"
+			property "sonar.sourceEncoding", "UTF-8"
+		property "sonar.host.url", "https://sonarqube.csse.canterbury.ac.nz"
+			property "sonar.login", "$System.env.SONARQUBE_TOKEN"
+	}
+}
+
 tasks.named('test') {
 	useJUnitPlatform()
+	finalizedBy jacocoTestReport
 }

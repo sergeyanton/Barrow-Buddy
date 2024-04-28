@@ -99,6 +99,18 @@
 
             document.getElementById('clientSideErrorMessage').textContent = "";
         }
+
+        // inspiration from source code: https://www.tjvantoll.com/2013/01/01/enter-should-submit-forms-stop-messing-with-that/
+        // to disable early form submission using enter key
+        const elements = ['firstName', 'lastName', 'noSurnameCheckBox', 'email']
+
+        for (let i = 0; i < elements.length; i++) {
+            document.getElementById(elements[i]).addEventListener('keypress', function(event) {
+                if (event.keyCode === 13) {
+                    event.preventDefault();
+                }
+            });
+        }
     </script>
 </body>
 </html>
