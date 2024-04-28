@@ -65,58 +65,21 @@ class GardenFormTest {
         GardenForm.validate(gardenForm, bindingResult);
         Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
     }
-
-    @Test
-    void validate_LocationStreetEmpty_AddsError() {
-        gardenForm.setAddress("");
-        GardenForm.validate(gardenForm, bindingResult);
-        Mockito.verify(bindingResult).addError(Mockito.any());
-    }
-    @Test
-    void validate_LocationSuburbEmpty_AddsError() {
-        gardenForm.setSuburb("");
-        GardenForm.validate(gardenForm, bindingResult);
-        Mockito.verify(bindingResult).addError(Mockito.any());
-    }
     @Test
     void validate_LocationCityEmpty_AddsError() {
         gardenForm.setCity("");
         GardenForm.validate(gardenForm, bindingResult);
         Mockito.verify(bindingResult).addError(Mockito.any());
-    }    @Test
-    void validate_LocationPostcodeEmpty_AddsError() {
-        gardenForm.setPostcode("");
-        GardenForm.validate(gardenForm, bindingResult);
-        Mockito.verify(bindingResult).addError(Mockito.any());
-    }    @Test
+    }
+    @Test
     void validate_LocationCountryEmpty_AddsError() {
         gardenForm.setCountry("");
-        GardenForm.validate(gardenForm, bindingResult);
-        Mockito.verify(bindingResult).addError(Mockito.any());
-    }
-
-
-    @Test
-    void validate_LocationStreetBlank_AddsError() {
-        gardenForm.setAddress("     ");
-        GardenForm.validate(gardenForm, bindingResult);
-        Mockito.verify(bindingResult).addError(Mockito.any());
-    }
-    @Test
-    void validate_LocationSuburbBlank_AddsError() {
-        gardenForm.setSuburb("     ");
         GardenForm.validate(gardenForm, bindingResult);
         Mockito.verify(bindingResult).addError(Mockito.any());
     }
     @Test
     void validate_LocationCityBlank_AddsError() {
         gardenForm.setCity("     ");
-        GardenForm.validate(gardenForm, bindingResult);
-        Mockito.verify(bindingResult).addError(Mockito.any());
-    }
-    @Test
-    void validate_LocationPostcodeBlank_AddsError() {
-        gardenForm.setPostcode("     ");
         GardenForm.validate(gardenForm, bindingResult);
         Mockito.verify(bindingResult).addError(Mockito.any());
     }
@@ -128,7 +91,7 @@ class GardenFormTest {
     }
 
     @Test
-    void validate_LocationStreetInvalid_AddsError() {
+    void validate_LocationAddressInvalid_AddsError() {
         gardenForm.setAddress("$teve");
         GardenForm.validate(gardenForm, bindingResult);
         Mockito.verify(bindingResult).addError(Mockito.any());
@@ -159,7 +122,7 @@ class GardenFormTest {
     }
 
     @Test
-    void validate_LocationStreetTooLong_AddsError() {
+    void validate_LocationAddressTooLong_AddsError() {
         gardenForm.setAddress("a".repeat(10000));
         GardenForm.validate(gardenForm, bindingResult);
         Mockito.verify(bindingResult).addError(Mockito.any());
@@ -188,9 +151,47 @@ class GardenFormTest {
         GardenForm.validate(gardenForm, bindingResult);
         Mockito.verify(bindingResult).addError(Mockito.any());
     }
+    @Test
+    void validate_EmptyAddressValid_DoesNotAddError() {
+        gardenForm.setAddress("");
+        GardenForm.validate(gardenForm, bindingResult);
+        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
+    @Test
+    void validate_WhitespaceAddressValid_DoesNotAddError() {
+        gardenForm.setAddress("");
+        GardenForm.validate(gardenForm, bindingResult);
+        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
 
     @Test
-    void validate_LocationStreetValid_DoesNotAddError() {
+    void validate_EmptySuburbValid_DoesNotAddError() {
+        gardenForm.setSuburb("");
+        GardenForm.validate(gardenForm, bindingResult);
+        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
+    @Test
+    void validate_WhitespaceSuburbValid_DoesNotAddError() {
+        gardenForm.setSuburb("");
+        GardenForm.validate(gardenForm, bindingResult);
+        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
+
+    @Test
+    void validate_EmptyPostcodeValid_DoesNotAddError() {
+        gardenForm.setPostcode("");
+        GardenForm.validate(gardenForm, bindingResult);
+        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
+    @Test
+    void validate_WhitespacePostcodeValid_DoesNotAddError() {
+        gardenForm.setPostcode("");
+        GardenForm.validate(gardenForm, bindingResult);
+        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
+
+    @Test
+    void validate_LocationAddressValid_DoesNotAddError() {
         gardenForm.setAddress("A1-,.");
         GardenForm.validate(gardenForm, bindingResult);
         Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
