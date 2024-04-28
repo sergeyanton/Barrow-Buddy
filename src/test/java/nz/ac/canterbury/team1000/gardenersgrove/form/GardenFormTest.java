@@ -159,7 +159,7 @@ class GardenFormTest {
     }
     @Test
     void validate_WhitespaceAddressValid_DoesNotAddError() {
-        gardenForm.setAddress("");
+        gardenForm.setAddress("     ");
         GardenForm.validate(gardenForm, bindingResult);
         Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
     }
@@ -172,7 +172,7 @@ class GardenFormTest {
     }
     @Test
     void validate_WhitespaceSuburbValid_DoesNotAddError() {
-        gardenForm.setSuburb("");
+        gardenForm.setSuburb("     ");
         GardenForm.validate(gardenForm, bindingResult);
         Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
     }
@@ -185,7 +185,7 @@ class GardenFormTest {
     }
     @Test
     void validate_WhitespacePostcodeValid_DoesNotAddError() {
-        gardenForm.setPostcode("");
+        gardenForm.setPostcode("      ");
         GardenForm.validate(gardenForm, bindingResult);
         Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
     }
