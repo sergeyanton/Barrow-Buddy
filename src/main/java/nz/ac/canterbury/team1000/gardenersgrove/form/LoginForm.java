@@ -2,8 +2,7 @@ package nz.ac.canterbury.team1000.gardenersgrove.form;
 
 import org.springframework.validation.BindingResult;
 
-import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.checkBlank;
-import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.checkEmailIsInvalid;
+import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.*;
 
 /**
  * Entity used to parse and store the data sent through a login POST request
@@ -40,6 +39,8 @@ public class LoginForm {
         // validate email
         if (checkBlank(loginForm.getEmail()) || checkEmailIsInvalid(loginForm.getEmail())) {
             errors.add("email", "Email address must be in the form ‘jane@doe.nz’", loginForm.getEmail());
+        } else if (checkOverMaxLength(loginForm.getEmail(), MAX_DB_STR_LEN)) {
+            errors.add("email", "Email address must be " + MAX_DB_STR_LEN + " characters long or less", loginForm.getEmail());
         }
 
         // validate password

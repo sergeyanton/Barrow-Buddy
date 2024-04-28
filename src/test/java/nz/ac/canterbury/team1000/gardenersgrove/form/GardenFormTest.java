@@ -7,7 +7,7 @@ import org.mockito.Mockito;
 import org.springframework.validation.BindingResult;
 
 class GardenFormTest {
-    GardenForm gardenForm = new GardenForm();
+    final GardenForm gardenForm = new GardenForm();
 
     @Mock
     BindingResult bindingResult;

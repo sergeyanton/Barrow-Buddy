@@ -3,7 +3,7 @@
 
 <head>
     <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
-    <link rel="stylesheet" type="text/css" th:href="@{/css/styles-user.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style-user.css}">
     <title>Log in</title>
 </head>
 
@@ -18,10 +18,18 @@
             <div>
                 <p>Not registered? <a th:href="@{register}">Create an account!</a></p>
             </div>
-
+            <a th:href="@{forgotPassword}">Forgot password?</a>
             <button type="submit">Sign In</button>
             <a class="cancel" th:href="@{.}">Cancel</a>
         </form>
     </div>
+    <script>
+        // to disable early form submission using enter key
+        document.getElementById('email').addEventListener('keypress', function(event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+            }
+        });
+    </script>
 </body>
 </html>

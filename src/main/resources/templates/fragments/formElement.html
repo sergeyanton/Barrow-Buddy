@@ -1,5 +1,7 @@
 <th:block th:fragment="formElementField(fieldName, label)" th:with="type=${type} ? ${type} : 'text', placeholder=${placeholder} ? ${placeholder} : null">
-    <label th:for="${fieldName}" th:text="${label}">label</label>
-    <input th:field="*{__${fieldName}__}" th:placeholder="${placeholder}" th:type="${type}"><br>
-    <span class="error" th:if="${#fields.hasErrors(fieldName)}" th:errors="*{__${fieldName}__}">Errors</span>
+    <div class="form-element">
+        <label th:for="${fieldName}" th:text="${label}">label</label>
+        <input th:field="*{__${fieldName}__}" th:placeholder="${placeholder}" th:type="${type}"><br>
+        <span class="error" th:if="${#fields.hasErrors(fieldName)}" th:errors="*{__${fieldName}__}">Errors</span>
+    </div>
 </th:block>
