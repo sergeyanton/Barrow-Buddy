@@ -6,7 +6,7 @@
 <body>
 <div th:replace="~{fragments/header :: header}"></div>
 <main>
-  <h4 th:text="${status} + ': ' + ${error}"></h4>
+  <h4 th:text="${status} + ': ' + ${customErrorMessage}"></h4>
   <p th:text="${message}"></p>
 </main>
 </body>
