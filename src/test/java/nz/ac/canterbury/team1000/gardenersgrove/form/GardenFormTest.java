@@ -16,8 +16,7 @@ class GardenFormTest {
     void setUp() {
         // set the garden form to a new user with valid data
         gardenForm.setName("Green Garden");
-        gardenForm.setStreet("A");
-        gardenForm.setStreetNumber("B");
+        gardenForm.setAddress("A");
         gardenForm.setSuburb("C");
         gardenForm.setCity("D");
         gardenForm.setPostcode("E");
@@ -69,14 +68,7 @@ class GardenFormTest {
 
     @Test
     void validate_LocationStreetEmpty_AddsError() {
-        gardenForm.setStreet("");
-        GardenForm.validate(gardenForm, bindingResult);
-        Mockito.verify(bindingResult).addError(Mockito.any());
-    }
-
-    @Test
-    void validate_LocationStreetNumberEmpty_AddsError() {
-        gardenForm.setStreetNumber("");
+        gardenForm.setAddress("");
         GardenForm.validate(gardenForm, bindingResult);
         Mockito.verify(bindingResult).addError(Mockito.any());
     }
@@ -106,13 +98,7 @@ class GardenFormTest {
 
     @Test
     void validate_LocationStreetBlank_AddsError() {
-        gardenForm.setStreet("     ");
-        GardenForm.validate(gardenForm, bindingResult);
-        Mockito.verify(bindingResult).addError(Mockito.any());
-    }
-    @Test
-    void validate_LocationStreetNumberBlank_AddsError() {
-        gardenForm.setStreetNumber("     ");
+        gardenForm.setAddress("     ");
         GardenForm.validate(gardenForm, bindingResult);
         Mockito.verify(bindingResult).addError(Mockito.any());
     }
@@ -143,13 +129,7 @@ class GardenFormTest {
 
     @Test
     void validate_LocationStreetInvalid_AddsError() {
-        gardenForm.setStreet("$teve");
-        GardenForm.validate(gardenForm, bindingResult);
-        Mockito.verify(bindingResult).addError(Mockito.any());
-    }
-    @Test
-    void validate_LocationStreetNumberInvalid_AddsError() {
-        gardenForm.setStreetNumber("$teve");
+        gardenForm.setAddress("$teve");
         GardenForm.validate(gardenForm, bindingResult);
         Mockito.verify(bindingResult).addError(Mockito.any());
     }
@@ -180,13 +160,7 @@ class GardenFormTest {
 
     @Test
     void validate_LocationStreetTooLong_AddsError() {
-        gardenForm.setStreet("a".repeat(10000));
-        GardenForm.validate(gardenForm, bindingResult);
-        Mockito.verify(bindingResult).addError(Mockito.any());
-    }
-    @Test
-    void validate_LocationStreetNumberTooLong_AddsError() {
-        gardenForm.setStreetNumber("a".repeat(10000));
+        gardenForm.setAddress("a".repeat(10000));
         GardenForm.validate(gardenForm, bindingResult);
         Mockito.verify(bindingResult).addError(Mockito.any());
     }
@@ -217,13 +191,7 @@ class GardenFormTest {
 
     @Test
     void validate_LocationStreetValid_DoesNotAddError() {
-        gardenForm.setStreet("A1-,.");
-        GardenForm.validate(gardenForm, bindingResult);
-        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
-    }
-    @Test
-    void validate_LocationStreetNumberValid_DoesNotAddError() {
-        gardenForm.setStreetNumber("A1-,.");
+        gardenForm.setAddress("A1-,.");
         GardenForm.validate(gardenForm, bindingResult);
         Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
     }
