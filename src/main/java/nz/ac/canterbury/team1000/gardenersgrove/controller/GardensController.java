@@ -177,9 +177,12 @@ public class GardensController {
         User loggedInUser = userService.getLoggedInUser();
         Garden garden = gardenService.getGardenById(gardenId);
 
-        if (garden.getOwner().getId() != loggedInUser.getId()) {
+        if (!Objects.equals(garden.getOwner().getId(), loggedInUser.getId())) {
             // respond with 403 Forbidden
-            return "error/403";
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "You don't own own this garden"
+            );
         }
 
         editGardenForm.setName(garden.getName());
@@ -211,9 +214,12 @@ public class GardensController {
         User loggedInUser = userService.getLoggedInUser();
         Garden garden = gardenService.getGardenById(gardenId);
 
-        if (garden.getOwner().getId() != loggedInUser.getId()) {
+        if (!Objects.equals(garden.getOwner().getId(), loggedInUser.getId())) {
             // respond with 403 Forbidden
-            return "error/403";
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "You don't own own this garden"
+            );
         }
         GardenForm.validate(editGardenForm, bindingResult);
 
@@ -221,7 +227,6 @@ public class GardensController {
             return "pages/editGardenPage";
         }
 
-        Garden garden = gardenService.getGardenById(gardenId);
         Garden edit =  editGardenForm.getGarden(loggedInUser);
         garden.setName(edit.getName());
         garden.setLocation(edit.getLocation());
@@ -250,9 +255,12 @@ public class GardensController {
         User loggedInUser = userService.getLoggedInUser();
         Garden garden = gardenService.getGardenById(gardenId);
 
-        if (garden.getOwner().getId() != loggedInUser.getId()) {
+        if (!Objects.equals(garden.getOwner().getId(), loggedInUser.getId())) {
             // respond with 403 Forbidden
-            return "error/403";
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "You don't own own this garden"
+            );
         }
         return "pages/createPlantPage";
     }
@@ -281,9 +289,12 @@ public class GardensController {
         User loggedInUser = userService.getLoggedInUser();
         Garden garden = gardenService.getGardenById(gardenId);
 
-        if (garden.getOwner().getId() != loggedInUser.getId()) {
+        if (!Objects.equals(garden.getOwner().getId(), loggedInUser.getId())) {
             // respond with 403 Forbidden
-            return "error/403";
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "You don't own own this garden"
+            );
         }
         PlantForm.validate(createPlantForm, bindingResult);
         if (bindingResult.hasErrors()) {
