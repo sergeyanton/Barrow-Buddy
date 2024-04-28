@@ -7,6 +7,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import nz.ac.canterbury.team1000.gardenersgrove.form.GardenForm;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +71,7 @@ public class GardenControllerTest {
             addedGarden.setId(1L);
             return addedGarden;
         });
-        Mockito.when(gardenService.updateGardenById(gardenForm.getGarden().getId(), Mockito.any(Garden.class))).thenAnswer(invocation -> {
+        Mockito.when(gardenService.updateGardenById(ArgumentMatchers.eq(1L), Mockito.any(Garden.class))).thenAnswer(invocation -> {
             Garden updatedGarden = invocation.getArgument(0);
             updatedGarden.setId(1L);
             return updatedGarden;
