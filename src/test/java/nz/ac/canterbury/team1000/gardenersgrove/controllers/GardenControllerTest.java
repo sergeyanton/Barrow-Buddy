@@ -6,6 +6,11 @@ import nz.ac.canterbury.team1000.gardenersgrove.form.GardenForm;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EmptySource;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,21 +99,11 @@ public class GardenControllerTest {
         Mockito.verify(gardenService).addGarden(Mockito.any());
     }
 
-    @Test
-    public void CreateGardenPost_WithValidGardenLocationAddressEmpty_SavesToService() throws Exception {
-        gardenForm.setAddress("");
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/create").with(csrf())
-                        .flashAttr("createGardenForm", gardenForm))
-                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
-
-        Mockito.verify(gardenService).addGarden(Mockito.any());
-    }
-
-    @Test
-    public void CreateGardenPost_WithValidGardenLocationAddressWhitespace_SavesToService() throws Exception {
-        gardenForm.setAddress("      ");
+    @ParameterizedTest
+    @EmptySource
+    @ValueSource(strings = {"    ", "\t", "\n", "1,5"})
+    void CreateGardenPost_ValidAddress_SavesToService(String addressField) throws Exception {
+        gardenForm.setAddress(addressField);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/create").with(csrf())
                         .flashAttr("createGardenForm", gardenForm))
@@ -280,10 +275,10 @@ public class GardenControllerTest {
         Mockito.verify(gardenService, Mockito.never()).addGarden(Mockito.any());
     }
 
-    @Test
-    public void CreateGardenPost_WithInvalidGardenBadAddress_ReturnsError() throws Exception {
-        gardenForm.setAddress("Not $ Allowed");
-
+    @ParameterizedTest
+    @ValueSource(strings = {"Not $ Allowed", "Not % Allowed"})
+    void CreateGardenPost_InvalidAddress_ReturnsError(String addressField) throws Exception {
+        gardenForm.setAddress(addressField);
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/create").with(csrf())
                         .flashAttr("createGardenForm", gardenForm))
                 .andExpect(MockMvcResultMatchers.status().isOk())
