@@ -8,7 +8,7 @@ import org.springframework.validation.BindingResult;
 
 public class LoginFormTest {
 
-    LoginForm loginForm = new LoginForm();
+    final LoginForm loginForm = new LoginForm();
 
     @Mock
     BindingResult bindingResult;
@@ -74,5 +74,4 @@ public class LoginFormTest {
         LoginForm.validate(loginForm, bindingResult);
         Mockito.verify(bindingResult).addError(Mockito.any());
     }
-
 }

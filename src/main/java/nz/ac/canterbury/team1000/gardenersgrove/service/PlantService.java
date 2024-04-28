@@ -15,7 +15,7 @@ import java.util.List;
  */
 @Service
 public class PlantService {
-    private PlantRepository plantRepository;
+    private final PlantRepository plantRepository;
 
     @Autowired
     public PlantService(PlantRepository plantRepository) {
@@ -31,6 +31,16 @@ public class PlantService {
     public Plant getPlantById(long id) {
         return plantRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid plant id: " + id));
+    }
+
+    /**
+     * Gets a plant from persistence by searching for the id
+     *
+     * @param id id to look for
+     * @return the appropriate plant
+     */
+    public List<Plant> getPlantsByGardenId(long id) {
+        return plantRepository.findByGardenId(id);
     }
 
     /**

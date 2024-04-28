@@ -1,10 +1,9 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controllers;
 
-import static org.hamcrest.Matchers.hasProperty; // for checking if the edit garden form gets populated properly
-import static org.hamcrest.Matchers.is; // for checking if the edit garden form gets populated properly
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 import nz.ac.canterbury.team1000.gardenersgrove.form.GardenForm;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -16,6 +15,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import nz.ac.canterbury.team1000.gardenersgrove.controller.GardensController;
@@ -53,11 +53,14 @@ public class GardenControllerTest {
     public void BeforeEach() {
         gardenMock = Mockito.mock(Garden.class);
         Mockito.when(gardenMock.getId()).thenReturn(1L);
+        Mockito.when(gardenMock.getName()).thenReturn("Hamilton Gardens");
+        Mockito.when(gardenMock.getLocation()).thenReturn("Hamilton");
+        Mockito.when(gardenMock.getSize()).thenReturn(46.2);
 
         gardenForm = new GardenForm();
-        gardenForm.setName("Hamilton Gardens");
-        gardenForm.setLocation("Hamilton");
-        gardenForm.setSize("46.2");
+        gardenForm.setName(gardenMock.getName());
+        gardenForm.setLocation(gardenMock.getLocation());
+        gardenForm.setSize(gardenMock.getSize().toString());
 
         // Mock addGarden(), updateGarden(), and getPlantById to always simply use id = 1
         Mockito.when(gardenService.addGarden(Mockito.any(Garden.class))).thenAnswer(invocation -> {
@@ -269,13 +272,16 @@ public class GardenControllerTest {
 
     @Test
     public void EditGardenGet_ValidGarden_FormIsPopulated() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/gardens/1/edit").with(csrf())
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/gardens/1/edit").with(csrf())
                         .flashAttr("editGardenForm", gardenForm))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.model().attribute("editGardenForm", hasProperty("name", is(gardenMock.getName()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("editGardenForm", hasProperty("location", is(gardenMock.getLocation()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("editGardenForm", hasProperty("size", is(gardenMock.getSize().toString()))));
-
+                        .andExpect(MockMvcResultMatchers.status().isOk())
+                        .andReturn();
+        GardenForm modelEditGardenForm = (GardenForm) result.getModelAndView().getModel().get("editGardenForm");
+        Assertions.assertEquals(gardenMock.getName(), modelEditGardenForm.getName());
+        Assertions.assertEquals(gardenMock.getLocation(), modelEditGardenForm.getLocation());
+        Assertions.assertEquals(gardenMock.getSize(), modelEditGardenForm.getSizeDouble());
+        System.out.println(gardenMock.getSize());
+        System.out.println(modelEditGardenForm.getSizeDouble());
         Mockito.verify(gardenService).getGardenById(1L);
     }
 }

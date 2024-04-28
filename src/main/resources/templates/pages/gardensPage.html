@@ -6,9 +6,9 @@
 <body>
     <div th:replace="~{fragments/header :: header}"></div>
     <main>
-        <h1>My Gardens</h1>
 
         <div class="content">
+            <h1>My Gardens</h1>
             <table>
                 <thead>
                     <tr>
@@ -24,7 +24,7 @@
                     <tr th:each="garden : ${gardens}">
                         <td><a th:href="@{/gardens/{id}(id=${garden.id})}" th:text="${garden.name}"> Name </a></td>
                         <td><span th:text="${garden.location}"> Location </span></td>
-                        <td><span th:if="${garden.size != null}" th:text="${garden.size}"> Size </span></td>
+                        <td><span th:text="${garden.size}"> Size </span></td>
                     </tr>
                 </tbody>
             </table>

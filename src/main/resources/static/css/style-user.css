@@ -3,6 +3,7 @@
     font-family: Helvetica;
 }
 
+
 /* Body style */
 body {
     background-color: #023020;
@@ -14,11 +15,22 @@ body {
 }
 
 /* Heading style */
-h1 {
+h1, form {
     text-align: center;
     margin-bottom: 2rem;
 }
 
+/*dev*/
+form button.cancel {
+    text-align: left;
+}
+
+/* Overwriting some tags */
+p {
+    margin: 4px 0;
+}
+
+/*elena*/
 /* Landing container styles */
 .landing {
     padding: 1.5rem;
@@ -43,8 +55,13 @@ h1 {
     border-radius: 10px;
 
     position: relative;
-    width: 500px;
-    height: 750px;
+    /*elena*/
+    /*width: 500px;*/
+    /*height: 750px;*/
+    width: 50rem;
+    height: auto;
+    min-height: 50%;
+
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -52,6 +69,7 @@ h1 {
     box-shadow: 0 0 1rem rgba(0, 0, 0, 0.5);
 }
 
+/*elena */
 /* Verification container styles */
 .verification {
     padding: 1.5rem;
@@ -68,25 +86,33 @@ h1 {
     box-shadow: 0 0 1rem rgba(0, 0, 0, 0.5);
 }
 
-/*.cancel, button.cancel{*/
-/*    padding: 8px 18px;*/
-/*    font-size: 18px;*/
-/*    border-radius: 10px;*/
-/*    color: #FAF9F6;*/
-/*    width: 100%;*/
-/*    text-align: center;*/
-/*    text-decoration: none; !* Remove underline *!*/
-/*    background-color: darkred;*/
-/*}*/
+/*dev*/
+form.upload-image {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
-/*.cancel:hover, button.cancel:hover {*/
-/*    background-color: #c00; !* Slightly lighter red on hover *!*/
-/*    opacity: 0.8;*/
-/*}*/
 
-.cancelButtonLink {
-    font-size: 18px;
-    border-radius: 3px;
+.cancel {
+    padding: 8px 18px;
+    font-size: 16px;
+    border-radius: 10px;
+    color: #FAF9F6;
+
+    text-decoration: none; /* Remove underline */
+
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    right: auto;
+    background-color: darkred;
+}
+
+button.cancel{
+    padding: 8px 18px;
+    font-size: 16px;
+    border-radius: 10px;
     color: #FAF9F6;
     text-align: center;
     text-decoration: none; /* Remove underline */
@@ -97,6 +123,17 @@ h1 {
     padding: 5px;
 }
 
+/*from dev*/
+.cancelMinor {
+    color: #FAF9F6;
+    background-color: darkred;
+}
+
+.cancelMinor:hover {
+    background-color: rgba(139, 0, 0, 0.55);
+}
+
+/*elena*/
 .cancelButtonLink:hover {
     background-color: #c00; /* Slightly lighter red on hover */
     opacity: 0.8;
@@ -117,23 +154,37 @@ h1 {
     background-color: rgba(4, 65, 42, 0.71);
 }
 
-/* Button styles */
-/*button, .next {*/
-/*    padding: 8px 18px;*/
-/*    font-size: 18px;*/
-/*    border-radius: 10px;*/
-/*    color: #FAF9F6;*/
+/* from dev */
+button {
+    padding: 8px 18px;
+    margin-top: 8px;
+    font-size: 16px;
+    border-radius: 10px;
+    color: #FAF9F6;
 
-/*    background-color: #023020;*/
-/*    border: none;*/
-/*    cursor: pointer;*/
-/*    text-decoration: none;*/
-/*}*/
-/*.button, .next:hover {*/
-/*    background-color: #04492f; !* Slightly lighter red on hover *!*/
-/*    opacity: 0.8;*/
-/*}*/
+    background-color: #023020;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+}
 
+.next {
+    padding: 8px 18px;
+    font-size: 16px;
+    border-radius: 10px;
+    color: #FAF9F6;
+
+    background-color: #023020;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+}
+
+/*elena*/
 .submitButton{
     font-size: 18px;
     border-radius: 3px;
@@ -152,6 +203,65 @@ h1 {
     opacity: 0.8;
 }
 
+/*from dev*/
+button.submit {
+    padding: 8px 18px;
+    font-size: 16px;
+    border-radius: 10px;
+    color: #FAF9F6;
+
+    background-color: #023020;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+
+    position: absolute;
+    bottom: auto;
+    right: 1rem;
+}
+
+button:hover {
+    background-color: rgba(4, 65, 42, 0.71);
+}
+
+.profile-picture-wrapper {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.profile-picture {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.file-upload-label {
+    display: inline-block;
+    color: #FAF9F6;
+    background-color: #023020;
+    padding: 8px 18px;
+    font-size: 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 8px;
+}
+
+.file-upload-label:hover {
+    background-color: rgba(4, 65, 42, 0.71);
+}
+
+.form-element {
+    margin-top: 8px;
+    width: 100%;
+}
+
+/*elena*/
 input {
     padding: 8px;
     border: 2px solid #ccc;

@@ -2,22 +2,25 @@ package nz.ac.canterbury.team1000.gardenersgrove.form;
 
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Helper class for adding validation errors to a BindingResult.
  */
 class ErrorAdder {
     // The BindingResult object to which errors will be added
-    private BindingResult bindingResult;
+    private final BindingResult bindingResult;
 
     // The name of the object associated with the errors
-    private String objectName;
+    private final String objectName;
 
     /**
      * Constructs an ErrorAdder with the specified BindingResult and object name.
@@ -52,7 +55,7 @@ public class FormUtils {
      * We have to use a STRICT resolver style to reject invalid month lengths.
      * By default, dates such as the 30th of February would be incorrectly accepted.
      */
-    private static DateTimeFormatter validDateFormat = DateTimeFormatter.ofPattern("dd/MM/uuuu").withResolverStyle(ResolverStyle.STRICT);
+    public static final DateTimeFormatter VALID_DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/uuuu").withResolverStyle(ResolverStyle.STRICT);
 
     /**
      * The default maximum length of strings in the database.
@@ -60,6 +63,15 @@ public class FormUtils {
      */
     public static final int MAX_DB_STR_LEN = 255;
 
+    /**
+     * The allowed MIME types for uploaded images.
+     */
+    public static final List<String> ALLOWED_IMAGE_TYPES = Arrays.asList("image/jpeg", "image/png", "image/svg+xml");
+
+    /**
+     * The maximum size allowed for an image that the user can upload.
+     */
+    public static final int MAX_IMAGE_SIZE_BYTES  = 10 * 1024 * 1024;
 
     /**
      * Checks if the given string is blank.
@@ -129,13 +141,14 @@ public class FormUtils {
     }
 
     /**
-     * Checks if the given string contains only letters, spaces, hyphens, or apostrophes.
+     * Checks if the given string contains only letters, accented characters, macrons,
+     * spaces, hyphens, or apostrophes.
      *
      * @param string the string to check
      * @return true if the string contains only valid characters, false otherwise
      */
-    public static boolean checkOnlyHasLettersSpacesHyphensApostrophes (String string) {
-        return !checkNotMatchesRegex(string, "^[a-zA-Z\\s'-]+$");
+    public static boolean checkOnlyHasLettersMacronsSpacesHyphensApostrophes (String string) {
+        return !checkNotMatchesRegex(string, "^[\\p{L}’'-]+(?:\\s[\\p{L}’'-]+)*$");
     }
 
     /**
@@ -234,7 +247,7 @@ public class FormUtils {
      */
     public static boolean checkDateNotInCorrectFormat(String dateString) {
         try {
-            LocalDate.parse(dateString, validDateFormat);
+            LocalDate.parse(dateString, VALID_DATE_FORMAT);
         } catch (DateTimeParseException e) {
             // date is incorrect format
             return true;
@@ -252,12 +265,30 @@ public class FormUtils {
      */
     public static boolean checkDateBefore(String dateString, LocalDate before) {
         try {
-            LocalDate date = LocalDate.parse(dateString, validDateFormat);
+            LocalDate date = LocalDate.parse(dateString, VALID_DATE_FORMAT);
             return date.isBefore(before);
         } catch (DateTimeParseException e) {
             return false;
         }
     }
 
+    /**
+     * Checks if the given image file is an accepted type
+     *
+     * @param image the image file to check
+     * @return true if the image is NOT an accepted type
+     */
+    public static boolean checkImageWrongType(MultipartFile image) {
+        return !ALLOWED_IMAGE_TYPES.contains(image.getContentType());
+    }
 
+    /**
+     * Checks if the given image file is too big
+     *
+     * @param image the image file to check
+     * @return true if the image is over the size limit
+     */
+    public static boolean checkImageTooBig(MultipartFile image) {
+        return image.getSize() > MAX_IMAGE_SIZE_BYTES;
+    }
 }

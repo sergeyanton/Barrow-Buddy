@@ -93,7 +93,6 @@ public class UserService {
         userRepository.updateUserByEmail(oldEmail, newUser);
     }
 
-
     /**
      * Authenticate the user with the given authenticationManager
      * 
