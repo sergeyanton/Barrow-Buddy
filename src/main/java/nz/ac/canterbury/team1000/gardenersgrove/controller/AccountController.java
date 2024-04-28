@@ -14,6 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -50,23 +52,23 @@ public class AccountController {
      *
      * @return thymeleaf profilePage
      */
-    @GetMapping("/profile")
-    public String getProfilePage(Model model) {
-        logger.info("GET /profile");
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentPrincipalName = authentication.getName();
-        User u = userService.findEmail(currentPrincipalName);
-        model.addAttribute("fName", u.getFname());
-        model.addAttribute("lName", u.getLname());
-        model.addAttribute("email", u.getEmail());
-        if (u.getDateOfBirth() != null) {
-            model.addAttribute("dob",
-                    u.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-        }
-
-
-        return "pages/profilePage";
-    }
+//    @GetMapping("/profile")
+//    public String getProfilePage(Model model) {
+//        logger.info("GET /profile");
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        String currentPrincipalName = authentication.getName();
+//        User u = userService.findEmail(currentPrincipalName);
+//        model.addAttribute("fName", u.getFname());
+//        model.addAttribute("lName", u.getLname());
+//        model.addAttribute("email", u.getEmail());
+//        if (u.getDateOfBirth() != null) {
+//            model.addAttribute("dob",
+//                    u.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+//        }
+//
+//
+//        return "pages/profilePage";
+//    }
 
 
     /**
@@ -169,7 +171,7 @@ public class AccountController {
         if (verificationTokenService.getVerificationTokenByUserId(userId) == null) {
             return false;
         }
-        return verifyPassword(userInputToken, verificationTokenService.getVerificationTokenByUserId(userId).getHashedToken());
+        return passwordEncoder.matches(userInputToken, verificationTokenService.getVerificationTokenByUserId(userId).getHashedToken());
     }
 
     /**
@@ -179,7 +181,7 @@ public class AccountController {
      */
     private void sendVerificationEmail(User user) {
         logger.info("Sending verification email to " + user.getEmail());
-        VerificationToken token = new VerificationToken(user.getId());
+        VerificationToken token = new VerificationToken(user.getId(), passwordEncoder);
         verificationTokenService.addVerificationToken(token);
         String body = "Please verify your account by copying the following code into the prompted field: \n\n" + token.getPlainToken()
                 + "\n\nIf this was not you, you can ignore this message and the account will be deleted after 10 minutes";
