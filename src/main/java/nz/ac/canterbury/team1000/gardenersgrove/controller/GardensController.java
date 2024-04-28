@@ -174,7 +174,7 @@ public class GardensController {
         User loggedInUser = userService.getLoggedInUser();
         Garden garden = gardenService.getGardenById(gardenId);
 
-        if (garden.getOwner().getId() != loggedInUser.getId()) {
+        if (!Objects.equals(garden.getOwner().getId(), loggedInUser.getId())) {
             // respond with 403 Forbidden
             throw new ResponseStatusException(
                     HttpStatus.FORBIDDEN,
@@ -211,7 +211,7 @@ public class GardensController {
         User loggedInUser = userService.getLoggedInUser();
         Garden garden = gardenService.getGardenById(gardenId);
 
-        if (garden.getOwner().getId() != loggedInUser.getId()) {
+        if (!Objects.equals(garden.getOwner().getId(), loggedInUser.getId())) {
             // respond with 403 Forbidden
             throw new ResponseStatusException(
                     HttpStatus.FORBIDDEN,
@@ -249,6 +249,16 @@ public class GardensController {
                                        @ModelAttribute("createPlantForm") PlantForm createPlantForm) {
         logger.info("GET /gardens/" + gardenId + "/plants/create");
 
+        User loggedInUser = userService.getLoggedInUser();
+        Garden garden = gardenService.getGardenById(gardenId);
+
+        if (!Objects.equals(garden.getOwner().getId(), loggedInUser.getId())) {
+            // respond with 403 Forbidden
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "You don't own this garden"
+            );
+        }
         return "pages/createPlantPage";
     }
 
@@ -273,6 +283,16 @@ public class GardensController {
                                         @PathVariable("gardenId") Long gardenId) {
         logger.info("POST /gardens/" + gardenId + "/plants/create");
 
+        User loggedInUser = userService.getLoggedInUser();
+        Garden garden = gardenService.getGardenById(gardenId);
+
+        if (!Objects.equals(garden.getOwner().getId(), loggedInUser.getId())) {
+            // respond with 403 Forbidden
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "You don't own this garden"
+            );
+        }
         PlantForm.validate(createPlantForm, bindingResult);
         if (bindingResult.hasErrors()) {
             return "pages/createPlantPage";
