@@ -6,29 +6,27 @@
 <body>
     <div th:replace="~{fragments/header :: header}"></div>
     <main>
-        <h1>Create a garden</h1>
         <div class="content">
+            <h1>Create a garden</h1>
             <form th:action="@{/gardens/create}" method="post" th:object="${createGardenForm}">
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='name', label='Garden Name: ', placeholder='The Hamilton Gardens')}" />
                 <br />
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='size', label='Size in m&sup2; (optional): ', placeholder='540000.0')}" />
 
                 <h2>Garden Location</h2>
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='address', label='Address: ', placeholder='13 Hungerford Crescent')}" />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='address', label='Address: (optional)', placeholder='13 Hungerford Crescent')}" />
                 <br />
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='suburb', label='Suburb: ', placeholder='Ilam')}" />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='suburb', label='Suburb: (optional)', placeholder='Ilam')}" />
                 <br />
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='city', label='City: ', placeholder='Christchurch')}" />
                 <br />
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='postcode', label='Postcode: ', placeholder='3216')}" />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='postcode', label='Postcode: (optional)', placeholder='3216')}" />
                 <br />
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='country', label='Country: ', placeholder='New Zealand')}" />
                 <br />
 
                 <button class="next" type="submit">Create</button>
-                <a class="cancel" th:href="@{/gardens}">Cancel</a> <!--TODO cancel back to the previous page-->
-<!--                <a class="cancel" href="#" onclick="window.history.back();">Cancel</a>-->
-
+                <a class="cancel button" th:href="@{/gardens}">Cancel</a> <!--TODO cancel back to the previous page-->
             </form>
         </div>
     </main>
