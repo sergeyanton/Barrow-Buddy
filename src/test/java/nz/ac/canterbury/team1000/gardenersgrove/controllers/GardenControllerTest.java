@@ -54,7 +54,7 @@ public class GardenControllerTest {
         gardenMock = Mockito.mock(Garden.class);
         Mockito.when(gardenMock.getId()).thenReturn(1L);
         Mockito.when(gardenMock.getName()).thenReturn("Hamilton Gardens");
-        Mockito.when(gardenMock.getLocation()).thenReturn("Hamilton");
+        Mockito.when(gardenMock.getCountry()).thenReturn("Hamilton");
         Mockito.when(gardenMock.getSize()).thenReturn(46.2);
 
         gardenForm = new GardenForm();
@@ -67,7 +67,7 @@ public class GardenControllerTest {
         gardenForm.setCountry("f");
         gardenForm.setSize("46.2");
         gardenForm.setName(gardenMock.getName());
-        gardenForm.setLocation(gardenMock.getLocation());
+        // gardenForm.setLocation(gardenMock.getLocation());
         gardenForm.setSize(gardenMock.getSize().toString());
 
         // Mock addGarden(), updateGarden(), and getPlantById to always simply use id = 1

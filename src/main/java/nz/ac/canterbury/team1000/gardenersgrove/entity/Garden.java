@@ -15,9 +15,7 @@ public class Garden {
     @Column(nullable = false)
     private String name;
     @Column(nullable = false)
-    private String street;
-    @Column(nullable = false)
-    private String streetNumber;
+    private String address;
     @Column(nullable = false)
     private String suburb;
     @Column(nullable = false)
@@ -39,18 +37,16 @@ public class Garden {
      * Creates a new Garden object
      *
      * @param name     name of garden
-     * @param street street name of garden's location
-     * @param streetNumber street number of garden's location
+     * @param address address name of garden's location
      * @param suburb suburb of garden's location
      * @param city city of garden's location
      * @param postcode postcode of garden's location
      * @param country country of garden's location
      * @param size     size of garden
      */
-    public Garden(String name, String street, String streetNumber, String suburb, String city, String postcode, String country, Double size) {
+    public Garden(String name, String address, String suburb, String city, String postcode, String country, Double size) {
         this.name = name;
-        this.street = street;
-        this.streetNumber = streetNumber;
+        this.address = address;
         this.suburb = suburb;
         this.city = city;
         this.postcode = postcode;
@@ -69,18 +65,16 @@ public class Garden {
      * either use a ',' or a '.' as a decimal separator
      *
      * @param name     name of garden
-     * @param street street name of garden's location
-     * @param streetNumber street number of garden's location
+     * @param address address name of garden's location
      * @param suburb suburb of garden's location
      * @param city city of garden's location
      * @param postcode postcode of garden's location
      * @param country country of garden's location
      * @param size     size of garden
      */
-    public Garden(String name, String street, String streetNumber, String suburb, String city, String postcode, String country, String size) {
+    public Garden(String name, String address, String suburb, String city, String postcode, String country, String size) {
         this.name = name;
-        this.street = street;
-        this.streetNumber = streetNumber;
+        this.address = address;
         this.suburb = suburb;
         this.city = city;
         this.postcode = postcode;
@@ -101,11 +95,8 @@ public class Garden {
         return name;
     }
 
-    public String getStreet() {
-        return street;
-    }
-    public String getStreetNumber() {
-        return streetNumber;
+    public String getAddress() {
+        return address;
     }
     public String getSuburb() {
         return suburb;
@@ -127,8 +118,7 @@ public class Garden {
     public void setName(String newName) {
         name = newName;
     }
-    public void setStreet(String newStreet) { street = newStreet; }
-    public void setStreetNumber(String newStreetNumber) { streetNumber = newStreetNumber;}
+    public void setAddress(String newAddress) { address = newAddress; }
     public void setSuburb(String newSuburb) {suburb = newSuburb;
     }
     public void setCity(String newCity) { city = newCity; }
@@ -149,6 +139,6 @@ public class Garden {
     }
 
     public String getLocationString() {
-        return streetNumber + " " + street + ", " + suburb + ", " + city + " " + postcode + ", " + country;
+        return address + ", " + suburb + ", " + city + " " + postcode + ", " + country;
     }
 }

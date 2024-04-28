@@ -144,8 +144,7 @@ public class GardensController {
         Garden garden = gardenService.getGardenById(gardenId);
         editGardenForm.setName(garden.getName());
 
-        editGardenForm.setStreet(garden.getStreet());
-        editGardenForm.setStreetNumber(garden.getStreetNumber());
+        editGardenForm.setAddress(garden.getAddress());
         editGardenForm.setSuburb(garden.getSuburb());
         editGardenForm.setCity(garden.getCity());
         editGardenForm.setPostcode(garden.getPostcode());

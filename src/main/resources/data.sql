@@ -1,4 +1,4 @@
--- INSERT INTO garden (name, street, street_number, suburb, city, postcode, country, size) VALUES ('The Hamilton Garden', 'Hungerford Crescent', '21', 'Hamilton East', 'Hamilton', '3216', 'New Zealand', 540000);
+INSERT INTO garden (name, address, suburb, city, postcode, country, size) VALUES ('The Hamilton Garden', '21 Hungerford Crescent', 'Hamilton East', 'Hamilton', '3216', 'New Zealand', 540000);
 -- INSERT INTO garden (name, street, street_number, suburb, city, postcode, country, size) VALUES ('Botanic Garden', 'Rolleston Avenue', '138',  'Rolleston', 'Christchurch Central City', '8013', 'New Zealand', 30.5);
 -- INSERT INTO garden (name, street, street_number, suburb, city, postcode, country, size) VALUES ('Test Garden', 'Test Street', '123', 'Test Suburb', 'Test City', '123', 'Test Country', 1);
 -- INSERT INTO garden (name, street, street_number, suburb, city, postcode, country, size) VALUES ('A1 .-''', 'A1 ,.-''', 'A1 ,.-''', 'A1 ,.-''', 'A1 ,.-''', 'A1 ,.-''', 'A1 ,.-''', 123.456);
