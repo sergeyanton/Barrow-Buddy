@@ -216,8 +216,34 @@ public class GardenControllerTest {
     }
 
     @Test
+    public void CreateGardenPost_WithInvalidGardenNameBadString_ReturnsError() throws Exception {
+        gardenForm.setName("Not $ Allowed");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/create").with(csrf())
+                        .flashAttr("createGardenForm", gardenForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/createGardenPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("createGardenForm", "name"));
+
+        Mockito.verify(gardenService, Mockito.never()).addGarden(Mockito.any());
+    }
+
+    @Test
     public void CreateGardenPost_WithInvalidGardenLocationCityEmptyString_ReturnsError() throws Exception {
         gardenForm.setCity("");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/create").with(csrf())
+                        .flashAttr("createGardenForm", gardenForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/createGardenPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("createGardenForm", "city"));
+
+        Mockito.verify(gardenService, Mockito.never()).addGarden(Mockito.any());
+    }
+
+    @Test
+    public void CreateGardenPost_WithInvalidGardenBadCity_ReturnsError() throws Exception {
+        gardenForm.setCity("Not $ Allowed");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/create").with(csrf())
                         .flashAttr("createGardenForm", gardenForm))
@@ -237,6 +263,58 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("pages/createGardenPage"))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("createGardenForm", "country"));
+
+        Mockito.verify(gardenService, Mockito.never()).addGarden(Mockito.any());
+    }
+
+    @Test
+    public void CreateGardenPost_WithInvalidGardenBadCountry_ReturnsError() throws Exception {
+        gardenForm.setCountry("Not $ Allowed");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/create").with(csrf())
+                        .flashAttr("createGardenForm", gardenForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/createGardenPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("createGardenForm", "country"));
+
+        Mockito.verify(gardenService, Mockito.never()).addGarden(Mockito.any());
+    }
+
+    @Test
+    public void CreateGardenPost_WithInvalidGardenBadAddress_ReturnsError() throws Exception {
+        gardenForm.setAddress("Not $ Allowed");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/create").with(csrf())
+                        .flashAttr("createGardenForm", gardenForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/createGardenPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("createGardenForm", "address"));
+
+        Mockito.verify(gardenService, Mockito.never()).addGarden(Mockito.any());
+    }
+
+    @Test
+    public void CreateGardenPost_WithInvalidGardenBadSuburb_ReturnsError() throws Exception {
+        gardenForm.setSuburb("Not $ Allowed");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/create").with(csrf())
+                        .flashAttr("createGardenForm", gardenForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/createGardenPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("createGardenForm", "suburb"));
+
+        Mockito.verify(gardenService, Mockito.never()).addGarden(Mockito.any());
+    }
+
+    @Test
+    public void CreateGardenPost_WithInvalidGardenBadPostcode_ReturnsError() throws Exception {
+        gardenForm.setPostcode("Not $ Allowed");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/create").with(csrf())
+                        .flashAttr("createGardenForm", gardenForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/createGardenPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("createGardenForm", "postcode"));
 
         Mockito.verify(gardenService, Mockito.never()).addGarden(Mockito.any());
     }
@@ -413,6 +491,19 @@ public class GardenControllerTest {
     }
 
     @Test
+    public void EditGardenPost_InvalidLocationBadCity_ReturnsError() throws Exception {
+        gardenForm.setCity("Not % Allowed");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf())
+                        .flashAttr("editGardenForm", gardenForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/editGardenPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editGardenForm", "city"));
+
+        Mockito.verify(gardenService, Mockito.never()).updateGardenById(Mockito.anyLong(), Mockito.any());
+    }
+
+    @Test
     public void EditGardenPost_InvalidLocationCountryEmptyString_ReturnsError() throws Exception {
         gardenForm.setCountry("");
 
@@ -421,6 +512,58 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("pages/editGardenPage"))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editGardenForm", "country"));
+
+        Mockito.verify(gardenService, Mockito.never()).updateGardenById(Mockito.anyLong(), Mockito.any());
+    }
+
+    @Test
+    public void EditGardenPost_InvalidLocationBadCountry_ReturnsError() throws Exception {
+        gardenForm.setCountry("Not % Allowed");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf())
+                        .flashAttr("editGardenForm", gardenForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/editGardenPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editGardenForm", "country"));
+
+        Mockito.verify(gardenService, Mockito.never()).updateGardenById(Mockito.anyLong(), Mockito.any());
+    }
+
+    @Test
+    public void EditGardenPost_InvalidLocationBadAddress_ReturnsError() throws Exception {
+        gardenForm.setAddress("Not % Allowed");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf())
+                        .flashAttr("editGardenForm", gardenForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/editGardenPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editGardenForm", "address"));
+
+        Mockito.verify(gardenService, Mockito.never()).updateGardenById(Mockito.anyLong(), Mockito.any());
+    }
+
+    @Test
+    public void EditGardenPost_InvalidLocationBadSuburb_ReturnsError() throws Exception {
+        gardenForm.setSuburb("Not % Allowed");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf())
+                        .flashAttr("editGardenForm", gardenForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/editGardenPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editGardenForm", "suburb"));
+
+        Mockito.verify(gardenService, Mockito.never()).updateGardenById(Mockito.anyLong(), Mockito.any());
+    }
+
+    @Test
+    public void EditGardenPost_InvalidLocationBadPostcode_ReturnsError() throws Exception {
+        gardenForm.setPostcode("Not % Allowed");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf())
+                        .flashAttr("editGardenForm", gardenForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/editGardenPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editGardenForm", "postcode"));
 
         Mockito.verify(gardenService, Mockito.never()).updateGardenById(Mockito.anyLong(), Mockito.any());
     }
