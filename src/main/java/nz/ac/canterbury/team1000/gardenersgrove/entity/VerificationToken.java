@@ -57,7 +57,7 @@ public class VerificationToken {
      * @return the expiry date of the token
      */
     private LocalDateTime calculateExpiryDate() {
-        return LocalDateTime.now().plusMinutes(2);
+        return LocalDateTime.now().plusMinutes(10);
     }
 
     public Long getId() {

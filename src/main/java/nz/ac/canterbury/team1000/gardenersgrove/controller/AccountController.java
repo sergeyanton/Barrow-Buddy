@@ -186,11 +186,12 @@ public class AccountController {
     @GetMapping("/login")
     public String getLoginPage(LoginForm loginForm) {
         logger.info("GET /login");
-
+        //TODO if user has been redirected from verafication page then display message “Your account has been activated, please log in”
         if (userService.getLoggedInUser() != null && !verificationTokenService.getVerificationTokenByUserId(userService.getLoggedInUser().getId()).isVerified()) {
             return "redirect:/register/verification";
         }
-        return userService.isSignedIn() ? "redirect:/" : "pages/loginPage";
+//        return userService.isSignedIn() ? "redirect:/" : "pages/loginPage";
+        return "pages/loginPage";
     }
 
     /**

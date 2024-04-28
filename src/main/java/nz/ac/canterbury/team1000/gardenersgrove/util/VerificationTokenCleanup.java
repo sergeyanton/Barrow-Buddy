@@ -32,7 +32,7 @@ public class VerificationTokenCleanup {
      * Deletes all expired verification tokens from the database every minute.
      * If the user's account is not verified, the user account is also deleted.
      */
-    @Scheduled(fixedRate = 30000) // Run every minute
+    @Scheduled(fixedRate = 60000) // Run every minute
     public void cleanupExpiredTokens() {
         List<VerificationToken> expiredTokens = verificationTokenRepository.findByExpiryDateBefore(LocalDateTime.now());
         logger.info("Found {} expired tokens", expiredTokens.size());
