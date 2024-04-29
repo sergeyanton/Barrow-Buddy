@@ -250,7 +250,7 @@ public class AccountController {
         logger.info("Sending reset password email to " + user.getEmail());
 //        VerificationToken token = new VerificationToken(user.getId(), passwordEncoder);
 //        verificationTokenService.addVerificationToken(token);
-        String url = "https://www.canterbury.ac.nz/";
+        String url = "http://localhost:8080/resetPassword";
         String htmlBody = "<p>Please click the below link to reset your password:</p>"
                 + "<a href='" + url + "'>Reset Password Link</a>"
                 + "<p>If this was not you, you can ignore this message and the account will be deleted after 10 minutes.</p>";
