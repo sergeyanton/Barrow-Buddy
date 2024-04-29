@@ -2,11 +2,15 @@ package nz.ac.canterbury.team1000.gardenersgrove.controllers;
 
 import nz.ac.canterbury.team1000.gardenersgrove.controller.AccountController;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
+import nz.ac.canterbury.team1000.gardenersgrove.form.ForgotPasswordForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.LoginForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.RegistrationForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +46,8 @@ class AccountControllerTest {
     private User userMock;
 
     private RegistrationForm registrationForm;
+    private ForgotPasswordForm forgotPasswordForm;
+
 
     private LoginForm loginForm;
 
@@ -308,6 +314,20 @@ class AccountControllerTest {
         Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
         Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
     }
+
+//    @ParameterizedTest
+//    @EmptySource
+//    @ValueSource(strings = {"    ", "\t", "\n", "bad email", "bad.email", "bad.email@"})
+//    public void ForgotPasswordPostRequest_InvalidEmail_HasFieldErrors(String emailField) throws Exception {
+//        forgotPasswordForm.setEmail(emailField);
+//
+//        mockMvc.perform(MockMvcRequestBuilders.post("/forgotPassword").with(csrf())
+//                        .flashAttr("registrationForm", registrationForm))
+//                .andExpect(MockMvcResultMatchers.status().isOk())
+//                .andExpect(MockMvcResultMatchers.view().name("pages/forgotPasswordPage"))
+//                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("forgotPasswordForm", "email"));
+//
+//    }
 
 //    TODO I cannot for the life of me figure out how to get these tests passing, they look perfect to me, i'm assuming its some weird authentication thing
 //    @Test
