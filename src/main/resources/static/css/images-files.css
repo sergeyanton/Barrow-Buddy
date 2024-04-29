@@ -64,6 +64,8 @@ input[type="file"] {
     height: 25px;
     border-radius: 50%;
     cursor: pointer;
+    color: #FAF9F6;
+    align-content: center;
     background-color: rgba(4, 65, 42, 0.5);
 }
 

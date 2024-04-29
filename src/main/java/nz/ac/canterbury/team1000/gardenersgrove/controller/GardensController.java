@@ -1,7 +1,9 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
+import java.io.IOException;
 import java.util.List;
 import nz.ac.canterbury.team1000.gardenersgrove.form.GardenForm;
+import nz.ac.canterbury.team1000.gardenersgrove.form.PictureForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PlantForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -120,11 +122,26 @@ public class GardensController {
      * @return thymeleaf pages/gardenProfilePage
      */
     @GetMapping("/gardens/{gardenId}")
-    public String viewGarden(@PathVariable("gardenId") Long gardenId, Model model) {
+    public String viewGarden(@PathVariable("gardenId") Long gardenId,
+                             @ModelAttribute("plantPictureForm") PictureForm plantPictureForm,
+                             Model model) {
         logger.info("GET /gardens/" + gardenId);
         model.addAttribute("garden", gardenService.getGardenById(gardenId));
         model.addAttribute("plants", plantService.getPlantsByGardenId(gardenId));
         return "pages/gardenProfilePage";
+    }
+
+    /**
+     * Handles POST requests from the /gardens/{gardenId} endpoint.
+     */
+    @PostMapping("/gardens/{gardenId}")
+    public String changePlantPictureFromGardenPage(HttpServletRequest request,
+                                                   @PathVariable("gardenId") Long gardenId,
+                                                   @ModelAttribute("plantPictureForm") PictureForm plantPictureForm,
+                                                   BindingResult bindingResult,
+                                                   Model model) throws IOException {
+        logger.info("POST /gardens/" + gardenId);
+        return "";
     }
 
     /**
