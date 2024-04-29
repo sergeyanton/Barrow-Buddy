@@ -104,16 +104,14 @@ public class ProfileController {
             currentUser.setPicturePath("/uploads/" + filename);
         }
 
-        model.addAttribute("fName", currentUser.getFname());
-        model.addAttribute("lName", currentUser.getLname());
-        model.addAttribute("email", currentUser.getEmail());
-        if (currentUser.getDateOfBirth() != null) {
-            model.addAttribute("dob", currentUser.getDateOfBirthString());
-        }
-        model.addAttribute("picturePath", currentUser.getPicturePath());
-
         if (bindingResult.hasErrors()) {
-            System.out.println("BAD FILE");
+            model.addAttribute("fName", currentUser.getFname());
+            model.addAttribute("lName", currentUser.getLname());
+            model.addAttribute("email", currentUser.getEmail());
+            if (currentUser.getDateOfBirth() != null) {
+                model.addAttribute("dob", currentUser.getDateOfBirthString());
+            }
+            model.addAttribute("picturePath", currentUser.getPicturePath());
             return "pages/profilePage";
         }
 

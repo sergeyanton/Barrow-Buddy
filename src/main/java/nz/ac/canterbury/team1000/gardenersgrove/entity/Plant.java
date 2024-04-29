@@ -22,6 +22,8 @@ public class Plant {
     private String description;
     @Column
     private LocalDate plantedOnDate;
+    @Column
+    private String picturePath;
     @Column(nullable = false)
     private Long gardenId;
 
@@ -38,14 +40,16 @@ public class Plant {
      * @param plantCount    number of plant occurrence in garden
      * @param description   description of plant
      * @param plantedOnDate date when plant was planted (in DD/MM/YYYY format)
+     * @param picturePath   the path to the plant's image
      * @param gardenId      ID of garden where the plant is currently in
      */
     public Plant(String name, Integer plantCount, String description, LocalDate plantedOnDate,
-                 Long gardenId) {
+                 String picturePath, Long gardenId) {
         this.name = name;
         this.plantCount = plantCount;
         this.description = description;
         this.plantedOnDate = plantedOnDate;
+        this.picturePath = picturePath;
         this.gardenId = gardenId;
     }
 
@@ -57,14 +61,16 @@ public class Plant {
      * @param plantCount    number of plant occurrence in garden
      * @param description   description of plant
      * @param plantedOnDate date when plant was planted (in DD/MM/YYYY format)
+     * @param picturePath   the path to the plant's image
      * @param gardenId      ID of garden where the plant is currently in
      */
     public Plant(String name, String plantCount, String description, String plantedOnDate,
-                 Long gardenId) {
+                 String picturePath, Long gardenId) {
         this.name = name;
         this.setPlantCount(plantCount);
         this.setDescription(description);
         this.setPlantedOnDate(plantedOnDate);
+        this.picturePath = picturePath;
         this.gardenId = gardenId;
     }
 
@@ -86,6 +92,10 @@ public class Plant {
 
     public LocalDate getPlantedOnDate() {
         return plantedOnDate;
+    }
+
+    public String getPicturePath() {
+        return picturePath;
     }
 
     public Long getGardenId() {
@@ -136,6 +146,10 @@ public class Plant {
         }
     }
 
+    public void setPicturePath(String picturePath) {
+        this.picturePath = picturePath;
+    }
+
     public void setGardenId(Long gardenId) {
         this.gardenId = gardenId;
     }
@@ -153,6 +167,6 @@ public class Plant {
     public String toString() {
         return "Plant{" + "id=" + id + ", name='" + name + "', count=" + plantCount
                 + ", description=" + description + ", planted on date=" + plantedOnDate
-                + ", garden id=" + gardenId + '\'' + '}';
+                + ", picturePath=" + picturePath + ", garden id=" + gardenId + '\'' + '}';
     }
 }
