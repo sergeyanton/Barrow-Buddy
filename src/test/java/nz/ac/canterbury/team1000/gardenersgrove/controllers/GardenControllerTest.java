@@ -305,9 +305,10 @@ public class GardenControllerTest {
         Mockito.verify(gardenService).updateGardenById(Mockito.anyLong(), Mockito.any());
     }
 
-    @Test
-    public void EditGardenPost_ValidGardenEmptyAddress_SavesToService() throws Exception {
-        gardenForm.setAddress("");
+    @ParameterizedTest
+    @ValueSource(strings = {"1,5", "Abc", "A b 123", "A-b c. de, f"})
+    void EditGardenPost_ValidName_SavesToService(String nameField) throws Exception {
+        gardenForm.setName(nameField);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf())
                         .flashAttr("editGardenForm", gardenForm))
@@ -317,9 +318,11 @@ public class GardenControllerTest {
         Mockito.verify(gardenService).updateGardenById(Mockito.anyLong(), Mockito.any());
     }
 
-    @Test
-    public void EditGardenPost_ValidGardenWhitespaceAddress_SavesToService() throws Exception {
-        gardenForm.setAddress("    ");
+    @ParameterizedTest
+    @EmptySource
+    @ValueSource(strings = {"    ", "\t", "\n", "1,5", "Abc", "A b 123", "A-b c. de, f"})
+    void EditGardenPost_ValidAddress_SavesToService(String addressField) throws Exception {
+        gardenForm.setAddress(addressField);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf())
                         .flashAttr("editGardenForm", gardenForm))
@@ -329,9 +332,11 @@ public class GardenControllerTest {
         Mockito.verify(gardenService).updateGardenById(Mockito.anyLong(), Mockito.any());
     }
 
-    @Test
-    public void EditGardenPost_ValidGardenEmptySuburb_SavesToService() throws Exception {
-        gardenForm.setSuburb("");
+    @ParameterizedTest
+    @EmptySource
+    @ValueSource(strings = {"    ", "\t", "\n", "1,5", "Abc", "A b 123", "A-b c. de, f"})
+    void EditGardenPost_ValidSuburb_SavesToService(String suburbField) throws Exception {
+        gardenForm.setSuburb(suburbField);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf())
                         .flashAttr("editGardenForm", gardenForm))
@@ -341,9 +346,10 @@ public class GardenControllerTest {
         Mockito.verify(gardenService).updateGardenById(Mockito.anyLong(), Mockito.any());
     }
 
-    @Test
-    public void EditGardenPost_ValidGardenWhitespaceSuburb_SavesToService() throws Exception {
-        gardenForm.setSuburb("    ");
+    @ParameterizedTest
+    @ValueSource(strings = {"1,5", "Abc", "A b 123", "A-b c. de, f"})
+    void EditGardenPost_ValidCity_SavesToService(String cityField) throws Exception {
+        gardenForm.setCity(cityField);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf())
                         .flashAttr("editGardenForm", gardenForm))
@@ -353,9 +359,11 @@ public class GardenControllerTest {
         Mockito.verify(gardenService).updateGardenById(Mockito.anyLong(), Mockito.any());
     }
 
-    @Test
-    public void EditGardenPost_ValidGardenEmptyPostcode_SavesToService() throws Exception {
-        gardenForm.setPostcode("");
+    @ParameterizedTest
+    @EmptySource
+    @ValueSource(strings = {"    ", "\t", "\n", "1,5", "Abc", "A b 123", "A-b c. de, f"})
+    void EditGardenPost_ValidPostcode_SavesToService(String postcodeField) throws Exception {
+        gardenForm.setPostcode(postcodeField);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf())
                         .flashAttr("editGardenForm", gardenForm))
@@ -365,9 +373,10 @@ public class GardenControllerTest {
         Mockito.verify(gardenService).updateGardenById(Mockito.anyLong(), Mockito.any());
     }
 
-    @Test
-    public void EditGardenPost_ValidGardenWhitespacePostcode_SavesToService() throws Exception {
-        gardenForm.setPostcode("    ");
+    @ParameterizedTest
+    @ValueSource(strings = {"1,5", "Abc", "A b 123", "A-b c. de, f"})
+    void EditGardenPost_ValidCountry_SavesToService(String countryField) throws Exception {
+        gardenForm.setCity(countryField);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf())
                         .flashAttr("editGardenForm", gardenForm))
@@ -377,45 +386,25 @@ public class GardenControllerTest {
         Mockito.verify(gardenService).updateGardenById(Mockito.anyLong(), Mockito.any());
     }
 
-    @Test
-    public void EditGardenPost_ValidGardenEuropeanFormat_SavesToService() throws Exception {
-        gardenForm.setSize("1,5");
+    @ParameterizedTest
+    @EmptySource
+    @ValueSource(strings = {"    ", "\t", "\n", "1,5", "1234", "1.1"})
+    void EditGardenPost_ValidSize_SavesToService(String sizeField) throws Exception {
+        gardenForm.setSize(sizeField);
+
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf())
                         .flashAttr("editGardenForm", gardenForm))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
 
         Mockito.verify(gardenService).updateGardenById(Mockito.anyLong(), Mockito.any());
-
     }
 
-    @Test
-    public void EditGardenPost_ValidEmptySize_SavesToService() throws Exception {
-        gardenForm.setSize("");
-        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf())
-                        .flashAttr("editGardenForm", gardenForm))
-                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
-
-        Mockito.verify(gardenService).updateGardenById(Mockito.anyLong(), Mockito.any());
-
-    }
-
-    @Test
-    public void EditGardenPost_ValidWhitespaceSize_SavesToService() throws Exception {
-        gardenForm.setSize("      ");
-        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf())
-                        .flashAttr("editGardenForm", gardenForm))
-                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
-
-        Mockito.verify(gardenService).updateGardenById(Mockito.anyLong(), Mockito.any());
-
-    }
-
-    @Test
-    public void EditGardenPost_InvalidNameEmptyString_ReturnsError() throws Exception {
-        gardenForm.setName("");
+    @ParameterizedTest
+    @EmptySource
+    @ValueSource(strings = {"    ", "\t", "\n", "Not #", "Not $", "Not %", "Not @", "Not ^", "Not *", "Not &"})
+    void EditGardenPost_InvalidName_ReturnsError(String nameField) throws Exception {
+        gardenForm.setName(nameField);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf())
                         .flashAttr("editGardenForm", gardenForm))
@@ -426,61 +415,10 @@ public class GardenControllerTest {
         Mockito.verify(gardenService, Mockito.never()).updateGardenById(Mockito.anyLong(), Mockito.any());
     }
 
-    @Test
-    public void EditGardenPost_InvalidLocationCityEmptyString_ReturnsError() throws Exception {
-        gardenForm.setCity("");
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf())
-                        .flashAttr("editGardenForm", gardenForm))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("pages/editGardenPage"))
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editGardenForm", "city"));
-
-        Mockito.verify(gardenService, Mockito.never()).updateGardenById(Mockito.anyLong(), Mockito.any());
-    }
-
-    @Test
-    public void EditGardenPost_InvalidLocationBadCity_ReturnsError() throws Exception {
-        gardenForm.setCity("Not % Allowed");
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf())
-                        .flashAttr("editGardenForm", gardenForm))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("pages/editGardenPage"))
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editGardenForm", "city"));
-
-        Mockito.verify(gardenService, Mockito.never()).updateGardenById(Mockito.anyLong(), Mockito.any());
-    }
-
-    @Test
-    public void EditGardenPost_InvalidLocationCountryEmptyString_ReturnsError() throws Exception {
-        gardenForm.setCountry("");
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf())
-                        .flashAttr("editGardenForm", gardenForm))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("pages/editGardenPage"))
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editGardenForm", "country"));
-
-        Mockito.verify(gardenService, Mockito.never()).updateGardenById(Mockito.anyLong(), Mockito.any());
-    }
-
-    @Test
-    public void EditGardenPost_InvalidLocationBadCountry_ReturnsError() throws Exception {
-        gardenForm.setCountry("Not % Allowed");
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf())
-                        .flashAttr("editGardenForm", gardenForm))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("pages/editGardenPage"))
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editGardenForm", "country"));
-
-        Mockito.verify(gardenService, Mockito.never()).updateGardenById(Mockito.anyLong(), Mockito.any());
-    }
-
-    @Test
-    public void EditGardenPost_InvalidLocationBadAddress_ReturnsError() throws Exception {
-        gardenForm.setAddress("Not % Allowed");
+    @ParameterizedTest
+    @ValueSource(strings = {"Not #", "Not $", "Not %", "Not @", "Not ^", "Not *", "Not &", "Not (", "Not )", "Not +", "Not ="})
+    void EditGardenPost_InvalidAddress_ReturnsError(String addressField) throws Exception {
+        gardenForm.setAddress(addressField);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf())
                         .flashAttr("editGardenForm", gardenForm))
@@ -491,9 +429,10 @@ public class GardenControllerTest {
         Mockito.verify(gardenService, Mockito.never()).updateGardenById(Mockito.anyLong(), Mockito.any());
     }
 
-    @Test
-    public void EditGardenPost_InvalidLocationBadSuburb_ReturnsError() throws Exception {
-        gardenForm.setSuburb("Not % Allowed");
+    @ParameterizedTest
+    @ValueSource(strings = {"Not #", "Not $", "Not %", "Not @", "Not ^", "Not *", "Not &", "Not (", "Not )", "Not +", "Not ="})
+    void EditGardenPost_InvalidSuburb_ReturnsError(String suburbField) throws Exception {
+        gardenForm.setSuburb(suburbField);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf())
                         .flashAttr("editGardenForm", gardenForm))
@@ -504,9 +443,25 @@ public class GardenControllerTest {
         Mockito.verify(gardenService, Mockito.never()).updateGardenById(Mockito.anyLong(), Mockito.any());
     }
 
-    @Test
-    public void EditGardenPost_InvalidLocationBadPostcode_ReturnsError() throws Exception {
-        gardenForm.setPostcode("Not % Allowed");
+    @ParameterizedTest
+    @EmptySource
+    @ValueSource(strings = {"    ", "\t", "\n", "Not #", "Not $", "Not %", "Not @", "Not ^", "Not *", "Not &", "Not (", "Not )", "Not +", "Not ="})
+    void EditGardenPost_InvalidCity_ReturnsError(String cityField) throws Exception {
+        gardenForm.setCity(cityField);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf())
+                        .flashAttr("editGardenForm", gardenForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/editGardenPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editGardenForm", "city"));
+
+        Mockito.verify(gardenService, Mockito.never()).updateGardenById(Mockito.anyLong(), Mockito.any());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"Not #", "Not $", "Not %", "Not @", "Not ^", "Not *", "Not &", "Not (", "Not )", "Not +", "Not ="})
+    void EditGardenPost_InvalidPostcode_ReturnsError(String postcodeField) throws Exception {
+        gardenForm.setPostcode(postcodeField);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf())
                         .flashAttr("editGardenForm", gardenForm))
@@ -517,22 +472,25 @@ public class GardenControllerTest {
         Mockito.verify(gardenService, Mockito.never()).updateGardenById(Mockito.anyLong(), Mockito.any());
     }
 
-    @Test
-    public void EditGardenPost_InvalidSizeNegativeNumber_ReturnsError() throws Exception {
-        gardenForm.setSize("-1");
+    @ParameterizedTest
+    @EmptySource
+    @ValueSource(strings = {"    ", "\t", "\n", "Not #", "Not $", "Not %", "Not @", "Not ^", "Not *", "Not &", "Not (", "Not )", "Not +", "Not ="})
+    void EditGardenPost_InvalidCountry_ReturnsError(String countryField) throws Exception {
+        gardenForm.setCountry(countryField);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf())
                         .flashAttr("editGardenForm", gardenForm))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("pages/editGardenPage"))
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editGardenForm", "size"));
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editGardenForm", "country"));
 
         Mockito.verify(gardenService, Mockito.never()).updateGardenById(Mockito.anyLong(), Mockito.any());
     }
 
-    @Test
-    public void EditGardenPost_InvalidSizeNotANumber_ReturnsError() throws Exception {
-        gardenForm.setSize("Bad Number");
+    @ParameterizedTest
+    @ValueSource(strings = {"#", "$", "%", "@", "^", "*", "&", "(", ")", "+", "=", "Not a number", "-1"})
+    void EditGardenPost_InvalidSize_ReturnsError(String sizeField) throws Exception {
+        gardenForm.setSize(sizeField);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf())
                         .flashAttr("editGardenForm", gardenForm))
