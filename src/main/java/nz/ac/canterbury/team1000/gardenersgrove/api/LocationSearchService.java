@@ -20,12 +20,16 @@ public class LocationSearchService {
 
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final TokenBucketService tokenBucket = new TokenBucketService(10, 2, 1000);
+    private final TokenBucketService secondTokenBucket = new TokenBucketService(10, 2, 1000);
+
+    private final TokenBucketService minuteTokenBucket = new TokenBucketService(120, 60, 60000);
+
+    private final TokenBucketService dailyTokenBucket = new TokenBucketService(10000, 5000, 86400000);
 
     public LocationSearchService() {}
 
     public List<Location> searchLocations(String query, String type) {
-        if (!tokenBucket.consumeToken()) {
+        if (!secondTokenBucket.consumeToken() || !minuteTokenBucket.consumeToken() || !dailyTokenBucket.consumeToken()) {
             return new ArrayList<>();
         }
 
