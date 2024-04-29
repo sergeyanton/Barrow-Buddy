@@ -11,7 +11,7 @@
             <a th:href="@{'/gardens/' + ${garden.id} + '/plants/create'}">
                 <button>Add a plant</button>
             </a>
-            <div th:text="'Location: ' + ${garden.location}"></div>
+            <div th:text="'Location: ' + ${garden.getLocationString}"></div>
             <div th:if="${garden.size != null}" th:text="'Size: ' + ${garden.size} + ' m&sup2;'"></div>
             <div><a th:href="@{'/gardens/' + ${garden.id} + '/edit'}">Edit Garden Details</a></div>
             <div class="scroll-plants-container">
