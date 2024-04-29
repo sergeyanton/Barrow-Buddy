@@ -31,13 +31,14 @@
                     </tr>
                     <tr th:each="plant : ${plants}">
                         <td>
-                            <div class="plant-picture-wrapper">
-<!--                                <input th:field="*{picturePath}" type="hidden"/>-->
-                                <img class="plant-picture" id="profileImage"
-                                     th:src="@{/images/defaultPlantPic.png}"
-                                     alt="Plant Picture">
+                            <div class="plant-picture-upload-wrapper">
+                                <div class="plant-picture-wrapper">
+                                    <img class="plant-picture" id="profileImage"
+                                         th:src="@{/images/defaultPlantPic.png}"
+                                         alt="Plant Picture">
+                                </div>
+                                <button class="file-upload-plus-button">+</button>
                             </div>
-<!--                            <img th:src="@{/images/defaultPlantPic.png}" alt="Plant Image" style="max-width: 100px; max-height: 100px;" />-->
                         </td>
                         <td><span th:text="${plant.name}"></span></td>
                         <td><span th:text="${plant.plantCount}"></span></td>
