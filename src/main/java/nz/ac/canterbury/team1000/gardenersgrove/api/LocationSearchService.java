@@ -1,8 +1,6 @@
 package nz.ac.canterbury.team1000.gardenersgrove.api;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.stereotype.Service;
@@ -16,7 +14,7 @@ import java.util.Map;
 
 @Service
 public class LocationSearchService {
-    private final String API_KEY = "pk.73082d5d87fb6091cebd2b86194b5b79"; // Right now this is using my personal account, create a new account for Team 1000
+    private final String API_KEY = "3d6f6041406e4a6eb3ab2c2aa117c9b6"; // Right now this is using my personal account, create a new account for Team 1000
     private final String URL = "https://api.locationiq.com/v1/autocomplete";
 
     private final RestTemplate restTemplate = new RestTemplate();
@@ -39,7 +37,7 @@ public class LocationSearchService {
             List<Map<String, Object>> locations = objectMapper.readValue(jsonResponse, List.class);
 
             for (Map<String, Object> location : locations) {
-                Map<String, Object> address = (Map<String, Object>) location.get("address");
+                Map<String, Object> address = (Map<String, Object>) location.get("addresss");
                 Location newLocation = new Location();
                 if (type.equals("city") && location.get("type").equals("city")) {
                     newLocation.setCity(address.get("name").toString());
@@ -69,19 +67,15 @@ public class LocationSearchService {
                 }
             }
             return locationAddresses;
-        } catch (JsonProcessingException e) {
+        } catch (Exception e) {
             return new ArrayList<>();
         }
     }
 
-    public static void main(String[] args) {
+    private static void main(String[] args) {
         LocationSearchService locationSearchService = new LocationSearchService();
 
-        List<Location> location = locationSearchService.searchLocations("Chr", "city");
-
-        if (location.isEmpty()) {
-            System.out.println("No matching location found");
-        }
+        List<Location> location = locationSearchService.searchLocations("Christchurch", "city");
 
         for (Location loc : location) {
             System.out.println(loc);
