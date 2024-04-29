@@ -8,22 +8,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import java.time.format.DateTimeFormatter;
-
 @Controller
 public class AccountController {
-    Logger logger = LoggerFactory.getLogger(AccountController.class);
+    final Logger logger = LoggerFactory.getLogger(AccountController.class);
     private final UserService userService;
 
     @Autowired
@@ -36,30 +31,6 @@ public class AccountController {
     public AccountController(UserService userService) {
         this.userService = userService;
     }
-
-
-    /**
-     * Gets the thymeleaf page representing the /profile page, displaying the currently logged-in
-     * user's account details. Will only work if the user is logged in.
-     * 
-     * @return thymeleaf profilePage
-     */
-    @GetMapping("/profile")
-    public String getProfilePage(Model model) {
-        logger.info("GET /profile");
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentPrincipalName = authentication.getName();
-        User u = userService.findEmail(currentPrincipalName);
-        model.addAttribute("fName", u.getFname());
-        model.addAttribute("lName", u.getLname());
-        model.addAttribute("email", u.getEmail());
-        if (u.getDateOfBirth() != null) {
-            model.addAttribute("dob",
-                    u.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-        }
-        return "pages/profilePage";
-    }
-
 
     /**
      * Gets the thymeleaf page representing the /register page Will only work if the user is not
@@ -128,6 +99,8 @@ public class AccountController {
         }
 
         User newUser = registrationForm.getUser(passwordEncoder);
+        logger.warn(newUser.getPassword());
+        // Give them the role of user
         newUser.grantAuthority("ROLE_USER");
         userService.registerUser(newUser);
         userService.authenticateUser(authenticationManager, newUser, request);
@@ -200,7 +173,7 @@ public class AccountController {
      * @param forgotPasswordForm the ForgotPasswordForm object representing the 'forgot password' data
      * @param bindingResult the BindingResult object for validation errors
      * @return a String representing the view to display after entering the 'forgot password email':
-     *      *  *         - Whatever the result is (error or no error), returns/redirects the forgot password page.
+     *         - Whatever the result is (error or no error), returns/redirects the forgot password page.
      */
     @PostMapping("/forgotPassword")
     public String forgotPassword(HttpServletRequest request, @ModelAttribute("forgotPasswordForm") ForgotPasswordForm forgotPasswordForm, BindingResult bindingResult) {

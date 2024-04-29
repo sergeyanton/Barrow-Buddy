@@ -1,27 +1,84 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
 
-<head>
-    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
-    <link rel="stylesheet" type="text/css" th:href="@{/css/styles-user.css}">
-    <title>My Profile</title>
-</head>
+<head th:replace="~{fragments/head :: head(title='Gardener\'s Grove - My Profile')}"></head>
 
 <body>
-    <div class="basic">
-        <h1>My Profile</h1>
-        <p th:text="'First Name: ' + ${fName}"></p>
-        <p th:text="'Last Name: ' + ${lName}"></p>
-        <p th:text="'Email: ' + ${email}"></p>
-        <p th:if="${dob != null}" th:text="'Date of birth: ' + ${dob}"></p>
-        <p th:if="${dob == null}" th:text="'Date of birth: '"></p>
+    <div th:replace="~{fragments/header :: header}"></div>
 
-        <form th:action="@{logout}" method="post">
-            <button class=cancel type="submit">Log Out</button>
-        </form>
+    <main>
+        <div class="content">
+            <h1>My Profile</h1>
+            <div class="profile-picture-wrapper">
+                <img class="profile-picture" id="profileImage" th:src="${picturePath}" alt="Profile Picture">
+            </div>
 
-        <a th:href="@{editProfile}">Edit profile</a>
-        <a class="next" th:href="@{.}">Home</a>
-    </div>
+            <form th:action="@{/profile}" th:object="${profilePictureForm}" method="post" enctype="multipart/form-data">
+                <label id="pictureFileLabel" class="file-upload-label" th:for="pictureFile">Edit Profile Picture</label>
+                <input th:field="*{pictureFile}" type="file" onchange="validateImage(this)" accept="image/png, image/jpeg, image/svg+xml">
+                <button type="button" id="cancelButton" class="cancelMinor" style="display: none;" onclick="cancelSelection()">Undo</button>
+                <button type="submit" id="submitButton" style="display: none;">Save Profile Picture</button>
+                <br><span id="clientSideErrorMessage" class="error"></span>
+            </form>
+
+            <p th:text="'First Name: ' + ${fName}"></p>
+            <p th:text="'Last Name: ' + ${lName}"></p>
+            <p th:text="'Email: ' + ${email}"></p>
+            <p th:if="${dob != null}" th:text="'Date of birth: ' + ${dob}"></p>
+
+            <a th:href="@{editProfile}">Edit profile</a>
+
+            <form th:action="@{logout}" method="post">
+                <button class="cancel" type="submit">Log Out</button>
+            </form>
+        </div>
+    </main>
+    <script th:inline="javascript">
+        // THYMELEAF SYNTAX FOR GETTING MODEL ATTRIBUTES INTO INLINE JS. The comment matters.
+        const initialProfilePictureUrl = /*[[${picturePath}]]*/ '';
+        function validateImage(input) {
+            if (!(input.files && input.files[0])) {
+                return;
+            }
+            const file = input.files[0];
+            const validTypes = ["image/png", "image/jpeg", "image/svg+xml"];
+            const maxFileSize = 10 * 1024 * 1024;
+
+            if (!validTypes.includes(file.type) && file.size > maxFileSize) {
+                input.value = '';
+                document.getElementById('clientSideErrorMessage').textContent = "Image must be of type png, jpg or svg, and less than 10MB";
+                return;
+            }
+            if (!validTypes.includes(file.type)) {
+                input.value = '';
+                document.getElementById('clientSideErrorMessage').textContent = "Image must be of type png, jpg or svg";
+                return;
+            }
+            if (file.size > maxFileSize) {
+                input.value = '';
+                document.getElementById('clientSideErrorMessage').textContent = "Image must be less than 10MB";
+                return;
+            }
+
+            const fileReader = new FileReader();
+            fileReader.onload = function (e) {
+                document.getElementById('profileImage').src = e.target.result;
+            }
+            fileReader.readAsDataURL(input.files[0]);
+
+            document.getElementById('pictureFileLabel').style.display = 'none';
+            document.getElementById('cancelButton').style.display = 'inline-block';
+            document.getElementById('submitButton').style.display = 'inline-block';
+            document.getElementById('clientSideErrorMessage').textContent = "";
+        }
+
+        function cancelSelection() {
+            document.getElementById('pictureFile').value = '';
+            document.getElementById('profileImage').src = initialProfilePictureUrl;
+            document.getElementById('pictureFileLabel').style.display = 'inline-block';
+            document.getElementById('cancelButton').style.display = 'none';
+            document.getElementById('submitButton').style.display = 'none';
+        }
+    </script>
 </body>
 </html>
