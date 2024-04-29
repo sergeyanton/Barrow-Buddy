@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
 
-<head>
-    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
-    <link rel="stylesheet" type="text/css" th:href="@{/css/style-user.css}">
-    <title>Home</title>
-</head>
+<head th:replace="~{fragments/head :: head(title='Gardener\'s Grove')}"></head>
 
 <body>
-    <div class="basic">
-        <h1>Home</h1>
-        <div id="landing">
-            <a th:href="@{profile}">My Profile</a>
+    <div th:replace="~{fragments/header :: header}"></div>
+    <main>
+        <div class="content">
+            <h1>Home</h1>
+            <div id="landing">
+                <a th:href="@{profile}">My Profile</a>
+            </div>
         </div>
-    </div>
+    </main>
 </body>
 </html>

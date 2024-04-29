@@ -39,6 +39,3 @@ out/
 
 ### Mac
 .DS_Store
-
-.env
-!.example.env
