@@ -39,30 +39,6 @@ public class AccountController {
         this.userService = userService;
     }
 
-
-    /**
-     * Gets the thymeleaf page representing the /profile page, displaying the currently logged-in
-     * user's account details. Will only work if the user is logged in.
-     * 
-     * @return thymeleaf profilePage
-     */
-    @GetMapping("/profile")
-    public String getProfilePage(Model model) {
-        logger.info("GET /profile");
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentPrincipalName = authentication.getName();
-        User u = userService.findEmail(currentPrincipalName);
-        model.addAttribute("fName", u.getFname());
-        model.addAttribute("lName", u.getLname());
-        model.addAttribute("email", u.getEmail());
-        if (u.getDateOfBirth() != null) {
-            model.addAttribute("dob",
-                    u.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-        }
-        return "pages/profilePage";
-    }
-
-
     /**
      * Gets the thymeleaf page representing the /register page Will only work if the user is not
      * logged in, otherwise it will redirect to the home page
