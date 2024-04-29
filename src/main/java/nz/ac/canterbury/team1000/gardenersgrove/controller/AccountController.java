@@ -1,5 +1,6 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.VerificationToken;
@@ -250,17 +251,25 @@ public class AccountController {
     }
 
     /**
-     * Sends a reset password email to the user.
+     * Sends a reset password email to the specified user.
+     * This method generates a password reset link and sends it to the user's email address.
+     * Handles any errors that might occur during the email sending process.
      *
-     * @param user the user to send the reset password email to
+     * @param user The User object containing the email address where the reset password email will be sent.
      */
     private void sendResetPasswordEmail(User user) {
         logger.info("Sending reset password email to " + user.getEmail());
-        VerificationToken token = new VerificationToken(user.getId(), passwordEncoder);
-        verificationTokenService.addVerificationToken(token);
-        String body = "Please click below link to reset the password: \n\n" + token.getPlainToken()
-                + "\n\nIf this was not you, you can ignore this message and the account will be deleted after 10 minutes";
-        emailService.sendSimpleMessage(user.getEmail(), "Gardeners Grove Account Reset Password", body);
+//        VerificationToken token = new VerificationToken(user.getId(), passwordEncoder);
+//        verificationTokenService.addVerificationToken(token);
+        String url = "https://www.canterbury.ac.nz/";
+        String htmlBody = "<p>Please click the below link to reset your password:</p>"
+                + "<a href='" + url + "'>Reset Password Link</a>"
+                + "<p>If this was not you, you can ignore this message and the account will be deleted after 10 minutes.</p>";
+        try {
+            emailService.sendHtmlMessage(user.getEmail(), "Gardeners Grove Account Reset Password", htmlBody);
+        } catch (MessagingException e) {
+            logger.error("Failed to send reset password email", e);
+        }
     }
 
     /**
