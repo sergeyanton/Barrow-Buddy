@@ -55,9 +55,6 @@ p {
     border-radius: 10px;
 
     position: relative;
-    /*elena*/
-    /*width: 500px;*/
-    /*height: 750px;*/
     width: 50rem;
     height: auto;
     min-height: 50%;
@@ -86,42 +83,40 @@ p {
     box-shadow: 0 0 1rem rgba(0, 0, 0, 0.5);
 }
 
-/*dev*/
 form.upload-image {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
+/*.cancel {*/
+/*    padding: 8px 18px;*/
+/*    font-size: 16px;*/
+/*    border-radius: 10px;*/
+/*    color: #FAF9F6;*/
 
-.cancel {
-    padding: 8px 18px;
-    font-size: 16px;
-    border-radius: 10px;
-    color: #FAF9F6;
+/*    text-decoration: none; !* Remove underline *!*/
 
-    text-decoration: none; /* Remove underline */
+/*    position: absolute;*/
+/*    bottom: 1rem;*/
+/*    left: 1rem;*/
+/*    right: auto;*/
+/*    background-color: darkred;*/
+/*}*/
 
-    position: absolute;
-    bottom: 1rem;
-    left: 1rem;
-    right: auto;
-    background-color: darkred;
-}
-
-button.cancel{
-    padding: 8px 18px;
-    font-size: 16px;
-    border-radius: 10px;
-    color: #FAF9F6;
-    text-align: center;
-    text-decoration: none; /* Remove underline */
-    background-color: darkred;
-    display: block;
-    width: 100%;
-    margin-top: 3px;
-    padding: 5px;
-}
+/*button.cancel{*/
+/*    padding: 8px 18px;*/
+/*    font-size: 16px;*/
+/*    border-radius: 10px;*/
+/*    color: #FAF9F6;*/
+/*    text-align: center;*/
+/*    text-decoration: none; !* Remove underline *!*/
+/*    background-color: darkred;*/
+/*    display: block;*/
+/*    width: 100%;*/
+/*    margin-top: 3px;*/
+/*    padding: 5px;*/
+/*}*/
 
 /*from dev*/
 .cancelMinor {
@@ -134,6 +129,19 @@ button.cancel{
 }
 
 /*elena*/
+.cancelButtonLink {
+    font-size: 18px;
+    border-radius: 3px;
+    color: #FAF9F6;
+    text-align: center;
+    text-decoration: none; /* Remove underline */
+    background-color: darkred;
+    display: block;
+    width: 100%;
+    margin-top: 3px;
+    padding: 5px;
+}
+
 .cancelButtonLink:hover {
     background-color: #c00; /* Slightly lighter red on hover */
     opacity: 0.8;
