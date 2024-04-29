@@ -15,8 +15,10 @@
             <br />
             <input th:replace="~{fragments/formElement :: formElementField(fieldName='lastName', label='Last Name: ', placeholder='Gilson')}" />
             <br />
-            <input type="checkbox" class="form-control" id="noSurnameCheckBox" th:field="*{noSurnameCheckBox}" onclick="toggleInput()">
-            <label for="noSurnameCheckBox"> I have no surname </label>
+            <div class="surnameCheckbox">
+                <input type="checkbox" class="form-control" id="noSurnameCheckBox" th:field="*{noSurnameCheckBox}" onclick="toggleInput()">
+                <label for="noSurnameCheckBox"> I have no surname </label>
+            </div>
             <br />
             <input th:replace="~{fragments/formElement :: formElementField(fieldName='email', label='Email: ', placeholder='jane@doe.nz')}" />
             <br />
@@ -25,10 +27,10 @@
             <input th:replace="~{fragments/formElement :: formElementField(fieldName='retypePassword', label='Re-Type Password: ', placeholder='*******', type='password')}" />
             <br />
             <input th:replace="~{fragments/formElement :: formElementField(fieldName='dob', label='Date of Birth: ', placeholder='DD/MM/YYYY')}" />
-            <br />
 
-            <button class="next" type="submit">Sign Up</button>
-            <a class="cancel" th:href="@{.}">Cancel</a>
+            <button class="submitButton" type="submit">Sign Up</button>
+            <br/>
+            <a class="cancelButtonLink" th:href="@{.}">Cancel</a>
         </form>
     </div>
     <script>

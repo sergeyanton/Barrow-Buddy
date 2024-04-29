@@ -1,13 +1,22 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
-import nz.ac.canterbury.team1000.gardenersgrove.form.*;
+import nz.ac.canterbury.team1000.gardenersgrove.entity.VerificationToken;
+import nz.ac.canterbury.team1000.gardenersgrove.form.ForgotPasswordForm;
+import nz.ac.canterbury.team1000.gardenersgrove.form.LoginForm;
+import nz.ac.canterbury.team1000.gardenersgrove.form.RegistrationForm;
+import nz.ac.canterbury.team1000.gardenersgrove.form.VerificationTokenForm;
+import nz.ac.canterbury.team1000.gardenersgrove.service.EmailService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
+import nz.ac.canterbury.team1000.gardenersgrove.service.VerificationTokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -21,6 +30,9 @@ public class AccountController {
     final Logger logger = LoggerFactory.getLogger(AccountController.class);
     private final UserService userService;
 
+    private final VerificationTokenService verificationTokenService;
+    private final EmailService emailService;
+
     @Autowired
     private AuthenticationManager authenticationManager;
 
@@ -28,8 +40,10 @@ public class AccountController {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public AccountController(UserService userService) {
+    public AccountController(UserService userService, VerificationTokenService verificationTokenService, EmailService emailService) {
         this.userService = userService;
+        this.verificationTokenService = verificationTokenService;
+        this.emailService = emailService;
     }
 
     /**
@@ -39,8 +53,8 @@ public class AccountController {
      * @param registrationForm the RegistrationForm object representing the user's registration data,
      *                         useful for seeing erroneous inputs of a failed POST request
      * @return the view to display:
-     *         - If the user is signed in, redirect to the home page
-     *         - Else, go to the registration page, where the user can create a new account
+     * - If the user is signed in, redirect to the home page
+     * - Else, go to the registration page, where the user can create a new account
      */
     @GetMapping("/register")
     public String getRegisterPage(@ModelAttribute("registrationForm") RegistrationForm registrationForm) {
@@ -77,12 +91,12 @@ public class AccountController {
      * Handles POST requests to the /register endpoint.
      * Handles the registration process for new users.
      *
-     * @param request           the HttpServletRequest object containing the request information
-     * @param registrationForm  the RegistrationForm object representing the user's registration data
-     * @param bindingResult     the BindingResult object for validation errors
+     * @param request          the HttpServletRequest object containing the request information
+     * @param registrationForm the RegistrationForm object representing the user's registration data
+     * @param bindingResult    the BindingResult object for validation errors
      * @return the view to display after registration:
-     *         - If there are validation errors, returns the registration page to display errors.
-     *         - If registration is successful, redirects to the user's profile page.
+     * - If there are validation errors, returns the registration page to display errors.
+     * - If registration is successful, redirects to the registrationVerification page to enter the verification token.
      */
     @PostMapping("/register")
     public String register(HttpServletRequest request,
@@ -104,10 +118,68 @@ public class AccountController {
         newUser.grantAuthority("ROLE_USER");
         userService.registerUser(newUser);
         userService.authenticateUser(authenticationManager, newUser, request);
-
-        return "redirect:/profile";
+        sendVerificationEmail(newUser);
+        return "redirect:/register/verification";
     }
 
+    @GetMapping("/register/verification")
+    public String getRegisterVerificationPage(@ModelAttribute("verificationTokenForm") VerificationTokenForm verificationTokenForm) {
+        logger.info("GET /register/verification");
+        return "pages/verificationPage";
+    }
+
+    /**
+     * Handles POST requests to the /register/verification endpoint.
+     * Handles the registration verification process for new users.
+     *
+     * @param verificationTokenForm the VerificationTokenForm object representing the user's verification token data
+     * @param bindingResult         the BindingResult object for validation errors
+     * @return the view to display after registration:
+     * - Either if there are validation errors or not, returns the registrationVerification page to display errors/ not.
+     */
+    @PostMapping("/register/verification")
+    public String registerVerification(@ModelAttribute("verificationTokenForm") VerificationTokenForm verificationTokenForm, BindingResult bindingResult) {
+        VerificationTokenForm.validate(verificationTokenForm, bindingResult);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findEmail(authentication.getName());
+        if (user == null || (!bindingResult.hasFieldErrors("verificationToken") && !validateToken(verificationTokenForm.getVerificationToken(), user.getId()))) {
+            bindingResult.addError(new FieldError("verificationTokenForm", "verificationToken", verificationTokenForm.getVerificationToken(), false, null, null, "Signup code invalid"));
+        }
+
+        if (bindingResult.hasErrors()) {
+            return "pages/verificationPage";
+        }
+        verificationTokenService.updateVerifiedByUserId(user.getId());
+        return "redirect:/login";
+    }
+
+    /**
+     * Validates the user's inputted token against the stored token in the database.
+     *
+     * @param userInputToken the user's inputted token as a string
+     * @param userId         the user's id
+     * @return boolean value whether the token is verified(true) or not(false)
+     */
+    private boolean validateToken(String userInputToken, long userId) {
+        if (verificationTokenService.getVerificationTokenByUserId(userId) == null) {
+            return false;
+        }
+        return passwordEncoder.matches(userInputToken, verificationTokenService.getVerificationTokenByUserId(userId).getHashedToken());
+    }
+
+    /**
+     * Sends a verification email to the user.
+     *
+     * @param user the user to send the verification email to
+     */
+    private void sendVerificationEmail(User user) {
+        logger.info("Sending verification email to " + user.getEmail());
+        VerificationToken token = new VerificationToken(user.getId(), passwordEncoder);
+        verificationTokenService.addVerificationToken(token);
+        String body = "Please verify your account by copying the following code into the prompted field: \n\n" + token.getPlainToken()
+                + "\n\nIf this was not you, you can ignore this message and the account will be deleted after 10 minutes";
+        emailService.sendSimpleMessage(user.getEmail(), "Gardeners Grove Account Verification", body);
+    }
 
     /**
      * Gets the thymeleaf page representing the /login page Will only work if the user is not logged
@@ -118,15 +190,20 @@ public class AccountController {
     @GetMapping("/login")
     public String getLoginPage(@ModelAttribute("loginForm") LoginForm loginForm) {
         logger.info("GET /login");
-        return userService.isSignedIn() ? "redirect:/" : "pages/loginPage";
+        //TODO if user has been redirected from verafication page then display message “Your account has been activated, please log in”
+        if (userService.getLoggedInUser() != null && !verificationTokenService.getVerificationTokenByUserId(userService.getLoggedInUser().getId()).isVerified()) {
+            return "redirect:/register/verification";
+        }
+//        return userService.isSignedIn() ? "redirect:/" : "pages/loginPage";
+        return "pages/loginPage";
     }
 
     /**
      * Handles POST requests to the /login endpoint.
      * Logs in the user, or shows an error message if the login details are invalid.
-     * 
-     * @param request the HttpServletRequest object containing the request information
-     * @param loginForm the LoginForm object representing the user's login data
+     *
+     * @param request       the HttpServletRequest object containing the request information
+     * @param loginForm     the LoginForm object representing the user's login data
      * @param bindingResult the BindingResult object for validation errors
      * @return a String representing the view to display after login:
      *         - If there are validation errors, returns the login page to display errors.
@@ -166,6 +243,28 @@ public class AccountController {
     }
 
     /**
+     * Sends a reset password email to the specified user.
+     * This method generates a password reset link and sends it to the user's email address.
+     * Handles any errors that might occur during the email sending process.
+     *
+     * @param user The User object containing the email address where the reset password email will be sent.
+     */
+    private void sendResetPasswordEmail(User user) {
+        logger.info("Sending reset password email to " + user.getEmail());
+//        VerificationToken token = new VerificationToken(user.getId(), passwordEncoder);
+//        verificationTokenService.addVerificationToken(token);
+        String url = "https://www.canterbury.ac.nz/";
+        String htmlBody = "<p>Please click the below link to reset your password:</p>"
+                + "<a href='" + url + "'>Reset Password Link</a>"
+                + "<p>If this was not you, you can ignore this message and the account will be deleted after 10 minutes.</p>";
+        try {
+            emailService.sendHtmlMessage(user.getEmail(), "Gardeners Grove Account Reset Password", htmlBody);
+        } catch (MessagingException e) {
+            logger.error("Failed to send reset password email", e);
+        }
+    }
+
+    /**
      * Handles POST requests to the /forgotPassword endpoint.
      * Let the user type an email address that they forgot the password of, and send them a reset email, or show an error message if the email address is invalid.
      *
@@ -180,11 +279,12 @@ public class AccountController {
         ForgotPasswordForm.validate(forgotPasswordForm, bindingResult);
         User user = userService.findEmail(forgotPasswordForm.getEmail());
 
-        if (user == null) {
-            bindingResult.addError(new FieldError("forgotPasswordForm", "email", forgotPasswordForm.getEmail(), false, null, null, "An email was sent to the address if it was recognised"));
+        if (user != null) {
+            sendResetPasswordEmail(user);
+        }
 
-        } else if (!bindingResult.hasFieldErrors("email") && !userService.checkEmail(forgotPasswordForm.getEmail())) {
-            bindingResult.addError(new FieldError("forgotPasswordForm", "email", forgotPasswordForm.getEmail(), false, null, null, "Invalid email format"));
+        if (!bindingResult.hasFieldErrors("email")) {
+            bindingResult.addError(new FieldError("forgotPasswordForm", "email", forgotPasswordForm.getEmail(), false, null, null, "An email was sent to the address if it was recognised"));
         }
 
         if (bindingResult.hasErrors()) {

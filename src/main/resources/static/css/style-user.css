@@ -1,8 +1,7 @@
 /* Font change */
 * {
-    font-family: Helvetica;
+    font-family: Helvetica, serif;
 }
-
 
 /* Body style */
 body {
@@ -20,6 +19,7 @@ h1, form {
     margin-bottom: 2rem;
 }
 
+/*dev*/
 form button.cancel {
     text-align: left;
 }
@@ -33,12 +33,13 @@ p {
 .basic {
     padding: 1.5rem;
     background-color: #FAF9F6;
-    border-radius: 1.75rem;
+    border-radius: 10px;
 
     position: relative;
     width: 50rem;
     height: auto;
     min-height: 50%;
+
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -52,60 +53,69 @@ form.upload-image {
     align-items: center;
 }
 
-.cancel {
-    padding: 8px 18px;
-    font-size: 16px;
-    border-radius: 10px;
-    color: #FAF9F6;
+/*.cancel {*/
+/*    padding: 8px 18px;*/
+/*    font-size: 16px;*/
+/*    border-radius: 10px;*/
+/*    color: #FAF9F6;*/
 
-    text-decoration: none; /* Remove underline */
+/*    text-decoration: none; !* Remove underline *!*/
 
-    position: absolute;
-    bottom: 1rem;
-    left: 1rem;
-    right: auto;
-    background-color: darkred;
-}
+/*    position: absolute;*/
+/*    bottom: 1rem;*/
+/*    left: 1rem;*/
+/*    right: auto;*/
+/*    background-color: darkred;*/
+/*}*/
 
-button.cancel{
-    padding: 8px 18px;
-    font-size: 16px;
-    border-radius: 10px;
-    color: #FAF9F6;
+/*button.cancel{*/
+/*    padding: 8px 18px;*/
+/*    font-size: 16px;*/
+/*    border-radius: 10px;*/
+/*    color: #FAF9F6;*/
+/*    text-align: center;*/
+/*    text-decoration: none; !* Remove underline *!*/
+/*    background-color: darkred;*/
+/*    display: block;*/
+/*    width: 100%;*/
+/*    margin-top: 3px;*/
+/*    padding: 5px;*/
+/*}*/
 
-    text-decoration: none; /* Remove underline */
-
-    position: absolute;
-    bottom: 1rem;
-    left: 1rem;
-    right: auto;
-    background-color: darkred;
-}
-
+/*from dev*/
 .cancelMinor {
     color: #FAF9F6;
     background-color: darkred;
-}
-
-.cancel:hover {
-    background-color: rgba(139, 0, 0, 0.55);
 }
 
 .cancelMinor:hover {
     background-color: rgba(139, 0, 0, 0.55);
 }
 
-button.cancel:hover {
-    background-color: rgba(139, 0, 0, 0.55);
+/*elena*/
+.cancelButtonLink {
+    font-size: 18px;
+    border-radius: 3px;
+    color: #FAF9F6;
+    text-align: center;
+    text-decoration: none; /* Remove underline */
+    background-color: darkred;
+    display: block;
+    width: 100%;
+    margin-top: 3px;
+    padding: 5px;
 }
 
-/* Other link styles */
+.cancelButtonLink:hover {
+    background-color: #c00; /* Slightly lighter red on hover */
+    opacity: 0.8;
+}
+
 #landing a {
     padding: 10px 22px;
     font-size: 18px;
-    border-radius: 10px;
+    border-radius: 5px;
     color: #FAF9F6;
-
     text-decoration: none; /* Remove underline */
 
     margin: 0 5px; /* Adjust margin between links */
@@ -116,7 +126,7 @@ button.cancel:hover {
     background-color: rgba(4, 65, 42, 0.71);
 }
 
-/* Button styles */
+/* from dev */
 button {
     padding: 8px 18px;
     margin-top: 8px;
@@ -146,6 +156,26 @@ button {
     right: 1rem;
 }
 
+/*elena*/
+.submitButton{
+    font-size: 18px;
+    border-radius: 3px;
+    color: #FAF9F6;
+
+    background-color: #023020;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    width: 100%;
+    padding: 5px;
+}
+
+.submitButton:hover {
+    background-color: #04492f; /* Slightly lighter red on hover */
+    opacity: 0.8;
+}
+
+/*from dev*/
 button.submit {
     padding: 8px 18px;
     font-size: 16px;
@@ -201,4 +231,38 @@ input[type="file"] {
 .form-element {
     margin-top: 8px;
     width: 100%;
+}
+
+/*elena*/
+input {
+    padding: 8px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    margin: 10px auto;
+}
+
+.surnameCheckbox {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.surnameCheckbox input[type="checkbox"] {
+    margin: 0;
+    width: fit-content;
+}
+
+.surnameCheckbox label {
+    padding-left: 10px;
+    margin: 0;
+    white-space: nowrap;
+}
+
+
+@media (max-width: 768px) {
+    .basic {
+        width: 90%;
+        padding: 10px;
+    }
 }

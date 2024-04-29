@@ -95,6 +95,18 @@ public class FormUtils {
     }
 
     /**
+     * Checks if the given string is less than the under length.
+     *
+     * @param string    the string to check
+     * @param underLength the maximum length allowed
+     * @return true if the string is less than the under length, false otherwise
+     */
+    public static boolean checkUnderLength(String string, Integer underLength) {
+        return string.length() < underLength;
+    }
+
+
+    /**
      * Checks if the given string represents a double bigger than the maximum integer value in java.
      * NOTE: Returns false if the string doesn't represent a valid double. Only call this method with
      * valid strings.
