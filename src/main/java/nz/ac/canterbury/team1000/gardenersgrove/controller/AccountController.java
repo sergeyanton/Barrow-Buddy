@@ -22,10 +22,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import static nz.ac.canterbury.team1000.gardenersgrove.util.Password.verifyPassword;
-
-import java.time.format.DateTimeFormatter;
-
 @Controller
 public class AccountController {
     final Logger logger = LoggerFactory.getLogger(AccountController.class);
@@ -40,34 +36,10 @@ public class AccountController {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public AccountController(UserService userService) {
+    public AccountController(UserService userService, VerificationTokenService verificationTokenService, EmailService emailService) {
         this.userService = userService;
         this.verificationTokenService = verificationTokenService;
         this.emailService = emailService;
-    }
-
-    /**
-     * Gets the thymeleaf page representing the /profile page, displaying the currently logged-in
-     * user's account details. Will only work if the user is logged in.
-     * 
-     * @return thymeleaf profilePage
-     */
-    @GetMapping("/profile")
-    public String getProfilePage(Model model) {
-        logger.info("GET /profile");
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentPrincipalName = authentication.getName();
-        User u = userService.findEmail(currentPrincipalName);
-        model.addAttribute("fName", u.getFname());
-        model.addAttribute("lName", u.getLname());
-        model.addAttribute("email", u.getEmail());
-        if (u.getDateOfBirth() != null) {
-            model.addAttribute("dob",
-                    u.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-        }
-
-
-        return "pages/profilePage";
     }
 
 
@@ -147,8 +119,7 @@ public class AccountController {
     @PostMapping("/register/verification")
     public String registerVerification(@ModelAttribute("verificationTokenForm") VerificationTokenForm verificationTokenForm, BindingResult bindingResult) {
         VerificationTokenForm.validate(verificationTokenForm, bindingResult);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.findEmail(authentication.getName());
+        User user = userService.findEmail(userService.getLoggedInUser().getEmail());
         if (user == null || (!bindingResult.hasFieldErrors("verificationToken") && !validateToken(verificationTokenForm.getVerificationToken(), user.getId()))) {
             bindingResult.addError(new FieldError("verificationTokenForm", "verificationToken", verificationTokenForm.getVerificationToken(), false, null, null, "Signup code invalid"));
         }
@@ -171,7 +142,7 @@ public class AccountController {
         if (verificationTokenService.getVerificationTokenByUserId(userId) == null) {
             return false;
         }
-        return verifyPassword(userInputToken, verificationTokenService.getVerificationTokenByUserId(userId).getHashedToken());
+        return passwordEncoder.matches(userInputToken, verificationTokenService.getVerificationTokenByUserId(userId).getHashedToken());
     }
 
     /**
@@ -181,7 +152,7 @@ public class AccountController {
      */
     private void sendVerificationEmail(User user) {
         logger.info("Sending verification email to " + user.getEmail());
-        VerificationToken token = new VerificationToken(user.getId());
+        VerificationToken token = new VerificationToken(user.getId(), passwordEncoder);
         verificationTokenService.addVerificationToken(token);
         String body = "Please verify your account by copying the following code into the prompted field: \n\n" + token.getPlainToken()
                 + "\n\nIf this was not you, you can ignore this message and the account will be deleted after 10 minutes";
@@ -197,7 +168,7 @@ public class AccountController {
     @GetMapping("/login")
     public String getLoginPage(@ModelAttribute("loginForm") LoginForm loginForm) {
         logger.info("GET /login");
-        //TODO if user has been redirected from verafication page then display message “Your account has been activated, please log in”
+        //TODO if user has been redirected from verification page then display message “Your account has been activated, please log in”
         if (userService.getLoggedInUser() != null && !verificationTokenService.getVerificationTokenByUserId(userService.getLoggedInUser().getId()).isVerified()) {
             return "redirect:/register/verification";
         }

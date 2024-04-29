@@ -78,7 +78,7 @@ class AccountControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
                 .flashAttr("registrationForm", registrationForm))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/profile"));
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/register/verification"));
 
         Mockito.verify(userService).registerUser(Mockito.any());
         Mockito.verify(userService).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
@@ -91,7 +91,7 @@ class AccountControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
                         .flashAttr("registrationForm", registrationForm))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/profile"));
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/register/verification"));
 
         Mockito.verify(userService).registerUser(Mockito.any());
         Mockito.verify(userService).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
@@ -104,7 +104,7 @@ class AccountControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
                         .flashAttr("registrationForm", registrationForm))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/profile"));
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/register/verification"));
 
         Mockito.verify(userService).registerUser(Mockito.any());
         Mockito.verify(userService).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
