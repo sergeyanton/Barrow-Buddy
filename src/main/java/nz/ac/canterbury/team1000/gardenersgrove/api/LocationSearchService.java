@@ -1,10 +1,13 @@
 package nz.ac.canterbury.team1000.gardenersgrove.api;
 
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nz.ac.canterbury.team1000.gardenersgrove.service.TokenBucketService;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Location;
@@ -12,6 +15,7 @@ import nz.ac.canterbury.team1000.gardenersgrove.entity.Location;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class LocationSearchService {
@@ -33,50 +37,55 @@ public class LocationSearchService {
             return new ArrayList<>();
         }
 
-        // CONSTRUCT URL
-        String encodedQuery = query.replaceAll(" ", "%");
-        String url = URL + "?q=" + encodedQuery + "&limit=5&key=" + API_KEY;
+        // CONSTRUCT
+        String url = URL + "?q=" + query + "&limit=5&key=" + API_KEY;
 
-        // SEND GET REQUEST TO API ENDPOINT
-        String jsonResponse = restTemplate.getForObject(url, String.class);
-
-        List<Location> locationAddresses = new ArrayList<>();
-
-        // PARSE THE JSON RESPONSE WITH A TRY-CATCH
-        // RETURN LOCATION LIST IF THERE ARE RESULTS, RETURN EMPTY LIST OTHERWISE
         try {
+            // SEND GET REQUEST TO API ENDPOINT
+            String jsonResponse = restTemplate.getForObject(url, String.class);
+
+            List<Location> locationAddresses = new ArrayList<>();
+
             List<Map<String, Object>> locations = objectMapper.readValue(jsonResponse, List.class);
 
             for (Map<String, Object> location : locations) {
                 String locationType = (String) location.get("type");
                 Map<String, Object> address = (Map<String, Object>) location.get("address");
-                Location newLocation = new Location();
+                Location newLocation = null;
                 if (addressField.equals("city") && locationType.equals("city")) {
-                    newLocation.setCity(address.get("name").toString());
-                    newLocation.setCountry(address.get("country").toString());
+                    String city = address.get("name").toString();
+                    String country = address.get("country").toString();
+
+                    newLocation = new Location("", "", "", city, "", country);
                 } else if (addressField.equals("suburb") && locationType.equals("suburb")) {
-                    newLocation.setSuburb(address.get("name").toString());
-                    newLocation.setCity(address.get("city").toString());
-                    newLocation.setCountry(address.get("country").toString());
+                    String suburb = address.get("name").toString();
+                    String city = address.get("city").toString();
+                    String country = address.get("country").toString();
+
+                    newLocation = new Location("", "", suburb, city, "", country);
                 } else if (addressField.equals("street address")) {
-                    if (locationType.equals("road") || locationType.equals("secondary")) {
-                        newLocation.setStreet(address.get("name").toString());
-                        newLocation.setSuburb(address.get("suburb").toString());
-                        newLocation.setCity(address.get("city").toString());
-                        newLocation.setPostCode(address.get("postcode").toString());
-                        newLocation.setCountry(address.get("country").toString());
+                    String houseNumber = "";
+                    String street = "";
+                    String suburb = "";
+                    if (address.containsKey("house_number")) {
+                        houseNumber = address.get("house_number").toString();
+                        street = address.get("road").toString();
                     } else {
-                        newLocation.setHouseNumber(address.get("house_number").toString());
-                        newLocation.setStreet(address.get("road").toString());
-                        newLocation.setSuburb(address.get("suburb").toString());
-                        newLocation.setCity(address.get("city").toString());
-                        newLocation.setPostCode(address.get("postcode").toString());
-                        newLocation.setCountry(address.get("country").toString());
+                        street = address.get("name").toString();
                     }
+                    if (address.containsKey("suburb")) {
+                        suburb = address.get("suburb").toString();
+                    }
+                    String city = address.get("city").toString();
+                    String postcode = "";
+                    if (address.containsKey("postcode")) {
+                        postcode = address.get("postcode").toString();
+                    }
+                    String country = address.get("country").toString();
+
+                    newLocation = new Location(houseNumber, street, suburb, city, postcode, country);
                 }
-                if (newLocation.getCity() != null && newLocation.getCountry() != null) {
-                    locationAddresses.add(newLocation);
-                }
+                locationAddresses.add(newLocation);
             }
             return locationAddresses;
         } catch (Exception e) {
@@ -91,24 +100,30 @@ public class LocationSearchService {
 
         List<Location> location = locationSearchService.searchLocations(query, addressField);
 
+        if (location.isEmpty()) {
+            System.out.println("No matching location found");
+        }
+
         for (Location loc : location) {
-            switch (addressField) {
-                case "street address":
-                    if (loc.getHouseNumber() != null) {
-                        System.out.println(loc.getHouseNumber() + " " + loc.getStreet() + ", " + loc.getSuburb() + ", " + loc.getCity() +
-                                " " + loc.getPostcode() + ", " + loc.getCountry());
-                    } else {
-                        System.out.println(loc.getStreet() + ", " + loc.getSuburb() + ", " + loc.getCity() +
-                                " " + loc.getPostcode() + ", " + loc.getCountry());
-                    }
-                    break;
-                case "suburb":
-                    System.out.println(loc.getSuburb() + ", " + loc.getCity() + ", " + loc.getCountry());
-                    break;
-                case "city":
-                    System.out.println(loc.getCity() + ", " + loc.getCountry());
-                    break;
+            if (!Objects.equals(loc.getHouseNumber(), "")) {
+                System.out.println("House Number: " + loc.getHouseNumber());
             }
+            if (!Objects.equals(loc.getStreet(), "")) {
+                System.out.println("Street: " + loc.getStreet());
+            }
+            if (!Objects.equals(loc.getSuburb(), "")) {
+                System.out.println("Suburb: " + loc.getSuburb());
+            }
+            if (!Objects.equals(loc.getCity(), "")) {
+                System.out.println("City: " + loc.getCity());
+            }
+            if (!Objects.equals(loc.getPostcode(), "")) {
+                System.out.println("Postcode: " + loc.getPostcode());
+            }
+            if (!Objects.equals(loc.getCountry(), "")) {
+                System.out.println("Country: " + loc.getCountry());
+            }
+            System.out.println("\n");
         }
     }
 }
