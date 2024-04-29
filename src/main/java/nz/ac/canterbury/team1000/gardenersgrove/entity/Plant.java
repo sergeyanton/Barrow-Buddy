@@ -3,6 +3,8 @@ package nz.ac.canterbury.team1000.gardenersgrove.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 /**
  * Entity class reflecting an entry of name, count, description, planted on date, and garden id of a
@@ -13,7 +15,6 @@ public class Plant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(nullable = false)
     private String name;
     @Column
@@ -92,6 +93,15 @@ public class Plant {
 
     public LocalDate getPlantedOnDate() {
         return plantedOnDate;
+    }
+
+    /**
+     * Returns the planted-on date as a string in the format DD/MM/YYYY.
+     *
+     * @return The date that the plant was planted on as a string in the format DD/MM/YYYY.
+     */
+    public String getPlantedOnDateString() {
+        return plantedOnDate.format(DateTimeFormatter.ofPattern("dd/MM/uuuu"));
     }
 
     public String getPicturePath() {
