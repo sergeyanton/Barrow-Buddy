@@ -266,4 +266,45 @@ public class GardensController {
         return "pages/editPlantPage";
     }
 
+    /**
+     * Handles POST requests from the /gardens/{gardenId}/plants/{plantId}/edit endpoint.
+     * 
+     * @param request the HttpServletRequest object containing the request information
+     * @param gardenId Id of the garden that this plant belongs to
+     * @param plantId Id of the plant to edit
+     * @param editPlantForm the PlantForm object representing the plant's new details
+     * @param bindingResult the BindingResult object for validation errors
+     * @return the view to display: - If there are validation errors, stays on the 'Edit Plant'
+     */
+    @PostMapping("/gardens/{gardenId}/plants/{plantId}/edit")
+    public String gardenEditPlantPost(HttpServletRequest request,
+    @PathVariable("gardenId") Long gardenId,
+            @PathVariable("plantId") Long plantId,
+            @ModelAttribute("editPlantForm") PlantForm editPlantForm,
+            BindingResult bindingResult, Model model) {
+
+        logger.info("POST /gardens/" + gardenId + "/plants/" + plantId + "/edit");
+
+        Plant existingPlant = null;
+        Garden existingGarden = null;
+        try {
+            existingGarden = gardenService.getGardenById(gardenId);
+            existingPlant = plantService.getPlantById(plantId);
+        } catch (IllegalArgumentException e) {
+            logger.error("Plant not found: " + plantId);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Plant not found");
+        }
+
+        model.addAttribute("garden", existingGarden);
+        model.addAttribute("plant", existingPlant);
+        
+
+        PlantForm.validate(editPlantForm, bindingResult);
+        if (bindingResult.hasErrors()) {
+            return "pages/editPlantPage";
+        }
+
+        return "pages/editPlantPage";
+    }
+
 }

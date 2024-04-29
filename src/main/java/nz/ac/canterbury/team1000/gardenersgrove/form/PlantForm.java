@@ -90,10 +90,10 @@ public class PlantForm {
 
         // Validate plant count (if there is one)
         if (!checkBlank(createPlantForm.getPlantCount())) {
-            if (checkIntegerIsInvalid(createPlantForm.getPlantCount()) || checkIntegerOutsideRange(createPlantForm.getPlantCount(), 1, null)) {
-                errors.add("plantCount", "Plant count must be a positive integer", createPlantForm.getPlantCount());
-            } else if (checkIntegerTooBig(createPlantForm.getPlantCount())) {
+            if (checkIntegerTooBig(createPlantForm.getPlantCount())) {
                 errors.add("plantCount", "Plant count must be at most " + Integer.MAX_VALUE, createPlantForm.getPlantCount());
+            } else if (checkIntegerIsInvalid(createPlantForm.getPlantCount()) || checkIntegerOutsideRange(createPlantForm.getPlantCount(), 1, null)) {
+                errors.add("plantCount", "Plant count must be a positive integer", createPlantForm.getPlantCount());
             }
         }
 

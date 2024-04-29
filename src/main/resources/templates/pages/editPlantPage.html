@@ -8,7 +8,7 @@
     <main>
         <h1 th:text="'Edit ' + ${plant.name} + ' of ' + ${garden.name}"></h1>
         <div class="content">
-            <form th:action="@{'/gardens/' + ${gardenId} + '/plants/create'}" method="post" th:object="${editPlantForm}">
+            <form th:action="@{'/gardens/' + ${gardenId} +'/plants/' + ${plantId} + '/edit'}" method="post" th:object="${editPlantForm}">
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='name', label='Plant Name: ', placeholder='Red Roses')}" />
                 <br />
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='plantCount', label='How many? (optional): ', placeholder='1')}" />
