@@ -15,7 +15,7 @@ import java.util.Map;
 
 @Service
 public class LocationSearchService {
-    private final String API_KEY = "3d6f6041406e4a6eb3ab2c2aa117c9b6"; // Right now this is using my personal account, create a new account for Team 1000
+    private final String API_KEY = "pk.73082d5d87fb6091cebd2b86194b5b79"; // Right now this is using my personal account, create a new account for Team 1000
     private final String URL = "https://api.locationiq.com/v1/autocomplete";
 
     private final RestTemplate restTemplate = new RestTemplate();
@@ -28,13 +28,14 @@ public class LocationSearchService {
 
     public LocationSearchService() {}
 
-    public List<Location> searchLocations(String query, String type) {
+    public List<Location> searchLocations(String query, String addressField) {
         if (!secondTokenBucket.consumeToken() || !minuteTokenBucket.consumeToken() || !dailyTokenBucket.consumeToken()) {
             return new ArrayList<>();
         }
 
         // CONSTRUCT URL
-        String url = URL + "?q=" + query + "&limit=5&key=" + API_KEY;
+        String encodedQuery = query.replaceAll(" ", "%");
+        String url = URL + "?q=" + encodedQuery + "&limit=5&key=" + API_KEY;
 
         // SEND GET REQUEST TO API ENDPOINT
         String jsonResponse = restTemplate.getForObject(url, String.class);
@@ -47,17 +48,18 @@ public class LocationSearchService {
             List<Map<String, Object>> locations = objectMapper.readValue(jsonResponse, List.class);
 
             for (Map<String, Object> location : locations) {
-                Map<String, Object> address = (Map<String, Object>) location.get("addresss");
+                String locationType = (String) location.get("type");
+                Map<String, Object> address = (Map<String, Object>) location.get("address");
                 Location newLocation = new Location();
-                if (type.equals("city") && location.get("type").equals("city")) {
+                if (addressField.equals("city") && locationType.equals("city")) {
                     newLocation.setCity(address.get("name").toString());
                     newLocation.setCountry(address.get("country").toString());
-                } else if (type.equals("suburb") && location.get("type").equals("suburb")) {
+                } else if (addressField.equals("suburb") && locationType.equals("suburb")) {
                     newLocation.setSuburb(address.get("name").toString());
                     newLocation.setCity(address.get("city").toString());
                     newLocation.setCountry(address.get("country").toString());
-                } else if (type.equals("street address")) {
-                    if (address.get("type").equals("road")) {
+                } else if (addressField.equals("street address")) {
+                    if (locationType.equals("road") || locationType.equals("secondary")) {
                         newLocation.setStreet(address.get("name").toString());
                         newLocation.setSuburb(address.get("suburb").toString());
                         newLocation.setCity(address.get("city").toString());
@@ -84,11 +86,29 @@ public class LocationSearchService {
 
     public static void main(String[] args) {
         LocationSearchService locationSearchService = new LocationSearchService();
+        String query = "Ilam Road";
+        String addressField = "street address";
 
-        List<Location> location = locationSearchService.searchLocations("Christchurch", "city");
+        List<Location> location = locationSearchService.searchLocations(query, addressField);
 
         for (Location loc : location) {
-            System.out.println(loc);
+            switch (addressField) {
+                case "street address":
+                    if (loc.getHouseNumber() != null) {
+                        System.out.println(loc.getHouseNumber() + " " + loc.getStreet() + ", " + loc.getSuburb() + ", " + loc.getCity() +
+                                " " + loc.getPostcode() + ", " + loc.getCountry());
+                    } else {
+                        System.out.println(loc.getStreet() + ", " + loc.getSuburb() + ", " + loc.getCity() +
+                                " " + loc.getPostcode() + ", " + loc.getCountry());
+                    }
+                    break;
+                case "suburb":
+                    System.out.println(loc.getSuburb() + ", " + loc.getCity() + ", " + loc.getCountry());
+                    break;
+                case "city":
+                    System.out.println(loc.getCity() + ", " + loc.getCountry());
+                    break;
+            }
         }
     }
 }
