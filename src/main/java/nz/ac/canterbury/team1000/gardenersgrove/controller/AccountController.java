@@ -250,6 +250,20 @@ public class AccountController {
     }
 
     /**
+     * Sends a reset password email to the user.
+     *
+     * @param user the user to send the reset password email to
+     */
+    private void sendResetPasswordEmail(User user) {
+        logger.info("Sending reset password email to " + user.getEmail());
+        VerificationToken token = new VerificationToken(user.getId(), passwordEncoder);
+        verificationTokenService.addVerificationToken(token);
+        String body = "Please click below link to reset the password: \n\n" + token.getPlainToken()
+                + "\n\nIf this was not you, you can ignore this message and the account will be deleted after 10 minutes";
+        emailService.sendSimpleMessage(user.getEmail(), "Gardeners Grove Account Reset Password", body);
+    }
+
+    /**
      * Handles POST requests to the /forgotPassword endpoint.
      * Let the user type an email address that they forgot the password of, and send them a reset email, or show an error message if the email address is invalid.
      *
@@ -264,22 +278,17 @@ public class AccountController {
         ForgotPasswordForm.validate(forgotPasswordForm, bindingResult);
         User user = userService.findEmail(forgotPasswordForm.getEmail());
 
-        if (user == null) {
-            bindingResult.addError(new FieldError("forgotPasswordForm", "email", forgotPasswordForm.getEmail(), false, null, null, "An email was sent to the address if it was recognised"));
+        if (user != null) {
+            sendResetPasswordEmail(user);
+        }
 
-        } else if (!bindingResult.hasFieldErrors("email") && !userService.checkEmail(forgotPasswordForm.getEmail())) {
-            bindingResult.addError(new FieldError("forgotPasswordForm", "email", forgotPasswordForm.getEmail(), false, null, null, "Invalid email format"));
+        if (!bindingResult.hasFieldErrors("email")) {
+            bindingResult.addError(new FieldError("forgotPasswordForm", "email", forgotPasswordForm.getEmail(), false, null, null, "An email was sent to the address if it was recognised"));
         }
 
         if (bindingResult.hasErrors()) {
             return "pages/forgotPasswordPage";
         }
-
-        // form was submitted with valid data
-        // send a reset password email to the provided email
-
-        // TODO: "SEND A RESET EMAIL TO USER!!!!!! - NOT IMPLEMENTED";
-
 
         return "redirect:/forgotPasswordPage";
     }
