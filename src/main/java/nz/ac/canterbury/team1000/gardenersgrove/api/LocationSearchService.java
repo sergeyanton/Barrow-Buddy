@@ -2,6 +2,7 @@ package nz.ac.canterbury.team1000.gardenersgrove.api;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import nz.ac.canterbury.team1000.gardenersgrove.service.TokenBucketService;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -19,10 +20,15 @@ public class LocationSearchService {
 
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final TokenBucketService tokenBucket = new TokenBucketService(10, 2, 1000);
 
     public LocationSearchService() {}
 
     public List<Location> searchLocations(String query, String type) {
+        if (!tokenBucket.consumeToken()) {
+            return new ArrayList<>();
+        }
+
         // CONSTRUCT URL
         String url = URL + "?q=" + query + "&limit=5&key=" + API_KEY;
 
@@ -72,7 +78,7 @@ public class LocationSearchService {
         }
     }
 
-    private static void main(String[] args) {
+    public static void main(String[] args) {
         LocationSearchService locationSearchService = new LocationSearchService();
 
         List<Location> location = locationSearchService.searchLocations("Christchurch", "city");
