@@ -165,7 +165,6 @@ public class GardensController {
                                                    BindingResult bindingResult,
                                                    Model model) throws IOException {
         logger.info("POST /gardens/" + gardenId);
-//        Garden garden = gardenService.getGardenById(gardenId);
         Plant plant = plantService.getPlantById(plantId);
 
         PictureForm.validate(plantPictureForm, bindingResult, null); // TODO is there a reason that .validate has a User parameter?

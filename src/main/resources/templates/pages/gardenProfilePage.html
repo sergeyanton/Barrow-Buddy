@@ -41,7 +41,7 @@
                                 </div>
                                 <form th:id="'pictureForm' + ${plant.id}" th:action="@{'/gardens/' + ${garden.id} + '/plants/' + ${plant.id}}" th:object="${plantPictureForm}" method="post" enctype="multipart/form-data">
                                     <label th:id="'pictureFileLabel' + ${plant.id}" class="file-upload-plus-button" th:for="'pictureFile' + ${plant.id}">+</label>
-                                    <input th:id="'pictureFile' + ${plant.id}" th:attr="onchange='validateImage(this, ' + ${plant.id} + ', \'' + ${plant.picturePath} + '\')'" th:field="*{pictureFile}" type="file" accept="image/png, image/jpeg, image/svg+xml">
+                                    <input th:id="'pictureFile' + ${plant.id}" th:attr="onchange='validateImage(this, ' + ${plant.id} + ')'" th:field="*{pictureFile}" type="file" accept="image/png, image/jpeg, image/svg+xml">
 <!--                                    <span th:id="'clientSideErrorMessage' + ${plant.id}" class="error"></span>-->
                                 </form>
                             </div>
@@ -80,9 +80,7 @@
             container.style.maxHeight = height + "px";
         }
 
-        // THYMELEAF SYNTAX FOR GETTING MODEL ATTRIBUTES INTO INLINE JS. The comment matters.
-        const initialProfilePictureUrl = /*[[${picturePath}]]*/ '';
-        function validateImage(input, id, initialPicturePath) {
+        function validateImage(input, id) {
             if (!(input.files && input.files[0])) {
                 return;
             }
@@ -106,11 +104,6 @@
                 return;
             }
 
-            const fileReader = new FileReader();
-            fileReader.onload = function (e) {
-                document.getElementById('plantImage' + id).src = e.target.result;
-            }
-            fileReader.readAsDataURL(input.files[0]);
             document.getElementById('pictureForm' + id).submit();
         }
     </script>
