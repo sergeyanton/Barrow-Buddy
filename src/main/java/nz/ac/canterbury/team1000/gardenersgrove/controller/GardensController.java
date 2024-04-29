@@ -160,7 +160,7 @@ public class GardensController {
     @PostMapping("/gardens/{gardenId}/plants/{plantId}")
     public String changePlantPictureFromGardenPage(HttpServletRequest request,
                                                    @PathVariable("gardenId") Long gardenId,
-                                                   @PathVariable("gardenId") Long plantId,
+                                                   @PathVariable("plantId") Long plantId,
                                                    @ModelAttribute("plantPictureForm") PictureForm plantPictureForm,
                                                    BindingResult bindingResult,
                                                    Model model) throws IOException {

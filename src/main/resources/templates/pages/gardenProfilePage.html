@@ -18,6 +18,8 @@
             <br th:if="${garden.size != null}">
             <a th:href="@{'/gardens/' + ${garden.id} + '/edit'}">Edit Garden Details</a>
             <br>
+            <span id="clientSideErrorMessage" class="error"></span>
+            <br>
             <div class="scroll-plants-container">
                 <table>
                     <thead>
@@ -34,14 +36,12 @@
                             <div class="plant-picture-upload-wrapper">
                                 <div class="plant-picture-wrapper">
                                     <img class="plant-picture" th:id="'plantImage' + ${plant.id}"
-                                         th:src="@{/images/defaultPlantPic.png}"
+                                         th:src="${plant.picturePath}"
                                          alt="Plant Picture">
                                 </div>
-                                <form th:action="@{'/gardens/' + ${garden.id} + '/plants/' + ${plant.id}}" th:object="${plantPictureForm}" method="post" enctype="multipart/form-data">
-                                    <label th:id="'pictureFileLabel' + ${plant.id}" class="file-upload-plus-button" th:for="pictureFile">+</label>
-                                    <input th:attr="onchange='validateImage(this, ' + ${plant.id} + ', \'' + ${plant.picturePath} + '\')'" th:field="*{pictureFile}" type="file" accept="image/png, image/jpeg, image/svg+xml">
-<!--                                    <button type="button" id="cancelButton" class="cancel" style="display: none;" onclick="cancelSelection()">❌</button>-->
-<!--                                    <button type="submit" id="submitButton" style="display: none;">✅</button>-->
+                                <form th:id="'pictureForm' + ${plant.id}" th:action="@{'/gardens/' + ${garden.id} + '/plants/' + ${plant.id}}" th:object="${plantPictureForm}" method="post" enctype="multipart/form-data">
+                                    <label th:id="'pictureFileLabel' + ${plant.id}" class="file-upload-plus-button" th:for="'pictureFile' + ${plant.id}">+</label>
+                                    <input th:id="'pictureFile' + ${plant.id}" th:attr="onchange='validateImage(this, ' + ${plant.id} + ', \'' + ${plant.picturePath} + '\')'" th:field="*{pictureFile}" type="file" accept="image/png, image/jpeg, image/svg+xml">
 <!--                                    <span th:id="'clientSideErrorMessage' + ${plant.id}" class="error"></span>-->
                                 </form>
                             </div>
@@ -83,8 +83,6 @@
         // THYMELEAF SYNTAX FOR GETTING MODEL ATTRIBUTES INTO INLINE JS. The comment matters.
         const initialProfilePictureUrl = /*[[${picturePath}]]*/ '';
         function validateImage(input, id, initialPicturePath) {
-            console.log(id);
-            console.log(initialPicturePath);
             if (!(input.files && input.files[0])) {
                 return;
             }
@@ -94,39 +92,27 @@
 
             if (!validTypes.includes(file.type) && file.size > maxFileSize) {
                 input.value = '';
-                // document.getElementById('clientSideErrorMessage').textContent = "Image must be of type png, jpg or svg, and less than 10MB";
+                document.getElementById('clientSideErrorMessage').textContent = "Image must be of type png, jpg or svg, and less than 10MB";
                 return;
             }
             if (!validTypes.includes(file.type)) {
                 input.value = '';
-                // document.getElementById('clientSideErrorMessage').textContent = "Image must be of type png, jpg or svg";
+                document.getElementById('clientSideErrorMessage').textContent = "Image must be of type png, jpg or svg";
                 return;
             }
             if (file.size > maxFileSize) {
                 input.value = '';
-                // document.getElementById('clientSideErrorMessage').textContent = "Image must be less than 10MB";
+                document.getElementById('clientSideErrorMessage').textContent = "Image must be less than 10MB";
                 return;
             }
 
             const fileReader = new FileReader();
             fileReader.onload = function (e) {
-                document.getElementById('plantImage').src = e.target.result;
+                document.getElementById('plantImage' + id).src = e.target.result;
             }
             fileReader.readAsDataURL(input.files[0]);
-
-            document.getElementById('pictureFileLabel').style.display = 'none';
-            // document.getElementById('cancelButton').style.display = 'inline-block';
-            // document.getElementById('submitButton').style.display = 'inline-block';
-            // document.getElementById('clientSideErrorMessage').textContent = "";
+            document.getElementById('pictureForm' + id).submit();
         }
-
-        // function cancelSelection() {
-        //     document.getElementById('pictureFile').value = '';
-        //     document.getElementById('profileImage').src = initialProfilePictureUrl;
-        //     document.getElementById('pictureFileLabel').style.display = 'inline-block';
-        //     document.getElementById('cancelButton').style.display = 'none';
-        //     document.getElementById('submitButton').style.display = 'none';
-        // }
     </script>
 </body>
 </html>
