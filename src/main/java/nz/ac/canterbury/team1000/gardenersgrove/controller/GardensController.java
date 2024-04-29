@@ -118,6 +118,8 @@ public class GardensController {
      * Handles GET requests from the /gardens/{gardenId} endpoint.
      * Displays details of the garden with the given id
      *
+     * @param gardenId the id of the garden that is being viewed
+     * @param plantPictureForm the PictureForm object representing a form with the uploaded image file
      * @param model (map-like) representation of results to be used by thymeleaf
      * @return thymeleaf pages/gardenProfilePage
      */
@@ -133,6 +135,17 @@ public class GardensController {
 
     /**
      * Handles POST requests from the /gardens/{gardenId} endpoint.
+     * Particularly it handles the uploading of images for a plant's picture.
+     *
+     * @param request           the HttpServletRequest object containing the request information
+     * @param gardenId          the id of the garden that is being viewed
+     * @param plantPictureForm  the PictureForm object representing a form with the uploaded image file
+     * @param bindingResult     the BindingResult object for validation errors
+     * @param model             (map-like) representation of results to be used by thymeleaf
+     * @return the view to display:
+     * - If there are validation errors with the image, stays on the form but render the plant's actual picture.
+     * - Else, redirect to the edited garden page with the new profile picture for the plant.
+     * @throws IOException IOException
      */
     @PostMapping("/gardens/{gardenId}")
     public String changePlantPictureFromGardenPage(HttpServletRequest request,
