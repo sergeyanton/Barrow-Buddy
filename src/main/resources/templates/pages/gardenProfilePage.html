@@ -41,8 +41,7 @@
                                 </div>
                                 <form th:id="'pictureForm' + ${plant.id}" th:action="@{'/gardens/' + ${garden.id} + '/plants/' + ${plant.id}}" th:object="${plantPictureForm}" method="post" enctype="multipart/form-data">
                                     <label th:id="'pictureFileLabel' + ${plant.id}" class="file-upload-plus-button" th:for="'pictureFile' + ${plant.id}">+</label>
-                                    <input th:id="'pictureFile' + ${plant.id}" th:attr="onchange='validateImage(this, ' + ${plant.id} + ')'" th:field="*{pictureFile}" type="file" accept="image/png, image/jpeg, image/svg+xml">
-<!--                                    <span th:id="'clientSideErrorMessage' + ${plant.id}" class="error"></span>-->
+                                    <input type="file" th:field="*{pictureFile}" th:id="'pictureFile' + ${plant.id}" th:attr="onchange='validateImage(this, ' + ${plant.id} + ')'" accept="image/png, image/jpeg, image/svg+xml">
                                 </form>
                             </div>
                         </td>
@@ -63,9 +62,6 @@
     <!--    TODO THIS WOULD BE VERY GOOD TO FIGURE OUT SO WE DON'T HAVE JS IN HTML FILES -->
 <!--    <script th:src="@{/js/plantsTableScrollAfter10Plants.js}" type="text/javascript"></script>-->
     <script>
-
-    </script>
-    <script th:inline="javascript">
         // limits viewable plants in the table to 10
         window.onload = function() {
             const container = document.querySelector(".scroll-plants-container");
