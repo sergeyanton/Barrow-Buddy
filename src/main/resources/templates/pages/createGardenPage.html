@@ -6,8 +6,8 @@
 <body>
     <div th:replace="~{fragments/header :: header}"></div>
     <main>
-        <h1>Create a garden</h1>
         <div class="content">
+            <h1>Create a garden</h1>
             <form th:action="@{/gardens/create}" method="post" th:object="${createGardenForm}">
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='name', label='Garden Name: ', placeholder='The Hamilton Gardens')}" />
                 <br />
@@ -16,7 +16,7 @@
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='size', label='Size in m&sup2; (optional): ', placeholder='540000.0')}" />
                 <br />
                 <button class="next" type="submit">Create</button>
-                <a class="cancel" th:href="@{/gardens}">Cancel</a> <!--TODO cancel back to the previous page-->
+                <a class="cancel button" th:href="@{/gardens}">Cancel</a> <!--TODO cancel back to the previous page-->
             </form>
         </div>
     </main>
