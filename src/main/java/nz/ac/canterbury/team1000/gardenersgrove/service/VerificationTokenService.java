@@ -14,7 +14,7 @@ import java.util.Optional;
  */
 @Service
 public class VerificationTokenService {
-    private VerificationTokenRepository verificationTokenRepository;
+    private final VerificationTokenRepository verificationTokenRepository;
 
     @Autowired
     public VerificationTokenService(VerificationTokenRepository verificationTokenRepository) {
@@ -24,11 +24,6 @@ public class VerificationTokenService {
     public VerificationToken getVerificationTokenByUserId(Long userId) {
         Optional<VerificationToken> verificationToken = verificationTokenRepository.findByUserId(userId);
         return verificationToken.orElse(null);
-    }
-
-    public void deleteVerificationTokenByUserId(Long userId) {
-        Optional<VerificationToken> verificationToken = verificationTokenRepository.findByUserId(userId);
-        verificationToken.ifPresent(verificationTokenRepository::delete);
     }
 
     public void addVerificationToken(VerificationToken verificationToken) {
@@ -41,7 +36,6 @@ public class VerificationTokenService {
             token.setVerified(true);
             verificationTokenRepository.save(token);
         });
-//        verificationTokenRepository.updateVerifiedByUserId(userId);
     }
 
 

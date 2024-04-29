@@ -25,13 +25,11 @@ public class HomeController {
 
     private final GardenService gardenService;
     private final UserService userService;
-    private final VerificationTokenService verificationTokenService;
 
     @Autowired
-    public HomeController(GardenService gardenService, UserService userService, VerificationTokenService verificationTokenService) {
+    public HomeController(GardenService gardenService, UserService userService) {
         this.gardenService = gardenService;
         this.userService = userService;
-        this.verificationTokenService = verificationTokenService;
     }
 
     @ModelAttribute("currentUrl")

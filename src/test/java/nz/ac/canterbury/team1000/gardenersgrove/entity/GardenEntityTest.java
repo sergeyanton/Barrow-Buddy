@@ -12,7 +12,7 @@ public class GardenEntityTest {
     }
 
     @Test
-    void Constructor_WithInvalidSizeString_ThtowsIllegalArgumentException() {
+    void Constructor_WithInvalidSizeString_ThrowsIllegalArgumentException() {
         assertThrows(IllegalArgumentException.class, () -> new Garden("name", "location", "abc"));
     }
 
