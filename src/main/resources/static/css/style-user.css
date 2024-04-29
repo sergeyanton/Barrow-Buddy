@@ -1,8 +1,7 @@
 /* Font change */
 * {
-    font-family: Helvetica;
+    font-family: Helvetica, serif;
 }
-
 
 /* Body style */
 body {
@@ -30,24 +29,6 @@ p {
     margin: 4px 0;
 }
 
-/*elena*/
-/* Landing container styles */
-.landing {
-    padding: 1.5rem;
-    background-color: #FAF9F6;
-    border-radius: 10px;
-
-    position: relative;
-    width: 600px;
-    height: 300px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 0 1rem rgba(0, 0, 0, 0.5);
-}
-
-
 /* Basic container styles */
 .basic {
     padding: 1.5rem;
@@ -59,23 +40,6 @@ p {
     height: auto;
     min-height: 50%;
 
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 0 1rem rgba(0, 0, 0, 0.5);
-}
-
-/*elena */
-/* Verification container styles */
-.verification {
-    padding: 1.5rem;
-    background-color: #FAF9F6;
-    border-radius: 10px;
-
-    position: relative;
-    width: 650px;
-    height: 400px;
     display: flex;
     flex-direction: column;
     justify-content: center;

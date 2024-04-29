@@ -3,12 +3,12 @@
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <link rel="stylesheet" type="text/css" th:href="@{/css/styles-user.css}">
     <title>Log in</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/styles-user.css}">
 </head>
 
 <body>
-<div class="verification">
+<div class="basic">
     <h1>Email Verification</h1>
     <form th:action="@{/register/verification}" method="post" th:object="${verificationTokenForm}">
         <p>We have emailed you with a 6-digit sign-up code, please enter it below</p>
