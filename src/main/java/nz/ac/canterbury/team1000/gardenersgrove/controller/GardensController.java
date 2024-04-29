@@ -189,7 +189,7 @@ public class GardensController {
         if (bindingResult.hasErrors()) {
             model.addAttribute("garden", gardenService.getGardenById(gardenId));
             model.addAttribute("plants", plantService.getPlantsByGardenId(gardenId));
-            return "pages/profilePage";
+            return "pages/gardenProfilePage";
         }
 
         plantService.updatePlant(plant);
