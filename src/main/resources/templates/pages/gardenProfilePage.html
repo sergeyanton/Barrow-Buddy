@@ -33,18 +33,17 @@
                         <td>
                             <div class="plant-picture-upload-wrapper">
                                 <div class="plant-picture-wrapper">
-                                    <img class="plant-picture" id="plantImage"
+                                    <img class="plant-picture" th:id="'plantImage' + ${plant.id}"
                                          th:src="@{/images/defaultPlantPic.png}"
                                          alt="Plant Picture">
                                 </div>
-                                <form th:action="@{'/gardens/' + ${garden.id}}" th:object="${plantPictureForm}" method="post" enctype="multipart/form-data">
-                                    <label id="pictureFileLabel" class="file-upload-plus-button" th:for="pictureFile">+</label>
-                                    <input th:field="*{pictureFile}" type="file" onchange="validateImage(this)" accept="image/png, image/jpeg, image/svg+xml">
-<!--                                    <button type="button" id="cancelButton" class="cancel" style="display: none;" onclick="cancelSelection()">Undo</button>-->
-<!--                                    <button type="submit" id="submitButton" style="display: none;">Save Profile Picture</button>-->
-                                    <span id="clientSideErrorMessage" class="error"></span>
+                                <form th:action="@{'/gardens/' + ${garden.id} + '/plants/' + ${plant.id}}" th:object="${plantPictureForm}" method="post" enctype="multipart/form-data">
+                                    <label th:id="'pictureFileLabel' + ${plant.id}" class="file-upload-plus-button" th:for="pictureFile">+</label>
+                                    <input th:attr="onchange='validateImage(this, ' + ${plant.id} + ', \'' + ${plant.picturePath} + '\')'" th:field="*{pictureFile}" type="file" accept="image/png, image/jpeg, image/svg+xml">
+<!--                                    <button type="button" id="cancelButton" class="cancel" style="display: none;" onclick="cancelSelection()">❌</button>-->
+<!--                                    <button type="submit" id="submitButton" style="display: none;">✅</button>-->
+<!--                                    <span th:id="'clientSideErrorMessage' + ${plant.id}" class="error"></span>-->
                                 </form>
-<!--                                <button >+</button>-->
                             </div>
                         </td>
                         <td><span th:text="${plant.name}"></span></td>
@@ -83,7 +82,9 @@
 
         // THYMELEAF SYNTAX FOR GETTING MODEL ATTRIBUTES INTO INLINE JS. The comment matters.
         const initialProfilePictureUrl = /*[[${picturePath}]]*/ '';
-        function validateImage(input) {
+        function validateImage(input, id, initialPicturePath) {
+            console.log(id);
+            console.log(initialPicturePath);
             if (!(input.files && input.files[0])) {
                 return;
             }
