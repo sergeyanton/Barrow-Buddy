@@ -30,7 +30,15 @@
                         <td colspan="5">No plants yet</td>
                     </tr>
                     <tr th:each="plant : ${plants}">
-                        <td><img th:src="@{/images/defaultPlantPic.png}" alt="Plant Image" style="max-width: 100px; max-height: 100px;" /></td>
+                        <td>
+                            <div class="plant-picture-wrapper">
+<!--                                <input th:field="*{picturePath}" type="hidden"/>-->
+                                <img class="plant-picture" id="profileImage"
+                                     th:src="@{/images/defaultPlantPic.png}"
+                                     alt="Plant Picture">
+                            </div>
+<!--                            <img th:src="@{/images/defaultPlantPic.png}" alt="Plant Image" style="max-width: 100px; max-height: 100px;" />-->
+                        </td>
                         <td><span th:text="${plant.name}"></span></td>
                         <td><span th:text="${plant.plantCount}"></span></td>
                         <td><span th:text="${plant.description}"></span></td>
@@ -39,7 +47,10 @@
                     </tbody>
                 </table>
             </div>
-            <div><a th:href="@{/gardens}">Back to My Gardens</a></div>
+            <br>
+            <a th:href="@{/gardens}">
+                <button>Back to My Gardens</button>
+            </a>
         </div>
     </main>
     <!--    TODO THIS WOULD BE VERY GOOD TO FIGURE OUT SO WE DON'T HAVE JS IN HTML FILES -->
