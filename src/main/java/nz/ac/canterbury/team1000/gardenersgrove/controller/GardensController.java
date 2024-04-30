@@ -37,26 +37,6 @@ public class GardensController {
         this.plantService = plantService;
     }
 
-    @ModelAttribute("currentUrl")
-    private String getCurrentPath(HttpServletRequest request) {
-        // the url path including query parameters
-        if (request.getQueryString() == null) {
-            return request.getRequestURI();
-        }
-        return request.getRequestURI() + "?" + request.getQueryString();
-    }
-
-
-    /**
-     * Necessary for being able to display each garden in the nav bar
-     * 
-     * @return all gardens currently in the database
-     */
-    @ModelAttribute("allGardens")
-    private List<Garden> getAllGardens() {
-        return gardenService.getGardens();
-    }
-
     /**
      * Handles GET requests from the /gardens/create endpoint. Displays results of previous form
      * when linked to from POST request

@@ -29,24 +29,6 @@ public class HomeController {
         this.userService = userService;
     }
 
-    @ModelAttribute("currentUrl")
-    private String getCurrentPath(HttpServletRequest request) {
-        // the url path including query parameters
-        if (request.getQueryString() == null) {
-            return request.getRequestURI();
-        }
-        return request.getRequestURI() + "?" + request.getQueryString();
-    }
-
-    /**
-     * Necessary for being able to display each garden in the nav bar
-     * @return all gardens currently in the database
-     */
-    @ModelAttribute("allGardens")
-    private List<Garden> getAllGardens() {
-        return gardenService.getGardens();
-    }
-
     /**
      * Renders the template.
      */
