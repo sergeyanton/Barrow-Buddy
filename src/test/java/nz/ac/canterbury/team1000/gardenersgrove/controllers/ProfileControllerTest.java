@@ -7,6 +7,7 @@ import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.EditUserForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.ProfilePictureForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.UpdatePasswordForm;
+import nz.ac.canterbury.team1000.gardenersgrove.service.VerificationTokenService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,6 +39,9 @@ public class ProfileControllerTest {
 
     @MockBean
     private UserService userService;
+
+    @MockBean
+    private VerificationTokenService verificationTokenService;
 
     @MockBean
     private AuthenticationManager authenticationManager;
@@ -190,7 +194,9 @@ public class ProfileControllerTest {
                 .andExpect(MockMvcResultMatchers.model().attribute("email", userMock.getEmail()))
                 .andExpect(MockMvcResultMatchers.model().attribute("dob", userMock.getDateOfBirthString()))
                 .andExpect(MockMvcResultMatchers.model().attribute("picturePath", userMock.getPicturePath()));
-        Mockito.verify(userService).getLoggedInUser();
+        // This is called twice because of the global model attribute provider
+        Mockito.verify(userService, Mockito.times(2)).getLoggedInUser();
+
     }
 
     @Test
