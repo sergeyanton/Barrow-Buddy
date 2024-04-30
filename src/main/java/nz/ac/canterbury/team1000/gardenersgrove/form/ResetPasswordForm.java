@@ -11,7 +11,7 @@ import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.checkPassw
 public class ResetPasswordForm {
     protected String newPassword;
     protected String retypePassword;
-    protected String resetToken;
+    protected String token;
 
     public String getNewPassword() {
         return newPassword;
@@ -50,11 +50,11 @@ public class ResetPasswordForm {
         }
     }
 
-    public void setResetToken(String resetToken) {
-        this.resetToken = resetToken;
+    public void setResetToken(String token) {
+        this.token = token;
     }
 
     public String getResetToken() {
-        return resetToken;
+        return token;
     }
 }

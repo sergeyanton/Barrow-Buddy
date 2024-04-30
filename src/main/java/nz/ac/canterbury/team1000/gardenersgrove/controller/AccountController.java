@@ -308,6 +308,7 @@ public class AccountController {
         System.out.println("!!!!!");
         System.out.println(resetToken);
         resetPasswordForm.setResetToken(resetToken);
+        System.out.println(resetPasswordForm.getResetToken());
         // TODO validate token
         // if token doesn't exist or expired:
         // redirect to login page, with message "Reset password link has expired"
@@ -332,14 +333,13 @@ public class AccountController {
     @PostMapping("/resetPassword")
     public String postUpdatePassword(HttpServletRequest request,
                                      @ModelAttribute("resetPasswordForm") ResetPasswordForm resetPasswordForm,
-                                     @RequestParam("token") String resetToken,
                                      BindingResult bindingResult) {
         logger.info("POST /resetPassword");
-
+        String resetToken = resetPasswordForm.getResetToken();
+        ResetToken token = resetTokenService.getResetToken(resetToken);
         System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         System.out.println(resetToken);
         // FIND EXISTING token: ???
-        ResetToken token = resetTokenService.getResetToken(resetToken);
         System.out.println(token);
         System.out.println(token.getToken());
         User user = token.getUser();
