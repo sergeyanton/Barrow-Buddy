@@ -97,6 +97,8 @@ public class AccountController {
     public String register(HttpServletRequest request,
                            @ModelAttribute("registrationForm") RegistrationForm registrationForm,
                            BindingResult bindingResult) {
+        logger.info("POST /register");
+
         RegistrationForm.validate(registrationForm, bindingResult);
 
         if (!bindingResult.hasFieldErrors("email") && userService.checkEmail(registrationForm.getEmail())) {
@@ -108,7 +110,6 @@ public class AccountController {
         }
 
         User newUser = registrationForm.getUser(passwordEncoder);
-        logger.warn(newUser.getPassword());
         // Give them the role of user
         newUser.grantAuthority("ROLE_USER");
         userService.registerUser(newUser);
@@ -133,7 +134,9 @@ public class AccountController {
      * - Either if there are validation errors or not, returns the registrationVerification page to display errors/ not.
      */
     @PostMapping("/register/verification")
-    public String registerVerification(@ModelAttribute("verificationTokenForm") VerificationTokenForm verificationTokenForm, BindingResult bindingResult) {
+    public String registerVerification(@ModelAttribute("verificationTokenForm") VerificationTokenForm verificationTokenForm,
+                                       BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        logger.info("POST /register/verification");
         VerificationTokenForm.validate(verificationTokenForm, bindingResult);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findEmail(authentication.getName());
@@ -145,6 +148,7 @@ public class AccountController {
             return "pages/verificationPage";
         }
         verificationTokenService.updateVerifiedByUserId(user.getId());
+        redirectAttributes.addFlashAttribute("errorMessage", "Your account has been activated, please log in");
         return "redirect:/login";
     }
 
@@ -156,6 +160,7 @@ public class AccountController {
      * @return boolean value whether the token is verified(true) or not(false)
      */
     private boolean validateToken(String userInputToken, long userId) {
+        logger.info("Validating token");
         if (verificationTokenService.getVerificationTokenByUserId(userId) == null) {
             return false;
         }
@@ -188,12 +193,10 @@ public class AccountController {
         if (redirectAttributes.containsAttribute("errorMessage")) {
             model.addAttribute("errorMessage", redirectAttributes.getAttribute("errorMessage"));
         }
-        //TODO if user has been redirected from verafication page then display message “Your account has been activated, please log in”
         if (userService.getLoggedInUser() != null && !verificationTokenService.getVerificationTokenByUserId(userService.getLoggedInUser().getId()).isVerified()) {
             return "redirect:/register/verification";
         }
 
-//        return userService.isSignedIn() ? "redirect:/" : "pages/loginPage";
         return "pages/loginPage";
     }
 
@@ -212,6 +215,7 @@ public class AccountController {
     public String login(HttpServletRequest request,
                         @ModelAttribute("loginForm") LoginForm loginForm,
                         BindingResult bindingResult) {
+        logger.info("POST /login");
         if (userService.isSignedIn()) {
             return "redirect:/";
         }
@@ -297,7 +301,10 @@ public class AccountController {
      *         - Whatever the result is (error or no error), returns/redirects the forgot password page.
      */
     @PostMapping("/forgotPassword")
-    public String forgotPassword(HttpServletRequest request, @ModelAttribute("forgotPasswordForm") ForgotPasswordForm forgotPasswordForm, BindingResult bindingResult) {
+    public String forgotPassword(HttpServletRequest request,
+                                 @ModelAttribute("forgotPasswordForm") ForgotPasswordForm forgotPasswordForm,
+                                 BindingResult bindingResult) {
+        logger.info("POST /forgotPassword");
         ForgotPasswordForm.validate(forgotPasswordForm, bindingResult);
         User user = userService.findEmail(forgotPasswordForm.getEmail());
 
