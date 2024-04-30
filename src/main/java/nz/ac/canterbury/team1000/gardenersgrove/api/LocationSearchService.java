@@ -41,27 +41,44 @@ public class LocationSearchService {
             return new ArrayList<>();
         }
 
-        String tag = "";
-        if (addressField.equals("country")) {
-            tag = "&tag=place:country";
-        } else if (addressField.equals("city")) {
-            tag = "&tag=place:city";
-        } else if (addressField.equals("postcode")) {
-            tag = "&tag=place:postcode";
-        } else if (addressField.equals("suburb")) {
-            tag = "&tag=place:suburb";
-        } else {
-            // TODO: implement tag for address - don't know how to do as address can be any class...
+        String[] separateQuery = query.split(" ");
+        String[] capitalisedSeparateQuery = new String[separateQuery.length];
+
+        for (int i = 0; i < separateQuery.length; i++) {
+            String word = separateQuery[i];
+            capitalisedSeparateQuery[i] = word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase();
         }
 
+      StringBuilder queryBuilder = new StringBuilder();
+      for (int i = 0; i < capitalisedSeparateQuery.length; i++) {
+            queryBuilder.append(capitalisedSeparateQuery[i]);
+            if (i < capitalisedSeparateQuery.length - 1) {
+                queryBuilder.append(" ");
+            }
+        }
+      String queryModified = queryBuilder.toString();
+      System.out.println(queryModified.length());
+
         // CONSTRUCT URL
-        String url = URL + "?q=" + query + "&limit=5&key=" + API_KEY + tag;
+        String url;
+        if (addressField.equals("country")) {
+            url = URL + "?q=" + queryModified + "&limit=5&key=" + API_KEY + "&tag=place:country";
+        } else if (addressField.equals("city")) {
+            url = URL + "?q=" + queryModified + "&limit=5&key=" + API_KEY + "&tag=place:city";
+        } else if (addressField.equals("postcode")) {
+            url = URL + "?q=" + queryModified + "&limit=5&key=" + API_KEY + "&tag=place:postcode";
+        } else if (addressField.equals("suburb")) {
+            url = URL + "?q=" + queryModified + "&limit=5&key=" + API_KEY + "&tag=place:suburb";
+        } else {
+            // TODO: implement tag for address - don't know how to do as address can be any class...
+            url = URL + "?q=" + queryModified + "&limit=5&key=" + API_KEY;
+        }
 
         try {
             // SEND GET REQUEST TO API ENDPOINT
             String jsonResponse = restTemplate.getForObject(url, String.class);
 
-            return locationsIntoList(jsonResponse, query, addressField);
+            return locationsIntoList(jsonResponse, queryModified, addressField);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return new ArrayList<>();
@@ -137,7 +154,7 @@ public class LocationSearchService {
     // TODO: delete main method before merge with dev
     public static void main(String[] args) {
         LocationSearchService locationSearchService = new LocationSearchService();
-        String query = "Ilam Road";
+        String query = "ilam road";
         String addressField = "address";
 
         List<Location> location = locationSearchService.searchLocations(query, addressField);
