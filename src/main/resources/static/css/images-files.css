@@ -54,7 +54,6 @@ input[type="file"] {
 }
 
 .file-upload-plus-button {
-    display: none;
     margin: 0;
     padding: 0;
     position: absolute;
@@ -65,14 +64,10 @@ input[type="file"] {
     border-radius: 50%;
     cursor: pointer;
     color: #FAF9F6;
+    background-color: rgba(4, 65, 42, 0.25);
     align-content: center;
-    background-color: rgba(4, 65, 42, 0.5);
 }
 
 .file-upload-plus-button:hover {
     background-color: rgba(4, 65, 42, 0.75);
-}
-
-td:hover .file-upload-plus-button {
-    display: inline-block;
 }
