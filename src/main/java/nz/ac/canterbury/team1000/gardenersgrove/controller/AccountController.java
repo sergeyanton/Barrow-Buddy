@@ -60,7 +60,8 @@ public class AccountController {
         if (userService.getLoggedInUser() != null && verificationTokenService.getVerificationTokenByUserId(userService.getLoggedInUser().getId()) != null) {
             return "redirect:/register/verification";
         }
-        return userService.isSignedIn() ? "redirect:/" : "pages/registrationPage";
+//        return userService.isSignedIn() ? "redirect:/" : "pages/registrationPage";
+        return "pages/registrationPage";
     }
 
     @GetMapping("/forgotPassword")
