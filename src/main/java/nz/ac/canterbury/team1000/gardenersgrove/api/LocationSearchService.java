@@ -38,9 +38,12 @@ public class LocationSearchService {
         }
 
         String tag = "";
-
-        if (addressField.equals("city")) {
+        if (addressField.equals("country")) {
+            tag = "&tag=place:country";
+        } else if (addressField.equals("city")) {
             tag = "&tag=place:city";
+        } else if (addressField.equals("postcode")) {
+            tag = "&tag=place:postcode";
         } else if (addressField.equals("suburb")) {
             tag = "&tag=place:suburb";
         } else {
@@ -69,6 +72,19 @@ public class LocationSearchService {
                 String postcode = "";
                 String country = "";
 
+                if (addressField.equals("country") && locationType.equals("country") && addressMap.get("name").toString().contains(query)) {
+                    country = addressMap.get("name").toString();
+
+                    locationAddresses.add(new Location(address, suburb, city, postcode, country, displayPlace));
+                } else if (addressField.equals("postcode") && locationType.equals("postcode") && addressMap.get("name").toString().contains(query)) {
+                    postcode = addressMap.get("name").toString();
+                    if (addressMap.containsKey("city")) city = addressMap.get("city").toString();
+                    if (addressMap.containsKey("country")) country = addressMap.get("country").toString();
+
+                    if (!city.isEmpty() && !country.isEmpty()) {
+                        locationAddresses.add(new Location(address, suburb, city, postcode, country, displayPlace));
+                    }
+                }
                 if (addressField.equals("city") && locationType.equals("city") && addressMap.get("name").toString().contains(query)) {
                     city = addressMap.get("name").toString();
                     if (addressMap.containsKey("country")) country = addressMap.get("country").toString();
@@ -112,8 +128,8 @@ public class LocationSearchService {
 
     public static void main(String[] args) {
         LocationSearchService locationSearchService = new LocationSearchService();
-        String query = "Aida";
-        String addressField = "suburb";
+        String query = "8025";
+        String addressField = "postcode";
 
         List<Location> location = locationSearchService.searchLocations(query, addressField);
 
