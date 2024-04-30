@@ -1,6 +1,8 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controllers;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+
+import nz.ac.canterbury.team1000.gardenersgrove.entity.Plant;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -44,6 +46,9 @@ public class GardenControllerAuthTest {
     private Garden gardenMock;
 
     @Mock
+    private Plant plantMock;
+
+    @Mock
     private User loggedInUser;
 
     @BeforeEach
@@ -63,9 +68,11 @@ public class GardenControllerAuthTest {
         Mockito.when(gardenMock.getCountry()).thenReturn("New Zealand");
         Mockito.when(gardenMock.getSize()).thenReturn(10.0);
 
+        plantMock = Mockito.mock(Plant.class);
 
         Mockito.when(userService.getLoggedInUser()).thenReturn(loggedInUser);
         Mockito.when(gardenService.getGardenById(1L)).thenReturn(gardenMock);
+        Mockito.when(plantService.getPlantById(1L)).thenReturn(plantMock);
     }
 
     @Test
@@ -136,4 +143,31 @@ public class GardenControllerAuthTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/gardens/1/edit"))
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
+
+    @Test
+    @WithAnonymousUser
+    void testGetPlantEdit_WithUnauthenticatedUser_ReturnsUnauthorizedRequest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/gardens/1/plants/1/edit"))
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser
+    void testGetPlantEdit_WithAuthenticatedUser_ReturnsOkRequest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/gardens/1/plants/1/edit"))
+            .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    @WithMockUser
+    void testGetPlantEdit_WithAuthenticatedUserThatDoesNotOwnGarden_ReturnsForbiddenRequest() throws Exception {
+        // make another user mock and say that the garden belongs to them
+        User otherUser = Mockito.mock(User.class);
+        Mockito.when(otherUser.getId()).thenReturn(2L);
+        Mockito.when(gardenMock.getOwner()).thenReturn(otherUser);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/gardens/1/plants/1/edit"))
+            .andExpect(MockMvcResultMatchers.status().isForbidden());
+    }
+
 }
