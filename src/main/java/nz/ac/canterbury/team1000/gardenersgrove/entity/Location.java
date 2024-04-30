@@ -22,6 +22,11 @@ public class Location {
         this.displayAddress = displayAddress();
     }
 
+    /**
+     * Displays the full address information in the format: address, suburb, city, postcode, country (and ignores any that
+     * is empty or blank)
+     * @return full address information in the format specified above
+     */
     public String displayAddress() {
         List<String> fields = new ArrayList<>();
         if (!address.isEmpty()) fields.add(address);

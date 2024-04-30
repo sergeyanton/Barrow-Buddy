@@ -13,15 +13,15 @@
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='size', label='Size in m&sup2; (optional): ', placeholder='540000.0')}" />
 
                 <h2>Edit Garden Location</h2>
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='address', label='Address: ', placeholder='13 Hungerford Crescent')}" />
+                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='address', label='Address: ', placeholder='13 Hungerford Crescent')}" />
                 <br />
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='suburb', label='Suburb: ', placeholder='Ilam')}" />
+                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='suburb', label='Suburb: ', placeholder='Ilam')}" />
                 <br />
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='city', label='City: ', placeholder='Christchurch')}" />
+                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='city', label='City: ', placeholder='Christchurch')}" />
                 <br />
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='postcode', label='Postcode: ', placeholder='3216')}" />
+                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='postcode', label='Postcode: ', placeholder='3216')}" />
                 <br />
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='country', label='Country: ', placeholder='New Zealand')}" />
+                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='country', label='Country: ', placeholder='New Zealand')}" />
                 <br />
                 <p>Search by <a href="https://locationiq.com">LocationIQ.com</a></p>
                 <div class="cancel-submit-wrapper">
@@ -31,5 +31,84 @@
             </form>
         </div>
     </main>
+    <script>
+        // ChatGPT assisted, particularly with fetch, timeouts, and the creation of html via js
+        const LOCATION_FIELD_IDS = ['address', 'suburb', 'city', 'postcode', 'country'];
+        const MIN_LENGTH_TO_AUTOCOMPLETE = 3;
+
+        let locationFields = [];
+        for (const id of LOCATION_FIELD_IDS) {
+            locationFields.push(document.getElementById(id))
+            locationFields[locationFields.length-1].addEventListener('input', () => {
+                debounce(() => getLocationSuggestions(id), 500);
+            });
+            locationFields[locationFields.length-1].addEventListener('blur', function() {
+                document.getElementById(`${id}DropdownMenu`).style.display = 'none';
+            });
+        }
+
+        let timeoutId;
+        /**
+         * Debounces the call to a given JS function.
+         * Useful for making API calls, as we don't want to exceed the given limit.
+         *
+         * @param func the function to debounce
+         * @param delay the delay in ms
+         */
+        function debounce(func, delay) {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(func, delay);
+        }
+
+        /**
+         * Gets a list of locations suggested by LocationIQ based on the current value of the
+         * given address field (either address, suburb, city, postcode, or country)
+         *
+         * @param addressField the name/id of the particular address field being used for autocomplete
+         */
+        function getLocationSuggestions(addressField) {
+            const query = document.getElementById(addressField).value;
+            if (query.trim().length < MIN_LENGTH_TO_AUTOCOMPLETE) {
+                return;
+            }
+
+            fetch(`/locationSearch?query=${query}&addressField=${addressField}`)
+            .then(response => response.json())
+            .then(locations => {
+                const dropdownMenu = document.getElementById(`${addressField}DropdownMenu`);
+                dropdownMenu.innerHTML = '';
+
+                dropdownMenu.style.display = 'block';
+                if (locations.length === 0) {
+                    const noLocations = document.createElement('li');
+                    noLocations.innerHTML = '<p>No matching location found, location-based services may not work</p>';
+                    noLocations.classList.add('dropdown-item');
+                    dropdownMenu.appendChild(noLocations);
+                } else {
+                    locations.forEach(location => {
+                        const option = document.createElement('li');
+                        option.classList.add('dropdown-item');
+                        option.innerHTML = `<b>${location.displayPlace}</b>`;
+                        if (location.displayAddress !== location.displayPlace) {
+                            option.innerHTML += `<p>${location.displayAddress}</p>`;
+                        }
+                        option.addEventListener('mousedown', function() {
+                            handleDropdownItemClick(location);
+                        });
+                        dropdownMenu.appendChild(option);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching locations:', error);
+            });
+        }
+
+        function handleDropdownItemClick(location) {
+            for (const id of LOCATION_FIELD_IDS) {
+                document.getElementById(id).value = location[id];
+            }
+        }
+    </script>
 </body>
 </html>

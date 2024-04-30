@@ -15,6 +15,10 @@ public class TokenBucketService {
         this.refillBucket();
     }
 
+    /**
+     * Consumes a token from the bucket if it does contain a token.
+     * @return true if it consumes a token, otherwise fales
+     */
     public boolean consumeToken() {
         refillBucket();
         if (this.tokens > 0) {
@@ -24,6 +28,10 @@ public class TokenBucketService {
         return false;
     }
 
+    /**
+     * Refills the bucket if the timeline has passed between the next refill time and the time of the previous refill.
+     * Otherwise, does nothing.
+     */
     public void refillBucket() {
         if (System.currentTimeMillis() < this.nextRefillTime) {
             return;
