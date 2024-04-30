@@ -1,28 +1,25 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
 
-<head th:replace="~{fragments/head :: head(title='Gardener\'s Grove - Edit Profile:w
-')}"></head>
-
+<head th:replace="~{fragments/head :: head(title='Gardener\'s Grove - Edit Profile')}"></head>
 
 <body>
     <div th:replace="~{fragments/header :: header}"></div>
-
     <main>
-        <div class="content">
+        <div class="basic">
             <h1>Edit My Profile</h1>
             <form class="upload-image" th:action="@{/editProfile}" method="post" th:object="${editUserForm}" enctype="multipart/form-data">
                 <div class="profile-picture-wrapper">
-                    <input th:field="*{picturePath}" type="hidden"/>
-                    <img class="profile-picture" id="profileImage"
-                         th:src="${editUserForm.getPicturePath()}"
-                         alt="Profile Picture">
+                <input th:field="*{picturePath}" type="hidden"/>
+                <img class="profile-picture" id="profileImage"
+                     th:src="${editUserForm.getPicturePath()}"
+                     alt="Profile Picture">
                 </div>
 
                 <div class="form-element">
                     <label class="file-upload-label" th:for="pictureFile">Edit Profile Picture</label>
                     <input th:field="*{pictureFile}" type="file" onchange="validateImage(this)" accept="image/png, image/jpeg, image/svg+xml">
-                    <br><span id="clientSideErrorMessage" class="error"></span>
+                    <span id="clientSideErrorMessage" class="error"></span>
                 </div>
 
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='firstName', label='First Name: ', placeholder='Fabian')}" />
@@ -36,9 +33,11 @@
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='email', label='Email: ', placeholder='jane@doe.nz')}" />
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='dob', label='Date of Birth: ', placeholder='DD/MM/YYYY')}" />
 
-                <button type="submit">Update Profile</button>
                 <a th:href="@{editProfile/updatePassword}">Update Password</a>
-                <a class="cancel button" th:href="@{profile}">Cancel</a>
+                <div class="cancel-submit-wrapper">
+                    <a class="cancel button" th:href="@{profile}">Cancel</a>
+                    <button type="submit">Update Profile</button>
+                </div>
             </form>
         </div>
     </main>

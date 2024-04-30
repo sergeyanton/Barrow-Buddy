@@ -1,0 +1,77 @@
+form {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-element {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+
+.form-element div {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.form-element.no-label div{
+    justify-content: center;
+}
+
+.form-element input[type="text"],
+.form-element input[type="password"]{
+    margin-left: 40px;
+}
+
+.form-element.no-label input {
+    margin-left: 0;
+}
+
+/* Buttons/Links */
+
+button, .cancel {
+    padding: 8px 18px;
+    margin-top: 8px;
+    font-size: 16px;
+    border-radius: 10px;
+    color: #FAF9F6;
+    background-color: #023020;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+button:hover {
+    background-color: rgba(4, 65, 42, 0.71);
+}
+
+.cancel {
+    background-color: darkred;
+}
+
+.cancel:hover {
+    background-color: rgba(139, 0, 0, 0.55);
+}
+
+#landing a {
+    margin: 0 5px;
+    padding: 10px 22px;
+    font-size: 18px;
+    border-radius: 10px;
+    color: #FAF9F6;
+    background-color: #023020;
+    text-decoration: none;
+}
+
+#landing a:hover {
+    background-color: rgba(4, 65, 42, 0.71);
+}
+
+.cancel-submit-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}

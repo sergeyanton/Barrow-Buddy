@@ -5,7 +5,7 @@ import nz.ac.canterbury.team1000.gardenersgrove.controller.GlobalModelAttributeP
 import nz.ac.canterbury.team1000.gardenersgrove.controller.ProfileController;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.EditUserForm;
-import nz.ac.canterbury.team1000.gardenersgrove.form.ProfilePictureForm;
+import nz.ac.canterbury.team1000.gardenersgrove.form.PictureForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.UpdatePasswordForm;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,7 +51,7 @@ public class ProfileControllerTest {
 
     @Mock
     private User userMock;
-    private ProfilePictureForm profilePictureForm;
+    private PictureForm profilePictureForm;
 
     private EditUserForm editUserForm;
     private UpdatePasswordForm updatePasswordForm;
@@ -67,7 +67,7 @@ public class ProfileControllerTest {
         Mockito.when(userMock.getPassword()).thenReturn("encoded_password");
         Mockito.when(userMock.getPicturePath()).thenReturn("/uploads/example.png");
 
-        profilePictureForm = new ProfilePictureForm();
+        profilePictureForm = new PictureForm();
         profilePictureForm.setPictureFile(new MockMultipartFile("pictureFile", new byte[0]));
 
         editUserForm = new EditUserForm();

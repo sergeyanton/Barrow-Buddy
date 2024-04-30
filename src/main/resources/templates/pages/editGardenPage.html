@@ -6,11 +6,10 @@
 <body>
     <div th:replace="~{fragments/header :: header}"></div>
     <main>
-        <div class="content">
+        <div class="basic">
             <h1>Edit Garden Details</h1>
             <form th:action="@{'/gardens/' + ${gardenId} + '/edit'}" method="post" th:object="${editGardenForm}">
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='name', label='Garden Name: ', placeholder='The Hamilton Gardens')}" />
-                <br />
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='size', label='Size in m&sup2; (optional): ', placeholder='540000.0')}" />
 
                 <h2>Edit Garden Location</h2>
@@ -25,8 +24,10 @@
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='country', label='Country: ', placeholder='New Zealand')}" />
                 <br />
 
-                <button class="next" type="submit">Edit</button>
-                <a class="cancel button" th:href="@{'/gardens/' + ${gardenId}}">Cancel</a>
+                <div class="cancel-submit-wrapper">
+                    <a class="cancel button" th:href="@{'/gardens/' + ${gardenId}}">Cancel</a>
+                    <button class="next" type="submit">Edit</button>
+                </div>
             </form>
         </div>
     </main>

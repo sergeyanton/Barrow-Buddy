@@ -5,13 +5,19 @@ INSERT INTO tab_user(id, date_of_birth, email, fName, lName, password, picture_p
 -- I Hanan Used a LLM to update this file on 30/04/2024 the following inserts were generated
 
 -- Create a garden the Hamilton Garden (id = 1)
-INSERT INTO garden (id, name, address, suburb, city, postcode, country, size) VALUES (1, 'The Hamilton Garden', '21 Hungerford Crescent', 'Hamilton East', 'Hamilton', '3216', 'New Zealand', 540000);
+INSERT INTO garden (id, name, address, suburb, city, postcode, country, size) VALUES (1, 'The Hamilton Gardens', '21 Hungerford Crescent', 'Hamilton East', 'Hamilton', '3216', 'New Zealand', 540000);
 -- add some plants to the Hamilton Garden
 INSERT INTO plant (name, plant_count, description, planted_on_date, garden_id) VALUES ('Rose Bush', 200, 'Fragrant, colorful garden flower.', null, 1),
                                                                                       ('Lavender', 50, 'Aromatic purple herb.', null, 1),
                                                                                       ('Sunflower ', 100, 'Tall with large yellow flowers.', null, 1),
                                                                                       ('Fern', 1150, 'Lush, green leafy plant.', null, 1),
-                                                                                      ('Tomato', 40, 'Edible red fruiting plant.', null, 1);
+                                                                                      ('Tomato', 40, 'Edible red fruiting plant.', null, 1),
+                                                                                      ('Basil', 30, 'Aromatic herb used in cooking.', null, 1),
+                                                                                      ('Cactus', 20, 'Hardy desert plant with spines.', null, 1),
+                                                                                      ('Daisy', 45, 'Small white flowers with a yellow center.', null, 1),
+                                                                                      ('Lemon Tree', 90, 'Produces yellow citrus fruits.', null, 1),
+                                                                                      ('Lily', 60, 'Elegant flowers with various colors and patterns.', null, 1);
+
 
 -- Create a garden called the Christchurch Botanic Gardens (id = 2)
 INSERT INTO garden (id, name, address, suburb, city, postcode, country, size) VALUES (2, 'The Christchurch Botanic Gardens', 'Rolleston Avenue', 'Christchurch Central', 'Christchurch', '8013', 'New Zealand', 210000);
