@@ -105,25 +105,7 @@ public class LocationSearchService {
         }
 
         for (Location loc : location) {
-            if (!Objects.equals(loc.getHouseNumber(), "")) {
-                System.out.println("House Number: " + loc.getHouseNumber());
-            }
-            if (!Objects.equals(loc.getStreet(), "")) {
-                System.out.println("Street: " + loc.getStreet());
-            }
-            if (!Objects.equals(loc.getSuburb(), "")) {
-                System.out.println("Suburb: " + loc.getSuburb());
-            }
-            if (!Objects.equals(loc.getCity(), "")) {
-                System.out.println("City: " + loc.getCity());
-            }
-            if (!Objects.equals(loc.getPostcode(), "")) {
-                System.out.println("Postcode: " + loc.getPostcode());
-            }
-            if (!Objects.equals(loc.getCountry(), "")) {
-                System.out.println("Country: " + loc.getCountry());
-            }
-            System.out.println("\n");
+            System.out.println(loc.displayAddress());
         }
     }
 }

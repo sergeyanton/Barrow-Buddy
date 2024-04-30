@@ -11,17 +11,24 @@
             <form th:action="@{'/gardens/' + ${gardenId} + '/edit'}" method="post" th:object="${editGardenForm}">
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='name', label='Garden Name: ', placeholder='The Hamilton Gardens')}" />
                 <br />
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='location', label='Location: ', placeholder='Hungerford Crescent, Hamilton 3216')}" />
-                <br />
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='size', label='Size in m&sup2; (optional): ', placeholder='540000.0')}" />
+
+                <h2>Edit Garden Location</h2>
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='address', label='Address: ', placeholder='13 Hungerford Crescent')}" />
                 <br />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='suburb', label='Suburb: ', placeholder='Ilam')}" />
+                <br />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='city', label='City: ', placeholder='Christchurch')}" />
+                <br />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='postcode', label='Postcode: ', placeholder='3216')}" />
+                <br />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='country', label='Country: ', placeholder='New Zealand')}" />
+                <br />
+
+                <p>Search by <a href="https://locationiq.com">LocationIQ.com</a></p>
                 <button class="next" type="submit">Edit</button>
                 <a class="cancel button" th:href="@{'/gardens/' + ${gardenId}}">Cancel</a>
             </form>
-        </div>
-        <div>
-            <!-- As of now, keep the attribution here, when autocomplete is implemented, add to bottom of autocomplete bar -->
-            <p>Search by <a href="https://locationiq.com">LocationIQ.com</a></p>
         </div>
     </main>
 </body>

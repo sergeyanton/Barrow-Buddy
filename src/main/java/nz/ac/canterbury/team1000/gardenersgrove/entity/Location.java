@@ -67,6 +67,38 @@ public class Location {
         this.country = country;
     }
 
+    public String displayAddress() {
+        String address = "";
+
+        if (!this.houseNumber.isEmpty()) {
+            address += this.houseNumber + " ";
+        }
+
+        if (!this.street.isEmpty()) {
+            address += this.street + ", ";
+        }
+
+        if (!this.suburb.isEmpty()) {
+            address += this.suburb + ", ";
+        }
+
+        if (!this.city.isEmpty()) {
+            address += this.city;
+
+            if (!this.postCode.isEmpty()) {
+                address += " " + this.postCode;
+            }
+
+            address += ", ";
+        }
+
+        if (!this.country.isEmpty()) {
+            address += this.country;
+        }
+
+        return address;
+    }
+
     @Override
     public String toString() {
         return "Location{" +
