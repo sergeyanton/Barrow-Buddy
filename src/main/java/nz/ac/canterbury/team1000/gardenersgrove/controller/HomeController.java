@@ -40,4 +40,10 @@ public class HomeController {
         return "pages/landingPage";
     }
 
+    @GetMapping("/home")
+    public String getHomePage() {
+        logger.info("/GET home");
+        return "pages/homePage";
+    }
+
 }

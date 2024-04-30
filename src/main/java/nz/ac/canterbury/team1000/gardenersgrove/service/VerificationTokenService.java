@@ -1,5 +1,6 @@
 package nz.ac.canterbury.team1000.gardenersgrove.service;
 
+import jakarta.transaction.Transactional;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.VerificationToken;
 import nz.ac.canterbury.team1000.gardenersgrove.repository.VerificationTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-// TODO Documentation
 
 /**
  * This class is responsible for handling the business logic for verification tokens.
@@ -39,8 +39,5 @@ public class VerificationTokenService {
     }
 
 
-    public void deleteVerificationTokenByUserId(Long id) {
-        verificationTokenRepository.deleteByUserId(id);
-    }
 }
 

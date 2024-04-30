@@ -58,11 +58,6 @@ public class ProfileController {
         logger.info("GET /profile");
         User currentUser = userService.getLoggedInUser();
 
-        // If user has not verified their account, redirect to the verification page
-        if (verificationTokenService.getVerificationTokenByUserId(currentUser.getId()) != null) {
-            return "redirect:/register/verification";
-        }
-
         model.addAttribute("fName", currentUser.getFname());
         model.addAttribute("lName", currentUser.getLname());
         model.addAttribute("email", currentUser.getEmail());

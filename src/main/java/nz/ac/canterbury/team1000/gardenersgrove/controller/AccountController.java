@@ -131,7 +131,7 @@ public class AccountController {
             return "pages/verificationPage";
         }
         verificationTokenService.updateVerifiedByUserId(user.getId());
-        verificationTokenService.deleteVerificationTokenByUserId(user.getId());
+
         return "redirect:/login";
     }
 
@@ -195,7 +195,7 @@ public class AccountController {
                         @ModelAttribute("loginForm") LoginForm loginForm,
                         BindingResult bindingResult) {
         if (userService.isSignedIn()) {
-            return "redirect:/";
+            return "redirect:/home";
         }
 
         LoginForm.validate(loginForm, bindingResult);
@@ -219,8 +219,7 @@ public class AccountController {
         // log in the user
         User validUser = userService.findEmail(loginForm.getEmail());
         userService.authenticateUser(authenticationManager, validUser, request);
-
-        return "redirect:/";
+        return "redirect:/home";
     }
 
     /**
