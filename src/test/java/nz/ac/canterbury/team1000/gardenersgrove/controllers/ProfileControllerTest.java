@@ -147,7 +147,6 @@ public class ProfileControllerTest {
     public void ProfilePost_WithInvalidFileType_HasFieldErrors() throws Exception {
         profilePictureForm.setPictureFile(new MockMultipartFile(
                 "pictureFile", "newPfp.webp", "image/webp", "file contents".getBytes()));
-
         mockMvc.perform(MockMvcRequestBuilders.post("/profile").with(csrf())
                         .flashAttr("profilePictureForm", profilePictureForm))
                 .andExpect(MockMvcResultMatchers.status().isOk())

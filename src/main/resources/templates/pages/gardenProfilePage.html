@@ -18,6 +18,8 @@
             <br th:if="${garden.size != null}">
             <a th:href="@{'/gardens/' + ${garden.id} + '/edit'}">Edit Garden Details</a>
             <br>
+            <span id="clientSideErrorMessage" class="error"></span>
+            <br>
             <div class="scroll-plants-container">
                 <table>
                     <thead>
@@ -37,18 +39,14 @@
                         <td>
                             <div class="plant-picture-upload-wrapper">
                                 <div class="plant-picture-wrapper">
-                                    <img class="plant-picture" id="plantImage"
-                                         th:src="@{/images/defaultPlantPic.png}"
+                                    <img class="plant-picture" th:id="'plantImage' + ${plant.id}"
+                                         th:src="${plant.picturePath}"
                                          alt="Plant Picture">
                                 </div>
-                                <form th:action="@{'/gardens/' + ${garden.id}}" th:object="${plantPictureForm}" method="post" enctype="multipart/form-data">
-                                    <label id="pictureFileLabel" class="file-upload-plus-button" th:for="pictureFile">+</label>
-                                    <input th:field="*{pictureFile}" type="file" onchange="validateImage(this)" accept="image/png, image/jpeg, image/svg+xml">
-<!--                                    <button type="button" id="cancelButton" class="cancel" style="display: none;" onclick="cancelSelection()">Undo</button>-->
-<!--                                    <button type="submit" id="submitButton" style="display: none;">Save Profile Picture</button>-->
-                                    <span id="clientSideErrorMessage" class="error"></span>
+                                <form th:id="'pictureForm' + ${plant.id}" th:action="@{'/gardens/' + ${garden.id} + '/plants/' + ${plant.id}}" th:object="${plantPictureForm}" method="post" enctype="multipart/form-data">
+                                    <label th:id="'pictureFileLabel' + ${plant.id}" class="file-upload-plus-button" th:for="'pictureFile' + ${plant.id}">+</label>
+                                    <input type="file" th:field="*{pictureFile}" th:id="'pictureFile' + ${plant.id}" th:attr="onchange='validateImage(this, ' + ${plant.id} + ')'" accept="image/png, image/jpeg, image/svg+xml">
                                 </form>
-<!--                                <button >+</button>-->
                             </div>
                         </td>
                         <td><span th:text="${plant.name}"></span></td>
@@ -67,7 +65,7 @@
     </main>
     <!--    TODO THIS WOULD BE VERY GOOD TO FIGURE OUT SO WE DON'T HAVE JS IN HTML FILES -->
 <!--    <script th:src="@{/js/plantsTableScrollAfter10Plants.js}" type="text/javascript"></script>-->
-    <script th:inline="javascript">
+    <script>
         // limits viewable plants in the table to 10
         window.onload = function() {
             const container = document.querySelector(".scroll-plants-container");
@@ -82,9 +80,7 @@
             container.style.maxHeight = height + "px";
         }
 
-        // THYMELEAF SYNTAX FOR GETTING MODEL ATTRIBUTES INTO INLINE JS. The comment matters.
-        const initialProfilePictureUrl = /*[[${picturePath}]]*/ '';
-        function validateImage(input) {
+        function validateImage(input, id) {
             if (!(input.files && input.files[0])) {
                 return;
             }
@@ -94,30 +90,33 @@
 
             if (!validTypes.includes(file.type) && file.size > maxFileSize) {
                 input.value = '';
-                // document.getElementById('clientSideErrorMessage').textContent = "Image must be of type png, jpg or svg, and less than 10MB";
+                document.getElementById('clientSideErrorMessage').textContent = "Image must be of type png, jpg or svg, and less than 10MB";
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
                 return;
             }
             if (!validTypes.includes(file.type)) {
                 input.value = '';
-                // document.getElementById('clientSideErrorMessage').textContent = "Image must be of type png, jpg or svg";
+                document.getElementById('clientSideErrorMessage').textContent = "Image must be of type png, jpg or svg";
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
                 return;
             }
             if (file.size > maxFileSize) {
                 input.value = '';
-                // document.getElementById('clientSideErrorMessage').textContent = "Image must be less than 10MB";
+                document.getElementById('clientSideErrorMessage').textContent = "Image must be less than 10MB";
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
                 return;
             }
 
-            const fileReader = new FileReader();
-            fileReader.onload = function (e) {
-                document.getElementById('plantImage').src = e.target.result;
-            }
-            fileReader.readAsDataURL(input.files[0]);
-
-            document.getElementById('pictureFileLabel').style.display = 'none';
-            // document.getElementById('cancelButton').style.display = 'inline-block';
-            // document.getElementById('submitButton').style.display = 'inline-block';
-            // document.getElementById('clientSideErrorMessage').textContent = "";
+            document.getElementById('pictureForm' + id).submit();
         }
 
         // function cancelSelection() {
