@@ -1,6 +1,7 @@
 package nz.ac.canterbury.team1000.gardenersgrove.entity;
 
 import jakarta.persistence.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -10,24 +11,26 @@ import java.util.UUID;
  * Inspiration from source: https://www.baeldung.com/spring-security-registration-i-forgot-my-password
  */
 @Entity
+@Table(name = "reset_token")
 public class ResetToken {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    private Long userId;
+
+    @Column(nullable = false)
     private String token;
 
-    @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
-    @JoinColumn(nullable = false, name = "user_id")
-    private User user;
-
+    @Column(nullable = false)
     private LocalDateTime expiryDate;
 
-    public ResetToken(User user, int expiry) {
+    public ResetToken(Long userId, int expiry) {
+        this.userId = userId;
         this.token = UUID.randomUUID().toString();
-        this.user = user;
-        setExpiryDate(LocalDateTime.now().plusMinutes(expiry));
+        this.expiryDate = LocalDateTime.now().plusMinutes(expiry);
     }
 
     public ResetToken() {
@@ -37,8 +40,8 @@ public class ResetToken {
         this.token = token;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public Long getUserId() {
+        return userId;
     }
 
     public void setExpiryDate(LocalDateTime expiry) {
@@ -47,10 +50,6 @@ public class ResetToken {
 
     public String getToken() {
         return token;
-    }
-
-    public User getUser() {
-        return user;
     }
 
     public LocalDateTime getExpiryDate() {

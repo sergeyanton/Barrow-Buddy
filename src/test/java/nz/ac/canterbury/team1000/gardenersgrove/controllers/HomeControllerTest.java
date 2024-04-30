@@ -2,6 +2,7 @@ package nz.ac.canterbury.team1000.gardenersgrove.controllers;
 
 import nz.ac.canterbury.team1000.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.PlantService;
+import nz.ac.canterbury.team1000.gardenersgrove.service.VerificationTokenService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -33,6 +34,9 @@ class HomeControllerTest {
 
     @MockBean
     private PlantService plantService;
+
+    @MockBean
+    private VerificationTokenService verificationTokenService;
 
     @Autowired
     private MockMvc mockMvc;

@@ -254,7 +254,7 @@ public class AccountController {
      */
     private void sendResetPasswordEmail(User user) {
         logger.info("Sending reset password email to " + user.getEmail());
-        ResetToken token = new ResetToken(user, 10);
+        ResetToken token = new ResetToken(user.getId(), 10);
 
         resetTokenService.addResetToken(token);
 
@@ -332,7 +332,6 @@ public class AccountController {
     @GetMapping("/resetPassword")
     public String getResetPasswordPage(@RequestParam(value = "token") String resetToken, HttpSession session,
                                        ResetPasswordForm resetPasswordForm, RedirectAttributes redirectAttributes) {
-        System.out.println("Gets to the resetPassword page!");
         ResetToken token = resetTokenService.getResetToken(resetToken);
         session.setAttribute("resetToken", resetToken);
         // if token doesn't exist or expired:
@@ -379,7 +378,7 @@ public class AccountController {
             return "redirect:/login";
         }
 
-        User user = token.getUser();
+        User user = userService.getUserById(token.getUserId());
         ResetPasswordForm.validate(resetPasswordForm, bindingResult);
 
         if (bindingResult.hasErrors()) {
