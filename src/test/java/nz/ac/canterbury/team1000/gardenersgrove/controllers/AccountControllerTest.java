@@ -1,16 +1,15 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controllers;
 
 import nz.ac.canterbury.team1000.gardenersgrove.controller.AccountController;
+import nz.ac.canterbury.team1000.gardenersgrove.entity.ResetToken;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
-import nz.ac.canterbury.team1000.gardenersgrove.form.ForgotPasswordForm;
-import nz.ac.canterbury.team1000.gardenersgrove.form.LoginForm;
-import nz.ac.canterbury.team1000.gardenersgrove.form.RegistrationForm;
+import nz.ac.canterbury.team1000.gardenersgrove.form.*;
+import nz.ac.canterbury.team1000.gardenersgrove.service.EmailService;
+import nz.ac.canterbury.team1000.gardenersgrove.service.ResetTokenService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
+import nz.ac.canterbury.team1000.gardenersgrove.service.VerificationTokenService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EmptySource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +36,12 @@ class AccountControllerTest {
     private UserService userService;
 
     @MockBean
+    private EmailService emailService;
+    @MockBean
+    private VerificationTokenService verificationTokenService;
+    @MockBean
+    private ResetTokenService resetTokenService;
+    @MockBean
     private AuthenticationManager authenticationManager;
 
     @MockBean
@@ -46,11 +51,12 @@ class AccountControllerTest {
     private User userMock;
 
     private RegistrationForm registrationForm;
-    private ForgotPasswordForm forgotPasswordForm;
-
 
     private LoginForm loginForm;
 
+    private VerificationTokenForm verificationTokenForm;
+    private ForgotPasswordForm forgotPasswordForm;
+    private ResetPasswordForm resetPasswordForm;
     @BeforeEach
     public void beforeEach() {
         userMock = Mockito.mock(User.class);
@@ -73,6 +79,12 @@ class AccountControllerTest {
         loginForm.setEmail(userMock.getEmail());
         loginForm.setPassword("Pass123$");
 
+        forgotPasswordForm = new ForgotPasswordForm();
+
+
+        resetPasswordForm = new ResetPasswordForm();
+
+
         Mockito.when(userService.checkEmail(Mockito.any())).thenReturn(false);
         Mockito.when(userService.isSignedIn()).thenReturn(false);
         Mockito.when(userService.findEmail(Mockito.any())).thenReturn(userMock);
@@ -82,9 +94,9 @@ class AccountControllerTest {
     @Test
     public void RegisterPostRequest_ValidDetails_UserRegisteredAndAuthenticated() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
-                .flashAttr("registrationForm", registrationForm))
+                        .flashAttr("registrationForm", registrationForm))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/profile"));
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/register/verification"));
 
         Mockito.verify(userService).registerUser(Mockito.any());
         Mockito.verify(userService).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
@@ -97,7 +109,7 @@ class AccountControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
                         .flashAttr("registrationForm", registrationForm))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/profile"));
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/register/verification"));
 
         Mockito.verify(userService).registerUser(Mockito.any());
         Mockito.verify(userService).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
@@ -110,7 +122,7 @@ class AccountControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
                         .flashAttr("registrationForm", registrationForm))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/profile"));
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/register/verification"));
 
         Mockito.verify(userService).registerUser(Mockito.any());
         Mockito.verify(userService).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
@@ -315,19 +327,11 @@ class AccountControllerTest {
         Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
     }
 
-//    @ParameterizedTest
-//    @EmptySource
-//    @ValueSource(strings = {"    ", "\t", "\n", "bad email", "bad.email", "bad.email@"})
-//    public void ForgotPasswordPostRequest_InvalidEmail_HasFieldErrors(String emailField) throws Exception {
-//        forgotPasswordForm.setEmail(emailField);
-//
-//        mockMvc.perform(MockMvcRequestBuilders.post("/forgotPassword").with(csrf())
-//                        .flashAttr("registrationForm", registrationForm))
-//                .andExpect(MockMvcResultMatchers.status().isOk())
-//                .andExpect(MockMvcResultMatchers.view().name("pages/forgotPasswordPage"))
-//                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("forgotPasswordForm", "email"));
-//
-//    }
+    @Test
+    public void ForgotPasswordPostRequest_InvalidEmail_HasFieldErrors() throws Exception {
+
+    }
+
 
 //    TODO I cannot for the life of me figure out how to get these tests passing, they look perfect to me, i'm assuming its some weird authentication thing
 //    @Test
