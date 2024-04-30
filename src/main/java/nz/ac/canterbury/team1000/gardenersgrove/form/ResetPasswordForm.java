@@ -34,6 +34,7 @@ public class ResetPasswordForm {
      * @param bindingResult      the BindingResult object for validation errors
      */
     public static void validate(ResetPasswordForm resetPasswordForm, BindingResult bindingResult) {
+        // TODO update to include token?
         // Create ErrorAdder instance with the BindingResult and object name
         ErrorAdder errors = new ErrorAdder(bindingResult, "resetPasswordForm");
 

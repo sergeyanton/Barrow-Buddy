@@ -2,6 +2,7 @@ package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.ResetToken;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.VerificationToken;
@@ -236,15 +237,13 @@ public class AccountController {
 
     /**
      * Sends a reset password email to the specified user.
-     * This method generates a password reset link and sends it to the user's email address.
+     * This method generates a unique password reset link and sends it to the user's email address.
      * Handles any errors that might occur during the email sending process.
      *
      * @param user The User object containing the email address where the reset password email will be sent.
      */
     private void sendResetPasswordEmail(User user) {
         logger.info("Sending reset password email to " + user.getEmail());
-//        VerificationToken token = new VerificationToken(user.getId(), passwordEncoder);
-//        verificationTokenService.addVerificationToken(token);
         ResetToken token = new ResetToken();
         token.setToken(UUID.randomUUID().toString());
         token.setUser(user);
@@ -278,10 +277,6 @@ public class AccountController {
         User user = userService.findEmail(forgotPasswordForm.getEmail());
 
         if (user != null) {
-            // TODO reset token
-
-            // resetTokenRepository.save(token);
-
             sendResetPasswordEmail(user);
         }
 
@@ -303,18 +298,14 @@ public class AccountController {
      * @return thymeleaf resetPasswordPage
      */
     @GetMapping("/resetPassword")
-    public String getResetPasswordPage(@RequestParam(value = "token") String resetToken, ResetPasswordForm resetPasswordForm) {
+    public String getResetPasswordPage(@RequestParam(value = "token") String resetToken, HttpSession session,
+                                       ResetPasswordForm resetPasswordForm) {
         ResetToken token = resetTokenService.getResetToken(resetToken);
-        System.out.println("!!!!!");
-        System.out.println(resetToken);
-        resetPasswordForm.setResetToken(resetToken);
-        System.out.println(resetPasswordForm.getResetToken());
+        session.setAttribute("resetToken", resetToken);
         // TODO validate token
         // if token doesn't exist or expired:
         // redirect to login page, with message "Reset password link has expired"
         logger.info("GET /resetPassword");
-        // TODO pass along token
-
 
         return "pages/resetPasswordPage";
     }
@@ -333,17 +324,14 @@ public class AccountController {
     @PostMapping("/resetPassword")
     public String postUpdatePassword(HttpServletRequest request,
                                      @ModelAttribute("resetPasswordForm") ResetPasswordForm resetPasswordForm,
-                                     BindingResult bindingResult) {
+                                     BindingResult bindingResult,
+                                     HttpSession session) {
         logger.info("POST /resetPassword");
-        String resetToken = resetPasswordForm.getResetToken();
+        String resetToken = (String) session.getAttribute("resetToken");
         ResetToken token = resetTokenService.getResetToken(resetToken);
-        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        System.out.println(resetToken);
-        // FIND EXISTING token: ???
-        System.out.println(token);
-        System.out.println(token.getToken());
         User user = token.getUser();
-
+        // TODO check this validation of form:
+        resetPasswordForm.setResetToken(resetToken);
         ResetPasswordForm.validate(resetPasswordForm, bindingResult);
 
         if (bindingResult.hasErrors()) {
@@ -351,10 +339,10 @@ public class AccountController {
         }
 
         user.setPassword(passwordEncoder.encode(resetPasswordForm.getNewPassword()));
-        // TODO authentication for updating user
 
         userService.updateUserByEmail(user.getEmail(), user);
         resetTokenService.deleteResetToken(token.getToken());
+        session.removeAttribute("resetToken");
 
         return "redirect:/login";
     }
