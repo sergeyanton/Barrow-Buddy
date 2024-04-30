@@ -61,6 +61,7 @@ nav ul li:hover ul {
 
 table {
     border-spacing: 0;
+    width: 100%;
 }
 
 table thead {
@@ -71,8 +72,12 @@ table thead {
     z-index: 9999; /* render the table header in front of everything else, namely the table body */
 }
 
-table tbody {
+table tbody tr {
     background: #e6e6e6;
+}
+
+table tbody tr:nth-child(2n) {
+    background: #f2f2f2;
 }
 
 th, td {
@@ -89,6 +94,7 @@ td {
 .scroll-plants-container {
     padding: 0 !important;
     overflow-y: auto;
+    width: 100%;
 }
 
 .scroll-plants-container > table {
