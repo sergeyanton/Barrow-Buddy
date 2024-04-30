@@ -5,6 +5,10 @@
     margin: 0;
 }
 
+body {
+    min-height: 100vh;
+}
+
 /* Navbar */
 
 nav {
@@ -17,6 +21,13 @@ nav ul {
     justify-content: center;
     list-style-type: none;
     z-index: 9999; /* render the navbar in front of everything else */
+}
+
+@media (max-width: 768px) {
+    nav ul {
+        flex-direction: column;
+        align-items: stretch;
+    }
 }
 
 nav ul li {
@@ -69,17 +80,16 @@ main {
 }
 
 .content {
-    max-width: 600px;
-    width: 80%;
+    width: 100%;;
     padding: 20px;
     background: lightgrey;
     border-radius: 10px;
-
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: 10px;
+    box-sizing: border-box;
 }
 
 h1,
@@ -181,6 +191,7 @@ td {
 
 table {
     border-spacing: 0;
+    width: 100%;
 }
 
 th, td {
