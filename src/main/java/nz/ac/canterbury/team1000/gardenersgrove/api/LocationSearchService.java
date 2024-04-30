@@ -57,79 +57,84 @@ public class LocationSearchService {
             // SEND GET REQUEST TO API ENDPOINT
             String jsonResponse = restTemplate.getForObject(url, String.class);
 
-            List<Location> locationAddresses = new ArrayList<>();
-
-            List<Map<String, Object>> locations = objectMapper.readValue(jsonResponse, List.class);
-
-            for (Map<String, Object> location : locations) {
-                String locationType = (String) location.get("type");
-                String displayPlace = (String) location.get("display_place");
-                Map<String, Object> addressMap = (Map<String, Object>) location.get("address");
-
-                String address = "";
-                String suburb = "";
-                String city = "";
-                String postcode = "";
-                String country = "";
-
-                if (addressField.equals("country") && locationType.equals("country") && addressMap.get("name").toString().contains(query)) {
-                    country = addressMap.get("name").toString();
-
-                    locationAddresses.add(new Location(address, suburb, city, postcode, country, displayPlace));
-                } else if (addressField.equals("postcode") && locationType.equals("postcode") && addressMap.get("name").toString().contains(query)) {
-                    postcode = addressMap.get("name").toString();
-                    if (addressMap.containsKey("city")) city = addressMap.get("city").toString();
-                    if (addressMap.containsKey("country")) country = addressMap.get("country").toString();
-
-                    if (!city.isEmpty() && !country.isEmpty()) {
-                        locationAddresses.add(new Location(address, suburb, city, postcode, country, displayPlace));
-                    }
-                }
-                if (addressField.equals("city") && locationType.equals("city") && addressMap.get("name").toString().contains(query)) {
-                    city = addressMap.get("name").toString();
-                    if (addressMap.containsKey("country")) country = addressMap.get("country").toString();
-
-                    if (!city.isEmpty() && !country.isEmpty()) {
-                        locationAddresses.add(new Location(address, suburb, city, postcode, country, displayPlace));
-                    }
-                } else if (addressField.equals("suburb") && locationType.equals("suburb")  && addressMap.get("name").toString().contains(query)) {
-                    suburb = addressMap.get("name").toString();
-                    if (addressMap.containsKey("city")) city = addressMap.get("city").toString();
-                    if (addressMap.containsKey("country")) country = addressMap.get("country").toString();
-
-                    if (!city.isEmpty() && !country.isEmpty()) {
-                        locationAddresses.add(new Location(address, suburb, city, postcode, country, displayPlace));
-                    }
-                } else if (addressField.equals("address")) {
-                    if (addressMap.containsKey("house_number")) {
-                        String addressCombined = addressMap.get("house_number").toString() + " " + addressMap.get("road").toString();
-                        if (addressCombined.startsWith(query)) {
-                            address = addressMap.get("house_number").toString() + " " + addressMap.get("road").toString();
-                        }
-                    } else if (addressMap.get("name").toString().contains(query)) {
-                        address = addressMap.get("name").toString();
-                    }
-                    if (addressMap.containsKey("suburb")) suburb = addressMap.get("suburb").toString();
-                    if (addressMap.containsKey("city")) city = addressMap.get("city").toString();
-                    if (addressMap.containsKey("postcode")) postcode = addressMap.get("postcode").toString();
-                    if (addressMap.containsKey("country")) country = addressMap.get("country").toString();
-
-                    if (!address.isEmpty() && !city.isEmpty() && !country.isEmpty()) {
-                        locationAddresses.add(new Location(address, suburb, city, postcode, country, displayPlace));
-                    }
-                }
-            }
-            return locationAddresses;
+            return locationsIntoList(jsonResponse, query, addressField);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return new ArrayList<>();
         }
     }
 
+    public List<Location> locationsIntoList(String jsonResponse, String query, String addressField) throws JsonProcessingException {
+        List<Location> locationAddresses = new ArrayList<>();
+
+        List<Map<String, Object>> locations = objectMapper.readValue(jsonResponse, List.class);
+
+        for (Map<String, Object> location : locations) {
+            String locationType = (String) location.get("type");
+            String displayPlace = (String) location.get("display_place");
+            Map<String, Object> addressMap = (Map<String, Object>) location.get("address");
+
+            String address = "";
+            String suburb = "";
+            String city = "";
+            String postcode = "";
+            String country = "";
+
+            if (addressField.equals("country") && locationType.equals("country") && addressMap.get("name").toString().contains(query)) {
+                country = addressMap.get("name").toString();
+
+                locationAddresses.add(new Location(address, suburb, city, postcode, country, displayPlace));
+            } else if (addressField.equals("postcode") && locationType.equals("postcode") && addressMap.get("name").toString().contains(query)) {
+                postcode = addressMap.get("name").toString();
+                if (addressMap.containsKey("city")) city = addressMap.get("city").toString();
+                if (addressMap.containsKey("country")) country = addressMap.get("country").toString();
+
+                if (!city.isEmpty() && !country.isEmpty()) {
+                    locationAddresses.add(new Location(address, suburb, city, postcode, country, displayPlace));
+                }
+            }
+            if (addressField.equals("city") && locationType.equals("city") && addressMap.get("name").toString().contains(query)) {
+                city = addressMap.get("name").toString();
+                if (addressMap.containsKey("country")) country = addressMap.get("country").toString();
+
+                if (!city.isEmpty() && !country.isEmpty()) {
+                    locationAddresses.add(new Location(address, suburb, city, postcode, country, displayPlace));
+                }
+            } else if (addressField.equals("suburb") && locationType.equals("suburb")  && addressMap.get("name").toString().contains(query)) {
+                suburb = addressMap.get("name").toString();
+                if (addressMap.containsKey("city")) city = addressMap.get("city").toString();
+                if (addressMap.containsKey("country")) country = addressMap.get("country").toString();
+
+                if (!city.isEmpty() && !country.isEmpty()) {
+                    locationAddresses.add(new Location(address, suburb, city, postcode, country, displayPlace));
+                }
+            } else if (addressField.equals("address")) {
+                if (addressMap.containsKey("house_number")) {
+                    String addressCombined = addressMap.get("house_number").toString() + " " + addressMap.get("road").toString();
+                    if (addressCombined.startsWith(query)) {
+                        address = addressMap.get("house_number").toString() + " " + addressMap.get("road").toString();
+                    }
+                } else if (addressMap.get("name").toString().contains(query)) {
+                    address = addressMap.get("name").toString();
+                }
+                if (addressMap.containsKey("suburb")) suburb = addressMap.get("suburb").toString();
+                if (addressMap.containsKey("city")) city = addressMap.get("city").toString();
+                if (addressMap.containsKey("postcode")) postcode = addressMap.get("postcode").toString();
+                if (addressMap.containsKey("country")) country = addressMap.get("country").toString();
+
+                if (!address.isEmpty() && !city.isEmpty() && !country.isEmpty()) {
+                    locationAddresses.add(new Location(address, suburb, city, postcode, country, displayPlace));
+                }
+            }
+        }
+        return locationAddresses;
+    }
+
+
     public static void main(String[] args) {
         LocationSearchService locationSearchService = new LocationSearchService();
-        String query = "8025";
-        String addressField = "postcode";
+        String query = "Ilam Road";
+        String addressField = "address";
 
         List<Location> location = locationSearchService.searchLocations(query, addressField);
 
