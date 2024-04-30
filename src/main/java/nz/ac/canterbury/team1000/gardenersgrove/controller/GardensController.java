@@ -1,7 +1,12 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import nz.ac.canterbury.team1000.gardenersgrove.form.GardenForm;
+import nz.ac.canterbury.team1000.gardenersgrove.form.PictureForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PlantForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,30 +36,14 @@ public class GardensController {
     private final GardenService gardenService;
     private final PlantService plantService;
 
+    //TODO make a controller dedicated to uploading files.
+    private final static String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/uploads";
+
+
     @Autowired
     public GardensController(GardenService gardenService, PlantService plantService) {
         this.gardenService = gardenService;
         this.plantService = plantService;
-    }
-
-    @ModelAttribute("currentUrl")
-    private String getCurrentPath(HttpServletRequest request) {
-        // the url path including query parameters
-        if (request.getQueryString() == null) {
-            return request.getRequestURI();
-        }
-        return request.getRequestURI() + "?" + request.getQueryString();
-    }
-
-
-    /**
-     * Necessary for being able to display each garden in the nav bar
-     * 
-     * @return all gardens currently in the database
-     */
-    @ModelAttribute("allGardens")
-    private List<Garden> getAllGardens() {
-        return gardenService.getGardens();
     }
 
     /**
@@ -72,7 +61,8 @@ public class GardensController {
     }
 
     /**
-     * Handles POST requests from the /gardens/create endpoint. Handles creation of new gardens
+     * Handles POST requests from the /gardens/create endpoint.
+     * Handles creation of new gardens
      *
      * @param request the HttpServletRequest object containing the request information
      * @param createGardenForm the GardenForm object representing the new garden's details
@@ -97,7 +87,8 @@ public class GardensController {
     }
 
     /**
-     * Handles GET requests from the /gardens endpoint. Displays all gardens that the user owns.
+     * Handles GET requests from the /gardens endpoint.
+     * Displays all gardens that the user owns.
      *
      * @param model (map-like) representation of results to be used by thymeleaf
      * @return thymeleaf pages/gardensPage
@@ -110,23 +101,84 @@ public class GardensController {
     }
 
     /**
-     * Handles GET requests from the /gardens/{gardenId} endpoint. Displays details of the garden
-     * with the given id
+     * Handles GET requests from the /gardens/{gardenId} endpoint.
+     * Displays details of the garden with the given id
      *
+     * @param gardenId the id of the garden that is being viewed
+     * @param plantPictureForm the PictureForm object representing a form with the uploaded image file
      * @param model (map-like) representation of results to be used by thymeleaf
      * @return thymeleaf pages/gardenProfilePage
      */
     @GetMapping("/gardens/{gardenId}")
-    public String viewGarden(@PathVariable("gardenId") Long gardenId, Model model) {
+    public String viewGarden(@PathVariable("gardenId") Long gardenId,
+                             @ModelAttribute("plantPictureForm") PictureForm plantPictureForm,
+                             Model model) {
         logger.info("GET /gardens/" + gardenId);
+
         model.addAttribute("garden", gardenService.getGardenById(gardenId));
         model.addAttribute("plants", plantService.getPlantsByGardenId(gardenId));
+
         return "pages/gardenProfilePage";
     }
 
     /**
-     * Handles GET requests from the /gardens/{gardenId}/edit endpoint. Displays the 'Edit Garden'
-     * form.
+     * Handles POST requests from the /gardens/{gardenId}/plants/{plantId} endpoint.
+     * Particularly it handles the uploading of images for a plant's picture.
+     *
+     * @param request           the HttpServletRequest object containing the request information
+     * @param gardenId          the id of the garden that is being viewed
+     * @param plantId the id of the plant that is being edited
+     * @param plantPictureForm  the PictureForm object representing a form with the uploaded image file
+     * @param bindingResult     the BindingResult object for validation errors
+     * @param model             (map-like) representation of results to be used by thymeleaf
+     * @return the view to display:
+     * - If there are validation errors with the image, stays on the form but render the plant's actual picture.
+     * - Else, redirect to the edited garden page with the new profile picture for the plant.
+     * @throws IOException IOException
+     */
+    @PostMapping("/gardens/{gardenId}/plants/{plantId}")
+    public String changePlantPictureFromGardenPage(HttpServletRequest request,
+                                                   @PathVariable("gardenId") Long gardenId,
+                                                   @PathVariable("plantId") Long plantId,
+                                                   @ModelAttribute("plantPictureForm") PictureForm plantPictureForm,
+                                                   BindingResult bindingResult,
+                                                   Model model) throws IOException {
+        logger.info("POST /gardens/" + gardenId);
+        Plant plant = plantService.getPlantById(plantId);
+
+        PictureForm.validate(plantPictureForm, bindingResult, null); // TODO is there a reason that .validate has a User parameter?
+
+        if (!plantPictureForm.getPictureFile().isEmpty() && !bindingResult.hasFieldErrors("pictureFile")) {
+            Path uploadDirectoryPath = Paths.get(UPLOAD_DIRECTORY);
+
+            if (!Files.exists(uploadDirectoryPath)) {
+                try {
+                    Files.createDirectories(uploadDirectoryPath);
+                } catch (IOException e) {
+                    throw new IOException("Failed to create upload directory", e);
+                }
+            }
+
+            String filename = plantPictureForm.getPictureFile().getOriginalFilename();
+            Path filePath = uploadDirectoryPath.resolve(filename);
+            Files.write(filePath, plantPictureForm.getPictureFile().getBytes());
+            plant.setPicturePath("/uploads/" + filename);
+        }
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("garden", gardenService.getGardenById(gardenId));
+            model.addAttribute("plants", plantService.getPlantsByGardenId(gardenId));
+            return "pages/gardenProfilePage";
+        }
+
+        plantService.updatePlant(plant);
+
+        return "redirect:/gardens/" + gardenId;
+    }
+
+    /**
+     * Handles GET requests from the /gardens/{gardenId}/edit endpoint.
+     * Displays the 'Edit Garden' form.
      *
      * @param gardenId the id of the garden being got
      * @param editGardenForm the GardenForm object representing the edited garden's details, useful
@@ -153,7 +205,8 @@ public class GardensController {
     }
 
     /**
-     * Handles POST requests from the /gardens/{gardenId}/edit endpoint. Handles editing of gardens
+     * Handles POST requests from the /gardens/{gardenId}/edit endpoint.
+     * Handles editing of gardens
      *
      * @param request the HttpServletRequest object containing the request information
      * @param editGardenForm the GardenForm object representing the garden's new details
@@ -165,7 +218,8 @@ public class GardensController {
     @PostMapping("/gardens/{gardenId}/edit")
     public String gardenEditPost(HttpServletRequest request,
             @ModelAttribute("editGardenForm") GardenForm editGardenForm,
-            BindingResult bindingResult, @PathVariable("gardenId") Long gardenId) {
+            BindingResult bindingResult,
+            @PathVariable("gardenId") Long gardenId) {
         logger.info("POST /gardens/" + gardenId + "/edit");
 
         GardenForm.validate(editGardenForm, bindingResult);
@@ -183,8 +237,8 @@ public class GardensController {
     }
 
     /**
-     * Handles GET requests from the /gardens/{gardenId}/edit endpoint. Displays the 'Edit Garden'
-     * form.
+     * Handles GET requests from the /gardens/{gardenId}/edit endpoint.
+     * Displays the 'Edit Garden' form.
      *
      * @param gardenId id of garden that this plant belongs to
      * @param createPlantForm the PlantForm object representing the plant's details, useful for
@@ -201,20 +255,22 @@ public class GardensController {
     // TODO handle when the gardenId is not for an existing garden (.getGardenById)
 
     /**
-     * Handles POST requests from the /gardens/{gardenId}/plants/create endpoint. Handles creation
-     * of plants
+     * Handles POST requests from the /gardens/{gardenId}/plants/create endpoint.
+     * Handles creation of plants
      *
      * @param request the HttpServletRequest object containing the request information
      * @param createPlantForm the PlantForm object representing the garden's new details
      * @param bindingResult the BindingResult object for validation errors
      * @param gardenId the id of the garden that the plant is being added to
-     * @return the view to display: - If there are validation errors, stays on the 'Create Plant'
-     *         form. - Else, redirect to the plant's garden's profile page.
+     * @return the view to display:
+     *         - If there are validation errors, stays on the 'Create Plant' form.
+     *         - Else, redirect to the plant's garden's profile page.
      */
     @PostMapping("/gardens/{gardenId}/plants/create")
     public String gardenCreatePlantPost(HttpServletRequest request,
             @ModelAttribute("createPlantForm") PlantForm createPlantForm,
-            BindingResult bindingResult, @PathVariable("gardenId") Long gardenId) {
+            BindingResult bindingResult,
+            @PathVariable("gardenId") Long gardenId) {
         logger.info("POST /gardens/" + gardenId + "/plants/create");
 
         PlantForm.validate(createPlantForm, bindingResult);
@@ -238,12 +294,10 @@ public class GardensController {
     /**
      * Handles GET requests from the /gardens/{gardenId}/plants/{plantId}/edit endpoint.
      * It displays the 'Edit Plant' form.
-     * 
-     * @param gardenId Id of the garden that this plant belongs to
-     * @param plantId Id of the plant to edit
-     * @param editPlantForm PlantForm object on the model to display the form
-     * @param garden Garden object on the model so its name can be displayed
-     * @param plant Plant object on the model so its name can be displayed
+     *
+     * @param gardenId id of the garden that this plant belongs to
+     * @param plantId id of the plant to edit
+     * @param model the model to be used by thymeleaf
      * @return thymeleaf pages/editPlantPage
      */
     @GetMapping("/gardens/{gardenId}/plants/{plantId}/edit")
@@ -270,4 +324,46 @@ public class GardensController {
         return "pages/editPlantPage";
     }
 
+    /**
+     * Handles POST requests from the /gardens/{gardenId}/plants/{plantId}/edit endpoint.
+     *
+     * @param request the HttpServletRequest object containing the request information
+     * @param gardenId id of the garden that this plant belongs to
+     * @param plantId id of the plant to edit
+     * @param editPlantForm the PlantForm object representing the plant's new details
+     * @param bindingResult the BindingResult object for validation errors
+     * @return the view to display:
+     *         - If there are validation errors, stays on the 'Edit Plant'
+     *         - Else, redirect to the plant's garden's profile page.
+     */
+    @PostMapping("/gardens/{gardenId}/plants/{plantId}/edit")
+    public String gardenEditPlantPost(HttpServletRequest request,
+            @PathVariable("gardenId") Long gardenId,
+            @PathVariable("plantId") Long plantId,
+            @ModelAttribute("editPlantForm") PlantForm editPlantForm,
+            BindingResult bindingResult, Model model) {
+
+        logger.info("POST /gardens/" + gardenId + "/plants/" + plantId + "/edit");
+
+        Plant existingPlant = null;
+        Garden existingGarden = null;
+        try {
+            existingGarden = gardenService.getGardenById(gardenId);
+            existingPlant = plantService.getPlantById(plantId);
+        } catch (IllegalArgumentException e) {
+            logger.error("Plant not found: " + plantId);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Plant not found");
+        }
+
+        model.addAttribute("garden", existingGarden);
+        model.addAttribute("plant", existingPlant);
+
+
+        PlantForm.validate(editPlantForm, bindingResult);
+        if (bindingResult.hasErrors()) {
+            return "pages/editPlantPage";
+        }
+
+        return "pages/editPlantPage";
+    }
 }

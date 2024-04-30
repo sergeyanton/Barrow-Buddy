@@ -200,7 +200,7 @@ class PlantFormTest {
 
     @Test
     void fromPlant_ValidPlant_ReturnsForm() {
-        Plant plant = new Plant("Poppy", 5, "Red", LocalDate.of(2024, 04, 26), 1L);
+        Plant plant = new Plant("Poppy", 5, "Red", LocalDate.of(2024, 04, 26), "/images/defaultPlantPic.png", 1L);
         PlantForm form = PlantForm.fromPlant(plant);
         assertEquals("Poppy", form.getName());
         assertEquals("5", form.getPlantCount());
@@ -211,7 +211,7 @@ class PlantFormTest {
 
     @Test
     void fromPlant_ValidPlantWithNulls_ReturnsForm() {
-        Plant plant = new Plant("Poppy", null, null, LocalDate.of(2024, 04, 26), 1L);
+        Plant plant = new Plant("Poppy", null, null, LocalDate.of(2024, 04, 26), "/images/defaultPlantPic.png", 1L);
         PlantForm form = PlantForm.fromPlant(plant);
         assertEquals("Poppy", form.getName());
         assertTrue(form.getPlantCount().isBlank());

@@ -6,23 +6,29 @@
 <body>
     <div th:replace="~{fragments/header :: header}"></div>
     <main>
-        <div class="content">
+        <div class="basic">
             <h1 th:text="${garden.name}"></h1>
             <a th:href="@{'/gardens/' + ${garden.id} + '/plants/create'}">
                 <button>Add a plant</button>
             </a>
-            <div th:text="'Location: ' + ${garden.getLocationString}"></div>
-            <div th:if="${garden.size != null}" th:text="'Size: ' + ${garden.size} + ' m&sup2;'"></div>
-            <div><a th:href="@{'/gardens/' + ${garden.id} + '/edit'}">Edit Garden Details</a></div>
+            <br>
+            <p th:text="'Location: ' + ${garden.getLocationString}"></p>
+            <br>
+            <p th:if="${garden.size != null}" th:text="'Size: ' + ${garden.size} + ' m&sup2;'"></p>
+            <br th:if="${garden.size != null}">
+            <a th:href="@{'/gardens/' + ${garden.id} + '/edit'}">Edit Garden Details</a>
+            <br>
+            <span id="clientSideErrorMessage" class="error"></span>
+            <br>
             <div class="scroll-plants-container">
                 <table>
                     <thead>
                     <tr>
-                        <th>Image</th>
+                        <th></th>
                         <th>Name</th>
-                        <th>Count</th>
+                        <th>Number of Plants</th>
                         <th>Description</th>
-                        <th>Edit</th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -30,21 +36,37 @@
                         <td colspan="5">No plants yet</td>
                     </tr>
                     <tr th:each="plant : ${plants}">
-                        <td><img th:src="@{/images/defaultPlantPic.png}" alt="Plant Image" style="max-width: 100px; max-height: 100px;" /></td>
+                        <td>
+                            <div class="plant-picture-upload-wrapper">
+                                <div class="plant-picture-wrapper">
+                                    <img class="plant-picture" th:id="'plantImage' + ${plant.id}"
+                                         th:src="${plant.picturePath}"
+                                         alt="Plant Picture">
+                                </div>
+                                <form th:id="'pictureForm' + ${plant.id}" th:action="@{'/gardens/' + ${garden.id} + '/plants/' + ${plant.id}}" th:object="${plantPictureForm}" method="post" enctype="multipart/form-data">
+                                    <label th:id="'pictureFileLabel' + ${plant.id}" class="file-upload-plus-button" th:for="'pictureFile' + ${plant.id}">+</label>
+                                    <input type="file" th:field="*{pictureFile}" th:id="'pictureFile' + ${plant.id}" th:attr="onchange='validateImage(this, ' + ${plant.id} + ')'" accept="image/png, image/jpeg, image/svg+xml">
+                                </form>
+                            </div>
+                        </td>
                         <td><span th:text="${plant.name}"></span></td>
                         <td><span th:text="${plant.plantCount}"></span></td>
                         <td><span th:text="${plant.description}"></span></td>
-                        <td><a th:href="@{'/gardens/' + ${garden.id} + '/plants/' + ${plant.id} + '/edit'}">Edit Plants</a></td>
+                        <td><a th:href="@{'/gardens/' + ${garden.id} + '/plants/' + ${plant.id} + '/edit'}">Edit Plant</a></td>
                     </tr>
                     </tbody>
                 </table>
             </div>
-            <div><a th:href="@{/gardens}">Back to My Gardens</a></div>
+            <br>
+            <a th:href="@{/gardens}">
+                <button>Back to My Gardens</button>
+            </a>
         </div>
     </main>
     <!--    TODO THIS WOULD BE VERY GOOD TO FIGURE OUT SO WE DON'T HAVE JS IN HTML FILES -->
 <!--    <script th:src="@{/js/plantsTableScrollAfter10Plants.js}" type="text/javascript"></script>-->
     <script>
+        // limits viewable plants in the table to 10
         window.onload = function() {
             const container = document.querySelector(".scroll-plants-container");
             const table = container.querySelector("table");
@@ -57,6 +79,53 @@
             }
             container.style.maxHeight = height + "px";
         }
+
+        function validateImage(input, id) {
+            if (!(input.files && input.files[0])) {
+                return;
+            }
+            const file = input.files[0];
+            const validTypes = ["image/png", "image/jpeg", "image/svg+xml"];
+            const maxFileSize = 10 * 1024 * 1024;
+
+            if (!validTypes.includes(file.type) && file.size > maxFileSize) {
+                input.value = '';
+                document.getElementById('clientSideErrorMessage').textContent = "Image must be of type png, jpg or svg, and less than 10MB";
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+                return;
+            }
+            if (!validTypes.includes(file.type)) {
+                input.value = '';
+                document.getElementById('clientSideErrorMessage').textContent = "Image must be of type png, jpg or svg";
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+                return;
+            }
+            if (file.size > maxFileSize) {
+                input.value = '';
+                document.getElementById('clientSideErrorMessage').textContent = "Image must be less than 10MB";
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+                return;
+            }
+
+            document.getElementById('pictureForm' + id).submit();
+        }
+
+        // function cancelSelection() {
+        //     document.getElementById('pictureFile').value = '';
+        //     document.getElementById('profileImage').src = initialProfilePictureUrl;
+        //     document.getElementById('pictureFileLabel').style.display = 'inline-block';
+        //     document.getElementById('cancelButton').style.display = 'none';
+        //     document.getElementById('submitButton').style.display = 'none';
+        // }
     </script>
 </body>
 </html>

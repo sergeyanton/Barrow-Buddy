@@ -515,8 +515,6 @@ public class GardenControllerTest {
         Assertions.assertEquals(gardenMock.getPostcode(), modelEditGardenForm.getPostcode());
         Assertions.assertEquals(gardenMock.getCountry(), modelEditGardenForm.getCountry());
         Assertions.assertEquals(gardenMock.getSize(), modelEditGardenForm.getSizeDouble());
-        System.out.println(gardenMock.getSize());
-        System.out.println(modelEditGardenForm.getSizeDouble());
         Mockito.verify(gardenService).getGardenById(1L);
     }
 }
