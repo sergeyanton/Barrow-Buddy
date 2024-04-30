@@ -37,15 +37,24 @@ public class LocationSearchService {
             return new ArrayList<>();
         }
 
-        // CONSTRUCT
-        String url = URL + "?q=" + query + "&limit=5&key=" + API_KEY;
+        String tag = "";
+
+        if (addressField.equals("city")) {
+            tag = "&tag=place:city";
+        } else if (addressField.equals("suburb")) {
+            tag = "&tag=place:suburb";
+        } else {
+            // TODO: implement tag for address - don't know how to do as address can be any class...
+        }
+
+        // CONSTRUCT URL
+        String url = URL + "?q=" + query + "&limit=5&key=" + API_KEY + tag;
 
         try {
             // SEND GET REQUEST TO API ENDPOINT
             String jsonResponse = restTemplate.getForObject(url, String.class);
-            System.out.println(jsonResponse);
 
-            List<Location> locationAddresses = new ArrayList<Location>();
+            List<Location> locationAddresses = new ArrayList<>();
 
             List<Map<String, Object>> locations = objectMapper.readValue(jsonResponse, List.class);
 
@@ -54,45 +63,57 @@ public class LocationSearchService {
                 String displayPlace = (String) location.get("display_place");
                 Map<String, Object> addressMap = (Map<String, Object>) location.get("address");
 
-                if (addressField.equals("city") && locationType.equals("city")) {
-                    String city = addressMap.get("name").toString();
-                    String country = addressMap.get("country").toString();
-                    locationAddresses.add(new Location( "", "", city, "", country, displayPlace));
-                } else if (addressField.equals("suburb") && locationType.equals("suburb")) {
-                    String suburb = addressMap.get("name").toString();
-                    String city = addressMap.get("city").toString();
-                    String country = addressMap.get("country").toString();
-                    locationAddresses.add(new Location( "", suburb, city, "", country, displayPlace));
+                String address = "";
+                String suburb = "";
+                String city = "";
+                String postcode = "";
+                String country = "";
+
+                if (addressField.equals("city") && locationType.equals("city") && addressMap.get("name").toString().contains(query)) {
+                    city = addressMap.get("name").toString();
+                    if (addressMap.containsKey("country")) country = addressMap.get("country").toString();
+
+                    if (!city.isEmpty() && !country.isEmpty()) {
+                        locationAddresses.add(new Location(address, suburb, city, postcode, country, displayPlace));
+                    }
+                } else if (addressField.equals("suburb") && locationType.equals("suburb")  && addressMap.get("name").toString().contains(query)) {
+                    suburb = addressMap.get("name").toString();
+                    if (addressMap.containsKey("city")) city = addressMap.get("city").toString();
+                    if (addressMap.containsKey("country")) country = addressMap.get("country").toString();
+
+                    if (!city.isEmpty() && !country.isEmpty()) {
+                        locationAddresses.add(new Location(address, suburb, city, postcode, country, displayPlace));
+                    }
                 } else if (addressField.equals("address")) {
-                    String address = "";
-                    String suburb = "";
                     if (addressMap.containsKey("house_number")) {
-                        address = addressMap.get("house_number").toString() + addressMap.get("road").toString();
-                    } else {
+                        String addressCombined = addressMap.get("house_number").toString() + " " + addressMap.get("road").toString();
+                        if (addressCombined.startsWith(query)) {
+                            address = addressMap.get("house_number").toString() + " " + addressMap.get("road").toString();
+                        }
+                    } else if (addressMap.get("name").toString().contains(query)) {
                         address = addressMap.get("name").toString();
                     }
-                    if (addressMap.containsKey("suburb")) {
-                        suburb = addressMap.get("suburb").toString();
+                    if (addressMap.containsKey("suburb")) suburb = addressMap.get("suburb").toString();
+                    if (addressMap.containsKey("city")) city = addressMap.get("city").toString();
+                    if (addressMap.containsKey("postcode")) postcode = addressMap.get("postcode").toString();
+                    if (addressMap.containsKey("country")) country = addressMap.get("country").toString();
+
+                    if (!address.isEmpty() && !city.isEmpty() && !country.isEmpty()) {
+                        locationAddresses.add(new Location(address, suburb, city, postcode, country, displayPlace));
                     }
-                    String city = addressMap.get("city").toString();
-                    String postcode = "";
-                    if (addressMap.containsKey("postcode")) {
-                        postcode = addressMap.get("postcode").toString();
-                    }
-                    String country = addressMap.get("country").toString();
-                    locationAddresses.add(new Location(address, suburb, city, postcode, country, displayPlace));
                 }
             }
             return locationAddresses;
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             return new ArrayList<>();
         }
     }
 
     public static void main(String[] args) {
         LocationSearchService locationSearchService = new LocationSearchService();
-        String query = "Ilam Road";
-        String addressField = "street address";
+        String query = "Aida";
+        String addressField = "suburb";
 
         List<Location> location = locationSearchService.searchLocations(query, addressField);
 
@@ -101,7 +122,7 @@ public class LocationSearchService {
         }
 
         for (Location loc : location) {
-            System.out.println(loc.displayAddress());
+            System.out.println(loc.displayAddress);
         }
     }
 }
