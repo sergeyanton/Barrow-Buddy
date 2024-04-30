@@ -27,7 +27,7 @@ public class ResetToken {
     public ResetToken(User user, int expiry) {
         this.token = UUID.randomUUID().toString();
         this.user = user;
-        setExpiryDate(expiry);
+        setExpiryDate(LocalDateTime.now().plusMinutes(expiry));
     }
 
     public ResetToken() {
@@ -41,8 +41,8 @@ public class ResetToken {
         this.user = user;
     }
 
-    public void setExpiryDate(int expiry) {
-        this.expiryDate = LocalDateTime.now().plusMinutes(expiry);
+    public void setExpiryDate(LocalDateTime expiry) {
+        this.expiryDate = expiry;
     }
 
     public String getToken() {
