@@ -185,7 +185,6 @@ public class AccountController {
     @GetMapping("/login")
     public String getLoginPage(@ModelAttribute("loginForm") LoginForm loginForm, Model model, RedirectAttributes redirectAttributes) {
         logger.info("GET /login");
-        System.out.println("Gets to the login page!");
         if (redirectAttributes.containsAttribute("errorMessage")) {
             model.addAttribute("errorMessage", redirectAttributes.getAttribute("errorMessage"));
         }
@@ -331,14 +330,10 @@ public class AccountController {
         session.setAttribute("resetToken", resetToken);
         // if token doesn't exist or expired:
         if (token == null) {
-            // TODO add error saying "Reset password link has expired"
-            System.out.println("Reset token is null");
             redirectAttributes.addFlashAttribute("errorMessage", "Reset password link has expired");
             return "redirect:/login";
         } else if (token.getExpiryDate().isBefore(LocalDateTime.now())) {
-            System.out.println("Reset token is expired");
             redirectAttributes.addFlashAttribute("errorMessage", "Reset password link has expired");
-            // TODO add error saying "Reset password link has expired"
             resetTokenService.deleteResetToken(resetToken);
             return "redirect:/login";
         }
@@ -363,17 +358,16 @@ public class AccountController {
     public String postUpdatePassword(HttpServletRequest request,
                                      @ModelAttribute("resetPasswordForm") ResetPasswordForm resetPasswordForm,
                                      BindingResult bindingResult,
-                                     HttpSession session) {
+                                     HttpSession session, RedirectAttributes redirectAttributes) {
         logger.info("POST /resetPassword");
         String resetToken = (String) session.getAttribute("resetToken");
         ResetToken token = resetTokenService.getResetToken(resetToken);
         // check if token is expired yet:
         if (token == null) {
-            // TODO add error saying "Reset password link has expired"
-
+            redirectAttributes.addFlashAttribute("errorMessage", "Reset password link has expired");
             return "redirect:/login";
         } else if (token.getExpiryDate().isBefore(LocalDateTime.now())) {
-            // TODO add error saying "Reset password link has expired"
+            redirectAttributes.addFlashAttribute("errorMessage", "Reset password link has expired");
             resetTokenService.deleteResetToken(resetToken);
             return "redirect:/login";
         }
