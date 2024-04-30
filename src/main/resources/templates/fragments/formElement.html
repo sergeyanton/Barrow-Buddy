@@ -10,9 +10,11 @@
 
 <th:block th:fragment="autocompleteDropdown(fieldName, label)" th:with="placeholder=${placeholder} ? ${placeholder} : null">
     <div class="form-element">
-        <label th:for="${fieldName}" th:text="${label}">label</label>
         <div class="dropdown">
-            <input th:field="*{__${fieldName}__}" th:placeholder="${placeholder}" type="text"><br>
+            <div>
+                <label th:for="${fieldName}" th:text="${label}">label</label>
+                <input th:field="*{__${fieldName}__}" th:placeholder="${placeholder}" type="text">
+            </div>
             <div id="dropdownMenu" class="dropdown-menu"></div>
         </div>
         <span class="error" th:if="${#fields.hasErrors(fieldName)}" th:errors="*{__${fieldName}__}">Errors</span>
