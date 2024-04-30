@@ -26,9 +26,7 @@
             <br>
             <p th:if="${dob != null}" th:text="'Date of birth: ' + ${dob}"></p>
             <a th:href="@{editProfile}">Edit profile</a>
-            <form th:action="@{logout}" method="post">
-                <button class="cancel" type="submit">Log Out</button>
-            </form>
+            <a th:href="@{logout}" class="cancel">Log out</a>
         </div>
     </main>
     <script>

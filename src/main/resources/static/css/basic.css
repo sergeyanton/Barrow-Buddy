@@ -6,14 +6,14 @@
 }
 
 body {
-    background-color: lavenderblush;
+    background-color: #b2e0af;
     height: 100vh;
     margin: 0;
     padding: 0;
 }
 
 main {
-    margin: 50px 5px;
+    margin: 50px 20px;
 }
 
 main.centred {
@@ -35,12 +35,16 @@ h1 {
     background-color: #FAF9F6;
     border-radius: 15px;
     min-width: 250px;
-    max-width: 600px;
+    max-width: 1000px;
+    width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     box-shadow: 0 0 1rem rgba(0, 0, 0, 0.5);
+    box-sizing: border-box;
+    min-height: 80vh;
+    gap: 2px;
 }
 
 .error {

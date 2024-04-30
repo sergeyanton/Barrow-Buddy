@@ -28,7 +28,7 @@ import java.util.List;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
-@WebMvcTest(controllers = GardensController.class)
+@WebMvcTest(controllers = {GardensController.class})
 @AutoConfigureMockMvc
 @WithMockUser
 public class PlantsControllerTest {
@@ -41,6 +41,7 @@ public class PlantsControllerTest {
 
     @MockBean
     private AuthenticationManager authenticationManager;
+    
 
     @MockBean
     private GardenService gardenService;
