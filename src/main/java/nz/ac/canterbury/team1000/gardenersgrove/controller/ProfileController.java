@@ -56,11 +56,12 @@ public class ProfileController {
     @GetMapping("/profile")
     public String getProfilePage(Model model, @ModelAttribute("profilePictureForm") PictureForm profilePictureForm) {
         logger.info("GET /profile");
+        User currentUser = userService.getLoggedInUser();
+
         // If user has not verified their account, redirect to the verification page
-        if (verificationTokenService.getVerificationTokenByUserId(userService.getLoggedInUser().getId()) != null) {
+        if (verificationTokenService.getVerificationTokenByUserId(currentUser.getId()) != null) {
             return "redirect:/register/verification";
         }
-        User currentUser = userService.getLoggedInUser();
 
         model.addAttribute("fName", currentUser.getFname());
         model.addAttribute("lName", currentUser.getLname());

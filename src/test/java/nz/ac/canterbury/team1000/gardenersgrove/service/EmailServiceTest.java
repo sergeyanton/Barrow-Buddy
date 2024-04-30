@@ -1,36 +1,57 @@
 package nz.ac.canterbury.team1000.gardenersgrove.service;
 
-import org.junit.jupiter.api.BeforeAll;
+import java.util.Objects;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.test.web.servlet.MockMvc;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+@Import(EmailService.class)
 public class EmailServiceTest {
-    @Autowired
-    private MockMvc mockMvc;
-
     @MockBean
-    private JavaMailSender mockJavaMailSender;
+    private JavaMailSender emailSenderMock;
+    private EmailService emailService;
 
-    /**
-     * Test that the email service calls the JavaMailSender to send an email with correct parameters
-     */
-    @Test
-    public void testSendEmail() throws Exception {
-        EmailService emailService = new EmailService(mockJavaMailSender);
-        Mockito.doNothing().when(mockJavaMailSender).send(Mockito.any(SimpleMailMessage.class));
-        emailService.sendSimpleMessage("recipient@example.com", "Test Subject", "Test Body");
-        Mockito.verify(mockJavaMailSender).send(Mockito.any(SimpleMailMessage.class));
+    @BeforeEach
+    public void setup() {
+        emailSenderMock = Mockito.mock(JavaMailSender.class);
+        emailService = new EmailService(emailSenderMock);
     }
 
+    /**
+     * Test that the email service calls the JavaMailSender to send an email with correct parameters.
+     * Written with help of GPT
+     */
 
+    @Test
+    public void testSendSimpleMessage() {
+        String to = "recipient@example.com";
+        String subject = "Test Subject";
+        String text = "Test Message";
 
+        // Call the method under test
+        emailService.sendSimpleMessage(to, subject, text);
+
+        // Verify that send method of emailSenderMock is called once
+        verify(emailSenderMock, times(1)).send(Mockito.any(SimpleMailMessage.class));
+
+        ArgumentCaptor<SimpleMailMessage> captor = ArgumentCaptor.forClass(SimpleMailMessage.class);
+        verify(emailSenderMock).send(captor.capture());
+
+        SimpleMailMessage message = captor.getValue();
+
+        // Verify that the email message has the correct parameters
+        Assertions.assertEquals(to, Objects.requireNonNull(message.getTo())[0]);
+        Assertions.assertEquals(subject, message.getSubject());
+        Assertions.assertEquals(text, message.getText());
+    }
 }
