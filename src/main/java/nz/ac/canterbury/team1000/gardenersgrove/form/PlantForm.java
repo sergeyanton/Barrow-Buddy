@@ -93,10 +93,10 @@ public class PlantForm {
 
         // Validate plant count (if there is one)
         if (!checkBlank(createPlantForm.getPlantCount())) {
-            if (checkIntegerIsInvalid(createPlantForm.getPlantCount())) {
-                errors.add("plantCount", "Plant count must be a positive integer", createPlantForm.getPlantCount());
-            } else if (checkIntegerTooBig(createPlantForm.getPlantCount())) {
+            if (checkIntegerTooBig(createPlantForm.getPlantCount())) {
                 errors.add("plantCount", "Plant count must be at most " + Integer.MAX_VALUE, createPlantForm.getPlantCount());
+            } else if (checkIntegerIsInvalid(createPlantForm.getPlantCount()) || checkIntegerOutsideRange(createPlantForm.getPlantCount(), 1, null)) {
+                errors.add("plantCount", "Plant count must be a positive integer", createPlantForm.getPlantCount());
             }
         }
 
@@ -115,5 +115,30 @@ public class PlantForm {
                 errors.add("plantedOnDate", "Date cannot be in the future", createPlantForm.getPlantedOnDate());
             }
         }
+    }
+
+    /**
+     * Create a PlantForm from the Plant object.
+     * 
+     * @param plant the Plant object to create the form from.
+     * @return the populated PlantForm object.
+     */
+    public static PlantForm fromPlant(Plant plant) {
+        PlantForm plantForm = new PlantForm();
+
+        // set all the fields blank
+        plantForm.setName("");
+        plantForm.setPlantCount("");
+        plantForm.setDescription("");
+        plantForm.setPlantedOnDate("");
+        if (plant == null) return plantForm;
+
+        if (plant.getName() != null) plantForm.setName(plant.getName());
+        if (plant.getPlantCount() != null) plantForm.setPlantCount(plant.getPlantCount().toString());
+        if (plant.getDescription() != null) plantForm.setDescription(plant.getDescription());
+        plantForm.setPlantedOnDate(FormUtils.dateToString(plant.getPlantedOnDate()));
+        plantForm.setGardenId(plant.getGardenId());
+
+        return plantForm;
     }
 }

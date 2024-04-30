@@ -12,7 +12,7 @@
                 <button>Add a plant</button>
             </a>
             <br>
-            <p th:text="'Location: ' + ${garden.location}"></p>
+            <p th:text="'Location: ' + ${garden.getLocationString}"></p>
             <br>
             <p th:if="${garden.size != null}" th:text="'Size: ' + ${garden.size} + ' m&sup2;'"></p>
             <br th:if="${garden.size != null}">
@@ -114,6 +114,14 @@
 
             document.getElementById('pictureForm' + id).submit();
         }
+
+        // function cancelSelection() {
+        //     document.getElementById('pictureFile').value = '';
+        //     document.getElementById('profileImage').src = initialProfilePictureUrl;
+        //     document.getElementById('pictureFileLabel').style.display = 'inline-block';
+        //     document.getElementById('cancelButton').style.display = 'none';
+        //     document.getElementById('submitButton').style.display = 'none';
+        // }
     </script>
 </body>
 </html>

@@ -61,6 +61,7 @@ table thead {
     background: #023020;
     position: sticky;
     top: 0;
+    z-index: 9999; /* render the table header in front of everything else, namely the table body */
 }
 
 table tbody {

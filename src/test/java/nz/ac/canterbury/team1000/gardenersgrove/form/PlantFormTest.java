@@ -1,10 +1,15 @@
 package nz.ac.canterbury.team1000.gardenersgrove.form;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.validation.BindingResult;
+import nz.ac.canterbury.team1000.gardenersgrove.entity.Plant;
 
 class PlantFormTest {
 
@@ -174,5 +179,44 @@ class PlantFormTest {
         plantForm.setPlantedOnDate("2003-02-02");
         PlantForm.validate(plantForm, bindingResult);
         Mockito.verify(bindingResult).addError(Mockito.any());
+    }
+
+    @Test
+    void validate_PlantCountIsZero_AddsError() {
+        plantForm.setPlantCount("0");
+        PlantForm.validate(plantForm, bindingResult);
+        Mockito.verify(bindingResult).addError(Mockito.any());
+    }
+
+    @Test
+    void fromPlant_NullPlant_ReturnsEmptyForm() {
+        PlantForm form = PlantForm.fromPlant(null);
+        assertTrue(form.getName().isBlank());
+        assertTrue(form.getPlantCount().isBlank());
+        assertTrue(form.getDescription().isBlank());
+        assertTrue(form.getPlantedOnDate().isBlank());
+        assertNull(form.getGardenId());
+    }
+
+    @Test
+    void fromPlant_ValidPlant_ReturnsForm() {
+        Plant plant = new Plant("Poppy", 5, "Red", LocalDate.of(2024, 04, 26), 1L);
+        PlantForm form = PlantForm.fromPlant(plant);
+        assertEquals("Poppy", form.getName());
+        assertEquals("5", form.getPlantCount());
+        assertEquals("Red", form.getDescription());
+        assertEquals("26/04/2024", form.getPlantedOnDate());
+        assertEquals(1L, form.getGardenId());
+    }
+
+    @Test
+    void fromPlant_ValidPlantWithNulls_ReturnsForm() {
+        Plant plant = new Plant("Poppy", null, null, LocalDate.of(2024, 04, 26), 1L);
+        PlantForm form = PlantForm.fromPlant(plant);
+        assertEquals("Poppy", form.getName());
+        assertTrue(form.getPlantCount().isBlank());
+        assertTrue(form.getDescription().isBlank());
+        assertEquals("26/04/2024", form.getPlantedOnDate());
+        assertEquals(1L, form.getGardenId());
     }
 }
