@@ -22,7 +22,7 @@ public class LocationSearchService {
     private final String API_KEY = "pk.73082d5d87fb6091cebd2b86194b5b79"; // Right now this is using my personal account, create a new account for Team 1000
     private final String URL = "https://api.locationiq.com/v1/autocomplete";
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    private RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final TokenBucketService secondTokenBucket = new TokenBucketService(10, 2, 1000);
 
@@ -31,6 +31,10 @@ public class LocationSearchService {
     private final TokenBucketService dailyTokenBucket = new TokenBucketService(10000, 5000, 86400000);
 
     public LocationSearchService() {}
+
+    public LocationSearchService(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     public List<Location> searchLocations(String query, String addressField) {
         if (!secondTokenBucket.consumeToken() || !minuteTokenBucket.consumeToken() || !dailyTokenBucket.consumeToken()) {
@@ -130,7 +134,7 @@ public class LocationSearchService {
         return locationAddresses;
     }
 
-
+    // TODO: delete main method before merge with dev
     public static void main(String[] args) {
         LocationSearchService locationSearchService = new LocationSearchService();
         String query = "Ilam Road";
