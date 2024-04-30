@@ -4,7 +4,10 @@ import nz.ac.canterbury.team1000.gardenersgrove.controller.AccountController;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.LoginForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.RegistrationForm;
+import nz.ac.canterbury.team1000.gardenersgrove.form.VerificationTokenForm;
+import nz.ac.canterbury.team1000.gardenersgrove.service.EmailService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
+import nz.ac.canterbury.team1000.gardenersgrove.service.VerificationTokenService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -33,6 +36,11 @@ class AccountControllerTest {
     private UserService userService;
 
     @MockBean
+    private EmailService emailService;
+    @MockBean
+    private VerificationTokenService verificationTokenService;
+
+    @MockBean
     private AuthenticationManager authenticationManager;
 
     @MockBean
@@ -45,6 +53,7 @@ class AccountControllerTest {
 
     private LoginForm loginForm;
 
+    private VerificationTokenForm verificationTokenForm;
     @BeforeEach
     public void beforeEach() {
         userMock = Mockito.mock(User.class);
@@ -66,6 +75,7 @@ class AccountControllerTest {
         loginForm = new LoginForm();
         loginForm.setEmail(userMock.getEmail());
         loginForm.setPassword("Pass123$");
+
 
         Mockito.when(userService.checkEmail(Mockito.any())).thenReturn(false);
         Mockito.when(userService.isSignedIn()).thenReturn(false);
