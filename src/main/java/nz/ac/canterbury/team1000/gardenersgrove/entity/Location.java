@@ -1,113 +1,34 @@
 package nz.ac.canterbury.team1000.gardenersgrove.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Location {
-    private String houseNumber;
-    private String street;
-    private String suburb;
-    private String city;
-    private String postCode;
-    private String country;
+    public String address;
+    public String suburb;
+    public String city;
+    public String postCode;
+    public String country;
+    public String displayPlace;
+    public String displayAddress;
 
-    public Location(String houseNumber, String street, String suburb, String city, String postCode, String country) {
-        this.houseNumber = houseNumber;
-        this.street = street;
+    public Location(String address, String suburb, String city, String postCode, String country, String displayPlace) {
+        this.address = address;
         this.suburb = suburb;
         this.city = city;
         this.postCode = postCode;
         this.country = country;
-    }
-
-    public Location() {}
-
-    public String getHouseNumber() {
-        return this.houseNumber;
-    }
-
-    public String getStreet() {
-        return this.street;
-    }
-
-    public String getSuburb() {
-        return this.suburb;
-    }
-
-    public String getCity() {
-        return this.city;
-    }
-
-    public String getPostcode() {
-        return this.postCode;
-    }
-
-    public String getCountry() {
-        return this.country;
-    }
-
-    public void setHouseNumber(String houseNumber) {
-        this.houseNumber = houseNumber;
-    }
-
-    public void setStreet(String street) {
-        this.street = street;
-    }
-
-    public void setSuburb(String suburb) {
-        this.suburb = suburb;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public void setPostCode(String postCode) {
-        this.postCode = postCode;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
+        this.displayPlace = displayPlace;
+        this.displayAddress = displayAddress();
     }
 
     public String displayAddress() {
-        String address = "";
-
-        if (!this.houseNumber.isEmpty()) {
-            address += this.houseNumber + " ";
-        }
-
-        if (!this.street.isEmpty()) {
-            address += this.street + ", ";
-        }
-
-        if (!this.suburb.isEmpty()) {
-            address += this.suburb + ", ";
-        }
-
-        if (!this.city.isEmpty()) {
-            address += this.city;
-
-            if (!this.postCode.isEmpty()) {
-                address += " " + this.postCode;
-            }
-
-            address += ", ";
-        }
-
-        if (!this.country.isEmpty()) {
-            address += this.country;
-        }
-
-        return address;
-    }
-
-    @Override
-    public String toString() {
-        return "Location{" +
-                "houseNumber='" + houseNumber + '\'' +
-                ", street='" + street + '\'' +
-                ", suburb='" + suburb + '\'' +
-                ", city='" + city + '\'' +
-                ", postCode='" + postCode + '\'' +
-                ", country='" + country + '\'' +
-                '}';
+        List<String> fields = new ArrayList<>();
+        if (!address.isEmpty()) fields.add(address);
+        if (!suburb.isEmpty()) fields.add(suburb);
+        if (!city.isEmpty()) fields.add(city);
+        if (!postCode.isEmpty()) fields.add(postCode);
+        if (!country.isEmpty()) fields.add(country);
+        return String.join(", ", fields);
     }
 }

@@ -45,48 +45,43 @@ public class LocationSearchService {
             String jsonResponse = restTemplate.getForObject(url, String.class);
             System.out.println(jsonResponse);
 
-            List<Location> locationAddresses = new ArrayList<>();
+            List<Location> locationAddresses = new ArrayList<Location>();
 
             List<Map<String, Object>> locations = objectMapper.readValue(jsonResponse, List.class);
 
             for (Map<String, Object> location : locations) {
                 String locationType = (String) location.get("type");
-                Map<String, Object> address = (Map<String, Object>) location.get("address");
-                Location newLocation = null;
+                String displayPlace = (String) location.get("display_place");
+                Map<String, Object> addressMap = (Map<String, Object>) location.get("address");
+
                 if (addressField.equals("city") && locationType.equals("city")) {
-                    String city = address.get("name").toString();
-                    String country = address.get("country").toString();
-
-                    newLocation = new Location("", "", "", city, "", country);
+                    String city = addressMap.get("name").toString();
+                    String country = addressMap.get("country").toString();
+                    locationAddresses.add(new Location( "", "", city, "", country, displayPlace));
                 } else if (addressField.equals("suburb") && locationType.equals("suburb")) {
-                    String suburb = address.get("name").toString();
-                    String city = address.get("city").toString();
-                    String country = address.get("country").toString();
-
-                    newLocation = new Location("", "", suburb, city, "", country);
-                } else if (addressField.equals("street address")) {
-                    String houseNumber = "";
-                    String street = "";
+                    String suburb = addressMap.get("name").toString();
+                    String city = addressMap.get("city").toString();
+                    String country = addressMap.get("country").toString();
+                    locationAddresses.add(new Location( "", suburb, city, "", country, displayPlace));
+                } else if (addressField.equals("address")) {
+                    String address = "";
                     String suburb = "";
-                    if (address.containsKey("house_number")) {
-                        houseNumber = address.get("house_number").toString();
-                        street = address.get("road").toString();
+                    if (addressMap.containsKey("house_number")) {
+                        address = addressMap.get("house_number").toString() + addressMap.get("road").toString();
                     } else {
-                        street = address.get("name").toString();
+                        address = addressMap.get("name").toString();
                     }
-                    if (address.containsKey("suburb")) {
-                        suburb = address.get("suburb").toString();
+                    if (addressMap.containsKey("suburb")) {
+                        suburb = addressMap.get("suburb").toString();
                     }
-                    String city = address.get("city").toString();
+                    String city = addressMap.get("city").toString();
                     String postcode = "";
-                    if (address.containsKey("postcode")) {
-                        postcode = address.get("postcode").toString();
+                    if (addressMap.containsKey("postcode")) {
+                        postcode = addressMap.get("postcode").toString();
                     }
-                    String country = address.get("country").toString();
-
-                    newLocation = new Location(houseNumber, street, suburb, city, postcode, country);
+                    String country = addressMap.get("country").toString();
+                    locationAddresses.add(new Location(address, suburb, city, postcode, country, displayPlace));
                 }
-                locationAddresses.add(newLocation);
             }
             return locationAddresses;
         } catch (Exception e) {

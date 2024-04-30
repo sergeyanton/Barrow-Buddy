@@ -15,6 +15,7 @@
 
                 <h2>Garden Location</h2>
                 <input id="address" th:replace="~{fragments/formElement :: formElementField(fieldName='address', label='Address: (optional)', placeholder='13 Hungerford Crescent')}" />
+                <div id="dropdownMenu"></div>
                 <br />
                 <input id="suburb" th:replace="~{fragments/formElement :: formElementField(fieldName='suburb', label='Suburb: (optional)', placeholder='Ilam')}" />
                 <br />
@@ -57,16 +58,22 @@
             // Your API request logic here
             const query = document.getElementById(addressField).value;
 
-            let locations;
+            console.log(addressField)
             fetch(`/locationSearch?query=${query}&addressField=${addressField}`)
                 .then(response => response.json())
-                .then(data => {
-                    locations = data;
+                .then(locations => {
+                    console.log(locations);
+                    const dropdownMenu = document.getElementById('dropdownMenu');
+                    dropdownMenu.innerHTML = '';
+                    locations.forEach(location => {
+                        const option = document.createElement('option');
+                        option.text = location.displayPlace + "\n" + location.displayAddress;
+                        dropdownMenu.appendChild(option);
+                    });
                 })
                 .catch(error => {
                     console.error('Error fetching locations:', error);
                 });
-            console.log(locations);
         }
 
         const LOCATION_FIELD_IDS = ['address', 'suburb', 'city', 'postcode', 'country'];
@@ -74,17 +81,9 @@
         for (const id of LOCATION_FIELD_IDS) {
             locationFields.push(document.getElementById(id))
             locationFields[locationFields.length-1].addEventListener('input', () => {
-                debounce(() => getLocationSuggestions(id), 500);
+                debounce(() => getLocationSuggestions(id), 1000);
             });
         }
-        // const addressInput = document.getElementById('address');
-        // const suburbInput = document.getElementById('suburb');
-        // const cityInput = document.getElementById('city');
-        // const postcodeInput = document.getElementById('postcode');
-        // const countryInput = document.getElementById('country');
-        // searchInput.addEventListener('input', () => {
-        //     debounce(getLocationSuggestions, 500);
-        // });
     </script>
 </body>
 </html>
