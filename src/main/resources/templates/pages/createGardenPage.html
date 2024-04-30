@@ -31,5 +31,39 @@
             </form>
         </div>
     </main>
+    <script>
+        // ChatGPT is helping out a bit here, I haven't used fetch much before.
+
+        let timeoutId;
+
+        function debounce(func, delay) {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(func, delay);
+        }
+
+        // Assuming you have a function to send the API request called sendRequest
+        function sendRequest() {
+            // Your API request logic here
+            console.log("send");
+            const query = searchInput.value;
+            const addressField = "street address"; // Or get this dynamically based on user selection
+
+            fetch(`/locationSearch?query=${query}&addressField=${addressField}`)
+                .then(response => response.json())
+                .then(locations => {
+                    // Update autocomplete suggestions with the received locations
+                    console.log(locations);
+                })
+                .catch(error => {
+                    console.error('Error fetching locations:', error);
+                });
+        }
+
+        // Assuming you have an event listener on your search input field
+        const searchInput = document.getElementById('address');
+        searchInput.addEventListener('input', () => {
+            debounce(sendRequest, 500);
+        });
+    </script>
 </body>
 </html>
