@@ -486,98 +486,106 @@ public class FormUtilsTest {
     }
 
     @Test
-void checkDoubleOutsideRange_WithDoubleStringWithinRange_ReturnsFalse() {
-    String value = "5.0";
-    double min = 0.0;
-    double max = 10.0;
-    Assertions.assertFalse(FormUtils.checkDoubleOutsideRange(value, min, max));
-}
+    void checkDoubleOutsideRange_WithDoubleStringWithinRange_ReturnsFalse() {
+        String value = "5.0";
+        double min = 0.0;
+        double max = 10.0;
+        Assertions.assertFalse(FormUtils.checkDoubleOutsideRange(value, min, max));
+    }
 
-@Test
-void checkDoubleOutsideRange_WithDoubleStringEqualToMin_ReturnsFalse() {
-    String value = "0.0";
-    double min = 0.0;
-    double max = 10.0;
-    Assertions.assertFalse(FormUtils.checkDoubleOutsideRange(value, min, max));
-}
+    @Test
+    void checkDoubleOutsideRange_WithDoubleStringEqualToMin_ReturnsFalse() {
+        String value = "0.0";
+        double min = 0.0;
+        double max = 10.0;
+        Assertions.assertFalse(FormUtils.checkDoubleOutsideRange(value, min, max));
+    }
 
-@Test
-void checkDoubleOutsideRange_WithDoubleStringEqualToMax_ReturnsFalse() {
-    String value = "10.0";
-    double min = 0.0;
-    double max = 10.0;
-    Assertions.assertFalse(FormUtils.checkDoubleOutsideRange(value, min, max));
-}
+    @Test
+    void checkDoubleOutsideRange_WithDoubleStringEqualToMax_ReturnsFalse() {
+        String value = "10.0";
+        double min = 0.0;
+        double max = 10.0;
+        Assertions.assertFalse(FormUtils.checkDoubleOutsideRange(value, min, max));
+    }
 
-@Test
-void checkDoubleOutsideRange_WithDoubleStringBelowMin_ReturnsTrue() {
-    String value = "-0.1";
-    double min = 0.0;
-    double max = 10.0;
-    Assertions.assertTrue(FormUtils.checkDoubleOutsideRange(value, min, max));
-}
+    @Test
+    void checkDoubleOutsideRange_WithDoubleStringBelowMin_ReturnsTrue() {
+        String value = "-0.1";
+        double min = 0.0;
+        double max = 10.0;
+        Assertions.assertTrue(FormUtils.checkDoubleOutsideRange(value, min, max));
+    }
 
-@Test
-void checkDoubleOutsideRange_WithDoubleStringAboveMax_ReturnsTrue() {
-    String value = "10.1";
-    double min = 0.0;
-    double max = 10.0;
-    Assertions.assertTrue(FormUtils.checkDoubleOutsideRange(value, min, max));
-}
+    @Test
+    void checkDoubleOutsideRange_WithDoubleStringAboveMax_ReturnsTrue() {
+        String value = "10.1";
+        double min = 0.0;
+        double max = 10.0;
+        Assertions.assertTrue(FormUtils.checkDoubleOutsideRange(value, min, max));
+    }
 
-@Test
-void checkDoubleOutsideRange_WithNonDoubleString_ReturnsTrue() {
-    String value = "abc";
-    double min = 0.0;
-    double max = 10.0;
-    Assertions.assertTrue(FormUtils.checkDoubleOutsideRange(value, min, max));
-}
+    @Test
+    void checkDoubleOutsideRange_WithNonDoubleString_ReturnsTrue() {
+        String value = "abc";
+        double min = 0.0;
+        double max = 10.0;
+        Assertions.assertTrue(FormUtils.checkDoubleOutsideRange(value, min, max));
+    }
 
-@Test
-void checkDoubleOutsideRange_WithNoUpperBoundAndDoubleStringAboveLowerBound_ReturnsFalse() {
-    String value = "5.0";
-    double min = 0.0;
-    Assertions.assertFalse(FormUtils.checkDoubleOutsideRange(value, min, null));
-}
+    @Test
+    void checkDoubleOutsideRange_WithNoUpperBoundAndDoubleStringAboveLowerBound_ReturnsFalse() {
+        String value = "5.0";
+        double min = 0.0;
+        Assertions.assertFalse(FormUtils.checkDoubleOutsideRange(value, min, null));
+    }
 
-@Test
-void checkDoubleOutsideRange_WithNoUpperBoundAndDoubleStringEqualToLowerBound_ReturnsFalse() {
-    String value = "0.0";
-    double min = 0.0;
-    Assertions.assertFalse(FormUtils.checkDoubleOutsideRange(value, min, null));
-}
+    @Test
+    void checkDoubleOutsideRange_WithNoUpperBoundAndDoubleStringEqualToLowerBound_ReturnsFalse() {
+        String value = "0.0";
+        double min = 0.0;
+        Assertions.assertFalse(FormUtils.checkDoubleOutsideRange(value, min, null));
+    }
 
-@Test
-void checkDoubleOutsideRange_WithNoUpperBoundAndDoubleStringBelowLowerBound_ReturnsTrue() {
-    String value = "-0.1";
-    double min = 0.0;
-    Assertions.assertTrue(FormUtils.checkDoubleOutsideRange(value, min, null));
-}
+    @Test
+    void checkDoubleOutsideRange_WithNoUpperBoundAndDoubleStringBelowLowerBound_ReturnsTrue() {
+        String value = "-0.1";
+        double min = 0.0;
+        Assertions.assertTrue(FormUtils.checkDoubleOutsideRange(value, min, null));
+    }
 
-@Test
-void checkDoubleOutsideRange_WithNoLowerBoundAndDoubleStringBelowUpperBound_ReturnsFalse() {
-    String value = "5.0";
-    double max = 10.0;
-    Assertions.assertFalse(FormUtils.checkDoubleOutsideRange(value, null, max));
-}
+    @Test
+    void checkDoubleOutsideRange_WithNoLowerBoundAndDoubleStringBelowUpperBound_ReturnsFalse() {
+        String value = "5.0";
+        double max = 10.0;
+        Assertions.assertFalse(FormUtils.checkDoubleOutsideRange(value, null, max));
+    }
 
-@Test
-void checkDoubleOutsideRange_WithNoLowerBoundAndDoubleStringEqualToUpperBound_ReturnsFalse() {
-    String value = "10.0";
-    double max = 10.0;
-    Assertions.assertFalse(FormUtils.checkDoubleOutsideRange(value, null, max));
-}
+    @Test
+    void checkDoubleOutsideRange_WithNoLowerBoundAndDoubleStringEqualToUpperBound_ReturnsFalse() {
+        String value = "10.0";
+        double max = 10.0;
+        Assertions.assertFalse(FormUtils.checkDoubleOutsideRange(value, null, max));
+    }
 
-@Test
-void checkDoubleOutsideRange_WithNoLowerBoundAndDoubleStringAboveUpperBound_ReturnsTrue() {
-    String value = "10.1";
-    double max = 10.0;
-    Assertions.assertTrue(FormUtils.checkDoubleOutsideRange(value, null, max));
-}
+    @Test
+    void checkDoubleOutsideRange_WithNoLowerBoundAndDoubleStringAboveUpperBound_ReturnsTrue() {
+        String value = "10.1";
+        double max = 10.0;
+        Assertions.assertTrue(FormUtils.checkDoubleOutsideRange(value, null, max));
+    }
 
-@Test
-void checkDoubleOutsideRange_WithNoBoundsAndNonDoubleString_ReturnsTrue() {
-    String value = "abc";
-    Assertions.assertTrue(FormUtils.checkDoubleOutsideRange(value, null, null));
-}
+    @Test
+    void checkDoubleOutsideRange_WithNoBoundsAndNonDoubleString_ReturnsTrue() {
+        String value = "abc";
+        Assertions.assertTrue(FormUtils.checkDoubleOutsideRange(value, null, null));
+    }
+
+    @Test
+    void checkDoubleOutsideRange_WithCommaDecimalSeparator_ReturnsFalse() {
+        String value = "5,0";
+        double min = 0.0;
+        double max = 10.0;
+        Assertions.assertFalse(FormUtils.checkDoubleOutsideRange(value, min, max));
+    }
 }

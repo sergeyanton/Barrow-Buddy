@@ -228,7 +228,7 @@ public class FormUtils {
      */
     public static boolean checkDoubleOutsideRange(String string, Double min, Double max) {
         try {
-            double value = Double.parseDouble(string);
+            double value = Double.parseDouble(string.replace(",", "."));
             if (min != null && value < min) return true;
             if (max != null && value > max) return true;
             return false;
