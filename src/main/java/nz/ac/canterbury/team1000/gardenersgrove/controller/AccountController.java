@@ -99,6 +99,8 @@ public class AccountController {
     public String register(HttpServletRequest request,
                            @ModelAttribute("registrationForm") RegistrationForm registrationForm,
                            BindingResult bindingResult) {
+        logger.info("POST /register");
+
         RegistrationForm.validate(registrationForm, bindingResult);
 
         if (!bindingResult.hasFieldErrors("email") && userService.checkEmail(registrationForm.getEmail())) {
@@ -136,6 +138,7 @@ public class AccountController {
      */
     @PostMapping("/register/verification")
     public String registerVerification(@ModelAttribute("verificationTokenForm") VerificationTokenForm verificationTokenForm, BindingResult bindingResult) {
+        logger.info("POST /register/verification");
         VerificationTokenForm.validate(verificationTokenForm, bindingResult);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findEmail(authentication.getName());
@@ -158,6 +161,7 @@ public class AccountController {
      * @return boolean value whether the token is verified(true) or not(false)
      */
     private boolean validateToken(String userInputToken, long userId) {
+        logger.info("Validating token");
         if (verificationTokenService.getVerificationTokenByUserId(userId) == null) {
             return false;
         }
@@ -210,6 +214,7 @@ public class AccountController {
     public String login(HttpServletRequest request,
                         @ModelAttribute("loginForm") LoginForm loginForm,
                         BindingResult bindingResult) {
+        logger.info("POST /login");
         if (userService.isSignedIn()) {
             return "redirect:/";
         }
@@ -272,7 +277,10 @@ public class AccountController {
      *         - Whatever the result is (error or no error), returns/redirects the forgot password page.
      */
     @PostMapping("/forgotPassword")
-    public String forgotPassword(HttpServletRequest request, @ModelAttribute("forgotPasswordForm") ForgotPasswordForm forgotPasswordForm, BindingResult bindingResult) {
+    public String forgotPassword(HttpServletRequest request,
+                                 @ModelAttribute("forgotPasswordForm") ForgotPasswordForm forgotPasswordForm,
+                                 BindingResult bindingResult) {
+        logger.info("POST /forgotPassword");
         ForgotPasswordForm.validate(forgotPasswordForm, bindingResult);
         User user = userService.findEmail(forgotPasswordForm.getEmail());
 
