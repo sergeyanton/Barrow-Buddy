@@ -2,10 +2,13 @@ package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import nz.ac.canterbury.team1000.gardenersgrove.entity.ResetToken;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.VerificationToken;
 import nz.ac.canterbury.team1000.gardenersgrove.form.*;
 import nz.ac.canterbury.team1000.gardenersgrove.service.EmailService;
+import nz.ac.canterbury.team1000.gardenersgrove.service.ResetTokenService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.VerificationTokenService;
 import org.slf4j.Logger;
@@ -16,11 +19,16 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.time.LocalDateTime;
 
 @Controller
 public class AccountController {
@@ -28,6 +36,7 @@ public class AccountController {
     private final UserService userService;
 
     private final VerificationTokenService verificationTokenService;
+    private final ResetTokenService resetTokenService;
     private final EmailService emailService;
 
     @Autowired
@@ -37,10 +46,12 @@ public class AccountController {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public AccountController(UserService userService, VerificationTokenService verificationTokenService, EmailService emailService) {
+    public AccountController(UserService userService, VerificationTokenService verificationTokenService,
+                             EmailService emailService, ResetTokenService resetTokenService) {
         this.userService = userService;
         this.verificationTokenService = verificationTokenService;
         this.emailService = emailService;
+        this.resetTokenService = resetTokenService;
     }
 
     /**
@@ -70,19 +81,6 @@ public class AccountController {
         logger.info("GET /forgotPassword");
         return "pages/forgotPasswordPage";
     }
-
-    /**
-     * Gets the thymeleaf page representing the /resetPassword page, for non-logged-in
-     * users to reset their password
-     *
-     * @return thymeleaf resetPasswordPage
-     */
-    @GetMapping("/resetPassword")
-    public String getResetPasswordPage(ResetPasswordForm resetPasswordForm) {
-        logger.info("GET /resetPassword");
-        return "pages/resetPasswordPage";
-    }
-
 
     /**
      * Handles POST requests to the /register endpoint.
@@ -189,12 +187,17 @@ public class AccountController {
      * @return thymeleaf loginPage
      */
     @GetMapping("/login")
-    public String getLoginPage(@ModelAttribute("loginForm") LoginForm loginForm) {
+    public String getLoginPage(@ModelAttribute("loginForm") LoginForm loginForm, Model model, RedirectAttributes redirectAttributes) {
         logger.info("GET /login");
+        System.out.println("Gets to the login page!");
+        if (redirectAttributes.containsAttribute("errorMessage")) {
+            model.addAttribute("errorMessage", redirectAttributes.getAttribute("errorMessage"));
+        }
         //TODO if user has been redirected from verafication page then display message “Your account has been activated, please log in”
         if (userService.getLoggedInUser() != null && !verificationTokenService.getVerificationTokenByUserId(userService.getLoggedInUser().getId()).isVerified()) {
             return "redirect:/register/verification";
         }
+
 //        return userService.isSignedIn() ? "redirect:/" : "pages/loginPage";
         return "pages/loginPage";
     }
@@ -246,16 +249,18 @@ public class AccountController {
 
     /**
      * Sends a reset password email to the specified user.
-     * This method generates a password reset link and sends it to the user's email address.
+     * This method generates a unique password reset link and sends it to the user's email address.
      * Handles any errors that might occur during the email sending process.
      *
      * @param user The User object containing the email address where the reset password email will be sent.
      */
     private void sendResetPasswordEmail(User user) {
         logger.info("Sending reset password email to " + user.getEmail());
-//        VerificationToken token = new VerificationToken(user.getId(), passwordEncoder);
-//        verificationTokenService.addVerificationToken(token);
-        String url = "http://localhost:8080/resetPassword";
+        ResetToken token = new ResetToken(user, 10);
+
+        resetTokenService.addResetToken(token);
+
+        String url = "http://localhost:8080/resetPassword?token=" + token.getToken();
         String htmlBody = "<p>Please click the below link to reset your password:</p>"
                 + "<a href='" + url + "'>Reset Password Link</a>"
                 + "<p>If this was not you, you can ignore this message and the account will be deleted after 10 minutes.</p>";
@@ -263,6 +268,27 @@ public class AccountController {
             emailService.sendHtmlMessage(user.getEmail(), "Gardeners Grove Account Reset Password", htmlBody);
         } catch (MessagingException e) {
             logger.error("Failed to send reset password email", e);
+        }
+    }
+
+    /**
+     * Sends a reset password confirmation email to the specified user.
+     * Once a user's password has been reset, this email is sent to notify the user of the confirmation.
+     * Handles any errors that might occur during the email sending process.
+     *
+     * @param user The User object containing the email address where the confirmation email will be sent.
+     */
+    private void sendResetConfirmation(User user) {
+        logger.info("Sending reset password confirmation email to " + user.getEmail());
+
+        String htmlBody = "<p>Dear user " + user.getFname() + " " + user.getLname() + "</p>"
+                + "<p>Your account password has been successfully updated.</p>"
+                + "<p>Regards,</p>"
+                + "<p>Gardeners Grove Team</p>";
+        try {
+            emailService.sendHtmlMessage(user.getEmail(), "Gardeners Grove Reset Password Confirmation", htmlBody);
+        } catch (MessagingException e) {
+            logger.error("Failed to send reset password confirmation email", e);
         }
     }
 
@@ -296,13 +322,38 @@ public class AccountController {
             return "pages/forgotPasswordPage";
         }
 
-        // form was submitted with valid data
-        // send a reset password email to the provided email
-
-        // TODO: "SEND A RESET EMAIL TO USER!!!!!! - NOT IMPLEMENTED";
-
-
         return "redirect:/forgotPasswordPage";
+    }
+
+    /**
+     * Gets the thymeleaf page representing the /resetPassword page, for non-logged-in
+     * users to reset their password
+     *
+     * @return thymeleaf resetPasswordPage
+     */
+    @GetMapping("/resetPassword")
+    public String getResetPasswordPage(@RequestParam(value = "token") String resetToken, HttpSession session,
+                                       ResetPasswordForm resetPasswordForm, RedirectAttributes redirectAttributes) {
+        System.out.println("Gets to the resetPassword page!");
+        ResetToken token = resetTokenService.getResetToken(resetToken);
+        session.setAttribute("resetToken", resetToken);
+        // if token doesn't exist or expired:
+        if (token == null) {
+            // TODO add error saying "Reset password link has expired"
+            System.out.println("Reset token is null");
+            redirectAttributes.addFlashAttribute("errorMessage", "Reset password link has expired");
+            return "redirect:/login";
+        } else if (token.getExpiryDate().isBefore(LocalDateTime.now())) {
+            System.out.println("Reset token is expired");
+            redirectAttributes.addFlashAttribute("errorMessage", "Reset password link has expired");
+            // TODO add error saying "Reset password link has expired"
+            resetTokenService.deleteResetToken(resetToken);
+            return "redirect:/login";
+        }
+
+        logger.info("GET /resetPassword");
+
+        return "pages/resetPasswordPage";
     }
 
     /**
@@ -314,24 +365,44 @@ public class AccountController {
      * @param bindingResult the BindingResult object for validation errors
      * @return a String representing the view to display after password reset:
      *         - If there are validation errors, returns the reset password page to display errors.
-     *         - If password reset is successful, redirects to the application's login page.
+     *         - If password reset is successful, redirects to the application's login page and sends email confirmation.
      */
     @PostMapping("/resetPassword")
     public String postUpdatePassword(HttpServletRequest request,
                                      @ModelAttribute("resetPasswordForm") ResetPasswordForm resetPasswordForm,
-                                     BindingResult bindingResult) {
+                                     BindingResult bindingResult,
+                                     HttpSession session) {
         logger.info("POST /resetPassword");
-//        User currentUser = userService.getLoggedInUser();
+        String resetToken = (String) session.getAttribute("resetToken");
+        ResetToken token = resetTokenService.getResetToken(resetToken);
+        // check if token is expired yet:
+        if (token == null) {
+            // TODO add error saying "Reset password link has expired"
+
+            return "redirect:/login";
+        } else if (token.getExpiryDate().isBefore(LocalDateTime.now())) {
+            // TODO add error saying "Reset password link has expired"
+            resetTokenService.deleteResetToken(resetToken);
+            return "redirect:/login";
+        }
+
+        User user = token.getUser();
         ResetPasswordForm.validate(resetPasswordForm, bindingResult);
 
         if (bindingResult.hasErrors()) {
             return "pages/resetPasswordPage";
         }
 
-//        currentUser.setPassword(passwordEncoder.encode(updatePasswordForm.getNewPassword()));
-//        userService.updateUserByEmail(currentUser.getEmail(), currentUser);
+        user.setPassword(passwordEncoder.encode(resetPasswordForm.getNewPassword()));
+
+        userService.updateUserByEmail(user.getEmail(), user);
+        resetTokenService.deleteResetToken(token.getToken());
+        session.removeAttribute("resetToken");
+
+        sendResetConfirmation(user);
 
         return "redirect:/login";
     }
+
 
 }

@@ -48,5 +48,4 @@ public class ResetPasswordForm {
             errors.add("retypePassword", "The new passwords do not match", resetPasswordForm.getRetypePassword());
         }
     }
-
 }
