@@ -7,6 +7,7 @@ import nz.ac.canterbury.team1000.gardenersgrove.form.ProfilePictureForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.UpdatePasswordForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
 
+import nz.ac.canterbury.team1000.gardenersgrove.service.VerificationTokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +30,12 @@ import java.nio.file.Paths;
 
 @Controller
 public class ProfileController {
+    private final UserService userService;
+    private final VerificationTokenService verificationTokenService;
     @Autowired
-    public ProfileController(UserService userService) {
+    public ProfileController(UserService userService, VerificationTokenService verificationTokenService) {
         this.userService = userService;
+        this.verificationTokenService = verificationTokenService;
     }
 
     @Autowired
@@ -39,7 +43,6 @@ public class ProfileController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-    private final UserService userService;
 
     private final static String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/uploads";
     final Logger logger = LoggerFactory.getLogger(ProfileController.class);
@@ -53,6 +56,10 @@ public class ProfileController {
     @GetMapping("/profile")
     public String getProfilePage(Model model, @ModelAttribute("profilePictureForm") ProfilePictureForm profilePictureForm) {
         logger.info("GET /profile");
+        // If user has not verified their account, redirect to the verification page
+        if (verificationTokenService.getVerificationTokenByUserId(userService.getLoggedInUser().getId()) != null) {
+            return "redirect:/register/verification";
+        }
         User currentUser = userService.getLoggedInUser();
 
         model.addAttribute("fName", currentUser.getFname());
