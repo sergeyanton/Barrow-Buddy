@@ -3,6 +3,10 @@ package nz.ac.canterbury.team1000.gardenersgrove.controller;
 import java.io.IOException;
 import java.util.Objects;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 import nz.ac.canterbury.team1000.gardenersgrove.form.GardenForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PictureForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PlantForm;
@@ -37,8 +41,12 @@ public class GardensController {
     private final UserService userService;
 
 
+    //TODO make a controller dedicated to uploading files.
+    private final static String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/uploads";
+
+    
     public GardensController(GardenService gardenService, PlantService plantService,
-                             UserService userService) {
+                                 UserService userService) {
         this.gardenService = gardenService;
         this.plantService = plantService;
         this.userService = userService;
@@ -160,6 +168,8 @@ public class GardensController {
      * Handles GET requests from the /gardens/{gardenId} endpoint.
      * Displays details of the garden with the given id
      *
+     * @param gardenId the id of the garden that is being viewed
+     * @param plantPictureForm the PictureForm object representing a form with the uploaded image file
      * @param model (map-like) representation of results to be used by thymeleaf
      * @return thymeleaf pages/gardenProfilePage
      */
@@ -175,16 +185,58 @@ public class GardensController {
     }
 
     /**
-     * Handles POST requests from the /gardens/{gardenId} endpoint.
+     * Handles POST requests from the /gardens/{gardenId}/plants/{plantId} endpoint.
+     * Particularly it handles the uploading of images for a plant's picture.
+     *
+     * @param request           the HttpServletRequest object containing the request information
+     * @param gardenId          the id of the garden that is being viewed
+     * @param plantId the id of the plant that is being edited
+     * @param plantPictureForm  the PictureForm object representing a form with the uploaded image file
+     * @param bindingResult     the BindingResult object for validation errors
+     * @param model             (map-like) representation of results to be used by thymeleaf
+     * @return the view to display:
+     * - If there are validation errors with the image, stays on the form but render the plant's actual picture.
+     * - Else, redirect to the edited garden page with the new profile picture for the plant.
+     * @throws IOException IOException
      */
-    @PostMapping("/gardens/{gardenId}")
+    @PostMapping("/gardens/{gardenId}/plants/{plantId}")
     public String changePlantPictureFromGardenPage(HttpServletRequest request,
                                                    @PathVariable("gardenId") Long gardenId,
+                                                   @PathVariable("plantId") Long plantId,
                                                    @ModelAttribute("plantPictureForm") PictureForm plantPictureForm,
                                                    BindingResult bindingResult,
                                                    Model model) throws IOException {
         logger.info("POST /gardens/" + gardenId);
-        return "";
+        Plant plant = plantService.getPlantById(plantId);
+
+        PictureForm.validate(plantPictureForm, bindingResult, null); // TODO is there a reason that .validate has a User parameter?
+
+        if (!plantPictureForm.getPictureFile().isEmpty() && !bindingResult.hasFieldErrors("pictureFile")) {
+            Path uploadDirectoryPath = Paths.get(UPLOAD_DIRECTORY);
+
+            if (!Files.exists(uploadDirectoryPath)) {
+                try {
+                    Files.createDirectories(uploadDirectoryPath);
+                } catch (IOException e) {
+                    throw new IOException("Failed to create upload directory", e);
+                }
+            }
+
+            String filename = plantPictureForm.getPictureFile().getOriginalFilename();
+            Path filePath = uploadDirectoryPath.resolve(filename);
+            Files.write(filePath, plantPictureForm.getPictureFile().getBytes());
+            plant.setPicturePath("/uploads/" + filename);
+        }
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("garden", gardenService.getGardenById(gardenId));
+            model.addAttribute("plants", plantService.getPlantsByGardenId(gardenId));
+            return "pages/gardenProfilePage";
+        }
+
+        plantService.updatePlant(plant);
+
+        return "redirect:/gardens/" + gardenId;
     }
 
     /**

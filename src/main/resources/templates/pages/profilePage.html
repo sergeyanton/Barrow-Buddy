@@ -15,8 +15,8 @@
 
             <form th:action="@{/profile}" th:object="${profilePictureForm}" method="post" enctype="multipart/form-data">
                 <label id="pictureFileLabel" class="file-upload-label" th:for="pictureFile">Edit Profile Picture</label>
-                <input th:field="*{pictureFile}" type="file" onchange="validateImage(this)" accept="image/png, image/jpeg, image/svg+xml">
-                <button type="button" id="cancelButton" class="cancel" style="display: none;" onclick="cancelSelection()">Undo</button>
+                <input type="file" th:field="*{pictureFile}" onchange="validateImage(this)" accept="image/png, image/jpeg, image/svg+xml">
+                <button type="button" id="cancelButton" class="cancel" style="display: none;" th:attr="onclick='cancelUpload(\'' + ${picturePath} + '\')'">Undo</button>
                 <button type="submit" id="submitButton" style="display: none;">Save Profile Picture</button>
                 <span id="clientSideErrorMessage" class="error"></span>
             </form>
@@ -29,9 +29,7 @@
             <a th:href="@{logout}" class="cancel">Log out</a>
         </div>
     </main>
-    <script th:inline="javascript">
-        // THYMELEAF SYNTAX FOR GETTING MODEL ATTRIBUTES INTO INLINE JS. The comment matters.
-        const initialProfilePictureUrl = /*[[${picturePath}]]*/ '';
+    <script>
         function validateImage(input) {
             if (!(input.files && input.files[0])) {
                 return;
@@ -68,9 +66,9 @@
             document.getElementById('clientSideErrorMessage').textContent = "";
         }
 
-        function cancelSelection() {
+        function cancelUpload(initialPicturePath) {
             document.getElementById('pictureFile').value = '';
-            document.getElementById('profileImage').src = initialProfilePictureUrl;
+            document.getElementById('profileImage').src = initialPicturePath;
             document.getElementById('pictureFileLabel').style.display = 'inline-block';
             document.getElementById('cancelButton').style.display = 'none';
             document.getElementById('submitButton').style.display = 'none';
