@@ -1,7 +1,7 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controllers;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-
+import nz.ac.canterbury.team1000.gardenersgrove.controller.GlobalModelAttributeProvider;
 import nz.ac.canterbury.team1000.gardenersgrove.controller.ProfileController;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.EditUserForm;
@@ -24,11 +24,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import nz.ac.canterbury.team1000.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
 
 import java.time.LocalDate;
 
-@WebMvcTest(controllers = ProfileController.class)
+@WebMvcTest(controllers = {ProfileController.class, GlobalModelAttributeProvider.class})
 @AutoConfigureMockMvc
 @WithMockUser
 public class ProfileControllerTest {
@@ -41,6 +42,9 @@ public class ProfileControllerTest {
 
     @MockBean
     private AuthenticationManager authenticationManager;
+
+    @MockBean
+    private GardenService gardenService;
 
     @MockBean
     private PasswordEncoder passwordEncoder;
