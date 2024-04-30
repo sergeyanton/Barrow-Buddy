@@ -17,16 +17,12 @@
                 <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='address', label='Address: (optional)', placeholder='13 Hungerford Crescent')}" />
                 <br />
                 <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='suburb', label='Suburb: (optional)', placeholder='Ilam')}" />
-<!--                <input th:replace="~{fragments/formElement :: formElementField(fieldName='suburb', label='Suburb: (optional)', placeholder='Ilam')}" />-->
                 <br />
                 <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='city', label='City: ', placeholder='Christchurch')}" />
-<!--                <input th:replace="~{fragments/formElement :: formElementField(fieldName='city', label='City: ', placeholder='Christchurch')}" />-->
                 <br />
                 <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='postcode', label='Postcode: (optional)', placeholder='8041')}" />
-<!--                <input th:replace="~{fragments/formElement :: formElementField(fieldName='postcode', label='Postcode: (optional)', placeholder='3216')}" />-->
                 <br />
                 <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='country', label='Country: ', placeholder='New Zealand')}" />
-<!--                <input th:replace="~{fragments/formElement :: formElementField(fieldName='country', label='Country: ', placeholder='New Zealand')}" />-->
                 <br />
                 <p>Search by <a href="https://locationiq.com">LocationIQ.com</a></p>
                 <div class="cancel-submit-wrapper">
@@ -37,9 +33,9 @@
         </div>
     </main>
     <script>
-        // ChatGPT is helping out a bit here, I haven't used fetch much before.
-
+        // ChatGPT assisted, particularly with fetch, timeouts, and the creation of html via js
         const LOCATION_FIELD_IDS = ['address', 'suburb', 'city', 'postcode', 'country'];
+        const MIN_LENGTH_TO_AUTOCOMPLETE = 3;
 
         let locationFields = [];
         for (const id of LOCATION_FIELD_IDS) {
@@ -66,55 +62,50 @@
         }
 
         /**
- * Gets a list of locations suggested by LocationIQ based on the current value of the
- * given address field (either address, suburb, city, postcode, or country)
- *
- * @param addressField the name/id of the particular address field being used for autocomplete
- */
-function getLocationSuggestions(addressField) {
-    const query = document.getElementById(addressField).value;
-
-    fetch(`/locationSearch?query=${query}&addressField=${addressField}`)
-        .then(response => response.json())
-        .then(locations => {
-            const dropdownMenu = document.getElementById(`${addressField}DropdownMenu`);
-            dropdownMenu.innerHTML = '';
-
-            if (locations.length === 0) {
-                dropdownMenu.style.display = 'block';
-                const noLocations = document.createElement('li');
-                noLocations.innerText = 'No matching location found, location-based services may not work';
-                noLocations.classList.add('dropdown-item');
-                dropdownMenu.appendChild(noLocations);
-                setTimeout(() => {
-                    dropdownMenu.style.display = 'none';
-                }, 3000);
-            } else {
-                locations.forEach(location => {
-                    dropdownMenu.style.display = 'block';
-                    const option = document.createElement('li');
-                    option.classList.add('dropdown-item');
-                    option.innerHTML = `<b>${location.displayPlace}</b>`;
-                    if (location.displayAddress !== location.displayPlace) {
-                        option.innerHTML += `<p>${location.displayAddress}</p>`;
-                    }
-                    option.addEventListener('mousedown', function() {
-                        handleDropdownItemClick(location);
-                    });
-                    dropdownMenu.appendChild(option);
-                });
+         * Gets a list of locations suggested by LocationIQ based on the current value of the
+         * given address field (either address, suburb, city, postcode, or country)
+         *
+         * @param addressField the name/id of the particular address field being used for autocomplete
+         */
+        function getLocationSuggestions(addressField) {
+            const query = document.getElementById(addressField).value;
+            if (query.trim().length < MIN_LENGTH_TO_AUTOCOMPLETE) {
+                return;
             }
-        })
-        .catch(error => {
-            console.error('Error fetching locations:', error);
-        });
-}
+
+            fetch(`/locationSearch?query=${query}&addressField=${addressField}`)
+                .then(response => response.json())
+                .then(locations => {
+                    const dropdownMenu = document.getElementById(`${addressField}DropdownMenu`);
+                    dropdownMenu.innerHTML = '';
+
+                    dropdownMenu.style.display = 'block';
+                    if (locations.length === 0) {
+                        const noLocations = document.createElement('li');
+                        noLocations.innerHTML = '<p>No matching location found, location-based services may not work</p>';
+                        noLocations.classList.add('dropdown-item');
+                        dropdownMenu.appendChild(noLocations);
+                    } else {
+                        locations.forEach(location => {
+                            const option = document.createElement('li');
+                            option.classList.add('dropdown-item');
+                            option.innerHTML = `<b>${location.displayPlace}</b>`;
+                            if (location.displayAddress !== location.displayPlace) {
+                                option.innerHTML += `<p>${location.displayAddress}</p>`;
+                            }
+                            option.addEventListener('mousedown', function() {
+                                handleDropdownItemClick(location);
+                            });
+                            dropdownMenu.appendChild(option);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching locations:', error);
+                });
+        }
 
         function handleDropdownItemClick(location) {
-            console.log(location);
-            console.log(location["postcode"]);
-
-
             for (const id of LOCATION_FIELD_IDS) {
                 document.getElementById(id).value = location[id];
             }
