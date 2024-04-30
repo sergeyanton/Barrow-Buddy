@@ -103,10 +103,6 @@ public class PlantsControllerTest {
         });
 
         Mockito.when(plantService.getPlantById(1L)).thenReturn(plantMock);
-
-        gardenMock = Mockito.mock(Garden.class);
-        Mockito.when(gardenMock.getId()).thenReturn(1L);
-
         Mockito.when(gardenService.getGardenById(1L)).thenReturn(gardenMock);
         Mockito.when(plantService.getPlantsByGardenId(1L)).thenReturn(List.of(plantMock));
     }

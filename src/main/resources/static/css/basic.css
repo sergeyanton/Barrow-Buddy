@@ -49,7 +49,7 @@ h1 {
 }
 
 .error {
-    margin: auto;
+    margin: 0 auto;
     max-width: 300px;
     color: red;
     text-align: center;
