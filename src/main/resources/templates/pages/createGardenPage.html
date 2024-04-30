@@ -66,38 +66,49 @@
         }
 
         /**
-         * Gets a list of locations suggested by LocationIQ based on the current value of the
-         * given address field (either address, suburb, city, postcode, or country)
-         *
-         * @param addressField the name/id of the particular address field being used for autocomplete
-         */
-        function getLocationSuggestions(addressField) {
-            const query = document.getElementById(addressField).value;
+ * Gets a list of locations suggested by LocationIQ based on the current value of the
+ * given address field (either address, suburb, city, postcode, or country)
+ *
+ * @param addressField the name/id of the particular address field being used for autocomplete
+ */
+function getLocationSuggestions(addressField) {
+    const query = document.getElementById(addressField).value;
 
-            fetch(`/locationSearch?query=${query}&addressField=${addressField}`)
-                .then(response => response.json())
-                .then(locations => {
-                    console.log(locations);
-                    const dropdownMenu = document.getElementById(`${addressField}DropdownMenu`);
-                    dropdownMenu.innerHTML = '';
-                    locations.forEach(location => {
-                        dropdownMenu.style.display = 'block';
-                        const option = document.createElement('li');
-                        option.classList.add('dropdown-item');
-                        option.innerHTML = `<b>${location.displayPlace}</b>`;
-                        if (location.displayAddress !== location.displayPlace) {
-                            option.innerHTML += `<p>${location.displayAddress}</p>`;
-                        }
-                        option.addEventListener('mousedown', function() {
-                            handleDropdownItemClick(location);
-                        });
-                        dropdownMenu.appendChild(option);
+    fetch(`/locationSearch?query=${query}&addressField=${addressField}`)
+        .then(response => response.json())
+        .then(locations => {
+            const dropdownMenu = document.getElementById(`${addressField}DropdownMenu`);
+            dropdownMenu.innerHTML = '';
+
+            if (locations.length === 0) {
+                dropdownMenu.style.display = 'block';
+                const noLocations = document.createElement('li');
+                noLocations.innerText = 'No matching location found, location-based services may not work';
+                noLocations.classList.add('dropdown-item');
+                dropdownMenu.appendChild(noLocations);
+                setTimeout(() => {
+                    dropdownMenu.style.display = 'none';
+                }, 3000);
+            } else {
+                locations.forEach(location => {
+                    dropdownMenu.style.display = 'block';
+                    const option = document.createElement('li');
+                    option.classList.add('dropdown-item');
+                    option.innerHTML = `<b>${location.displayPlace}</b>`;
+                    if (location.displayAddress !== location.displayPlace) {
+                        option.innerHTML += `<p>${location.displayAddress}</p>`;
+                    }
+                    option.addEventListener('mousedown', function() {
+                        handleDropdownItemClick(location);
                     });
-                })
-                .catch(error => {
-                    console.error('Error fetching locations:', error);
+                    dropdownMenu.appendChild(option);
                 });
-        }
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching locations:', error);
+        });
+}
 
         function handleDropdownItemClick(location) {
             console.log(location);
