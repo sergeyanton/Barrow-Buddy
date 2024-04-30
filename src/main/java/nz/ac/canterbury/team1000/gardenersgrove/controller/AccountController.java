@@ -19,12 +19,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
 
@@ -181,12 +183,17 @@ public class AccountController {
      * @return thymeleaf loginPage
      */
     @GetMapping("/login")
-    public String getLoginPage(@ModelAttribute("loginForm") LoginForm loginForm) {
+    public String getLoginPage(@ModelAttribute("loginForm") LoginForm loginForm, Model model, RedirectAttributes redirectAttributes) {
         logger.info("GET /login");
+        System.out.println("Gets to the login page!");
+        if (redirectAttributes.containsAttribute("errorMessage")) {
+            model.addAttribute("errorMessage", redirectAttributes.getAttribute("errorMessage"));
+        }
         //TODO if user has been redirected from verafication page then display message “Your account has been activated, please log in”
         if (userService.getLoggedInUser() != null && !verificationTokenService.getVerificationTokenByUserId(userService.getLoggedInUser().getId()).isVerified()) {
             return "redirect:/register/verification";
         }
+
 //        return userService.isSignedIn() ? "redirect:/" : "pages/loginPage";
         return "pages/loginPage";
     }
@@ -318,18 +325,22 @@ public class AccountController {
      */
     @GetMapping("/resetPassword")
     public String getResetPasswordPage(@RequestParam(value = "token") String resetToken, HttpSession session,
-                                       ResetPasswordForm resetPasswordForm) {
+                                       ResetPasswordForm resetPasswordForm, RedirectAttributes redirectAttributes) {
+        System.out.println("Gets to the resetPassword page!");
         ResetToken token = resetTokenService.getResetToken(resetToken);
         session.setAttribute("resetToken", resetToken);
-
         // if token doesn't exist or expired:
         if (token == null) {
             // TODO add error saying "Reset password link has expired"
-            return "redirect:/loginPage";
+            System.out.println("Reset token is null");
+            redirectAttributes.addFlashAttribute("errorMessage", "Reset password link has expired");
+            return "redirect:/login";
         } else if (token.getExpiryDate().isBefore(LocalDateTime.now())) {
+            System.out.println("Reset token is expired");
+            redirectAttributes.addFlashAttribute("errorMessage", "Reset password link has expired");
             // TODO add error saying "Reset password link has expired"
             resetTokenService.deleteResetToken(resetToken);
-            return "redirect:/loginPage";
+            return "redirect:/login";
         }
 
         logger.info("GET /resetPassword");
@@ -359,11 +370,12 @@ public class AccountController {
         // check if token is expired yet:
         if (token == null) {
             // TODO add error saying "Reset password link has expired"
-            return "redirect:/loginPage";
+
+            return "redirect:/login";
         } else if (token.getExpiryDate().isBefore(LocalDateTime.now())) {
             // TODO add error saying "Reset password link has expired"
             resetTokenService.deleteResetToken(resetToken);
-            return "redirect:/loginPage";
+            return "redirect:/login";
         }
 
         User user = token.getUser();
