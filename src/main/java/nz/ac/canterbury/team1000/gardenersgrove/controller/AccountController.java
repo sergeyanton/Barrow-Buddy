@@ -124,6 +124,10 @@ public class AccountController {
     @PostMapping("/register/verification")
     public String registerVerification(@ModelAttribute("verificationTokenForm") VerificationTokenForm verificationTokenForm, BindingResult bindingResult) {
         VerificationTokenForm.validate(verificationTokenForm, bindingResult);
+        if (userService.getLoggedInUser() == null) {
+            bindingResult.addError(new FieldError("verificationTokenForm", "verificationToken", verificationTokenForm.getVerificationToken(), false, null, null, "Account expired, please register again"));
+            return "pages/verificationPage";
+        }
         User user = userService.findEmail(userService.getLoggedInUser().getEmail());
         if (user == null || (!bindingResult.hasFieldErrors("verificationToken") && !validateToken(verificationTokenForm.getVerificationToken(), user.getId()))) {
             bindingResult.addError(new FieldError("verificationTokenForm", "verificationToken", verificationTokenForm.getVerificationToken(), false, null, null, "Signup code invalid"));

@@ -25,11 +25,13 @@ public class HomeController {
 
     private final GardenService gardenService;
     private final UserService userService;
+    private final VerificationTokenService verificationTokenService;
 
     @Autowired
-    public HomeController(GardenService gardenService, UserService userService) {
+    public HomeController(GardenService gardenService, UserService userService, VerificationTokenService verificationTokenService) {
         this.gardenService = gardenService;
         this.userService = userService;
+        this.verificationTokenService = verificationTokenService;
     }
 
     @ModelAttribute("currentUrl")
@@ -56,6 +58,10 @@ public class HomeController {
      */
     @GetMapping("/")
     public String getHome() {
+        // If viewer not verified, redirect to verification page
+        if (userService.getLoggedInUser() != null && verificationTokenService.getVerificationTokenByUserId(userService.getLoggedInUser().getId()) != null) {
+            return "pages/landingPage";
+        }
         return userService.isSignedIn() ? "pages/homePage" : "pages/landingPage";
     }
 
