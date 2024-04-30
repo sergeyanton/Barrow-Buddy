@@ -29,7 +29,6 @@ public class AccountController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Autowired
     public AccountController(UserService userService) {
         this.userService = userService;
     }
@@ -83,7 +82,6 @@ public class AccountController {
         }
 
         User newUser = registrationForm.getUser(passwordEncoder);
-        logger.warn(newUser.getPassword());
         // Give them the role of user
         newUser.grantAuthority("ROLE_USER");
         userService.registerUser(newUser);
@@ -157,7 +155,7 @@ public class AccountController {
      * @param forgotPasswordForm the ForgotPasswordForm object representing the 'forgot password' data
      * @param bindingResult the BindingResult object for validation errors
      * @return a String representing the view to display after entering the 'forgot password email':
-     *         - Whatever the result is (error or no error), returns/redirects the forgot password page.
+     *      *  *         - Whatever the result is (error or no error), returns/redirects the forgot password page.
      */
     @PostMapping("/forgotPassword")
     public String forgotPassword(HttpServletRequest request, @ModelAttribute("forgotPasswordForm") ForgotPasswordForm forgotPasswordForm, BindingResult bindingResult) {

@@ -100,3 +100,8 @@ td {
 .scroll-plants-container > table {
     width: 100%
 }
+
+.error-debug-table {
+    width: 80%;
+    margin: 0 auto;
+}

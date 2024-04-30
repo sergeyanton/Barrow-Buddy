@@ -1,12 +1,14 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
+import java.util.Arrays;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.service.GardenService;
+import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
 
 /**
  * Controller advice is applied to every controller and is used to provide model attributes the need to be access globally.
@@ -14,10 +16,11 @@ import nz.ac.canterbury.team1000.gardenersgrove.service.GardenService;
 @ControllerAdvice
 public class GlobalModelAttributeProvider {
     private final GardenService gardenService;
+    private final UserService userService;
 
-    @Autowired
-    public GlobalModelAttributeProvider(GardenService gardenService) {
+    public GlobalModelAttributeProvider(GardenService gardenService, UserService userService) {
         this.gardenService = gardenService;
+        this.userService = userService;
     }
 
     /**
@@ -42,6 +45,10 @@ public class GlobalModelAttributeProvider {
      */
     @ModelAttribute("allGardens")
     private List<Garden> getAllGardens() {
-        return gardenService.getGardens();
+        User user = userService.getLoggedInUser();
+        if (user == null) {
+            return Arrays.asList();
+        }
+        return gardenService.getUserGardens(user.getId());
     }
 }

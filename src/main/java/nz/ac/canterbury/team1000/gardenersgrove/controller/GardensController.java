@@ -1,16 +1,16 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
 import java.io.IOException;
+import java.util.Objects;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 import nz.ac.canterbury.team1000.gardenersgrove.form.GardenForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PictureForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PlantForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,10 +22,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Plant;
+import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.PlantService;
 import org.springframework.web.server.ResponseStatusException;
 
+import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
 
 /**
  * This is the controller for the gardens page.
@@ -35,16 +37,74 @@ public class GardensController {
     final Logger logger = LoggerFactory.getLogger(GardensController.class);
     private final GardenService gardenService;
     private final PlantService plantService;
+    private final UserService userService;
+
 
     //TODO make a controller dedicated to uploading files.
     private final static String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/uploads";
 
-
-    @Autowired
-    public GardensController(GardenService gardenService, PlantService plantService) {
+    
+    public GardensController(GardenService gardenService, PlantService plantService,
+                                 UserService userService) {
         this.gardenService = gardenService;
         this.plantService = plantService;
+        this.userService = userService;
     }
+
+    /**
+     * Gets the garden with the given id, if the garden can be accessed.
+     * Otherwise, throws an HTTP response exception like 403 or 404
+     * @param gardenId The id of the garden to access
+     * @return The garden object accessed
+     * @throws ResponseStatusException An exception that has occurred when trying to access the garden
+     */
+    private Garden tryToAccessGarden(Long gardenId) throws ResponseStatusException {
+        Garden garden = null;
+        // Make sure the garden exists
+        try {
+            garden = gardenService.getGardenById(gardenId);
+        } catch (IllegalArgumentException exception) {
+            throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Garden not found"
+            );
+        }
+
+        User loggedInUser = userService.getLoggedInUser();
+        // check that the garden belongs to the logged in user
+        if (!Objects.equals(garden.getOwner().getId(), loggedInUser.getId())) {
+            // respond with 403 Forbidden
+            throw new ResponseStatusException(
+                HttpStatus.FORBIDDEN,
+                "You don't own this garden"
+            );
+        }
+
+        return garden;
+    }
+
+    /**
+     * Gets the plant with the given id, if the plant can be accessed.
+     * Otherwise, throws an HTTP response exception like 403 or 404
+     * @param plantId The id of the plant to access
+     * @return The plant object accessed
+     * @throws ResponseStatusException An exception that has occurred when trying to access the plant
+     */
+    private Plant tryToAccessPlant(Long plantId) throws ResponseStatusException {
+        Plant plant = null;
+        // Make sure the plant exists
+        try {
+            plant = plantService.getPlantById(plantId);
+        } catch (IllegalArgumentException exception) {
+            throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Plant not found"
+            );
+        }
+
+        return plant;
+    }
+
 
     /**
      * Handles GET requests from the /gardens/create endpoint. Displays results of previous form
@@ -75,12 +135,14 @@ public class GardensController {
             @ModelAttribute("createGardenForm") GardenForm createGardenForm,
             BindingResult bindingResult) {
         logger.info("POST /gardens/create");
+
         GardenForm.validate(createGardenForm, bindingResult);
         if (bindingResult.hasErrors()) {
             return "pages/createGardenPage";
         }
 
-        Garden newGarden = createGardenForm.getGarden();
+        User loggedInUser = userService.getLoggedInUser();
+        Garden newGarden = createGardenForm.getGarden(loggedInUser);
         gardenService.addGarden(newGarden);
         logger.info("Garden created: " + newGarden);
         return "redirect:/gardens/" + newGarden.getId();
@@ -96,7 +158,8 @@ public class GardensController {
     @GetMapping("/gardens")
     public String viewGardens(Model model) {
         logger.info("GET /gardens");
-        model.addAttribute("gardens", gardenService.getGardens());
+        User loggedInUser = userService.getLoggedInUser();
+        model.addAttribute("gardens", gardenService.getUserGardens(loggedInUser.getId()));
         return "pages/gardensPage";
     }
 
@@ -114,10 +177,9 @@ public class GardensController {
                              @ModelAttribute("plantPictureForm") PictureForm plantPictureForm,
                              Model model) {
         logger.info("GET /gardens/" + gardenId);
-
-        model.addAttribute("garden", gardenService.getGardenById(gardenId));
-        model.addAttribute("plants", plantService.getPlantsByGardenId(gardenId));
-
+        Garden garden = tryToAccessGarden(gardenId);
+        model.addAttribute("garden", garden);
+        model.addAttribute("plants", plantService.getPlantsByGardenId(garden.getId()));
         return "pages/gardenProfilePage";
     }
 
@@ -190,7 +252,8 @@ public class GardensController {
             @ModelAttribute("editGardenForm") GardenForm editGardenForm) {
         logger.info("GET /gardens/" + gardenId + "/edit");
 
-        Garden garden = gardenService.getGardenById(gardenId);
+        Garden garden = tryToAccessGarden(gardenId);
+
         editGardenForm.setName(garden.getName());
 
         editGardenForm.setAddress(garden.getAddress());
@@ -222,13 +285,14 @@ public class GardensController {
             @PathVariable("gardenId") Long gardenId) {
         logger.info("POST /gardens/" + gardenId + "/edit");
 
+        Garden garden = tryToAccessGarden(gardenId);
         GardenForm.validate(editGardenForm, bindingResult);
         if (bindingResult.hasErrors()) {
             return "pages/editGardenPage";
         }
 
-        Garden garden = gardenService.getGardenById(gardenId);
-        Garden updatedGarden = editGardenForm.getGarden();
+        User loggedInUser = userService.getLoggedInUser();
+        Garden updatedGarden = editGardenForm.getGarden(loggedInUser);
 
         gardenService.updateGardenById(garden.getId(), updatedGarden);
 
@@ -250,20 +314,11 @@ public class GardensController {
             @ModelAttribute("createPlantForm") PlantForm createPlantForm, Model model) {
         logger.info("GET /gardens/" + gardenId + "/plants/create");
 
-        Garden existingGarden = null;
-        try {
-            existingGarden = gardenService.getGardenById(gardenId);
-        } catch (IllegalArgumentException e) {
-            logger.error("Garden not found: " + gardenId);
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Garden not found");
-        }
-
+        Garden existingGarden = tryToAccessGarden(gardenId);
         createPlantForm.setPicturePath("/images/defaultPlantPic.png");
         model.addAttribute("garden", existingGarden);
         return "pages/createPlantPage";
     }
-
-    // TODO handle when the gardenId is not for an existing garden (.getGardenById)
 
     /**
      * Handles POST requests from the /gardens/{gardenId}/plants/create endpoint.
@@ -284,13 +339,7 @@ public class GardensController {
             @PathVariable("gardenId") Long gardenId, Model model) throws IOException{
         logger.info("POST /gardens/" + gardenId + "/plants/create");
 
-        Garden existingGarden = null;
-        try {
-            existingGarden = gardenService.getGardenById(gardenId);
-        } catch (IllegalArgumentException e) {
-            logger.error("Garden not found: " + gardenId);
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Garden not found");
-        }
+        Garden existingGarden = tryToAccessGarden(gardenId);
         model.addAttribute("garden", existingGarden);
 
         PlantForm.validate(createPlantForm, bindingResult);
@@ -332,8 +381,8 @@ public class GardensController {
      * Handles GET requests from the /gardens/{gardenId}/plants/{plantId}/edit endpoint.
      * It displays the 'Edit Plant' form.
      *
-     * @param gardenId id of the garden that this plant belongs to
-     * @param plantId id of the plant to edit
+     * @param gardenId Id of the garden that this plant belongs to
+     * @param plantId Id of the plant to edit
      * @param model the model to be used by thymeleaf
      * @return thymeleaf pages/editPlantPage
      */
@@ -344,15 +393,8 @@ public class GardensController {
 
         logger.info("GET /gardens/" + gardenId + "/plants/" + plantId + "/edit");
 
-        Plant existingPlant = null;
-        Garden existingGarden = null;
-        try {
-            existingGarden = gardenService.getGardenById(gardenId);
-            existingPlant = plantService.getPlantById(plantId);
-        } catch (IllegalArgumentException e) {
-            logger.error("Plant not found: " + plantId);
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Plant not found");
-        }
+        Garden existingGarden = tryToAccessGarden(gardenId);
+        Plant existingPlant = tryToAccessPlant(plantId);
 
         model.addAttribute("garden", existingGarden);
         model.addAttribute("plant", existingPlant);
@@ -382,19 +424,11 @@ public class GardensController {
 
         logger.info("POST /gardens/" + gardenId + "/plants/" + plantId + "/edit");
 
-        Plant existingPlant = null;
-        Garden existingGarden = null;
-        try {
-            existingGarden = gardenService.getGardenById(gardenId);
-            existingPlant = plantService.getPlantById(plantId);
-        } catch (IllegalArgumentException e) {
-            logger.error("Plant not found: " + plantId);
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Plant not found");
-        }
+        Garden existingGarden = tryToAccessGarden(gardenId);
+        Plant existingPlant = tryToAccessPlant(plantId);
 
         model.addAttribute("garden", existingGarden);
         model.addAttribute("plant", existingPlant);
-
 
         PlantForm.validate(editPlantForm, bindingResult);
         if (bindingResult.hasErrors()) {

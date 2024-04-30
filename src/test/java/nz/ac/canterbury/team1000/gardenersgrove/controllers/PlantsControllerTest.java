@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import nz.ac.canterbury.team1000.gardenersgrove.controller.GardensController;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Plant;
+import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.PlantService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
@@ -56,8 +57,20 @@ public class PlantsControllerTest {
     private PictureForm plantPictureForm;
     private PlantForm plantForm;
 
+    @Mock
+    private User loggedInUser;
+
     @BeforeEach
     public void BeforeEach() {
+        loggedInUser = Mockito.mock(User.class);
+        Mockito.when(userService.getLoggedInUser()).thenReturn(loggedInUser);
+        Mockito.when(loggedInUser.getId()).thenReturn(1L);
+
+        gardenMock = Mockito.mock(Garden.class);
+        Mockito.when(gardenService.getGardenById(1L)).thenReturn(gardenMock);
+        Mockito.when(gardenMock.getId()).thenReturn(1L);
+        Mockito.when(gardenMock.getOwner()).thenReturn(loggedInUser);
+
         plantMock = Mockito.mock(Plant.class);
         Mockito.when(plantMock.getId()).thenReturn(1L);
         Mockito.when(plantMock.getName()).thenReturn("Red Rose");
@@ -90,10 +103,6 @@ public class PlantsControllerTest {
         });
 
         Mockito.when(plantService.getPlantById(1L)).thenReturn(plantMock);
-
-        gardenMock = Mockito.mock(Garden.class);
-        Mockito.when(gardenMock.getId()).thenReturn(1L);
-
         Mockito.when(gardenService.getGardenById(1L)).thenReturn(gardenMock);
         Mockito.when(plantService.getPlantsByGardenId(1L)).thenReturn(List.of(plantMock));
     }

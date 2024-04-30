@@ -16,6 +16,7 @@ public interface GardenRepository extends CrudRepository<Garden, Long> {
     Optional<Garden> findById(long id);
 
     List<Garden> findAll();
+    List<Garden> findByOwnerId(long ownerId);
 
     /**
      * Updates the garden with the given id to the new garden details.
