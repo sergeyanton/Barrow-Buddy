@@ -149,7 +149,7 @@ public class GardensController {
             // respond with 403 Forbidden
             throw new ResponseStatusException(
                     HttpStatus.FORBIDDEN,
-                    "You don't own own this garden"
+                    "You don't own this garden"
             );
         }
         model.addAttribute("garden", garden);
