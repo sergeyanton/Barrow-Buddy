@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 public class BuildPropertiesController {
     @ModelAttribute("debug")
     public boolean isDev() {
-        return System.getenv("DEBUG").equals("true");
+        String debugFlag = System.getenv("DEBUG");
+        return debugFlag != null && debugFlag.equals("true");
     }
 }
