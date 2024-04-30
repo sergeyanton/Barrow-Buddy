@@ -17,8 +17,10 @@
                 <br />
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='plantedOnDate', label='Planted Date (optional): ', placeholder='15/12/2023')}" />
                 <br />
-                <button class="next" type="submit">Create</button>
-                <a class="cancel button" th:href="@{'/gardens/' + ${gardenId}}">Cancel</a>
+                <div class="cancel-submit-wrapper">
+                    <a class="cancel button" th:href="@{'/gardens/' + ${gardenId}}">Cancel</a>
+                    <button class="next" type="submit">Create</button>
+                </div>
             </form>
         </div>
     </main>

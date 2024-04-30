@@ -5,7 +5,7 @@
 
 <body>
     <div th:replace="~{fragments/header :: header}"></div>
-    <main class="centred">
+    <main>
         <div class="basic">
             <h1>Edit My Profile</h1>
             <form class="upload-image" th:action="@{/editProfile}" method="post" th:object="${editUserForm}" enctype="multipart/form-data">
