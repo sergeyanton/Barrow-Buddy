@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import nz.ac.canterbury.team1000.gardenersgrove.controller.GardensController;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.PlantService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
@@ -52,10 +53,18 @@ public class GardenControllerTest {
 
     private GardenForm gardenForm;
 
+    @Mock
+    private User loggedInUser;
+
     @BeforeEach
     public void BeforeEach() {
+        loggedInUser = Mockito.mock(User.class);
+        Mockito.when(userService.getLoggedInUser()).thenReturn(loggedInUser);
+        Mockito.when(loggedInUser.getId()).thenReturn(1L);
+
         gardenMock = Mockito.mock(Garden.class);
         Mockito.when(gardenMock.getId()).thenReturn(1L);
+        Mockito.when(gardenMock.getOwner()).thenReturn(loggedInUser);
         Mockito.when(gardenMock.getName()).thenReturn("Hamilton Gardens");
         Mockito.when(gardenMock.getAddress()).thenReturn("13 Hungerford Crescent");
         Mockito.when(gardenMock.getSuburb()).thenReturn("Ilam");
@@ -84,6 +93,7 @@ public class GardenControllerTest {
             updatedGarden.setId(1L);
             return updatedGarden;
         });
+
         Mockito.when(gardenService.getGardenById(1L)).thenReturn(gardenMock);
     }
 
@@ -513,8 +523,6 @@ public class GardenControllerTest {
         Assertions.assertEquals(gardenMock.getPostcode(), modelEditGardenForm.getPostcode());
         Assertions.assertEquals(gardenMock.getCountry(), modelEditGardenForm.getCountry());
         Assertions.assertEquals(gardenMock.getSize(), modelEditGardenForm.getSizeDouble());
-        System.out.println(gardenMock.getSize());
-        System.out.println(modelEditGardenForm.getSizeDouble());
         Mockito.verify(gardenService).getGardenById(1L);
     }
 }

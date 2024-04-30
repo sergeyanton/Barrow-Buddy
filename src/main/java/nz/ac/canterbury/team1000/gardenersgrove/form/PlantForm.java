@@ -13,6 +13,8 @@ public class PlantForm {
     protected String description;
     protected String plantedOnDate;
 
+    //TODO protected String picturePath;
+
     // Somehow this is implicitly set by Spring MVC. Despite the setter appearing uncalled, it is in the background.
     protected Long gardenId;
 
@@ -66,6 +68,7 @@ public class PlantForm {
                 this.plantCount,
                 this.description,
                 this.plantedOnDate,
+                "/images/defaultPlantPic.png",
                 this.gardenId);
     }
 

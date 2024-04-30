@@ -1,0 +1,107 @@
+/* Navbar */
+
+nav {
+    background-color: #023020;
+    color: #fff;
+}
+
+nav ul {
+    display: flex;
+    justify-content: center;
+    list-style-type: none;
+    z-index: 9999; /* render the navbar in front of everything else */
+}
+
+@media (max-width: 768px) {
+    nav ul {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+nav ul li {
+    position: relative;
+}
+
+nav ul li a {
+    display: block;
+    padding: 10px 20px;
+    color: #fff;
+    font-size: 25px;
+}
+
+nav ul li a.active {
+    background: #1e3c32;
+}
+
+nav ul li a:hover {
+    background: #233732;
+}
+
+nav ul li ul {
+    display: none;
+    position: absolute;
+    top: 100%;
+    background-color: #023020;
+}
+
+nav ul li ul li a {
+    font-size: 16px;
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+nav ul li:hover ul {
+    display: block;
+}
+
+/* Table */
+
+table {
+    border-spacing: 0;
+    width: 100%;
+}
+
+table thead {
+    color: white;
+    background: #023020;
+    position: sticky;
+    top: 0;
+    z-index: 9999; /* render the table header in front of everything else, namely the table body */
+}
+
+table tbody tr {
+    background: #e6e6e6;
+}
+
+table tbody tr:nth-child(2n) {
+    background: #f2f2f2;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+
+td {
+    max-width: 200px;
+    white-space: initial;
+    word-wrap: break-word;
+}
+
+.scroll-plants-container {
+    padding: 0 !important;
+    overflow-y: auto;
+    width: 100%;
+}
+
+.scroll-plants-container > table {
+    width: 100%
+}
+
+.error-debug-table {
+    width: 80%;
+    margin: 0 auto;
+}
