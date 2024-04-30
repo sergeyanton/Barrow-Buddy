@@ -52,11 +52,13 @@ public class GardenService {
 
     /**
      * Updates a Garden in persistence
-     * 
+     *
+     * @param gardenId to update
      * @param garden object to update
      * @return the saved garden object
      */
-    public Garden updateGarden(Garden garden) {
-        return gardenRepository.save(garden);
+    public Garden updateGardenById(long gardenId, Garden garden) {
+        gardenRepository.updateGardenById(gardenId, garden);
+        return getGardenById(gardenId);
     }
 }

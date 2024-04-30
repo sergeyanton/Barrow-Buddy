@@ -11,14 +11,18 @@
             <a th:href="@{'/gardens/' + ${garden.id} + '/plants/create'}">
                 <button>Add a plant</button>
             </a>
-            <div th:text="'Location: ' + ${garden.location}"></div>
+            <div th:text="'Location: ' + ${garden.getLocationString}"></div>
             <div th:if="${garden.size != null}" th:text="'Size: ' + ${garden.size} + ' m&sup2;'"></div>
             <div><a th:href="@{'/gardens/' + ${garden.id} + '/edit'}">Edit Garden Details</a></div>
             <div class="scroll-plants-container">
                 <table>
                     <thead>
                     <tr>
-                        <th colspan="5">Plants</th>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Count</th>
+                        <th>Description</th>
+                        <th>Edit</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -30,7 +34,7 @@
                         <td><span th:text="${plant.name}"></span></td>
                         <td><span th:text="${plant.plantCount}"></span></td>
                         <td><span th:text="${plant.description}"></span></td>
-                        <td><a th:href="@{'/gardens/' + ${garden.id} + '/plants/' + ${plant.id} + '/edit'}">Edit Plant</a></td>
+                        <td><a th:href="@{'/gardens/' + ${garden.id} + '/plants/' + ${plant.id} + '/edit'}">Edit Plants</a></td>
                     </tr>
                     </tbody>
                 </table>
