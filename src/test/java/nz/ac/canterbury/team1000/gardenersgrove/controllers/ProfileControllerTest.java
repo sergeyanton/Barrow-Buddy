@@ -193,7 +193,8 @@ public class ProfileControllerTest {
                 .andExpect(MockMvcResultMatchers.model().attribute("email", userMock.getEmail()))
                 .andExpect(MockMvcResultMatchers.model().attribute("dob", userMock.getDateOfBirthString()))
                 .andExpect(MockMvcResultMatchers.model().attribute("picturePath", userMock.getPicturePath()));
-        Mockito.verify(userService).getLoggedInUser();
+        // This is called twice because of the global model attribute provider
+        Mockito.verify(userService, Mockito.times(2)).getLoggedInUser();
     }
 
     @Test
@@ -483,7 +484,8 @@ public class ProfileControllerTest {
         Assertions.assertEquals(userMock.getLname() == null || userMock.getLname().isEmpty(), modelEditUserForm.getNoSurnameCheckBox());
         Assertions.assertEquals(userMock.getDateOfBirthString(), modelEditUserForm.getDob());
         Assertions.assertEquals(userMock.getPicturePath(), modelEditUserForm.getPicturePath());
-        Mockito.verify(userService).getLoggedInUser();
+        // This is called twice because of the global model attribute provider
+        Mockito.verify(userService, Mockito.times(2)).getLoggedInUser();
     }
 
     @Test
