@@ -110,7 +110,6 @@ public class AccountController {
         }
 
         User newUser = registrationForm.getUser(passwordEncoder);
-        logger.warn(newUser.getPassword());
         // Give them the role of user
         newUser.grantAuthority("ROLE_USER");
         userService.registerUser(newUser);
@@ -135,7 +134,8 @@ public class AccountController {
      * - Either if there are validation errors or not, returns the registrationVerification page to display errors/ not.
      */
     @PostMapping("/register/verification")
-    public String registerVerification(@ModelAttribute("verificationTokenForm") VerificationTokenForm verificationTokenForm, BindingResult bindingResult) {
+    public String registerVerification(@ModelAttribute("verificationTokenForm") VerificationTokenForm verificationTokenForm,
+                                       BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         logger.info("POST /register/verification");
         VerificationTokenForm.validate(verificationTokenForm, bindingResult);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -148,6 +148,7 @@ public class AccountController {
             return "pages/verificationPage";
         }
         verificationTokenService.updateVerifiedByUserId(user.getId());
+        redirectAttributes.addFlashAttribute("errorMessage", "Your account has been activated, please log in");
         return "redirect:/login";
     }
 
@@ -192,12 +193,10 @@ public class AccountController {
         if (redirectAttributes.containsAttribute("errorMessage")) {
             model.addAttribute("errorMessage", redirectAttributes.getAttribute("errorMessage"));
         }
-        //TODO if user has been redirected from verafication page then display message “Your account has been activated, please log in”
         if (userService.getLoggedInUser() != null && !verificationTokenService.getVerificationTokenByUserId(userService.getLoggedInUser().getId()).isVerified()) {
             return "redirect:/register/verification";
         }
 
-//        return userService.isSignedIn() ? "redirect:/" : "pages/loginPage";
         return "pages/loginPage";
     }
 
