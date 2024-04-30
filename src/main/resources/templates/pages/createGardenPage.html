@@ -16,13 +16,17 @@
                 <h2>Garden Location</h2>
                 <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='address', label='Address: (optional)', placeholder='13 Hungerford Crescent')}" />
                 <br />
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='suburb', label='Suburb: (optional)', placeholder='Ilam')}" />
+                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='suburb', label='Suburb: (optional)', placeholder='Ilam')}" />
+<!--                <input th:replace="~{fragments/formElement :: formElementField(fieldName='suburb', label='Suburb: (optional)', placeholder='Ilam')}" />-->
                 <br />
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='city', label='City: ', placeholder='Christchurch')}" />
+                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='city', label='City: ', placeholder='Christchurch')}" />
+<!--                <input th:replace="~{fragments/formElement :: formElementField(fieldName='city', label='City: ', placeholder='Christchurch')}" />-->
                 <br />
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='postcode', label='Postcode: (optional)', placeholder='3216')}" />
+                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='postcode', label='Postcode: (optional)', placeholder='8041')}" />
+<!--                <input th:replace="~{fragments/formElement :: formElementField(fieldName='postcode', label='Postcode: (optional)', placeholder='3216')}" />-->
                 <br />
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='country', label='Country: ', placeholder='New Zealand')}" />
+                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='country', label='Country: ', placeholder='New Zealand')}" />
+<!--                <input th:replace="~{fragments/formElement :: formElementField(fieldName='country', label='Country: ', placeholder='New Zealand')}" />-->
                 <br />
                 <p>Search by <a href="https://locationiq.com">LocationIQ.com</a></p>
                 <div class="cancel-submit-wrapper">
@@ -34,6 +38,19 @@
     </main>
     <script>
         // ChatGPT is helping out a bit here, I haven't used fetch much before.
+
+        const LOCATION_FIELD_IDS = ['address', 'suburb', 'city', 'postcode', 'country'];
+
+        let locationFields = [];
+        for (const id of LOCATION_FIELD_IDS) {
+            locationFields.push(document.getElementById(id))
+            locationFields[locationFields.length-1].addEventListener('input', () => {
+                debounce(() => getLocationSuggestions(id), 500);
+            });
+            locationFields[locationFields.length-1].addEventListener('blur', function() {
+                document.getElementById(`${id}DropdownMenu`).style.display = 'none';
+            });
+        }
 
         let timeoutId;
         /**
@@ -55,20 +72,25 @@
          * @param addressField the name/id of the particular address field being used for autocomplete
          */
         function getLocationSuggestions(addressField) {
-            // Your API request logic here
             const query = document.getElementById(addressField).value;
 
-            console.log(addressField)
             fetch(`/locationSearch?query=${query}&addressField=${addressField}`)
                 .then(response => response.json())
                 .then(locations => {
                     console.log(locations);
-                    const dropdownMenu = document.getElementById('dropdownMenu');
+                    const dropdownMenu = document.getElementById(`${addressField}DropdownMenu`);
                     dropdownMenu.innerHTML = '';
                     locations.forEach(location => {
-                        const option = document.createElement('div');
+                        dropdownMenu.style.display = 'block';
+                        const option = document.createElement('li');
                         option.classList.add('dropdown-item');
-                        option.textContent = location.displayPlace + "\n" + location.displayAddress;
+                        option.innerHTML = `<b>${location.displayPlace}</b>`;
+                        if (location.displayAddress !== location.displayPlace) {
+                            option.innerHTML += `<p>${location.displayAddress}</p>`;
+                        }
+                        option.addEventListener('mousedown', function() {
+                            handleDropdownItemClick(location);
+                        });
                         dropdownMenu.appendChild(option);
                     });
                 })
@@ -77,13 +99,14 @@
                 });
         }
 
-        const LOCATION_FIELD_IDS = ['address', 'suburb', 'city', 'postcode', 'country'];
-        let locationFields = [];
-        for (const id of LOCATION_FIELD_IDS) {
-            locationFields.push(document.getElementById(id))
-            locationFields[locationFields.length-1].addEventListener('input', () => {
-                debounce(() => getLocationSuggestions(id), 1000);
-            });
+        function handleDropdownItemClick(location) {
+            console.log(location);
+            console.log(location["postcode"]);
+
+
+            for (const id of LOCATION_FIELD_IDS) {
+                document.getElementById(id).value = location[id];
+            }
         }
     </script>
 </body>
