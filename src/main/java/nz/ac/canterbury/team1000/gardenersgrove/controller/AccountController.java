@@ -262,6 +262,27 @@ public class AccountController {
     }
 
     /**
+     * Sends a reset password confirmation email to the specified user.
+     * Once a user's password has been reset, this email is sent to notify the user of the confirmation.
+     * Handles any errors that might occur during the email sending process.
+     *
+     * @param user The User object containing the email address where the confirmation email will be sent.
+     */
+    private void sendResetConfirmation(User user) {
+        logger.info("Sending reset password confirmation email to " + user.getEmail());
+
+        String htmlBody = "<p>Dear user " + user.getFname() + " " + user.getLname() + "</p>"
+                + "<p>Your account password has been successfully updated.</p>"
+                + "<p>Regards,</p>"
+                + "<p>Gardeners Grove Team</p>";
+        try {
+            emailService.sendHtmlMessage(user.getEmail(), "Gardeners Grove Reset Password Confirmation", htmlBody);
+        } catch (MessagingException e) {
+            logger.error("Failed to send reset password confirmation email", e);
+        }
+    }
+
+    /**
      * Handles POST requests to the /forgotPassword endpoint.
      * Let the user type an email address that they forgot the password of, and send them a reset email, or show an error message if the email address is invalid.
      *
@@ -319,7 +340,7 @@ public class AccountController {
      * @param bindingResult the BindingResult object for validation errors
      * @return a String representing the view to display after password reset:
      *         - If there are validation errors, returns the reset password page to display errors.
-     *         - If password reset is successful, redirects to the application's login page.
+     *         - If password reset is successful, redirects to the application's login page and sends email confirmation.
      */
     @PostMapping("/resetPassword")
     public String postUpdatePassword(HttpServletRequest request,
@@ -331,6 +352,7 @@ public class AccountController {
         ResetToken token = resetTokenService.getResetToken(resetToken);
         User user = token.getUser();
         // TODO check this validation of form:
+        // if we get to here, the token exists but still need to check if it has expired yet
         resetPasswordForm.setResetToken(resetToken);
         ResetPasswordForm.validate(resetPasswordForm, bindingResult);
 
@@ -343,6 +365,8 @@ public class AccountController {
         userService.updateUserByEmail(user.getEmail(), user);
         resetTokenService.deleteResetToken(token.getToken());
         session.removeAttribute("resetToken");
+
+        sendResetConfirmation(user);
 
         return "redirect:/login";
     }
