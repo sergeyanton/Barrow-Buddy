@@ -43,6 +43,7 @@ public class LocationSearchService {
         try {
             // SEND GET REQUEST TO API ENDPOINT
             String jsonResponse = restTemplate.getForObject(url, String.class);
+            System.out.println(jsonResponse);
 
             List<Location> locationAddresses = new ArrayList<>();
 

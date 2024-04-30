@@ -16,13 +16,13 @@
                 <h2>Garden Location</h2>
                 <input id="address" th:replace="~{fragments/formElement :: formElementField(fieldName='address', label='Address: (optional)', placeholder='13 Hungerford Crescent')}" />
                 <br />
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='suburb', label='Suburb: (optional)', placeholder='Ilam')}" />
+                <input id="suburb" th:replace="~{fragments/formElement :: formElementField(fieldName='suburb', label='Suburb: (optional)', placeholder='Ilam')}" />
                 <br />
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='city', label='City: ', placeholder='Christchurch')}" />
+                <input id="city" th:replace="~{fragments/formElement :: formElementField(fieldName='city', label='City: ', placeholder='Christchurch')}" />
                 <br />
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='postcode', label='Postcode: (optional)', placeholder='3216')}" />
+                <input id="postcode" th:replace="~{fragments/formElement :: formElementField(fieldName='postcode', label='Postcode: (optional)', placeholder='3216')}" />
                 <br />
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='country', label='Country: ', placeholder='New Zealand')}" />
+                <input id="country" th:replace="~{fragments/formElement :: formElementField(fieldName='country', label='Country: ', placeholder='New Zealand')}" />
                 <br />
 
                 <p>Search by <a href="https://locationiq.com">LocationIQ.com</a></p>
@@ -35,35 +35,56 @@
         // ChatGPT is helping out a bit here, I haven't used fetch much before.
 
         let timeoutId;
-
+        /**
+         * Debounces the call to a given JS function.
+         * Useful for making API calls, as we don't want to exceed the given limit.
+         *
+         * @param func the function to debounce
+         * @param delay the delay in ms
+         */
         function debounce(func, delay) {
             clearTimeout(timeoutId);
             timeoutId = setTimeout(func, delay);
         }
 
-        // Assuming you have a function to send the API request called sendRequest
-        function sendRequest() {
+        /**
+         * Gets a list of locations suggested by LocationIQ based on the current value of the
+         * given address field (either address, suburb, city, postcode, or country)
+         *
+         * @param addressField the name/id of the particular address field being used for autocomplete
+         */
+        function getLocationSuggestions(addressField) {
             // Your API request logic here
-            console.log("send");
-            const query = searchInput.value;
-            const addressField = "street address"; // Or get this dynamically based on user selection
+            const query = document.getElementById(addressField).value;
 
+            let locations;
             fetch(`/locationSearch?query=${query}&addressField=${addressField}`)
                 .then(response => response.json())
-                .then(locations => {
-                    // Update autocomplete suggestions with the received locations
-                    console.log(locations);
+                .then(data => {
+                    locations = data;
                 })
                 .catch(error => {
                     console.error('Error fetching locations:', error);
                 });
+            console.log(locations);
         }
 
-        // Assuming you have an event listener on your search input field
-        const searchInput = document.getElementById('address');
-        searchInput.addEventListener('input', () => {
-            debounce(sendRequest, 500);
-        });
+        const LOCATION_FIELD_IDS = ['address', 'suburb', 'city', 'postcode', 'country'];
+        let locationFields = [];
+        for (const id of LOCATION_FIELD_IDS) {
+            locationFields.push(document.getElementById(id))
+            locationFields[locationFields.length-1].addEventListener('input', () => {
+                debounce(() => getLocationSuggestions(id), 500);
+            });
+        }
+        // const addressInput = document.getElementById('address');
+        // const suburbInput = document.getElementById('suburb');
+        // const cityInput = document.getElementById('city');
+        // const postcodeInput = document.getElementById('postcode');
+        // const countryInput = document.getElementById('country');
+        // searchInput.addEventListener('input', () => {
+        //     debounce(getLocationSuggestions, 500);
+        // });
     </script>
 </body>
 </html>
