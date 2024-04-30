@@ -153,10 +153,10 @@ public class GardenForm {
 
         // Validate garden size (if there is one)
         if (!checkBlank(createGardenForm.getSize())) {
-            if (checkDoubleIsInvalid(createGardenForm.getSize())) {
-                errors.add("size", "Garden size must be a positive number", createGardenForm.getSize());
-            } else if (checkDoubleTooBig(createGardenForm.getSize())) {
+            if (checkDoubleTooBig(createGardenForm.getSize())) {
                 errors.add("size", "Garden size must be at most " + Integer.MAX_VALUE + " m²", createGardenForm.getSize());
+            } else if (checkDoubleIsInvalid(createGardenForm.getSize()) || checkDoubleOutsideRange(createGardenForm.getSize(), 0.1, null)) {
+                errors.add("size", "Garden size must be a positive number", createGardenForm.getSize());
             }
         }
     }
