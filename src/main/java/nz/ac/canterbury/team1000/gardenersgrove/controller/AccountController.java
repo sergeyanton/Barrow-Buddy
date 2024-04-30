@@ -132,6 +132,7 @@ public class AccountController {
             return "pages/verificationPage";
         }
         verificationTokenService.updateVerifiedByUserId(user.getId());
+        verificationTokenService.deleteVerificationTokenByUserId(user.getId());
         return "redirect:/login";
     }
 
@@ -176,7 +177,6 @@ public class AccountController {
         if (userService.getLoggedInUser() != null && !verificationTokenService.getVerificationTokenByUserId(userService.getLoggedInUser().getId()).isVerified()) {
             return "redirect:/register/verification";
         }
-//        return userService.isSignedIn() ? "redirect:/" : "pages/loginPage";
         return "pages/loginPage";
     }
 

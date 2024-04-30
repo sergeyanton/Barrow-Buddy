@@ -39,5 +39,8 @@ public class VerificationTokenService {
     }
 
 
+    public void deleteVerificationTokenByUserId(Long id) {
+        verificationTokenRepository.deleteByUserId(id);
+    }
 }
 
