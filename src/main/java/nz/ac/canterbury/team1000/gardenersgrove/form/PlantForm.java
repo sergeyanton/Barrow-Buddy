@@ -70,6 +70,20 @@ public class PlantForm {
     }
 
     /**
+     * Updates an existing Plant object with the values from the form.
+     * 
+     * @param plant the Plant object to update
+     */
+    public void updatePlant(Plant plant) {
+        plant.setName(this.name);
+        plant.setPlantCount(this.plantCount);
+        plant.setDescription(this.description);
+        plant.setPlantedOnDate(this.plantedOnDate);
+    }
+
+    
+
+    /**
      * Validates the 'New Plant' form data and adds validation errors to the BindingResult.
      *
      * @param createPlantForm the PlantForm object representing the details of the garden being created

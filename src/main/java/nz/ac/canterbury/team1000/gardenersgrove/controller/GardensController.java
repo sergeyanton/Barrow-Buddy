@@ -300,13 +300,14 @@ public class GardensController {
         model.addAttribute("garden", existingGarden);
         model.addAttribute("plant", existingPlant);
         
-
         PlantForm.validate(editPlantForm, bindingResult);
         if (bindingResult.hasErrors()) {
             return "pages/editPlantPage";
         }
 
-        return "pages/editPlantPage";
-    }
+        editPlantForm.updatePlant(existingPlant);
+        plantService.updatePlant(existingPlant);
 
+        return "redirect:/gardens/" + gardenId;
+    }
 }
