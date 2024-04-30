@@ -38,7 +38,6 @@ public class VerificationTokenCleanup {
         logger.info("Found {} expired tokens", expiredTokens.size());
         for (VerificationToken token : expiredTokens) {
             if (!token.isVerified()) {
-                logger.info("Deleting user with id {}", token.getUserId());
                 userRepository.deleteById(token.getUserId());
             }
         }
