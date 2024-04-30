@@ -2,6 +2,7 @@ package nz.ac.canterbury.team1000.gardenersgrove.repository;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Plant;
 import java.util.List;
@@ -28,5 +29,5 @@ public interface PlantRepository extends CrudRepository<Plant, Long> {
      * @return a list of plants that belong to the garden
      */
     @Query("SELECT p FROM Plant p WHERE p.gardenId = :gardenId")
-    List<Plant> findByGardenId(Long gardenId);
+    List<Plant> findByGardenId(@Param("gardenId") Long gardenId);
 }

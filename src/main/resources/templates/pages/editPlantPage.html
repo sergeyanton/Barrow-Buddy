@@ -1,15 +1,26 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
 
-<head th:replace="~{fragments/head :: head(title='Gardener\'s Grove - Edit Plant')}"></head>
+<head th:replace="~{fragments/head :: head(title='Gardener\'s Grove - Create Plant')}"></head>
 
 <body>
-<div th:replace="~{fragments/header :: header}"></div>
-<main>
-    <h1>Edit Plant</h1>
-    <div class="content">
-        Edit Plant Page
-    </div>
-</main>
+    <div th:replace="~{fragments/header :: header}"></div>
+    <main>
+        <h1 th:text="'Edit ' + ${plant.name} + ' of ' + ${garden.name}"></h1>
+        <div class="content">
+            <form th:action="@{'/gardens/' + ${gardenId} +'/plants/' + ${plantId} + '/edit'}" method="post" th:object="${editPlantForm}">
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='name', label='Plant Name: ', placeholder='Red Roses')}" />
+                <br />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='plantCount', label='How many? (optional): ', placeholder='1')}" />
+                <br />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='description', label='Description (optional): ', placeholder='Rather thorny')}" />
+                <br />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='plantedOnDate', label='Planted Date (optional): ', placeholder='15/12/2023')}" />
+                <br />
+                <button class="next" type="submit">Save Changes</button>
+                <a class="cancel" th:href="@{'/gardens/' + ${gardenId}}">Cancel</a>
+            </form>
+        </div>
+    </main>
 </body>
 </html>
