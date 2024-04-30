@@ -27,6 +27,9 @@ public class Garden {
     @Column
     private Double size;
 
+    @ManyToOne
+    private User owner;
+
     /**
      * JPA required no-args constructor
      */
@@ -43,8 +46,9 @@ public class Garden {
      * @param postcode postcode of garden's location
      * @param country country of garden's location
      * @param size     size of garden
+     * @param owner    owner of garden
      */
-    public Garden(String name, String address, String suburb, String city, String postcode, String country, Double size) {
+    public Garden(String name, String address, String suburb, String city, String postcode, String country, Double size, User owner) {
         this.name = name;
         this.address = address;
         this.suburb = suburb;
@@ -58,6 +62,7 @@ public class Garden {
         }
 
         this.size = size;
+        this.owner = owner;
     }
 
     /**
@@ -71,8 +76,9 @@ public class Garden {
      * @param postcode postcode of garden's location
      * @param country country of garden's location
      * @param size     size of garden
+     * @param owner    owner of garden
      */
-    public Garden(String name, String address, String suburb, String city, String postcode, String country, String size) {
+    public Garden(String name, String address, String suburb, String city, String postcode, String country, String size, User owner) {
         this.name = name;
         this.address = address;
         this.suburb = suburb;
@@ -126,11 +132,22 @@ public class Garden {
     public void setCountry(String newCountry) { country = newCountry; }
 
     public void setSize(Double newSize) {
+        if (newSize != null && newSize < 0) {
+            throw new IllegalArgumentException("Garden size must be a positive number");
+        }
         size = newSize;
     }
 
     public void setSize(String newSize) {
-        this.size = (newSize.isBlank()) ? null : Double.parseDouble(newSize.replace(",", "."));
+        setSize((newSize.isBlank()) ? null : Double.parseDouble(newSize.replace(",", ".")));
+    }
+
+    public void setOwner(User newOwner) {
+        owner = newOwner;
+    }
+
+    public User getOwner() {
+        return owner;
     }
 
     @Override

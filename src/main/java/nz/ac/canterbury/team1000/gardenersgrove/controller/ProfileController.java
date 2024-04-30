@@ -29,7 +29,6 @@ import java.nio.file.Paths;
 
 @Controller
 public class ProfileController {
-    @Autowired
     public ProfileController(UserService userService) {
         this.userService = userService;
     }

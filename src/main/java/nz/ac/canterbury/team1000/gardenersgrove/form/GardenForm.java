@@ -1,6 +1,7 @@
 package nz.ac.canterbury.team1000.gardenersgrove.form;
 
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import org.springframework.validation.BindingResult;
 
 import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.*;
@@ -74,9 +75,11 @@ public class GardenForm {
 
     /**
      * Generates a Garden object with the values from the form.
+     *
+     * @param owner the User object that will be the owner of the garden
      * @return new Garden with attributes directly from the input values in the form.
      */
-    public Garden getGarden() {
+    public Garden getGarden(User owner) {
         return new Garden(
                 this.name,
                 this.address,
@@ -84,9 +87,11 @@ public class GardenForm {
                 this.city,
                 this.postcode,
                 this.country,
-                getSizeDouble() //TODO could get rid of some constructor redundancy in either Garden or User
+                getSizeDouble(), //TODO could get rid of some constructor redundancy in either Garden or User
+                owner
         );
     }
+
     /**
      * Validates the 'New Garden' form data and adds validation errors to the BindingResult.
      *

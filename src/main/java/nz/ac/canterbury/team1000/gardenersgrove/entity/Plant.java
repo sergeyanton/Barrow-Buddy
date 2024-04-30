@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 
 /**
  * Entity class reflecting an entry of name, count, description, planted on date, and garden id of a
