@@ -12,8 +12,10 @@ public class PlantEntityTest {
         String plantCount = "3";
         String description = "This plant is cool";
         String dateString = "30/01/2024";
+        String picturePathString = "/images/defaultPlantPic.png";
+
         Long gardenId = 1L;
-        Plant plant = new Plant(plantName, plantCount, description, dateString, gardenId);
+        Plant plant = new Plant(plantName, plantCount, description, dateString, picturePathString, gardenId);
         assertEquals(plantName, plant.getName());
         assertEquals(Integer.parseInt(plantCount), plant.getPlantCount());
         assertEquals(description, plant.getDescription());

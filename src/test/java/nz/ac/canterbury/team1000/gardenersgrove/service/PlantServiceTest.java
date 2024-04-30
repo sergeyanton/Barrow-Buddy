@@ -92,7 +92,7 @@ public class PlantServiceTest {
 
             }
         });
-        plantService.addPlant(new Plant("My Plant", "1", "My plant is cool", "30/1/2021", 1L));
+        plantService.addPlant(new Plant("My Plant", "1", "My plant is cool", "30/1/2021", "/images/defaultPlantPic.png", 1L));
     }
 
     @Autowired
@@ -102,7 +102,7 @@ public class PlantServiceTest {
     public void CreateNewPlant_NewPlantCreated_PlantInRepository() {
         PlantService gardenService = new PlantService(plantRepository);
         Plant result = gardenService
-                .addPlant(new Plant("My Plant", "1", "My plant is cool", "30/1/2021", 1L));
+                .addPlant(new Plant("My Plant", "1", "My plant is cool", "30/1/2021", "/images/defaultPlantPic.png", 1L));
         Assertions.assertEquals(result.getName(), "My Plant");
     }
 }

@@ -3,7 +3,7 @@ package nz.ac.canterbury.team1000.gardenersgrove.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.EditUserForm;
-import nz.ac.canterbury.team1000.gardenersgrove.form.ProfilePictureForm;
+import nz.ac.canterbury.team1000.gardenersgrove.form.PictureForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.UpdatePasswordForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
 
@@ -54,7 +54,7 @@ public class ProfileController {
      * @return thymeleaf profilePage
      */
     @GetMapping("/profile")
-    public String getProfilePage(Model model, @ModelAttribute("profilePictureForm") ProfilePictureForm profilePictureForm) {
+    public String getProfilePage(Model model, @ModelAttribute("profilePictureForm") PictureForm profilePictureForm) {
         logger.info("GET /profile");
         // If user has not verified their account, redirect to the verification page
         if (verificationTokenService.getVerificationTokenByUserId(userService.getLoggedInUser().getId()) != null) {
@@ -78,7 +78,7 @@ public class ProfileController {
      * Specifically, this handles the uploading of a new profile picture.
      *
      * @param request            the HttpServletRequest object containing the request information
-     * @param profilePictureForm the ProfilePictureForm object containing the form's user inputted image file
+     * @param profilePictureForm the PictureForm object containing the form's user inputted image file
      * @param bindingResult      the BindingResult object for validation errors
      * @return the view to display:
      * - If there are validation errors with the image, stays on the form but render the user's actual profile picture.
@@ -87,12 +87,12 @@ public class ProfileController {
      */
     @PostMapping("/profile")
     public String handleProfilePictureUpload(HttpServletRequest request,
-                                             @ModelAttribute("profilePictureForm") ProfilePictureForm profilePictureForm,
+                                             @ModelAttribute("profilePictureForm") PictureForm profilePictureForm,
                                              BindingResult bindingResult,
                                              Model model) throws IOException {
         User currentUser = userService.getLoggedInUser();
 
-        ProfilePictureForm.validate(profilePictureForm, bindingResult, currentUser);
+        PictureForm.validate(profilePictureForm, bindingResult, currentUser);
 
         if (!profilePictureForm.getPictureFile().isEmpty() && !bindingResult.hasFieldErrors("pictureFile")) {
             Path uploadDirectoryPath = Paths.get(UPLOAD_DIRECTORY);
@@ -111,16 +111,14 @@ public class ProfileController {
             currentUser.setPicturePath("/uploads/" + filename);
         }
 
-        model.addAttribute("fName", currentUser.getFname());
-        model.addAttribute("lName", currentUser.getLname());
-        model.addAttribute("email", currentUser.getEmail());
-        if (currentUser.getDateOfBirth() != null) {
-            model.addAttribute("dob", currentUser.getDateOfBirthString());
-        }
-        model.addAttribute("picturePath", currentUser.getPicturePath());
-
         if (bindingResult.hasErrors()) {
-            System.out.println("BAD FILE");
+            model.addAttribute("fName", currentUser.getFname());
+            model.addAttribute("lName", currentUser.getLname());
+            model.addAttribute("email", currentUser.getEmail());
+            if (currentUser.getDateOfBirth() != null) {
+                model.addAttribute("dob", currentUser.getDateOfBirthString());
+            }
+            model.addAttribute("picturePath", currentUser.getPicturePath());
             return "pages/profilePage";
         }
 

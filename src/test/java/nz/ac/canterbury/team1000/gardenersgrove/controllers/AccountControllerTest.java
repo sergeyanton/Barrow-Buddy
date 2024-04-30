@@ -7,6 +7,7 @@ import nz.ac.canterbury.team1000.gardenersgrove.form.LoginForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.RegistrationForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.VerificationTokenForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.EmailService;
+import nz.ac.canterbury.team1000.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.VerificationTokenService;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,6 +41,9 @@ class AccountControllerTest {
     private EmailService emailService;
     @MockBean
     private VerificationTokenService verificationTokenService;
+
+    @MockBean
+    private GardenService gardenService;
 
     @MockBean
     private AuthenticationManager authenticationManager;

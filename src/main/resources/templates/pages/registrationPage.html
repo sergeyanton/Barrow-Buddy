@@ -1,38 +1,31 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
 
-<head>
-    <meta charset="UTF-8">
-    <title>Registration</title>
-    <link rel="stylesheet" type="text/css" th:href="@{/css/style-user.css}">
-</head>
+<head th:replace="~{fragments/head :: head(title='Gardener\'s Grove - Register')}"></head>
 
 <body>
-    <div class="basic">
-        <h1>Register</h1>
-        <form th:action="@{/register}" method="post" th:object="${registrationForm}">
-            <input th:replace="~{fragments/formElement :: formElementField(fieldName='firstName', label='First Name: ', placeholder='Fabian')}" />
-            <br />
-            <input th:replace="~{fragments/formElement :: formElementField(fieldName='lastName', label='Last Name: ', placeholder='Gilson')}" />
-            <br />
-            <div class="surnameCheckbox">
-                <input type="checkbox" class="form-control" id="noSurnameCheckBox" th:field="*{noSurnameCheckBox}" onclick="toggleInput()">
-                <label for="noSurnameCheckBox"> I have no surname </label>
-            </div>
-            <br />
-            <input th:replace="~{fragments/formElement :: formElementField(fieldName='email', label='Email: ', placeholder='jane@doe.nz')}" />
-            <br />
-            <input th:replace="~{fragments/formElement :: formElementField(fieldName='password', label='Password: ', placeholder='*******', type='password')}" />
-            <br />
-            <input th:replace="~{fragments/formElement :: formElementField(fieldName='retypePassword', label='Re-Type Password: ', placeholder='*******', type='password')}" />
-            <br />
-            <input th:replace="~{fragments/formElement :: formElementField(fieldName='dob', label='Date of Birth: ', placeholder='DD/MM/YYYY')}" />
+    <main class="centred">
+        <div class="basic">
+            <h1>Register</h1>
+            <form th:action="@{/register}" method="post" th:object="${registrationForm}">
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='firstName', label='First Name: ', placeholder='Fabian')}" />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='lastName', label='Last Name: ', placeholder='Gilson')}" />
+                <div class="form-element">
+                    <label for="noSurnameCheckBox"> I have no surname </label>
+                    <input type="checkbox" class="form-control" id="noSurnameCheckBox" th:field="*{noSurnameCheckBox}" onclick="toggleInput()">
+                </div>
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='email', label='Email: ', placeholder='jane@doe.nz')}" />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='password', label='Password: ', placeholder='*******', type='password')}" />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='retypePassword', label='Re-Type Password: ', placeholder='*******', type='password')}" />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='dob', label='Date of Birth: ', placeholder='DD/MM/YYYY')}" />
 
-            <button class="submitButton" type="submit">Sign Up</button>
-            <br/>
-            <a class="cancelButtonLink" th:href="@{.}">Cancel</a>
-        </form>
-    </div>
+                <div class="cancel-submit-wrapper">
+                    <a class="cancel" th:href="@{/}">Cancel</a>
+                    <button class="next" type="submit">Sign Up</button>
+                </div>
+            </form>
+        </div>
+    </main>
     <script>
         // Function to disable last name input field if the 'no surname' checkbox is checked
         function toggleInput() {

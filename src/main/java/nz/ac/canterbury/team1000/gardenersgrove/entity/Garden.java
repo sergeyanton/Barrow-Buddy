@@ -15,9 +15,21 @@ public class Garden {
     @Column(nullable = false)
     private String name;
     @Column(nullable = false)
-    private String location;
+    private String address;
+    @Column(nullable = false)
+    private String suburb;
+    @Column(nullable = false)
+    private String city;
+    @Column(nullable = false)
+    private String postcode;
+    @Column(nullable = false)
+    private String country;
     @Column
     private Double size;
+
+    @ManyToOne
+    @JoinColumn(name = "owner_id", nullable = false)
+    private User owner;
 
     /**
      * JPA required no-args constructor
@@ -29,18 +41,29 @@ public class Garden {
      * Creates a new Garden object
      *
      * @param name     name of garden
-     * @param location location of garden
+     * @param address address name of garden's location
+     * @param suburb suburb of garden's location
+     * @param city city of garden's location
+     * @param postcode postcode of garden's location
+     * @param country country of garden's location
      * @param size     size of garden
+     * @param owner    owner of garden
      */
-    public Garden(String name, String location, Double size) {
+    public Garden(String name, String address, String suburb, String city, String postcode, String country, Double size, User owner) {
         this.name = name;
-        this.location = location;
+        this.address = address;
+        this.suburb = suburb;
+        this.city = city;
+        this.postcode = postcode;
+        this.country = country;
+
 
         if (size != null && size < 0) {
             throw new IllegalArgumentException("Garden size must be a positive number");
         }
 
         this.size = size;
+        this.owner = owner;
     }
 
     /**
@@ -48,12 +71,21 @@ public class Garden {
      * either use a ',' or a '.' as a decimal separator
      *
      * @param name     name of garden
-     * @param location location of garden
+     * @param address address name of garden's location
+     * @param suburb suburb of garden's location
+     * @param city city of garden's location
+     * @param postcode postcode of garden's location
+     * @param country country of garden's location
      * @param size     size of garden
+     * @param owner    owner of garden
      */
-    public Garden(String name, String location, String size) {
+    public Garden(String name, String address, String suburb, String city, String postcode, String country, String size, User owner) {
         this.name = name;
-        this.location = location;
+        this.address = address;
+        this.suburb = suburb;
+        this.city = city;
+        this.postcode = postcode;
+        this.country = country;
 
         this.setSize(size);
     }
@@ -70,8 +102,20 @@ public class Garden {
         return name;
     }
 
-    public String getLocation() {
-        return location;
+    public String getAddress() {
+        return address;
+    }
+    public String getSuburb() {
+        return suburb;
+    }
+    public String getCity() {
+        return city;
+    }
+    public String getPostcode() {
+        return postcode;
+    }
+    public String getCountry() {
+        return country;
     }
 
     public Double getSize() {
@@ -81,21 +125,38 @@ public class Garden {
     public void setName(String newName) {
         name = newName;
     }
-
-    public void setLocation(String newLocation) {
-        location = newLocation;
+    public void setAddress(String newAddress) { address = newAddress; }
+    public void setSuburb(String newSuburb) {suburb = newSuburb;
     }
+    public void setCity(String newCity) { city = newCity; }
+    public void setPostcode(String newPostcode) { postcode = newPostcode; }
+    public void setCountry(String newCountry) { country = newCountry; }
 
     public void setSize(Double newSize) {
+        if (newSize != null && newSize < 0) {
+            throw new IllegalArgumentException("Garden size must be a positive number");
+        }
         size = newSize;
     }
 
     public void setSize(String newSize) {
-        this.size = (newSize.isBlank()) ? null : Double.parseDouble(newSize.replace(",", "."));
+        setSize((newSize.isBlank()) ? null : Double.parseDouble(newSize.replace(",", ".")));
+    }
+
+    public void setOwner(User newOwner) {
+        owner = newOwner;
+    }
+
+    public User getOwner() {
+        return owner;
     }
 
     @Override
     public String toString() {
         return "Garden{id=" + id + ", name=" + name + "', size='" + size + "'}";
+    }
+
+    public String getLocationString() {
+        return address + ", " + suburb + ", " + city + " " + postcode + ", " + country;
     }
 }
