@@ -57,7 +57,7 @@ public class AccountController {
     public String getRegisterPage(@ModelAttribute("registrationForm") RegistrationForm registrationForm) {
         logger.info("GET /register");
         // If user has not verified their account, redirect to the verification page
-        if (verificationTokenService.getVerificationTokenByUserId(userService.getLoggedInUser().getId()) != null) {
+        if (userService.getLoggedInUser() != null && verificationTokenService.getVerificationTokenByUserId(userService.getLoggedInUser().getId()) != null) {
             return "redirect:/register/verification";
         }
         return userService.isSignedIn() ? "redirect:/" : "pages/registrationPage";
