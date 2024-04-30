@@ -226,7 +226,6 @@ public class GardensController {
             return "pages/editGardenPage";
         }
 
-        Garden garden = gardenService.getGardenById(gardenId);
         Garden updatedGarden = editGardenForm.getGarden(loggedInUser);
 
         gardenService.updateGardenById(garden.getId(), updatedGarden);

@@ -55,7 +55,12 @@ public class GardenControllerAuthTest {
         Mockito.when(gardenMock.getId()).thenReturn(1L);
         Mockito.when(gardenMock.getOwner()).thenReturn(loggedInUser);
         Mockito.when(gardenMock.getName()).thenReturn("Test Garden");
-        Mockito.when(gardenMock.getLocation()).thenReturn("Your mums house");
+        Mockito.when(gardenMock.getName()).thenReturn("Hamilton Gardens");
+        Mockito.when(gardenMock.getAddress()).thenReturn("13 Hungerford Crescent");
+        Mockito.when(gardenMock.getSuburb()).thenReturn("Ilam");
+        Mockito.when(gardenMock.getCity()).thenReturn("Hamilton");
+        Mockito.when(gardenMock.getPostcode()).thenReturn("3216");
+        Mockito.when(gardenMock.getCountry()).thenReturn("New Zealand");
         Mockito.when(gardenMock.getSize()).thenReturn(10.0);
 
 
