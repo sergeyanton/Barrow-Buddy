@@ -1,5 +1,6 @@
 package nz.ac.canterbury.team1000.gardenersgrove.service;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,19 +18,17 @@ public class EmailServiceTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private JavaMailSender javaMailSender;
-
-    @Autowired
-    private EmailService emailService;
+    private JavaMailSender mockJavaMailSender;
 
     /**
      * Test that the email service calls the JavaMailSender to send an email with correct parameters
      */
     @Test
     public void testSendEmail() throws Exception {
-        Mockito.doNothing().when(javaMailSender).send(Mockito.any(SimpleMailMessage.class));
+        EmailService emailService = new EmailService(mockJavaMailSender);
+        Mockito.doNothing().when(mockJavaMailSender).send(Mockito.any(SimpleMailMessage.class));
         emailService.sendSimpleMessage("recipient@example.com", "Test Subject", "Test Body");
-        Mockito.verify(javaMailSender).send(Mockito.any(SimpleMailMessage.class));
+        Mockito.verify(mockJavaMailSender).send(Mockito.any(SimpleMailMessage.class));
     }
 
 

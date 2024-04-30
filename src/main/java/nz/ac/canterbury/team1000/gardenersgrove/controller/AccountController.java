@@ -165,10 +165,10 @@ public class AccountController {
     }
 
     /**
-     * Gets the thymeleaf page representing the /login page Will only work if the user is not logged
-     * in, otherwise it will redirect to the home page
-     *
-     * @return thymeleaf loginPage
+     * Handles GET requests to the /login endpoint.
+     * Gets the login page.
+     * If the user has not verified their account, they are redirected to verification page
+     * @param loginForm the LoginForm object representing the user's login data
      */
     @GetMapping("/login")
     public String getLoginPage(@ModelAttribute("loginForm") LoginForm loginForm) {
