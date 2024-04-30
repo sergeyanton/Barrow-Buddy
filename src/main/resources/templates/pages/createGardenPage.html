@@ -14,16 +14,15 @@
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='size', label='Size in m&sup2; (optional): ', placeholder='540000.0')}" />
 
                 <h2>Garden Location</h2>
-                <input id="address" th:replace="~{fragments/formElement :: formElementField(fieldName='address', label='Address: (optional)', placeholder='13 Hungerford Crescent')}" />
-                <div id="dropdownMenu"></div>
+                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='address', label='Address: (optional)', placeholder='13 Hungerford Crescent')}" />
                 <br />
-                <input id="suburb" th:replace="~{fragments/formElement :: formElementField(fieldName='suburb', label='Suburb: (optional)', placeholder='Ilam')}" />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='suburb', label='Suburb: (optional)', placeholder='Ilam')}" />
                 <br />
-                <input id="city" th:replace="~{fragments/formElement :: formElementField(fieldName='city', label='City: ', placeholder='Christchurch')}" />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='city', label='City: ', placeholder='Christchurch')}" />
                 <br />
-                <input id="postcode" th:replace="~{fragments/formElement :: formElementField(fieldName='postcode', label='Postcode: (optional)', placeholder='3216')}" />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='postcode', label='Postcode: (optional)', placeholder='3216')}" />
                 <br />
-                <input id="country" th:replace="~{fragments/formElement :: formElementField(fieldName='country', label='Country: ', placeholder='New Zealand')}" />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='country', label='Country: ', placeholder='New Zealand')}" />
                 <br />
 
                 <p>Search by <a href="https://locationiq.com">LocationIQ.com</a></p>
@@ -66,8 +65,9 @@
                     const dropdownMenu = document.getElementById('dropdownMenu');
                     dropdownMenu.innerHTML = '';
                     locations.forEach(location => {
-                        const option = document.createElement('option');
-                        option.text = location.displayPlace + "\n" + location.displayAddress;
+                        const option = document.createElement('div');
+                        option.classList.add('dropdown-item');
+                        option.textContent = location.displayPlace + "\n" + location.displayAddress;
                         dropdownMenu.appendChild(option);
                     });
                 })
