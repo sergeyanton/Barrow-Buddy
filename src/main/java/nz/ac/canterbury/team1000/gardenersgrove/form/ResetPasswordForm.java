@@ -11,7 +11,6 @@ import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.checkPassw
 public class ResetPasswordForm {
     protected String newPassword;
     protected String retypePassword;
-    protected String token;
 
     public String getNewPassword() {
         return newPassword;
@@ -34,7 +33,6 @@ public class ResetPasswordForm {
      * @param bindingResult      the BindingResult object for validation errors
      */
     public static void validate(ResetPasswordForm resetPasswordForm, BindingResult bindingResult) {
-        // TODO update to include token?
         // Create ErrorAdder instance with the BindingResult and object name
         ErrorAdder errors = new ErrorAdder(bindingResult, "resetPasswordForm");
 
@@ -49,13 +47,5 @@ public class ResetPasswordForm {
         if (!resetPasswordForm.getNewPassword().equals(resetPasswordForm.getRetypePassword())) {
             errors.add("retypePassword", "The new passwords do not match", resetPasswordForm.getRetypePassword());
         }
-    }
-
-    public void setResetToken(String token) {
-        this.token = token;
-    }
-
-    public String getResetToken() {
-        return token;
     }
 }

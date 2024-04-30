@@ -1,7 +1,6 @@
 package nz.ac.canterbury.team1000.gardenersgrove.repository;
 
 import nz.ac.canterbury.team1000.gardenersgrove.entity.ResetToken;
-import nz.ac.canterbury.team1000.gardenersgrove.entity.VerificationToken;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

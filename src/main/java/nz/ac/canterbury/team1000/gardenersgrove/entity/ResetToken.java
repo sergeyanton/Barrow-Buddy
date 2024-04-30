@@ -3,8 +3,10 @@ package nz.ac.canterbury.team1000.gardenersgrove.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
+ * Represents a reset password token entity in the application.
  * Inspiration from source: https://www.baeldung.com/spring-security-registration-i-forgot-my-password
  */
 @Entity
@@ -21,6 +23,15 @@ public class ResetToken {
     private User user;
 
     private LocalDateTime expiryDate;
+
+    public ResetToken(User user, int expiry) {
+        this.token = UUID.randomUUID().toString();
+        this.user = user;
+        setExpiryDate(expiry);
+    }
+
+    public ResetToken() {
+    }
 
     public void setToken(String token) {
         this.token = token;

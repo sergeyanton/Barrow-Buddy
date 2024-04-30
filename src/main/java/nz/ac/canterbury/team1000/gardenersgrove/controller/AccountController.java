@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.UUID;
+import java.time.LocalDateTime;
 
 @Controller
 public class AccountController {
@@ -244,10 +244,8 @@ public class AccountController {
      */
     private void sendResetPasswordEmail(User user) {
         logger.info("Sending reset password email to " + user.getEmail());
-        ResetToken token = new ResetToken();
-        token.setToken(UUID.randomUUID().toString());
-        token.setUser(user);
-        token.setExpiryDate(10);
+        ResetToken token = new ResetToken(user, 10);
+
         resetTokenService.addResetToken(token);
 
         String url = "http://localhost:8080/resetPassword?token=" + token.getToken();
@@ -323,9 +321,17 @@ public class AccountController {
                                        ResetPasswordForm resetPasswordForm) {
         ResetToken token = resetTokenService.getResetToken(resetToken);
         session.setAttribute("resetToken", resetToken);
-        // TODO validate token
+
         // if token doesn't exist or expired:
-        // redirect to login page, with message "Reset password link has expired"
+        if (token == null) {
+            // TODO add error saying "Reset password link has expired"
+            return "redirect:/loginPage";
+        } else if (token.getExpiryDate().isBefore(LocalDateTime.now())) {
+            // TODO add error saying "Reset password link has expired"
+            resetTokenService.deleteResetToken(resetToken);
+            return "redirect:/loginPage";
+        }
+
         logger.info("GET /resetPassword");
 
         return "pages/resetPasswordPage";
@@ -350,10 +356,17 @@ public class AccountController {
         logger.info("POST /resetPassword");
         String resetToken = (String) session.getAttribute("resetToken");
         ResetToken token = resetTokenService.getResetToken(resetToken);
+        // check if token is expired yet:
+        if (token == null) {
+            // TODO add error saying "Reset password link has expired"
+            return "redirect:/loginPage";
+        } else if (token.getExpiryDate().isBefore(LocalDateTime.now())) {
+            // TODO add error saying "Reset password link has expired"
+            resetTokenService.deleteResetToken(resetToken);
+            return "redirect:/loginPage";
+        }
+
         User user = token.getUser();
-        // TODO check this validation of form:
-        // if we get to here, the token exists but still need to check if it has expired yet
-        resetPasswordForm.setResetToken(resetToken);
         ResetPasswordForm.validate(resetPasswordForm, bindingResult);
 
         if (bindingResult.hasErrors()) {
