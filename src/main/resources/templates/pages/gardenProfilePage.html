@@ -12,7 +12,7 @@
                 <button>Add a plant</button>
             </a>
             <br>
-            <p th:text="'Location: ' + ${garden.location}"></p>
+            <p th:text="'Location: ' + ${garden.getLocationString}"></p>
             <br>
             <p th:if="${garden.size != null}" th:text="'Size: ' + ${garden.size} + ' m&sup2;'"></p>
             <br th:if="${garden.size != null}">
@@ -63,9 +63,6 @@
     </main>
     <!--    TODO THIS WOULD BE VERY GOOD TO FIGURE OUT SO WE DON'T HAVE JS IN HTML FILES -->
 <!--    <script th:src="@{/js/plantsTableScrollAfter10Plants.js}" type="text/javascript"></script>-->
-    <script>
-
-    </script>
     <script th:inline="javascript">
         // limits viewable plants in the table to 10
         window.onload = function() {
