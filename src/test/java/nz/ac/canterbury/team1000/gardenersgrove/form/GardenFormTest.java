@@ -290,4 +290,46 @@ class GardenFormTest {
         GardenForm.validate(gardenForm, bindingResult);
         Mockito.verify(bindingResult).addError(Mockito.any());
     }
+
+    @Test
+    void validate_GardenSizeValid_DoesNotAddError() {
+        gardenForm.setSize("6.5");
+        GardenForm.validate(gardenForm, bindingResult);
+        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
+
+    @Test
+    void validate_GardenSizeEmpty_DoesNotAddError() {
+        gardenForm.setSize("");
+        GardenForm.validate(gardenForm, bindingResult);
+        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
+
+    @Test
+    void validate_GardenSizeBlank_DoesNotAddError() {
+        gardenForm.setSize("    ");
+        GardenForm.validate(gardenForm, bindingResult);
+        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
+
+    @Test
+    void validate_GardenSizeZero_AddsError() {
+        gardenForm.setSize("0");
+        GardenForm.validate(gardenForm, bindingResult);
+        Mockito.verify(bindingResult).addError(Mockito.any());
+    }
+
+    @Test
+    void validate_GardenSizeNegative_AddsError() {
+        gardenForm.setSize("-5");
+        GardenForm.validate(gardenForm, bindingResult);
+        Mockito.verify(bindingResult).addError(Mockito.any());
+    }
+
+    @Test
+    void validate_GardenSizeValidZeroPointOne_DoesNotAddError() {
+        gardenForm.setSize("0.1");
+        GardenForm.validate(gardenForm, bindingResult);
+        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
 }

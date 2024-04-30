@@ -11,7 +11,13 @@ INSERT IGNORE INTO plant (name, plant_count, description, planted_on_date, garde
                                                                                       ('Lavender', 50, 'Aromatic purple herb.', null, 1),
                                                                                       ('Sunflower ', 100, 'Tall with large yellow flowers.', null, 1),
                                                                                       ('Fern', 1150, 'Lush, green leafy plant.', null, 1),
-                                                                                      ('Tomato', 40, 'Edible red fruiting plant.', null, 1);
+                                                                                      ('Tomato', 40, 'Edible red fruiting plant.', null, 1),
+                                                                                      ('Basil', 30, 'Aromatic herb used in cooking.', null, 1),
+                                                                                      ('Cactus', 20, 'Hardy desert plant with spines.', null, 1),
+                                                                                      ('Daisy', 45, 'Small white flowers with a yellow center.', null, 1),
+                                                                                      ('Lemon Tree', 90, 'Produces yellow citrus fruits.', null, 1),
+                                                                                      ('Lily', 60, 'Elegant flowers with various colors and patterns.', null, 1);
+
 
 -- Create a garden called the Christchurch Botanic Gardens (id = 2)
 INSERT IGNORE INTO garden (id, name, address, suburb, city, postcode, country, size) VALUES (2, 'The Christchurch Botanic Gardens', 'Rolleston Avenue', 'Christchurch Central', 'Christchurch', '8013', 'New Zealand', 210000);

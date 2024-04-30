@@ -23,7 +23,7 @@ import nz.ac.canterbury.team1000.gardenersgrove.service.PlantService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
-@WebMvcTest(controllers = GardensController.class)
+@WebMvcTest(controllers = {GardensController.class})
 @AutoConfigureMockMvc
 @WithMockUser
 public class PlantsControllerTest {
@@ -36,6 +36,7 @@ public class PlantsControllerTest {
 
     @MockBean
     private AuthenticationManager authenticationManager;
+    
 
     @MockBean
     private GardenService gardenService;

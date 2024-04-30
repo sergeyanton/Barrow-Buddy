@@ -7,7 +7,7 @@
     <div th:replace="~{fragments/header :: header}"></div>
 
     <main>
-        <div class="content">
+        <div class="basic">
             <h1>My Profile</h1>
             <div class="profile-picture-wrapper">
                 <img class="profile-picture" id="profileImage" th:src="${picturePath}" alt="Profile Picture">
@@ -16,21 +16,17 @@
             <form th:action="@{/profile}" th:object="${profilePictureForm}" method="post" enctype="multipart/form-data">
                 <label id="pictureFileLabel" class="file-upload-label" th:for="pictureFile">Edit Profile Picture</label>
                 <input th:field="*{pictureFile}" type="file" onchange="validateImage(this)" accept="image/png, image/jpeg, image/svg+xml">
-                <button type="button" id="cancelButton" class="cancelMinor" style="display: none;" onclick="cancelSelection()">Undo</button>
+                <button type="button" id="cancelButton" class="cancel" style="display: none;" onclick="cancelSelection()">Undo</button>
                 <button type="submit" id="submitButton" style="display: none;">Save Profile Picture</button>
-                <br><span id="clientSideErrorMessage" class="error"></span>
+                <span id="clientSideErrorMessage" class="error"></span>
             </form>
-
-            <p th:text="'First Name: ' + ${fName}"></p>
-            <p th:text="'Last Name: ' + ${lName}"></p>
+            <p th:text="${fName} + (${lName} ? ' ' + ${lName} : '')"></p>
+            <br>
             <p th:text="'Email: ' + ${email}"></p>
+            <br>
             <p th:if="${dob != null}" th:text="'Date of birth: ' + ${dob}"></p>
-
             <a th:href="@{editProfile}">Edit profile</a>
-
-            <form th:action="@{logout}" method="post">
-                <button class="cancel" type="submit">Log Out</button>
-            </form>
+            <a th:href="@{logout}" class="cancel">Log out</a>
         </div>
     </main>
     <script th:inline="javascript">
