@@ -84,7 +84,7 @@ public class PlantForm {
                 this.plantCount,
                 this.description,
                 this.plantedOnDate,
-                "/images/defaultPlantPic.png",
+                this.picturePath,
                 this.gardenId);
     }
 

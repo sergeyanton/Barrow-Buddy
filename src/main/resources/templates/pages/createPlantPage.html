@@ -9,17 +9,18 @@
         <div class="basic">
             <h1 th:text="'Create plant for ' + ${garden.name}"></h1>
             <form class="upload-image" th:action="@{'/gardens/' + ${gardenId} + '/plants/create'}" method="post" th:object="${createPlantForm}" enctype="multipart/form-data">
-                <div class="profile-picture-wrapper">
-                    <input th:field="*{picturePath}" type="hidden"/>
-                    <img class="profile-picture" id="profileImage"
-                         th:src="${createPlantForm.picturePath}"
-                         alt="Plant Picture">
-                </div>
-
-                <div class="form-element">
-                    <label class="file-upload-label" th:for="pictureFile">Edit Plant Picture</label>
-                    <input type="file" th:field="*{pictureFile}" th:attr="onchange='validateImage(this, \'' + ${createPlantForm.picturePath} + '\')'" accept="image/png, image/jpeg, image/svg+xml">
-                    <span id="clientSideErrorMessage" class="error"></span>
+                <div class="plant-picture-upload-wrapper">
+                    <div class="profile-picture-wrapper">
+                        <input th:field="*{picturePath}" type= "hidden"/>
+                        <img class="profile-picture" id="profileImage"
+                             th:src="${createPlantForm.picturePath}"
+                             alt="Plant Picture">
+                        <label id="pictureFileLabel" class="file-upload-plus-button" for="pictureFile">+</label>
+                    <div class="form-element">
+                    </div>
+                        <input type="file" th:field="*{pictureFile}" id="pictureFile" th:attr="onchange='validateImage(this, \'' + ${createPlantForm.picturePath} + '\')'" accept="image/png, image/jpeg, image/svg+xml">
+                        <span id="clientSideErrorMessage" class="error"></span>
+                    </div>
                 </div>
 
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='name', label='Plant Name: ', placeholder='Red Roses')}" />
