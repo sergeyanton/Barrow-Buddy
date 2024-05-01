@@ -2,7 +2,6 @@ package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
-import nz.ac.canterbury.team1000.gardenersgrove.entity.VerificationToken;
 import nz.ac.canterbury.team1000.gardenersgrove.form.EditUserForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PictureForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.UpdatePasswordForm;
@@ -58,10 +57,6 @@ public class ProfileController {
     public String getProfilePage(Model model, @ModelAttribute("profilePictureForm") PictureForm profilePictureForm) {
         logger.info("GET /profile");
         User currentUser = userService.getLoggedInUser();
-        VerificationToken token = verificationTokenService.getVerificationTokenByUserId(currentUser.getId());
-        if (token != null && !token.isVerified()) {
-            return "redirect:/landing";
-        }
 
         model.addAttribute("fName", currentUser.getFname());
         model.addAttribute("lName", currentUser.getLname());

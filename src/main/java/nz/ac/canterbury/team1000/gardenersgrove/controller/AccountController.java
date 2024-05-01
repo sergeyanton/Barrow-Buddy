@@ -130,7 +130,7 @@ public class AccountController {
         if (bindingResult.hasErrors()) {
             return "pages/verificationPage";
         }
-        // verificationTokenService.updateVerifiedByUserId(user.getId());
+        verificationTokenService.updateVerifiedByUserId(user.getId());
 
         return "redirect:/login";
     }
@@ -173,6 +173,9 @@ public class AccountController {
     public String getLoginPage(@ModelAttribute("loginForm") LoginForm loginForm) {
         logger.info("GET /login");
         //TODO if user has been redirected from verification page then display message “Your account has been activated, please log in”
+        if (userService.getLoggedInUser() != null && !verificationTokenService.getVerificationTokenByUserId(userService.getLoggedInUser().getId()).isVerified()) {
+            return "redirect:/register/verification";
+        }
         return "pages/loginPage";
     }
 
@@ -193,11 +196,6 @@ public class AccountController {
                         BindingResult bindingResult) {
         if (userService.isSignedIn()) {
             return "redirect:/home";
-        }
-
-        User currentUser = userService.getLoggedInUser();
-        if (currentUser != null && !verificationTokenService.getVerificationTokenByUserId(currentUser.getId()).isVerified()) {
-             verificationTokenService.updateVerifiedByUserId(currentUser.getId());
         }
 
         LoginForm.validate(loginForm, bindingResult);
