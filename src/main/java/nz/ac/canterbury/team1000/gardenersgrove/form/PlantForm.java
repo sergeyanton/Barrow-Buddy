@@ -98,6 +98,7 @@ public class PlantForm {
         plant.setPlantCount(this.plantCount);
         plant.setDescription(this.description);
         plant.setPlantedOnDate(this.plantedOnDate);
+        plant.setPicturePath(this.picturePath);
     }
 
     

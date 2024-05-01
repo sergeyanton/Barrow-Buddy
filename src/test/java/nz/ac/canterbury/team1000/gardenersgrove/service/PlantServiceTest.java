@@ -105,4 +105,15 @@ public class PlantServiceTest {
                 .addPlant(new Plant("My Plant", "1", "My plant is cool", "30/1/2021", "/images/defaultPlantPic.png", 1L));
         Assertions.assertEquals(result.getName(), "My Plant");
     }
+
+    @Test
+    public void UpdatePlant_PlantEdited_PlantInRepository() {
+        PlantService gardenService = new PlantService(plantRepository);
+        Plant result = gardenService
+            .addPlant(new Plant("My Plant", "1", "My plant is cool", "30/1/2021", "/images/defaultPlantPic.png", 1L));
+        Plant updateResult = gardenService
+            .updatePlant(new Plant("Edited Plant", "1", "My plant is cool", "30/1/2021", "/images/defaultPlantPic.png", 1L));
+
+        Assertions.assertEquals(result.getName(), "Edited Plant");
+    }
 }
