@@ -98,6 +98,7 @@ public class PlantForm {
         plant.setPlantCount(this.plantCount);
         plant.setDescription(this.description);
         plant.setPlantedOnDate(this.plantedOnDate);
+        plant.setPicturePath(this.picturePath);
     }
 
     
@@ -177,6 +178,7 @@ public class PlantForm {
         if (plant.getDescription() != null) plantForm.setDescription(plant.getDescription());
         plantForm.setPlantedOnDate(FormUtils.dateToString(plant.getPlantedOnDate()));
         plantForm.setGardenId(plant.getGardenId());
+        plantForm.setPicturePath(plant.getPicturePath());
 
         return plantForm;
     }
