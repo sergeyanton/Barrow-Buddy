@@ -6,14 +6,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 
-@SpringBootTest
 public class LocationSearchServiceTest {
 
   private LocationSearchService locationSearchService;

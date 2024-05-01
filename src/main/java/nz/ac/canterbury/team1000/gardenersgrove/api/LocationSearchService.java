@@ -1,13 +1,9 @@
 package nz.ac.canterbury.team1000.gardenersgrove.api;
 
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nz.ac.canterbury.team1000.gardenersgrove.service.TokenBucketService;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Location;
@@ -15,7 +11,6 @@ import nz.ac.canterbury.team1000.gardenersgrove.entity.Location;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * This service contains the handling of getting matching location results entered in address fields in both create and edit
