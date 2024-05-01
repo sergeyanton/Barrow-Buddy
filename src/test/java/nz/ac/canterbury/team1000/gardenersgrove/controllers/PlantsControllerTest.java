@@ -5,6 +5,9 @@ import nz.ac.canterbury.team1000.gardenersgrove.form.PictureForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PlantForm;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -325,4 +328,137 @@ public class PlantsControllerTest {
                 .andExpect(MockMvcResultMatchers.model().attributeExists("garden"))
                 .andExpect(MockMvcResultMatchers.model().attributeExists("plants"));
     }
+
+    @Test
+    public void EditPlantPost_WithValidPlant_SavesToService() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/plants/1/edit")
+                .with(csrf())
+                .flashAttr("editPlantForm", plantForm))
+            .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+            .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
+
+        Mockito.verify(plantService).updatePlant(Mockito.any(Plant.class));
+    }
+
+        @Test
+        public void EditPlantPost_WithValidPlantEmptyCount_SavesToService() throws Exception {
+            plantForm.setPlantCount("");
+            mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/plants/1/edit")
+                    .with(csrf())
+                    .flashAttr("editPlantForm", plantForm))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
+
+            Mockito.verify(plantService).updatePlant(Mockito.any(Plant.class));
+        }
+
+        @Test
+        public void EditPlantPost_WithValidEmptyPlantDescription_SavesToService() throws Exception {
+            plantForm.setDescription("");
+
+            mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/plants/1/edit")
+                    .with(csrf())
+                    .flashAttr("editPlantForm", plantForm))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
+
+            Mockito.verify(plantService).updatePlant(Mockito.any(Plant.class));
+        }
+
+        @Test
+        public void EditPlantPost_WithValidPlantEmptyDate_SavesToService() throws Exception {
+            plantForm.setPlantedOnDate("");
+
+            mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/plants/1/edit")
+                    .with(csrf())
+                    .flashAttr("editPlantForm", plantForm))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
+
+            Mockito.verify(plantService).updatePlant(Mockito.any(Plant.class));
+        }
+
+        @Test
+        public void EditPlantPost_WithInvalidPlantBadName_ReturnsError() throws Exception {
+            plantForm.setName("%%%");
+
+            mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/plants/1/edit")
+                    .with(csrf())
+                    .flashAttr("editPlantForm", plantForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/editPlantPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editPlantForm", "name"));
+
+            Mockito.verify(plantService, Mockito.never()).updatePlant(Mockito.any(Plant.class));
+        }
+
+        @Test
+        public void EditPlantPost_WithInvalidPlantEmptyName_ReturnsError() throws Exception {
+            plantForm.setName("");
+
+            mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/plants/1/edit")
+                    .with(csrf())
+                    .flashAttr("editPlantForm", plantForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/editPlantPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editPlantForm", "name"));
+
+            Mockito.verify(plantService, Mockito.never()).updatePlant(Mockito.any(Plant.class));
+        }
+
+        @Test
+        public void EditPlantPost_WithInvalidPlantBadCount_ReturnsError() throws Exception {
+            plantForm.setPlantCount("Not a number");
+
+            mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/plants/1/edit")
+                    .with(csrf())
+                    .flashAttr("editPlantForm", plantForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/editPlantPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editPlantForm", "plantCount"));
+
+            Mockito.verify(plantService, Mockito.never()).updatePlant(Mockito.any(Plant.class));
+        }
+
+        @Test
+        public void EditPlantPost_WithInvalidPlantBadDescription_ReturnsError() throws Exception {
+            plantForm.setDescription("a".repeat(513));
+
+            mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/plants/1/edit")
+                    .with(csrf())
+                    .flashAttr("editPlantForm", plantForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/editPlantPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editPlantForm", "description"));
+
+            Mockito.verify(plantService, Mockito.never()).updatePlant(Mockito.any(Plant.class));
+        }
+
+        @Test
+        public void EditPlantPost_WithInvalidPlantBadDate_ReturnsError() throws Exception {
+            plantForm.setPlantedOnDate("Not a date");
+
+            mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/plants/1/edit")
+                    .with(csrf())
+                    .flashAttr("editPlantForm", plantForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/editPlantPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editPlantForm", "plantedOnDate"));
+
+            Mockito.verify(plantService, Mockito.never()).updatePlant(Mockito.any(Plant.class));
+        }
+
+        @Test
+        public void EditPlantPost_WithInvalidPlantBadDateDays_ReturnsError() throws Exception {
+            plantForm.setPlantedOnDate("29/02/2023");
+
+            mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/plants/1/edit")
+                    .with(csrf())
+                    .flashAttr("editPlantForm", plantForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/editPlantPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editPlantForm", "plantedOnDate"));
+
+            Mockito.verify(plantService, Mockito.never()).updatePlant(Mockito.any(Plant.class));
+        }
 }
