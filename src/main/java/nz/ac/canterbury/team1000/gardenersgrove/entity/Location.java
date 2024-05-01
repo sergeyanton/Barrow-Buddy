@@ -3,6 +3,10 @@ package nz.ac.canterbury.team1000.gardenersgrove.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Entity class reflecting an entry of address, suburb, city, postcode, country, displayPlace and
+ * displayAddress of a location
+ */
 public class Location {
     public String address;
     public String suburb;

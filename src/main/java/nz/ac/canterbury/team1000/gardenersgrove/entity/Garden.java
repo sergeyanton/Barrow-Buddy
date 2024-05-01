@@ -29,6 +29,7 @@ public class Garden {
     @Column
     private Double size;
 
+
     @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
@@ -158,13 +159,11 @@ public class Garden {
         return "Garden{id=" + id + ", name=" + name + "', size='" + size + "'}";
     }
 
+    /**
+     * Get the String formatted version of the full address
+     * @return the full address as a String in the format: address, suburb, city, postcode, country
+     */
     public String getLocationString() {
-        List<String> fields = new ArrayList<>();
-        if (!address.isEmpty()) fields.add(address);
-        if (!suburb.isEmpty()) fields.add(suburb);
-        if (!city.isEmpty()) fields.add(city);
-        if (!postcode.isEmpty()) fields.add(postcode);
-        if (!country.isEmpty()) fields.add(country);
-        return String.join(", ", fields);
+        return new Location(this.address, this.suburb, this.city, this.postcode, this.country, "").displayAddress();
     }
 }

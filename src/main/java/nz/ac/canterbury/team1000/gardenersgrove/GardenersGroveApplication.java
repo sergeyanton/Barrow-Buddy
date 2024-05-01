@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
  * Gardener's Grove entry-point
  */
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
-public class 	GardenersGroveApplication {
+public class GardenersGroveApplication {
 
 	/**
 	 * Main entry point, runs the Spring application

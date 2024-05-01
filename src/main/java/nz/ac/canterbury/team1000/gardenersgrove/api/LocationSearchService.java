@@ -17,6 +17,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * This service contains the handling of getting matching location results entered in address fields in both create and edit
+ * garden form. Contains a class searchLocation that searches for matching locations and locationsIntoList that parses a JSON response
+ * in String format into a list containing Location entities.
+ */
 @Service
 public class LocationSearchService {
     private final String API_KEY = System.getenv("API_KEY");
@@ -24,11 +29,33 @@ public class LocationSearchService {
 
     private RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final TokenBucketService secondTokenBucket = new TokenBucketService(10, 2, 1000);
 
-    private final TokenBucketService minuteTokenBucket = new TokenBucketService(120, 60, 60000);
+    /**
+     * This is a rate limiter that uses the TokenBucket class. LocationIQ has a request limit rate of 2 requests
+     * per second so if more than 2 requests are made in a second, then calling consumeToken() would return false,
+     * meaning the rate limit has been exceeded.
+     *
+     * Rate Limit Duration of 1000 is how many milliseconds there are in a second.
+     */
+    private final TokenBucketService TWO_REQUESTS_PER_SECOND_RATE_LIMITER = new TokenBucketService(10, 2, 1000);
 
-    private final TokenBucketService dailyTokenBucket = new TokenBucketService(10000, 5000, 86400000);
+    /**
+     * This is a rate limiter that uses the TokenBucket class. LocationIQ has a request limit rate of 60 requests
+     * per minute so if more than 60 requests are made in a minute, then calling consumeToken() would return false,
+     * meaning the rate limit has been exceeded.
+     *
+     * Rate Limit Duration of 60000 is how many milliseconds there are in a minute.
+     */
+    private final TokenBucketService SIXTY_REQUESTS_PER_MINUTE_RATE_LIMITER = new TokenBucketService(120, 60, 60000);
+
+    /**
+     * This is a rate limiter that uses the TokenBucket class. LocationIQ has a request limit rate of 5000 requests
+     * per day so if more than 5000 requests are made in a day, then calling consumeToken() would return false,
+     * meaning the rate limit has been exceeded.
+     *
+     * Rate Limit Duration of 86400000 is how many milliseconds there are in a day.
+     */
+    private final TokenBucketService FIVE_THOUSAND_REQUESTS_PER_DAY_RATE_LIMITER = new TokenBucketService(10000, 5000, 86400000);
 
     public LocationSearchService() {}
 
@@ -47,23 +74,29 @@ public class LocationSearchService {
     public List<Location> searchLocations(String query, String addressField) {
         // If the number of requests exceed the rate limit (2 requests per second, 60 requests per minute, or 5000 requests per day),
         // then it will not continue with sending the request and instead return an empty array list.
-        if (!secondTokenBucket.consumeToken() || !minuteTokenBucket.consumeToken() || !dailyTokenBucket.consumeToken()) {
+        if (!TWO_REQUESTS_PER_SECOND_RATE_LIMITER.consumeToken() || !SIXTY_REQUESTS_PER_MINUTE_RATE_LIMITER.consumeToken() || !FIVE_THOUSAND_REQUESTS_PER_DAY_RATE_LIMITER.consumeToken()) {
             return new ArrayList<>();
         }
 
         try {
             // Construct URL for sending requests to the LocationIQ API
             String url;
-            if (addressField.equals("country")) {
-                url = URL + "?q=" + query + "&limit=5&key=" + API_KEY + "&tag=place:country";
-            } else if (addressField.equals("city")) {
-                url = URL + "?q=" + query + "&limit=5&key=" + API_KEY + "&tag=place:city";
-            } else if (addressField.equals("postcode")) {
-                url = URL + "?q=" + query + "&limit=5&key=" + API_KEY + "&tag=place:postcode";
-            } else if (addressField.equals("suburb")) {
-                url = URL + "?q=" + query + "&limit=5&key=" + API_KEY + "&tag=place:suburb";
-            } else {
-                url = URL + "?q=" + query + "&limit=5&key=" + API_KEY;
+
+            switch (addressField) {
+                case "country":
+                    url = URL + "?q=" + query + "&limit=5&key=" + API_KEY + "&tag=place:country";
+                    break;
+                case "city":
+                    url = URL + "?q=" + query + "&limit=5&key=" + API_KEY + "&tag=place:city";
+                    break;
+                case "postcode":
+                    url = URL + "?q=" + query + "&limit=5&key=" + API_KEY + "&tag=place:postcode";
+                    break;
+                case "suburb":
+                    url = URL + "?q=" + query + "&limit=5&key=" + API_KEY + "&tag=place:suburb";
+                    break;
+                default:
+                    url = URL + "?q=" + query + "&limit=5&key=" + API_KEY;
             }
 
             // Sending a request to the LocationIQ API endpoint and returns a JSON response in string form
