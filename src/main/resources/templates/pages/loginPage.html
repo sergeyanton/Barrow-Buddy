@@ -1,34 +1,31 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
 
-<head>
-    <meta http-equiv="Content-Type" context="text/html; charset=UTF-8">
-    <link rel="stylesheet" type="text/css" th:href="@{/css/style-user.css}">
-    <title>Log in</title>
-</head>
+<head th:replace="~{fragments/head :: head(title='Gardener\'s Grove - Log In')}"></head>
 
 <body>
-    <div class="basic">
-        <h1>Log In</h1>
-        <form th:action="@{login}" method="post" th:object="${loginForm}">
-            <div th:if="${errorMessage}" class="error-message">
-                <p th:text="${errorMessage}"></p>
-            </div>
-            <input th:replace="~{fragments/formElement :: formElementField(fieldName='email', label='Email: ', placeholder='jane@doe.nz')}"/>
-            <br />
-            <input th:replace="~{fragments/formElement :: formElementField(fieldName='password', label='Password: ', placeholder='*******', type='password')}"/>
-            <br />
-            <input type="text" id="signupCode" name="signupCode" style="display: none;">
-            <div>
-                <p>Not registered? <a th:href="@{register}">Create an account!</a></p>
-            </div>
-            <a th:href="@{forgotPassword}">Forgot password?</a>
-            <button class="submitButton" type="submit">Sign In</button>
-            <br/>
-            <a class="cancelButtonLink" th:href="@{.}">Cancel</a>
-        </form>
-    </div>
-
+    <main class="centred">
+        <div class="basic">
+            <h1>Log In</h1>
+            <form th:action="@{login}" method="post" th:object="${loginForm}">
+                <div th:if="${errorMessage}" class="error-message">
+                    <p th:text="${errorMessage}"></p>
+                </div>
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='email', label='Email: ', placeholder='jane@doe.nz')}" />
+                <br />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='password', label='Password: ', placeholder='*******', type='password')}" />
+                <br />
+                <div>
+                    <p>Not registered? <a th:href="@{register}">Create an account!</a></p>
+                </div>
+                <a th:href="@{forgotPassword}">Forgot password?</a>
+                <div class="cancel-submit-wrapper">
+                    <a class="cancel" th:href="@{/}">Cancel</a>
+                    <button type="submit">Sign In</button>
+                </div>
+            </form>
+        </div>
+    </main>
     <script>
         // to disable early form submission using enter key
         document.getElementById('email').addEventListener('keypress', function(event) {

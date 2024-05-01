@@ -6,6 +6,10 @@ import jakarta.servlet.http.HttpSession;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.ResetToken;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.VerificationToken;
+import nz.ac.canterbury.team1000.gardenersgrove.form.ForgotPasswordForm;
+import nz.ac.canterbury.team1000.gardenersgrove.form.LoginForm;
+import nz.ac.canterbury.team1000.gardenersgrove.form.RegistrationForm;
+import nz.ac.canterbury.team1000.gardenersgrove.form.VerificationTokenForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.*;
 import nz.ac.canterbury.team1000.gardenersgrove.service.EmailService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.ResetTokenService;
@@ -67,7 +71,7 @@ public class AccountController {
     @GetMapping("/register")
     public String getRegisterPage(@ModelAttribute("registrationForm") RegistrationForm registrationForm) {
         logger.info("GET /register");
-        return userService.isSignedIn() ? "redirect:/" : "pages/registrationPage";
+        return "pages/registrationPage";
     }
 
     /**
@@ -138,8 +142,11 @@ public class AccountController {
                                        BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         logger.info("POST /register/verification");
         VerificationTokenForm.validate(verificationTokenForm, bindingResult);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.findEmail(authentication.getName());
+        if (userService.getLoggedInUser() == null) {
+            bindingResult.addError(new FieldError("verificationTokenForm", "verificationToken", verificationTokenForm.getVerificationToken(), false, null, null, "Account expired, please register again"));
+            return "pages/verificationPage";
+        }
+        User user = userService.findEmail(userService.getLoggedInUser().getEmail());
         if (user == null || (!bindingResult.hasFieldErrors("verificationToken") && !validateToken(verificationTokenForm.getVerificationToken(), user.getId()))) {
             bindingResult.addError(new FieldError("verificationTokenForm", "verificationToken", verificationTokenForm.getVerificationToken(), false, null, null, "Signup code invalid"));
         }
@@ -182,10 +189,10 @@ public class AccountController {
     }
 
     /**
-     * Gets the thymeleaf page representing the /login page Will only work if the user is not logged
-     * in, otherwise it will redirect to the home page
-     * 
-     * @return thymeleaf loginPage
+     * Handles GET requests to the /login endpoint.
+     * Gets the login page.
+     * If the user has not verified their account, they are redirected to verification page
+     * @param loginForm the LoginForm object representing the user's login data
      */
     @GetMapping("/login")
     public String getLoginPage(@ModelAttribute("loginForm") LoginForm loginForm, Model model, RedirectAttributes redirectAttributes) {
@@ -217,7 +224,7 @@ public class AccountController {
                         BindingResult bindingResult) {
         logger.info("POST /login");
         if (userService.isSignedIn()) {
-            return "redirect:/";
+            return "redirect:/home";
         }
 
         LoginForm.validate(loginForm, bindingResult);
@@ -241,8 +248,7 @@ public class AccountController {
         // log in the user
         User validUser = userService.findEmail(loginForm.getEmail());
         userService.authenticateUser(authenticationManager, validUser, request);
-
-        return "redirect:/";
+        return "redirect:/home";
     }
 
     /**
@@ -298,7 +304,7 @@ public class AccountController {
      * @param forgotPasswordForm the ForgotPasswordForm object representing the 'forgot password' data
      * @param bindingResult the BindingResult object for validation errors
      * @return a String representing the view to display after entering the 'forgot password email':
-     *         - Whatever the result is (error or no error), returns/redirects the forgot password page.
+     *      *  *         - Whatever the result is (error or no error), returns/redirects the forgot password page.
      */
     @PostMapping("/forgotPassword")
     public String forgotPassword(HttpServletRequest request,
@@ -314,6 +320,9 @@ public class AccountController {
 
         if (!bindingResult.hasFieldErrors("email")) {
             bindingResult.addError(new FieldError("forgotPasswordForm", "email", forgotPasswordForm.getEmail(), false, null, null, "An email was sent to the address if it was recognised"));
+
+        } else if (!bindingResult.hasFieldErrors("email") && !userService.checkEmail(forgotPasswordForm.getEmail())) {
+            bindingResult.addError(new FieldError("forgotPasswordForm", "email", forgotPasswordForm.getEmail(), false, null, null, "Invalid email format"));
         }
 
         if (bindingResult.hasErrors()) {

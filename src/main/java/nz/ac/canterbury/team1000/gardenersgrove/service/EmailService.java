@@ -30,11 +30,10 @@ public class EmailService {
      *
      * @param to      the recipient's email address
      * @param subject the subject of the email
-     * @param text    the plain text of the email
+     * @param text    the body of the email
      */
     public void sendSimpleMessage(String to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("noreply@team1000.com");
         message.setTo(to);
         message.setSubject(subject);
         message.setText(text);

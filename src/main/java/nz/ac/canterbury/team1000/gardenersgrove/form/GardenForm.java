@@ -1,13 +1,18 @@
 package nz.ac.canterbury.team1000.gardenersgrove.form;
 
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import org.springframework.validation.BindingResult;
 
 import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.*;
 
 public class GardenForm {
     protected String name;
-    protected String location;
+    protected String address;
+    protected String suburb;
+    protected String city;
+    protected String postcode;
+    protected String country;
     protected String size;
 
     public String getName() {
@@ -18,12 +23,38 @@ public class GardenForm {
         this.name = name;
     }
 
-    public String getLocation() {
-        return location;
+    public String getAddress() {
+        return address;
+    }
+    public String getSuburb() {
+        return suburb;
+    }
+    public String getCity() {
+        return city;
+    }
+    public String getPostcode() {
+        return postcode;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public String getCountry() {
+        return country;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+    public void setSuburb(String suburb) {
+        this.suburb = suburb;
+    }
+    public void setCity(String city) {
+        this.city = city;
+    }
+    public void setPostcode(String postcode) {
+        this.postcode = postcode;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
     }
 
     public String getSize() {
@@ -44,13 +75,20 @@ public class GardenForm {
 
     /**
      * Generates a Garden object with the values from the form.
+     *
+     * @param owner the User object that will be the owner of the garden
      * @return new Garden with attributes directly from the input values in the form.
      */
-    public Garden getGarden() {
+    public Garden getGarden(User owner) {
         return new Garden(
                 this.name,
-                this.location,
-                getSizeDouble() //TODO could get rid of some constructor redundancy in either Garden or User
+                this.address,
+                this.suburb,
+                this.city,
+                this.postcode,
+                this.country,
+                getSizeDouble(), //TODO could get rid of some constructor redundancy in either Garden or User
+                owner
         );
     }
 
@@ -69,25 +107,61 @@ public class GardenForm {
             errors.add("name", "Garden name must not be empty", createGardenForm.getName());
         } else if (!checkValidGardenName(createGardenForm.getName())) {
             errors.add("name", "Garden name must only include letters, numbers, spaces, dots, hyphens or apostrophes", createGardenForm.getName());
-        } else if (checkOverMaxLength(createGardenForm.getName(), 255)) { //TODO replace with constant
+        } else if (checkOverMaxLength(createGardenForm.getName(), MAX_DB_STR_LEN)) {
             errors.add("name", "Name must be 255 characters or less", createGardenForm.getName());
         }
 
-        // Validate garden location
-        if (checkBlank(createGardenForm.getLocation())) {
-            errors.add("location", "Location cannot be empty", createGardenForm.getLocation());
-        } else if (!checkValidLocationName(createGardenForm.getLocation())) {
-            errors.add("location", "Location name must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes", createGardenForm.getName());
-        } else if (checkOverMaxLength(createGardenForm.getLocation(), 255)) { //TODO replace with constant
-            errors.add("location", "Location must be 255 characters or less", createGardenForm.getLocation());
+        // Validate garden location - Address
+        if (!checkBlank(createGardenForm.getAddress())) {
+            if (!checkValidLocationName(createGardenForm.getAddress())) {
+                errors.add("address", "Address must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes", createGardenForm.getAddress());
+            } else if (checkOverMaxLength(createGardenForm.getAddress(), MAX_DB_STR_LEN)) {
+                errors.add("address", "Address must be 255 characters or less", createGardenForm.getAddress());
+            }
+        }
+
+        // Validate garden location - Suburb
+        if (!checkBlank(createGardenForm.getSuburb())) {
+            if (!checkValidLocationName(createGardenForm.getSuburb())) {
+                errors.add("suburb", "Suburb must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes", createGardenForm.getSuburb());
+            } else if (checkOverMaxLength(createGardenForm.getSuburb(), MAX_DB_STR_LEN)) {
+                errors.add("suburb", "Suburb must be 255 characters or less", createGardenForm.getSuburb());
+            }
+        }
+
+        // Validate garden location - City
+        if (checkBlank(createGardenForm.getCity())) {
+            errors.add("city", "City and Country are required", createGardenForm.getCity());
+        } else if (!checkValidLocationName(createGardenForm.getCity())) {
+            errors.add("city", "City must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes", createGardenForm.getCity());
+        } else if (checkOverMaxLength(createGardenForm.getCity(), MAX_DB_STR_LEN)) {
+            errors.add("city", "City must be 255 characters or less", createGardenForm.getCity());
+        }
+
+        // Validate garden location - Country
+        if (checkBlank(createGardenForm.getCountry())) {
+            errors.add("country", "City and Country are required", createGardenForm.getCountry());
+        } else if (!checkValidLocationName(createGardenForm.getCountry())) {
+            errors.add("country", "Country must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes", createGardenForm.getCountry());
+        } else if (checkOverMaxLength(createGardenForm.getCountry(), MAX_DB_STR_LEN)) {
+            errors.add("country", "Country must be 255 characters or less", createGardenForm.getCountry());
+        }
+
+        // Validate garden location - Postcode
+        if (!checkBlank(createGardenForm.getPostcode())) {
+            if (!checkValidLocationName(createGardenForm.getPostcode())) {
+                errors.add("postcode", "Postcode must only include letters, numbers, spaces, commas, dots, hyphens or apostrophes", createGardenForm.getPostcode());
+            } else if (checkOverMaxLength(createGardenForm.getPostcode(), MAX_DB_STR_LEN)) {
+                errors.add("postcode", "Postcode must be 255 characters or less", createGardenForm.getPostcode());
+            }
         }
 
         // Validate garden size (if there is one)
         if (!checkBlank(createGardenForm.getSize())) {
-            if (checkDoubleIsInvalid(createGardenForm.getSize())) {
-                errors.add("size", "Garden size must be a positive number", createGardenForm.getSize());
-            } else if (checkDoubleTooBig(createGardenForm.getSize())) {
+            if (checkDoubleTooBig(createGardenForm.getSize())) {
                 errors.add("size", "Garden size must be at most " + Integer.MAX_VALUE + " m²", createGardenForm.getSize());
+            } else if (checkDoubleIsInvalid(createGardenForm.getSize()) || checkDoubleOutsideRange(createGardenForm.getSize(), 0.1, null)) {
+                errors.add("size", "Garden size must be a positive number", createGardenForm.getSize());
             }
         }
     }

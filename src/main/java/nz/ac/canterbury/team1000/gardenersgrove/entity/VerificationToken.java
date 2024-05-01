@@ -28,7 +28,6 @@ public class VerificationToken {
     @Transient
     private String plainToken;
 
-
     protected VerificationToken() {
     }
 

@@ -209,6 +209,48 @@ public class FormUtils {
     }
 
     /**
+     * Checks if an integer fits within the specified range.
+     * NOTE: Returns true for blank or invalid strings. Should not be used to check for invalid integers.
+     *
+     * @param string the string to check
+     * @param min the minimum value allowed, or null if there is no minimum
+     * @param max the maximum value allowed, or null if there is no maximum
+     * @return true if the integer is outside the specified range, false otherwise
+     */
+    public static boolean checkIntegerOutsideRange(String string, Integer min, Integer max) {
+        try {
+            int value = Integer.parseInt(string);
+            if (min != null && value < min) return true;
+            if (max != null && value > max) return true;
+            return false;
+        } catch (NumberFormatException e) {
+            // make sure we fail if the string is not a valid integer
+            return true;
+        }
+    }
+
+    /**
+     * Checks if a double fits within the specified range.
+     * NOTE: Returns true for blank or invalid strings. Should not be used to check for invalid doubles.
+     *
+     * @param string the string to check
+     * @param min the minimum value allowed, or null if there is no minimum
+     * @param max the maximum value allowed, or null if there is no maximum
+     * @return true if the double is outside the specified range, false otherwise
+     */
+    public static boolean checkDoubleOutsideRange(String string, Double min, Double max) {
+        try {
+            double value = Double.parseDouble(string.replace(",", "."));
+            if (min != null && value < min) return true;
+            if (max != null && value > max) return true;
+            return false;
+        } catch (NumberFormatException e) {
+            // make sure we fail if the string is not a valid double
+            return true;
+        }
+    }
+
+    /**
      * Checks if the given email address is invalid.
      *
      * @param string the email address to check
@@ -290,5 +332,16 @@ public class FormUtils {
      */
     public static boolean checkImageTooBig(MultipartFile image) {
         return image.getSize() > MAX_IMAGE_SIZE_BYTES;
+    }
+
+    /**
+     * Converts LocalDate to a string in the format "DD/MM/YYYY".
+     *
+     * @param date the date to convert
+     * @return the string representation of the date in the format "DD/MM/YYYY" or an empty string if the date is null.
+     */
+    public static String dateToString(LocalDate date) {
+        if (date == null) return "";
+        return date.format(VALID_DATE_FORMAT);
     }
 }
