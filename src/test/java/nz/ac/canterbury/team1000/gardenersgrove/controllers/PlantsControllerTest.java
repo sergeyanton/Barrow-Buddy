@@ -5,9 +5,6 @@ import nz.ac.canterbury.team1000.gardenersgrove.form.PictureForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PlantForm;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EmptySource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +28,7 @@ import nz.ac.canterbury.team1000.gardenersgrove.service.VerificationTokenService
 import java.time.LocalDate;
 import java.util.List;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 @WebMvcTest(controllers = {GardensController.class})
@@ -328,6 +326,24 @@ public class PlantsControllerTest {
                 .andExpect(MockMvcResultMatchers.model().attributeExists("garden"))
                 .andExpect(MockMvcResultMatchers.model().attributeExists("plants"));
     }
+  @Test
+  public void EditPlantGet_Valid_IsPopulated() throws Exception {
+    // create the plant and add to garden
+    mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/plants/create").with(csrf())
+            .flashAttr("createPlantForm", plantForm))
+        .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+        .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
+
+    Mockito.verify(plantService).addPlant(Mockito.any());
+    // then click edit and verify the prefilled values
+    mockMvc.perform(MockMvcRequestBuilders.get("/gardens/1/plants/1/edit").with(csrf()))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.model().attributeExists("editPlantForm"))
+        .andExpect(MockMvcResultMatchers.content().string(containsString("value=\"Red Rose\"")))
+        .andExpect(MockMvcResultMatchers.content().string(containsString("value=\"5\"")))
+        .andExpect(MockMvcResultMatchers.content().string(containsString("value=\"It is red and smells like roses\"")))
+        .andExpect(MockMvcResultMatchers.content().string(containsString("value=\"25/12/2023\"")));
+  }
 
     @Test
     public void EditPlantPost_WithValidPlant_SavesToService() throws Exception {

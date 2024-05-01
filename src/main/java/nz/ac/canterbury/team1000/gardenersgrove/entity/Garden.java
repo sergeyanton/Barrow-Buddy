@@ -1,6 +1,8 @@
 package nz.ac.canterbury.team1000.gardenersgrove.entity;
 
 import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Entity class reflecting an entry of name, location, and size of a garden Note the @link{Entity}
@@ -26,6 +28,7 @@ public class Garden {
     private String country;
     @Column
     private Double size;
+
 
     @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)
@@ -156,7 +159,11 @@ public class Garden {
         return "Garden{id=" + id + ", name=" + name + "', size='" + size + "'}";
     }
 
+    /**
+     * Get the String formatted version of the full address
+     * @return the full address as a String in the format: address, suburb, city, postcode, country
+     */
     public String getLocationString() {
-        return address + ", " + suburb + ", " + city + " " + postcode + ", " + country;
+        return new Location(this.address, this.suburb, this.city, this.postcode, this.country, "").displayAddress();
     }
 }
