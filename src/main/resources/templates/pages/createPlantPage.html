@@ -8,7 +8,7 @@
     <main>
         <div class="basic">
             <h1 th:text="'Create plant for ' + ${garden.name}"></h1>
-            <form class="upload-image" th:action="@{'/gardens/' + ${gardenId} + '/plants/create'}" method="post" th:object="${createPlantForm}" enctype="multipart/form-data">
+            <form th:action="@{'/gardens/' + ${gardenId} + '/plants/create'}" method="post" th:object="${createPlantForm}" enctype="multipart/form-data">
                 <div class="plant-picture-upload-wrapper">
                     <div class="profile-picture-wrapper">
                         <input th:field="*{picturePath}" type= "hidden"/>
@@ -16,13 +16,11 @@
                              th:src="${createPlantForm.picturePath}"
                              alt="Plant Picture">
                         <label id="pictureFileLabel" class="file-upload-plus-button" for="pictureFile">+</label>
-                    <div class="form-element">
-                    </div>
                         <input type="file" th:field="*{pictureFile}" id="pictureFile" th:attr="onchange='validateImage(this, \'' + ${createPlantForm.picturePath} + '\')'" accept="image/png, image/jpeg, image/svg+xml">
-                        <span id="clientSideErrorMessage" class="error"></span>
                     </div>
+                    <span id="clientSideErrorMessage" class="error"></span>
                 </div>
-
+                <br />
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='name', label='Plant Name: ', placeholder='Red Roses')}" />
                 <br />
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='plantCount', label='How many? (optional): ', placeholder='1')}" />
