@@ -3,25 +3,23 @@
 
 <head th:replace="~{fragments/head :: head(title='Gardener\'s Grove - Edit Profile')}"></head>
 
-
 <body>
     <div th:replace="~{fragments/header :: header}"></div>
-
     <main>
-        <div class="content">
+        <div class="basic">
             <h1>Edit My Profile</h1>
-            <form class="upload-image" th:action="@{/editProfile}" method="post" th:object="${editUserForm}" enctype="multipart/form-data">
+            <form th:action="@{/editProfile}" method="post" th:object="${editUserForm}" enctype="multipart/form-data">
                 <div class="profile-picture-wrapper">
-                    <input th:field="*{picturePath}" type="hidden"/>
-                    <img class="profile-picture" id="profileImage"
-                         th:src="${editUserForm.getPicturePath()}"
-                         alt="Profile Picture">
+                <input th:field="*{picturePath}" type="hidden"/>
+                <img class="profile-picture" id="profileImage"
+                     th:src="${editUserForm.picturePath}"
+                     alt="Profile Picture">
                 </div>
 
                 <div class="form-element">
                     <label class="file-upload-label" th:for="pictureFile">Edit Profile Picture</label>
-                    <input th:field="*{pictureFile}" type="file" onchange="validateImage(this)" accept="image/png, image/jpeg, image/svg+xml">
-                    <br><span id="clientSideErrorMessage" class="error"></span>
+                    <input type="file" th:field="*{pictureFile}" th:attr="onchange='validateImage(this, \'' + ${editUserForm.picturePath} + '\')'" accept="image/png, image/jpeg, image/svg+xml">
+                    <span id="clientSideErrorMessage" class="error"></span>
                 </div>
 
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='firstName', label='First Name: ', placeholder='Fabian')}" />
@@ -35,13 +33,15 @@
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='email', label='Email: ', placeholder='jane@doe.nz')}" />
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='dob', label='Date of Birth: ', placeholder='DD/MM/YYYY')}" />
 
-                <button type="submit">Update Profile</button>
                 <a th:href="@{editProfile/updatePassword}">Update Password</a>
-                <a class="cancel button" th:href="@{profile}">Cancel</a>
+                <div class="cancel-submit-wrapper">
+                    <a class="cancel button" th:href="@{profile}">Cancel</a>
+                    <button type="submit">Update Profile</button>
+                </div>
             </form>
         </div>
     </main>
-    <script th:inline="javascript">
+    <script>
         // Function to disable last name input field if the 'no surname' checkbox is checked
         function toggleInput() {
             let checkbox = document.getElementById('noSurnameCheckBox');
@@ -60,10 +60,7 @@
             toggleInput();
         };
 
-        // THYMELEAF SYNTAX FOR GETTING MODEL ATTRIBUTES INTO INLINE JS. The comment matters.
-        const initialProfilePictureUrl = /*[[${editUserForm.getPicturePath()}]]*/ '';
-
-        function validateImage(input) {
+        function validateImage(input, initialPicturePath) {
             if (!(input.files && input.files[0])) {
                 return;
             }
@@ -73,19 +70,19 @@
 
             if (!validTypes.includes(file.type) && file.size > maxFileSize) {
                 input.value = '';
-                document.getElementById('profileImage').src = initialProfilePictureUrl;
+                document.getElementById('profileImage').src = initialPicturePath;
                 document.getElementById('clientSideErrorMessage').textContent = "Image must be of type png, jpg or svg, and less than 10MB";
                 return;
             }
             if (!validTypes.includes(file.type)) {
                 input.value = '';
-                document.getElementById('profileImage').src = initialProfilePictureUrl;
+                document.getElementById('profileImage').src = initialPicturePath;
                 document.getElementById('clientSideErrorMessage').textContent = "Image must be of type png, jpg or svg";
                 return;
             }
             if (file.size > maxFileSize) {
                 input.value = '';
-                document.getElementById('profileImage').src = initialProfilePictureUrl;
+                document.getElementById('profileImage').src = initialPicturePath;
                 document.getElementById('clientSideErrorMessage').textContent = "Image must be less than 10MB";
                 return;
             }

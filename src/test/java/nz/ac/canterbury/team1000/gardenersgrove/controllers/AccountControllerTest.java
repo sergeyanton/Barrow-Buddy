@@ -2,9 +2,14 @@ package nz.ac.canterbury.team1000.gardenersgrove.controllers;
 
 import nz.ac.canterbury.team1000.gardenersgrove.controller.AccountController;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
+import nz.ac.canterbury.team1000.gardenersgrove.entity.VerificationToken;
 import nz.ac.canterbury.team1000.gardenersgrove.form.LoginForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.RegistrationForm;
+import nz.ac.canterbury.team1000.gardenersgrove.form.VerificationTokenForm;
+import nz.ac.canterbury.team1000.gardenersgrove.service.EmailService;
+import nz.ac.canterbury.team1000.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
+import nz.ac.canterbury.team1000.gardenersgrove.service.VerificationTokenService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -33,6 +38,14 @@ class AccountControllerTest {
     private UserService userService;
 
     @MockBean
+    private EmailService emailService;
+    @MockBean
+    private VerificationTokenService verificationTokenService;
+
+    @MockBean
+    private GardenService gardenService;
+
+    @MockBean
     private AuthenticationManager authenticationManager;
 
     @MockBean
@@ -41,10 +54,14 @@ class AccountControllerTest {
     @Mock
     private User userMock;
 
+    @Mock
+    private VerificationToken verificationTokenMock;
+
     private RegistrationForm registrationForm;
 
     private LoginForm loginForm;
 
+    private VerificationTokenForm verificationTokenForm;
     @BeforeEach
     public void beforeEach() {
         userMock = Mockito.mock(User.class);
@@ -53,6 +70,12 @@ class AccountControllerTest {
         Mockito.when(userMock.getEmail()).thenReturn("johnsmith@gmail.com");
         Mockito.when(userMock.getDateOfBirthString()).thenReturn("05/05/1999");
         Mockito.when(userMock.getPassword()).thenReturn("encoded_password");
+
+        verificationTokenMock = Mockito.mock(VerificationToken.class);
+        Mockito.when(verificationTokenMock.getUserId()).thenReturn(1L);
+        Mockito.when(verificationTokenMock.getHashedToken()).thenReturn("hashed_token");
+        Mockito.when(verificationTokenMock.getPlainToken()).thenReturn("123456");
+
 
         registrationForm = new RegistrationForm();
         registrationForm.setFirstName(userMock.getFname());
@@ -67,6 +90,9 @@ class AccountControllerTest {
         loginForm.setEmail(userMock.getEmail());
         loginForm.setPassword("Pass123$");
 
+        verificationTokenForm = new VerificationTokenForm();
+        verificationTokenForm.setVerificationToken(verificationTokenMock.getPlainToken());
+
         Mockito.when(userService.checkEmail(Mockito.any())).thenReturn(false);
         Mockito.when(userService.isSignedIn()).thenReturn(false);
         Mockito.when(userService.findEmail(Mockito.any())).thenReturn(userMock);
@@ -78,7 +104,7 @@ class AccountControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
                 .flashAttr("registrationForm", registrationForm))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/profile"));
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/register/verification"));
 
         Mockito.verify(userService).registerUser(Mockito.any());
         Mockito.verify(userService).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
@@ -91,7 +117,7 @@ class AccountControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
                         .flashAttr("registrationForm", registrationForm))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/profile"));
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/register/verification"));
 
         Mockito.verify(userService).registerUser(Mockito.any());
         Mockito.verify(userService).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
@@ -104,7 +130,7 @@ class AccountControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
                         .flashAttr("registrationForm", registrationForm))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/profile"));
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/register/verification"));
 
         Mockito.verify(userService).registerUser(Mockito.any());
         Mockito.verify(userService).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
@@ -309,6 +335,80 @@ class AccountControllerTest {
         Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
     }
 
+    @Test
+    public void VerificationGetRequest_ValidToken_Successful() throws Exception {
+        Mockito.when(verificationTokenService.getVerificationTokenByUserId(Mockito.any())).thenReturn(verificationTokenMock);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/register/verification").with(csrf())
+                        .flashAttr("verificationTokenForm", verificationTokenForm))
+                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
+    }
+
+    @Test
+    public void VerificationPostRequest_Valid_Redirection() throws Exception {
+        verificationTokenMock.setVerified(true);
+        Mockito.when(userService.getLoggedInUser()).thenReturn(userMock);
+        Mockito.when(verificationTokenService.getVerificationTokenByUserId(Mockito.any())).thenReturn(verificationTokenMock);
+        mockMvc.perform(MockMvcRequestBuilders.post("/register/verification").with(csrf())
+                        .flashAttr("verificationTokenForm", verificationTokenForm))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/login"));
+    }
+
+    @Test
+    public void VerificationPostRequest_InvalidTokenTooShort_HasFieldErrors() throws Exception {
+        verificationTokenMock.setVerified(false);
+        Mockito.when(userService.getLoggedInUser()).thenReturn(userMock);
+        Mockito.when(verificationTokenService.getVerificationTokenByUserId(Mockito.any())).thenReturn(verificationTokenMock);
+        verificationTokenForm.setVerificationToken("12345");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/register/verification").with(csrf())
+                        .flashAttr("verificationTokenForm", verificationTokenForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/verificationPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("verificationTokenForm", "verificationToken"));
+    }
+
+    @Test
+    public void VerificationPostRequest_InvalidTokenTooLong_HasFieldErrors() throws Exception {
+        verificationTokenMock.setVerified(false);
+        Mockito.when(userService.getLoggedInUser()).thenReturn(userMock);
+        Mockito.when(verificationTokenService.getVerificationTokenByUserId(Mockito.any())).thenReturn(verificationTokenMock);
+        verificationTokenForm.setVerificationToken("1234567");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/register/verification").with(csrf())
+                        .flashAttr("verificationTokenForm", verificationTokenForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/verificationPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("verificationTokenForm", "verificationToken"));
+    }
+
+    @Test
+    public void VerificationPostRequest_InvalidTokenEmpty_HasFieldErrors() throws Exception {
+        verificationTokenMock.setVerified(false);
+        Mockito.when(userService.getLoggedInUser()).thenReturn(userMock);
+        Mockito.when(verificationTokenService.getVerificationTokenByUserId(Mockito.any())).thenReturn(verificationTokenMock);
+        verificationTokenForm.setVerificationToken("");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/register/verification").with(csrf())
+                        .flashAttr("verificationTokenForm", verificationTokenForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/verificationPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("verificationTokenForm", "verificationToken"));
+    }
+
+    @Test
+    public void VerificationPostRequest_TokenExpired_ShowError() throws Exception {
+        Mockito.when(userService.getLoggedInUser()).thenReturn(null);
+        mockMvc.perform(MockMvcRequestBuilders.post("/register/verification").with(csrf())
+                        .flashAttr("verificationTokenForm", verificationTokenForm))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("pages/verificationPage"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("verificationTokenForm", "verificationToken"));
+    }
+
+
+
 //    TODO I cannot for the life of me figure out how to get these tests passing, they look perfect to me, i'm assuming its some weird authentication thing
 //    @Test
 //    void LoginGetRequest_SignedIn_Redirects() throws Exception {
@@ -425,4 +525,17 @@ class AccountControllerTest {
 //
 //        Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
 //    }
+//@Test
+//public void LoginGetRequest_NotVerified_RedirectsToVerification() throws Exception {
+//    Mockito.when(userService.getLoggedInUser()).thenReturn(userMock);
+//    Mockito.when(verificationTokenService.getVerificationTokenByUserId(Mockito.anyLong())).thenReturn(verificationTokenMock);
+//    Mockito.when(verificationTokenMock.isVerified()).thenReturn(false);
+//
+//    System.out.println(userService.getLoggedInUser() != null && !verificationTokenService.getVerificationTokenByUserId(userService.getLoggedInUser().getId()).isVerified());
+//
+//    mockMvc.perform(MockMvcRequestBuilders.get("/login").with(csrf())
+//                    .flashAttr("loginForm", loginForm))
+//            .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+//            .andExpect(MockMvcResultMatchers.redirectedUrl("/register/verification"));
+//}
 }

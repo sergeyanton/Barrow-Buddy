@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
 
-<head th:replace="~{fragments/head :: head(title='Gardener\'s Grove - Create Plant')}"></head>
+<head th:replace="~{fragments/head :: head(title='Gardener\'s Grove - Edit Plant')}"></head>
 
 <body>
     <div th:replace="~{fragments/header :: header}"></div>
     <main>
         <h1 th:text="'Edit ' + ${plant.name} + ' of ' + ${garden.name}"></h1>
-        <div class="content">
+        <div class="basic">
             <form th:action="@{'/gardens/' + ${gardenId} +'/plants/' + ${plantId} + '/edit'}" method="post" th:object="${editPlantForm}">
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='name', label='Plant Name: ', placeholder='Red Roses')}" />
                 <br />
@@ -17,8 +17,10 @@
                 <br />
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='plantedOnDate', label='Planted Date (optional): ', placeholder='15/12/2023')}" />
                 <br />
-                <button class="next" type="submit">Save Changes</button>
-                <a class="cancel" th:href="@{'/gardens/' + ${gardenId}}">Cancel</a>
+                <div class="cancel-submit-wrapper">
+                    <a class="cancel" th:href="@{'/gardens/' + ${gardenId}}">Cancel</a>
+                    <button class="next" type="submit">Save Changes</button>
+                </div>
             </form>
         </div>
     </main>

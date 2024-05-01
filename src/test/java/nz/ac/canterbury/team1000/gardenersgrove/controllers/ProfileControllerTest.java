@@ -1,12 +1,13 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controllers;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-
+import nz.ac.canterbury.team1000.gardenersgrove.controller.GlobalModelAttributeProvider;
 import nz.ac.canterbury.team1000.gardenersgrove.controller.ProfileController;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.EditUserForm;
-import nz.ac.canterbury.team1000.gardenersgrove.form.ProfilePictureForm;
+import nz.ac.canterbury.team1000.gardenersgrove.form.PictureForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.UpdatePasswordForm;
+import nz.ac.canterbury.team1000.gardenersgrove.service.VerificationTokenService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,11 +25,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import nz.ac.canterbury.team1000.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
 
 import java.time.LocalDate;
 
-@WebMvcTest(controllers = ProfileController.class)
+@WebMvcTest(controllers = {ProfileController.class, GlobalModelAttributeProvider.class})
 @AutoConfigureMockMvc
 @WithMockUser
 public class ProfileControllerTest {
@@ -40,14 +42,20 @@ public class ProfileControllerTest {
     private UserService userService;
 
     @MockBean
+    private VerificationTokenService verificationTokenService;
+
+    @MockBean
     private AuthenticationManager authenticationManager;
+
+    @MockBean
+    private GardenService gardenService;
 
     @MockBean
     private PasswordEncoder passwordEncoder;
 
     @Mock
     private User userMock;
-    private ProfilePictureForm profilePictureForm;
+    private PictureForm profilePictureForm;
 
     private EditUserForm editUserForm;
     private UpdatePasswordForm updatePasswordForm;
@@ -63,7 +71,7 @@ public class ProfileControllerTest {
         Mockito.when(userMock.getPassword()).thenReturn("encoded_password");
         Mockito.when(userMock.getPicturePath()).thenReturn("/uploads/example.png");
 
-        profilePictureForm = new ProfilePictureForm();
+        profilePictureForm = new PictureForm();
         profilePictureForm.setPictureFile(new MockMultipartFile("pictureFile", new byte[0]));
 
         editUserForm = new EditUserForm();
@@ -143,7 +151,6 @@ public class ProfileControllerTest {
     public void ProfilePost_WithInvalidFileType_HasFieldErrors() throws Exception {
         profilePictureForm.setPictureFile(new MockMultipartFile(
                 "pictureFile", "newPfp.webp", "image/webp", "file contents".getBytes()));
-
         mockMvc.perform(MockMvcRequestBuilders.post("/profile").with(csrf())
                         .flashAttr("profilePictureForm", profilePictureForm))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -190,7 +197,8 @@ public class ProfileControllerTest {
                 .andExpect(MockMvcResultMatchers.model().attribute("email", userMock.getEmail()))
                 .andExpect(MockMvcResultMatchers.model().attribute("dob", userMock.getDateOfBirthString()))
                 .andExpect(MockMvcResultMatchers.model().attribute("picturePath", userMock.getPicturePath()));
-        Mockito.verify(userService).getLoggedInUser();
+        // This is called twice because of the global model attribute provider
+        Mockito.verify(userService, Mockito.times(2)).getLoggedInUser();
     }
 
     @Test
@@ -480,7 +488,8 @@ public class ProfileControllerTest {
         Assertions.assertEquals(userMock.getLname() == null || userMock.getLname().isEmpty(), modelEditUserForm.getNoSurnameCheckBox());
         Assertions.assertEquals(userMock.getDateOfBirthString(), modelEditUserForm.getDob());
         Assertions.assertEquals(userMock.getPicturePath(), modelEditUserForm.getPicturePath());
-        Mockito.verify(userService).getLoggedInUser();
+        // This is called twice because of the global model attribute provider
+        Mockito.verify(userService, Mockito.times(2)).getLoggedInUser();
     }
 
     @Test

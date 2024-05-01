@@ -4,6 +4,7 @@ import nz.ac.canterbury.team1000.gardenersgrove.entity.Plant;
 import org.springframework.validation.BindingResult;
 
 import java.time.LocalDate;
+import org.springframework.web.multipart.MultipartFile;
 
 import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.*;
 
@@ -12,6 +13,8 @@ public class PlantForm {
     protected String plantCount;
     protected String description;
     protected String plantedOnDate;
+    protected String picturePath;
+    protected MultipartFile pictureFile;
 
     // Somehow this is implicitly set by Spring MVC. Despite the setter appearing uncalled, it is in the background.
     protected Long gardenId;
@@ -55,6 +58,21 @@ public class PlantForm {
     public void setGardenId(Long gardenId) {
         this.gardenId = gardenId;
     }
+    public String getPicturePath() {
+        return picturePath;
+    }
+
+    public void setPicturePath(String picturePath) {
+        this.picturePath = picturePath;
+    }
+
+    public MultipartFile getPictureFile() {
+        return pictureFile;
+    }
+
+    public void setPictureFile(MultipartFile pictureFile) {
+        this.pictureFile = pictureFile;
+    }
 
     /**
      * Generates a Plant object with the values from the form.
@@ -66,8 +84,23 @@ public class PlantForm {
                 this.plantCount,
                 this.description,
                 this.plantedOnDate,
+                this.picturePath,
                 this.gardenId);
     }
+
+    /**
+     * Updates an existing Plant object with the values from the form.
+     * 
+     * @param plant the Plant object to update
+     */
+    public void updatePlant(Plant plant) {
+        plant.setName(this.name);
+        plant.setPlantCount(this.plantCount);
+        plant.setDescription(this.description);
+        plant.setPlantedOnDate(this.plantedOnDate);
+    }
+
+    
 
     /**
      * Validates the 'New Plant' form data and adds validation errors to the BindingResult.
@@ -112,6 +145,15 @@ public class PlantForm {
                 errors.add("plantedOnDate", "Date cannot be in the future", createPlantForm.getPlantedOnDate());
             }
         }
+
+        // Validate image
+        if (!createPlantForm.getPictureFile().isEmpty()) {
+            if (checkImageWrongType(createPlantForm.getPictureFile())) {
+                errors.add("pictureFile", "Image must be of type png, jpg or svg", null);
+            } else if (checkImageTooBig(createPlantForm.getPictureFile())) {
+                errors.add("pictureFile", "Image must be less than 10MB", null);
+            }
+        }
     }
 
     /**
@@ -137,5 +179,21 @@ public class PlantForm {
         plantForm.setGardenId(plant.getGardenId());
 
         return plantForm;
+    }
+
+    /**
+     * Returns a string representation of the PlantForm object.
+     * 
+     * @return a string representation of the PlantForm object.
+     */
+    @Override
+    public String toString() {
+        return "PlantForm{" +
+                "name='" + name + '\'' +
+                ", plantCount='" + plantCount + '\'' +
+                ", description='" + description + '\'' +
+                ", plantedOnDate='" + plantedOnDate + '\'' +
+                ", gardenId=" + gardenId +
+                '}';
     }
 }

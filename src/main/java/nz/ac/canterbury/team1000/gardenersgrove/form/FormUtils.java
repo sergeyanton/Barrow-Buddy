@@ -95,6 +95,18 @@ public class FormUtils {
     }
 
     /**
+     * Checks if the given string is less than the under length.
+     *
+     * @param string    the string to check
+     * @param underLength the maximum length allowed
+     * @return true if the string is less than the under length, false otherwise
+     */
+    public static boolean checkUnderLength(String string, Integer underLength) {
+        return string.length() < underLength;
+    }
+
+
+    /**
      * Checks if the given string represents a double bigger than the maximum integer value in java.
      * NOTE: Returns false if the string doesn't represent a valid double. Only call this method with
      * valid strings.
@@ -213,6 +225,27 @@ public class FormUtils {
             return false;
         } catch (NumberFormatException e) {
             // make sure we fail if the string is not a valid integer
+            return true;
+        }
+    }
+
+    /**
+     * Checks if a double fits within the specified range.
+     * NOTE: Returns true for blank or invalid strings. Should not be used to check for invalid doubles.
+     *
+     * @param string the string to check
+     * @param min the minimum value allowed, or null if there is no minimum
+     * @param max the maximum value allowed, or null if there is no maximum
+     * @return true if the double is outside the specified range, false otherwise
+     */
+    public static boolean checkDoubleOutsideRange(String string, Double min, Double max) {
+        try {
+            double value = Double.parseDouble(string.replace(",", "."));
+            if (min != null && value < min) return true;
+            if (max != null && value > max) return true;
+            return false;
+        } catch (NumberFormatException e) {
+            // make sure we fail if the string is not a valid double
             return true;
         }
     }

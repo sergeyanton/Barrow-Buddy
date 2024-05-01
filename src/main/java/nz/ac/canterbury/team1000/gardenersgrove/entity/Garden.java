@@ -28,6 +28,7 @@ public class Garden {
     private Double size;
 
     @ManyToOne
+    @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 
     /**

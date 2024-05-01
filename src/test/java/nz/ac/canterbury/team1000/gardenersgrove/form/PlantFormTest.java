@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.validation.BindingResult;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Plant;
 
@@ -26,6 +27,7 @@ class PlantFormTest {
         plantForm.setDescription("Smells nice");
         plantForm.setPlantedOnDate("25/12/2000");
         plantForm.setGardenId(1L);
+        plantForm.setPictureFile(new MockMultipartFile("pictureFile", new byte[0]));
 
         bindingResult = Mockito.mock(BindingResult.class);
         Mockito.when(bindingResult.hasErrors()).thenReturn(false);
@@ -200,7 +202,7 @@ class PlantFormTest {
 
     @Test
     void fromPlant_ValidPlant_ReturnsForm() {
-        Plant plant = new Plant("Poppy", 5, "Red", LocalDate.of(2024, 04, 26), 1L);
+        Plant plant = new Plant("Poppy", 5, "Red", LocalDate.of(2024, 04, 26), "/images/defaultPlantPic.png", 1L);
         PlantForm form = PlantForm.fromPlant(plant);
         assertEquals("Poppy", form.getName());
         assertEquals("5", form.getPlantCount());
@@ -211,12 +213,28 @@ class PlantFormTest {
 
     @Test
     void fromPlant_ValidPlantWithNulls_ReturnsForm() {
-        Plant plant = new Plant("Poppy", null, null, LocalDate.of(2024, 04, 26), 1L);
+        Plant plant = new Plant("Poppy", null, null, LocalDate.of(2024, 04, 26), "/images/defaultPlantPic.png", 1L);
         PlantForm form = PlantForm.fromPlant(plant);
         assertEquals("Poppy", form.getName());
         assertTrue(form.getPlantCount().isBlank());
         assertTrue(form.getDescription().isBlank());
         assertEquals("26/04/2024", form.getPlantedOnDate());
         assertEquals(1L, form.getGardenId());
+    }
+
+    @Test
+    void updatePlant_WithValidData_UpdatesPlant() {
+        Plant plant = new Plant("Poppy", 5, "Red", LocalDate.of(2024, 04, 26), "/images/defaultPlantPic.png", 1L);
+        plantForm.setName("Violet");
+        plantForm.setPlantCount("3");
+        plantForm.setDescription("Smells nice");
+        plantForm.setPlantedOnDate("25/12/2000");
+        plantForm.setGardenId(1L);
+        plantForm.updatePlant(plant);
+        assertEquals("Violet", plant.getName());
+        assertEquals(3, plant.getPlantCount());
+        assertEquals("Smells nice", plant.getDescription());
+        assertEquals(LocalDate.of(2000, 12, 25), plant.getPlantedOnDate());
+        assertEquals(1L, plant.getGardenId());
     }
 }
