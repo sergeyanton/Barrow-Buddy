@@ -6,9 +6,11 @@ import java.util.Objects;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import nz.ac.canterbury.team1000.gardenersgrove.entity.VerificationToken;
 import nz.ac.canterbury.team1000.gardenersgrove.form.GardenForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PictureForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PlantForm;
+import nz.ac.canterbury.team1000.gardenersgrove.service.VerificationTokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -38,6 +40,7 @@ public class GardensController {
     private final GardenService gardenService;
     private final PlantService plantService;
     private final UserService userService;
+    private final VerificationTokenService verificationTokenService;
 
 
     //TODO make a controller dedicated to uploading files.
@@ -45,10 +48,11 @@ public class GardensController {
 
     
     public GardensController(GardenService gardenService, PlantService plantService,
-                                 UserService userService) {
+                                 UserService userService, VerificationTokenService verificationTokenService) {
         this.gardenService = gardenService;
         this.plantService = plantService;
         this.userService = userService;
+        this.verificationTokenService = verificationTokenService;
     }
 
     /**
@@ -159,6 +163,10 @@ public class GardensController {
     public String viewGardens(Model model) {
         logger.info("GET /gardens");
         User loggedInUser = userService.getLoggedInUser();
+        VerificationToken token = verificationTokenService.getVerificationTokenByUserId(loggedInUser.getId());
+        if (token != null && !token.isVerified()) {
+            return "redirect:/landing";
+        }
         model.addAttribute("gardens", gardenService.getUserGardens(loggedInUser.getId()));
         return "pages/gardensPage";
     }
@@ -311,13 +319,14 @@ public class GardensController {
      */
     @GetMapping("/gardens/{gardenId}/plants/create")
     public String gardenCreatePlantGet(@PathVariable("gardenId") Long gardenId,
-            @ModelAttribute("createPlantForm") PlantForm createPlantForm) {
+            @ModelAttribute("createPlantForm") PlantForm createPlantForm, Model model) {
         logger.info("GET /gardens/" + gardenId + "/plants/create");
-        tryToAccessGarden(gardenId);
+
+        Garden existingGarden = tryToAccessGarden(gardenId);
+        createPlantForm.setPicturePath("/images/defaultPlantPic.png");
+        model.addAttribute("garden", existingGarden);
         return "pages/createPlantPage";
     }
-
-    // TODO handle when the gardenId is not for an existing garden (.getGardenById)
 
     /**
      * Handles POST requests from the /gardens/{gardenId}/plants/create endpoint.
@@ -335,13 +344,31 @@ public class GardensController {
     public String gardenCreatePlantPost(HttpServletRequest request,
             @ModelAttribute("createPlantForm") PlantForm createPlantForm,
             BindingResult bindingResult,
-            @PathVariable("gardenId") Long gardenId) {
+            @PathVariable("gardenId") Long gardenId, Model model) throws IOException{
         logger.info("POST /gardens/" + gardenId + "/plants/create");
 
-        tryToAccessGarden(gardenId);
+        Garden existingGarden = tryToAccessGarden(gardenId);
+        model.addAttribute("garden", existingGarden);
 
         PlantForm.validate(createPlantForm, bindingResult);
+
+        if (!createPlantForm.getPictureFile().isEmpty() && !bindingResult.hasFieldErrors("pictureFile")) {
+            Path uploadDirectoryPath = Paths.get(UPLOAD_DIRECTORY);
+            if (!Files.exists(uploadDirectoryPath)) {
+                try {
+                    Files.createDirectories(uploadDirectoryPath);
+                } catch (IOException e) {
+                    throw new IOException("Failed to create upload directory", e);
+                }
+            }
+            Path filePath = uploadDirectoryPath.resolve(createPlantForm.getPictureFile().getOriginalFilename());
+            Files.write(filePath, createPlantForm.getPictureFile().getBytes());
+            createPlantForm.setPicturePath("/uploads/" + createPlantForm.getPictureFile().getOriginalFilename());
+        }
+
+
         if (bindingResult.hasErrors()) {
+            if (bindingResult.hasFieldErrors("pictureFile")) createPlantForm.setPicturePath("/images/defaultPlantPic.png");
             return "pages/createPlantPage";
         }
 
@@ -416,6 +443,9 @@ public class GardensController {
             return "pages/editPlantPage";
         }
 
-        return "pages/editPlantPage";
+        editPlantForm.updatePlant(existingPlant);
+        plantService.updatePlant(existingPlant);
+
+        return "redirect:/gardens/" + gardenId;
     }
 }

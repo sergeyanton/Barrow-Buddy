@@ -86,6 +86,7 @@ public class PlantsControllerTest {
         plantForm.setDescription(plantMock.getDescription());
         plantForm.setPlantedOnDate(plantMock.getPlantedOnDateString());
         plantForm.setGardenId(plantMock.getGardenId());
+        plantForm.setPictureFile(new MockMultipartFile("pictureFile", new byte[0]));
 
         plantPictureForm = new PictureForm();
         plantPictureForm.setPictureFile(new MockMultipartFile("pictureFile", new byte[0]));

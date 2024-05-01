@@ -38,7 +38,6 @@ import java.time.LocalDateTime;
 public class AccountController {
     final Logger logger = LoggerFactory.getLogger(AccountController.class);
     private final UserService userService;
-
     private final VerificationTokenService verificationTokenService;
     private final ResetTokenService resetTokenService;
     private final EmailService emailService;
@@ -225,6 +224,11 @@ public class AccountController {
         logger.info("POST /login");
         if (userService.isSignedIn()) {
             return "redirect:/home";
+        }
+
+        User currentUser = userService.getLoggedInUser();
+        if (currentUser != null && !verificationTokenService.getVerificationTokenByUserId(currentUser.getId()).isVerified()) {
+             verificationTokenService.updateVerifiedByUserId(currentUser.getId());
         }
 
         LoginForm.validate(loginForm, bindingResult);

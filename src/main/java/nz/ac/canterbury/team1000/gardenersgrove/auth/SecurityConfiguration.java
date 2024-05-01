@@ -64,8 +64,8 @@ public class SecurityConfiguration {
                         // Allow "/", "/register", and "/login" to anyone (permitAll) - Also allow
                         // access to
                         // stylesheets
-                        .requestMatchers("/", "/gardens/**", "/hello", "/register", "/login", "/forgotPassword",
-                                "/resetPassword", "/css/**", "/images/**")
+                        .requestMatchers("/", "/hello", "/register", "/login", "/forgotPassword",
+                            "/resetPassword", "/css/**", "/images/**", "/register/verification")
                         .permitAll()
                         // Only allow admins to reach the "/admin" page
                         .requestMatchers("/admin")

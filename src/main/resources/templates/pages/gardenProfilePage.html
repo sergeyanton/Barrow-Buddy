@@ -42,9 +42,9 @@
                                     <img class="plant-picture" th:id="'plantImage' + ${plant.id}"
                                          th:src="${plant.picturePath}"
                                          alt="Plant Picture">
+                                    <label th:id="'pictureFileLabel' + ${plant.id}" class="file-upload-plus-button" th:for="'pictureFile' + ${plant.id}">+</label>
                                 </div>
                                 <form th:id="'pictureForm' + ${plant.id}" th:action="@{'/gardens/' + ${garden.id} + '/plants/' + ${plant.id}}" th:object="${plantPictureForm}" method="post" enctype="multipart/form-data">
-                                    <label th:id="'pictureFileLabel' + ${plant.id}" class="file-upload-plus-button" th:for="'pictureFile' + ${plant.id}">+</label>
                                     <input type="file" th:field="*{pictureFile}" th:id="'pictureFile' + ${plant.id}" th:attr="onchange='validateImage(this, ' + ${plant.id} + ')'" accept="image/png, image/jpeg, image/svg+xml">
                                 </form>
                             </div>
