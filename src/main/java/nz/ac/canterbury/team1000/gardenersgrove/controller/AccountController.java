@@ -2,10 +2,14 @@ package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
+import nz.ac.canterbury.team1000.gardenersgrove.entity.VerificationToken;
 import nz.ac.canterbury.team1000.gardenersgrove.form.ForgotPasswordForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.LoginForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.RegistrationForm;
+import nz.ac.canterbury.team1000.gardenersgrove.form.VerificationTokenForm;
+import nz.ac.canterbury.team1000.gardenersgrove.service.EmailService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
+import nz.ac.canterbury.team1000.gardenersgrove.service.VerificationTokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +26,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class AccountController {
     final Logger logger = LoggerFactory.getLogger(AccountController.class);
     private final UserService userService;
+    private final VerificationTokenService verificationTokenService;
+    private final EmailService emailService;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -29,9 +35,13 @@ public class AccountController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public AccountController(UserService userService) {
+    @Autowired
+    public AccountController(UserService userService, VerificationTokenService verificationTokenService, EmailService emailService) {
         this.userService = userService;
+        this.verificationTokenService = verificationTokenService;
+        this.emailService = emailService;
     }
+
 
     /**
      * Gets the thymeleaf page representing the /register page Will only work if the user is not
@@ -40,13 +50,13 @@ public class AccountController {
      * @param registrationForm the RegistrationForm object representing the user's registration data,
      *                         useful for seeing erroneous inputs of a failed POST request
      * @return the view to display:
-     *         - If the user is signed in, redirect to the home page
-     *         - Else, go to the registration page, where the user can create a new account
+     * - If the user is signed in, redirect to the home page
+     * - Else, go to the registration page, where the user can create a new account
      */
     @GetMapping("/register")
     public String getRegisterPage(@ModelAttribute("registrationForm") RegistrationForm registrationForm) {
         logger.info("GET /register");
-        return userService.isSignedIn() ? "redirect:/" : "pages/registrationPage";
+        return "pages/registrationPage";
     }
 
     @GetMapping("/forgotPassword")
@@ -60,12 +70,12 @@ public class AccountController {
      * Handles POST requests to the /register endpoint.
      * Handles the registration process for new users.
      *
-     * @param request           the HttpServletRequest object containing the request information
-     * @param registrationForm  the RegistrationForm object representing the user's registration data
-     * @param bindingResult     the BindingResult object for validation errors
+     * @param request          the HttpServletRequest object containing the request information
+     * @param registrationForm the RegistrationForm object representing the user's registration data
+     * @param bindingResult    the BindingResult object for validation errors
      * @return the view to display after registration:
-     *         - If there are validation errors, returns the registration page to display errors.
-     *         - If registration is successful, redirects to the user's profile page.
+     * - If there are validation errors, returns the registration page to display errors.
+     * - If registration is successful, redirects to the registrationVerification page to enter the verification token.
      */
     @PostMapping("/register")
     public String register(HttpServletRequest request,
@@ -86,29 +96,92 @@ public class AccountController {
         newUser.grantAuthority("ROLE_USER");
         userService.registerUser(newUser);
         userService.authenticateUser(authenticationManager, newUser, request);
-
-        return "redirect:/profile";
+        sendVerificationEmail(newUser);
+        return "redirect:/register/verification";
     }
 
+    @GetMapping("/register/verification")
+    public String getRegisterVerificationPage(@ModelAttribute("verificationTokenForm") VerificationTokenForm verificationTokenForm) {
+        logger.info("GET /register/verification");
+        return "pages/verificationPage";
+    }
 
     /**
-     * Gets the thymeleaf page representing the /login page Will only work if the user is not logged
-     * in, otherwise it will redirect to the home page
-     * 
-     * @return thymeleaf loginPage
+     * Handles POST requests to the /register/verification endpoint.
+     * Handles the registration verification process for new users.
+     *
+     * @param verificationTokenForm the VerificationTokenForm object representing the user's verification token data
+     * @param bindingResult         the BindingResult object for validation errors
+     * @return the view to display after registration:
+     * - Either if there are validation errors or not, returns the registrationVerification page to display errors/ not.
+     */
+    @PostMapping("/register/verification")
+    public String registerVerification(@ModelAttribute("verificationTokenForm") VerificationTokenForm verificationTokenForm, BindingResult bindingResult) {
+        VerificationTokenForm.validate(verificationTokenForm, bindingResult);
+        if (userService.getLoggedInUser() == null) {
+            bindingResult.addError(new FieldError("verificationTokenForm", "verificationToken", verificationTokenForm.getVerificationToken(), false, null, null, "Account expired, please register again"));
+            return "pages/verificationPage";
+        }
+        User user = userService.findEmail(userService.getLoggedInUser().getEmail());
+        if (user == null || (!bindingResult.hasFieldErrors("verificationToken") && !validateToken(verificationTokenForm.getVerificationToken(), user.getId()))) {
+            bindingResult.addError(new FieldError("verificationTokenForm", "verificationToken", verificationTokenForm.getVerificationToken(), false, null, null, "Signup code invalid"));
+        }
+
+        if (bindingResult.hasErrors()) {
+            return "pages/verificationPage";
+        }
+        // verificationTokenService.updateVerifiedByUserId(user.getId());
+
+        return "redirect:/login";
+    }
+
+    /**
+     * Validates the user's inputted token against the stored token in the database.
+     *
+     * @param userInputToken the user's inputted token as a string
+     * @param userId         the user's id
+     * @return boolean value whether the token is verified(true) or not(false)
+     */
+    private boolean validateToken(String userInputToken, long userId) {
+        if (verificationTokenService.getVerificationTokenByUserId(userId) == null) {
+            return false;
+        }
+        return passwordEncoder.matches(userInputToken, verificationTokenService.getVerificationTokenByUserId(userId).getHashedToken());
+    }
+
+    /**
+     * Sends a verification email to the user.
+     *
+     * @param user the user to send the verification email to
+     */
+    private void sendVerificationEmail(User user) {
+        logger.info("Sending verification email to " + user.getEmail());
+        VerificationToken token = new VerificationToken(user.getId(), passwordEncoder);
+        verificationTokenService.addVerificationToken(token);
+        String body = "Please verify your account by copying the following code into the prompted field: \n\n" + token.getPlainToken()
+                + "\n\nIf this was not you, you can ignore this message and the account will be deleted after 10 minutes";
+        emailService.sendSimpleMessage(user.getEmail(), "Gardeners Grove Account Verification", body);
+    }
+
+    /**
+     * Handles GET requests to the /login endpoint.
+     * Gets the login page.
+     * If the user has not verified their account, they are redirected to verification page
+     * @param loginForm the LoginForm object representing the user's login data
      */
     @GetMapping("/login")
     public String getLoginPage(@ModelAttribute("loginForm") LoginForm loginForm) {
         logger.info("GET /login");
-        return userService.isSignedIn() ? "redirect:/" : "pages/loginPage";
+        //TODO if user has been redirected from verification page then display message “Your account has been activated, please log in”
+        return "pages/loginPage";
     }
 
     /**
      * Handles POST requests to the /login endpoint.
      * Logs in the user, or shows an error message if the login details are invalid.
-     * 
-     * @param request the HttpServletRequest object containing the request information
-     * @param loginForm the LoginForm object representing the user's login data
+     *
+     * @param request       the HttpServletRequest object containing the request information
+     * @param loginForm     the LoginForm object representing the user's login data
      * @param bindingResult the BindingResult object for validation errors
      * @return a String representing the view to display after login:
      *         - If there are validation errors, returns the login page to display errors.
@@ -119,7 +192,12 @@ public class AccountController {
                         @ModelAttribute("loginForm") LoginForm loginForm,
                         BindingResult bindingResult) {
         if (userService.isSignedIn()) {
-            return "redirect:/";
+            return "redirect:/home";
+        }
+
+        User currentUser = userService.getLoggedInUser();
+        if (currentUser != null && !verificationTokenService.getVerificationTokenByUserId(currentUser.getId()).isVerified()) {
+             verificationTokenService.updateVerifiedByUserId(currentUser.getId());
         }
 
         LoginForm.validate(loginForm, bindingResult);
@@ -143,8 +221,7 @@ public class AccountController {
         // log in the user
         User validUser = userService.findEmail(loginForm.getEmail());
         userService.authenticateUser(authenticationManager, validUser, request);
-
-        return "redirect:/";
+        return "redirect:/home";
     }
 
     /**

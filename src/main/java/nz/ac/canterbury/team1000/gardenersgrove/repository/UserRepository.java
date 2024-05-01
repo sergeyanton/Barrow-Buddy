@@ -3,6 +3,7 @@ package nz.ac.canterbury.team1000.gardenersgrove.repository;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
+
 import java.util.Optional;
 
 /**
@@ -16,11 +17,14 @@ public interface UserRepository extends CrudRepository<User, Long> {
 
     Optional<User> findByEmail(String email);
 
+    void deleteById(Long userId);
+
+
     /**
      * Updates the user with the given email to the new user details.
-     * 
+     *
      * @param oldEmail the email of the user to update
-     * @param newUser the new user details
+     * @param newUser  the new user details
      */
     default void updateUserByEmail(String oldEmail, User newUser) {
         Optional<User> optionalUser = findByEmail(oldEmail);

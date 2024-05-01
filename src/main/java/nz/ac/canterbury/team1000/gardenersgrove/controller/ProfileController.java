@@ -2,11 +2,13 @@ package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
+import nz.ac.canterbury.team1000.gardenersgrove.entity.VerificationToken;
 import nz.ac.canterbury.team1000.gardenersgrove.form.EditUserForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PictureForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.UpdatePasswordForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
 
+import nz.ac.canterbury.team1000.gardenersgrove.service.VerificationTokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +31,12 @@ import java.nio.file.Paths;
 
 @Controller
 public class ProfileController {
-    public ProfileController(UserService userService) {
+    private final UserService userService;
+    private final VerificationTokenService verificationTokenService;
+    @Autowired
+    public ProfileController(UserService userService, VerificationTokenService verificationTokenService) {
         this.userService = userService;
+        this.verificationTokenService = verificationTokenService;
     }
 
     @Autowired
@@ -38,7 +44,6 @@ public class ProfileController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-    private final UserService userService;
 
     private final static String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/uploads";
     final Logger logger = LoggerFactory.getLogger(ProfileController.class);
@@ -53,6 +58,10 @@ public class ProfileController {
     public String getProfilePage(Model model, @ModelAttribute("profilePictureForm") PictureForm profilePictureForm) {
         logger.info("GET /profile");
         User currentUser = userService.getLoggedInUser();
+        VerificationToken token = verificationTokenService.getVerificationTokenByUserId(currentUser.getId());
+        if (token != null && !token.isVerified()) {
+            return "redirect:/landing";
+        }
 
         model.addAttribute("fName", currentUser.getFname());
         model.addAttribute("lName", currentUser.getLname());

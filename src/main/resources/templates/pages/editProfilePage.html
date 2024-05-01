@@ -8,7 +8,7 @@
     <main>
         <div class="basic">
             <h1>Edit My Profile</h1>
-            <form class="upload-image" th:action="@{/editProfile}" method="post" th:object="${editUserForm}" enctype="multipart/form-data">
+            <form th:action="@{/editProfile}" method="post" th:object="${editUserForm}" enctype="multipart/form-data">
                 <div class="profile-picture-wrapper">
                 <input th:field="*{picturePath}" type="hidden"/>
                 <img class="profile-picture" id="profileImage"

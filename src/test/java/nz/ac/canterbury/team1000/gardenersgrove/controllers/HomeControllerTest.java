@@ -3,6 +3,7 @@ package nz.ac.canterbury.team1000.gardenersgrove.controllers;
 import nz.ac.canterbury.team1000.gardenersgrove.controller.GardensController;
 import nz.ac.canterbury.team1000.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.PlantService;
+import nz.ac.canterbury.team1000.gardenersgrove.service.VerificationTokenService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
@@ -31,6 +32,9 @@ class HomeControllerTest {
 
     @MockBean
     private UserService userService;
+
+    @MockBean
+    private VerificationTokenService verificationTokenService;
 
     @MockBean
     private AuthenticationManager authenticationManager;
