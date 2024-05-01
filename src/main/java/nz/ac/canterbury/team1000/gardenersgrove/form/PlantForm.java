@@ -148,7 +148,7 @@ public class PlantForm {
         }
 
         // Validate image
-        if (!createPlantForm.getPictureFile().isEmpty()) {
+        if (createPlantForm.getPictureFile() != null && !createPlantForm.getPictureFile().isEmpty()) {
             if (checkImageWrongType(createPlantForm.getPictureFile())) {
                 errors.add("pictureFile", "Image must be of type png, jpg or svg", null);
             } else if (checkImageTooBig(createPlantForm.getPictureFile())) {
