@@ -24,6 +24,7 @@ import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.PlantService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
+import nz.ac.canterbury.team1000.gardenersgrove.service.VerificationTokenService;
 
 @WebMvcTest(controllers = GardensController.class)
 @AutoConfigureMockMvc
@@ -42,6 +43,9 @@ public class GardenControllerAuthTest {
 
     @MockBean
     private PlantService plantService;
+
+    @MockBean
+    private VerificationTokenService verificationTokenService;
 
     @Mock
     private Garden gardenMock;
