@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head(title='Gardener\'s Grove - Verification')}"></head>
+
+
+<body>
+    <main class="centred">
+        <div class="basic">
+            <h1>Email Verification</h1>
+            <form th:action="@{/register/verification}" method="post" th:object="${verificationTokenForm}">
+                <p>We have emailed you with a 6-digit sign-up code, please enter it below</p>
+                <br/>
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='verificationToken', label='Signup Code: ', placeholder='XXXXXX')}"/>
+                <br/>
+                <div class="cancel-submit-wrapper">
+                    <a class="cancel" th:href="@{/landing}">Cancel</a>
+                    <button class="next" type="submit">Verify Email</button>
+                </div>
+            </form>
+        </div>
+    </main>
+</body>
+
+</html>
