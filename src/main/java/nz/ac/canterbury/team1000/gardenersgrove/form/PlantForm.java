@@ -155,4 +155,20 @@ public class PlantForm {
 
         return plantForm;
     }
+
+    /**
+     * Returns a string representation of the PlantForm object.
+     * 
+     * @return a string representation of the PlantForm object.
+     */
+    @Override
+    public String toString() {
+        return "PlantForm{" +
+                "name='" + name + '\'' +
+                ", plantCount='" + plantCount + '\'' +
+                ", description='" + description + '\'' +
+                ", plantedOnDate='" + plantedOnDate + '\'' +
+                ", gardenId=" + gardenId +
+                '}';
+    }
 }
