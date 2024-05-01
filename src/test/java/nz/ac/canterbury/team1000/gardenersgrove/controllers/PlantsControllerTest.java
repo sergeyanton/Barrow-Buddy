@@ -23,6 +23,7 @@ import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.PlantService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
+import nz.ac.canterbury.team1000.gardenersgrove.service.VerificationTokenService;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -43,6 +44,8 @@ public class PlantsControllerTest {
     @MockBean
     private AuthenticationManager authenticationManager;
     
+    @MockBean
+    private VerificationTokenService verificationTokenService;
 
     @MockBean
     private GardenService gardenService;
@@ -86,6 +89,7 @@ public class PlantsControllerTest {
         plantForm.setDescription(plantMock.getDescription());
         plantForm.setPlantedOnDate(plantMock.getPlantedOnDateString());
         plantForm.setGardenId(plantMock.getGardenId());
+        plantForm.setPictureFile(new MockMultipartFile("pictureFile", new byte[0]));
 
         plantPictureForm = new PictureForm();
         plantPictureForm.setPictureFile(new MockMultipartFile("pictureFile", new byte[0]));

@@ -1,4 +1,4 @@
-
+SET MODE MySQL;
 -- Setup a test user with password Password1234!
 INSERT IGNORE INTO tab_user(id, date_of_birth, email, fName, lName, password, picture_path) VALUES (1, '2003-08-19', 'test@example.com', 'Test', 'User', '$2a$10$Ra2OyNaklSi.YcfvGPuN9urUjCT17A9Kmu57zYftXe0ydZpEqbHg.', '/images/default_pic.jpg');
 INSERT IGNORE INTO tab_user(id, date_of_birth, email, fName, lName, password, picture_path) VALUES (2, '2003-08-19', 'user@example.com', 'User', 'Test', '$2a$10$Ra2OyNaklSi.YcfvGPuN9urUjCT17A9Kmu57zYftXe0ydZpEqbHg.', '/images/default_pic.jpg');
