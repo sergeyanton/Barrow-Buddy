@@ -34,13 +34,13 @@ class HomeControllerTest {
     private UserService userService;
 
     @MockBean
-    private VerificationTokenService verificationTokenService;
-
-    @MockBean
     private AuthenticationManager authenticationManager;
 
     @MockBean
     private PlantService plantService;
+
+    @MockBean
+    private VerificationTokenService verificationTokenService;
 
     @Autowired
     private MockMvc mockMvc;

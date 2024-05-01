@@ -47,6 +47,11 @@ public class UserService {
         return user.orElse(null);
     }
 
+    public User getUserById(Long userId) {
+        Optional<User> user = userRepository.findById(userId);
+        return user.orElse(null);
+    }
+
     /**
      * Checks if an email is already in use.
      * 

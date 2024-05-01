@@ -8,6 +8,9 @@
         <div class="basic">
             <h1>Log In</h1>
             <form th:action="@{login}" method="post" th:object="${loginForm}">
+                <div th:if="${errorMessage}" class="error-message">
+                    <p th:text="${errorMessage}"></p>
+                </div>
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='email', label='Email: ', placeholder='jane@doe.nz')}" />
                 <br />
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='password', label='Password: ', placeholder='*******', type='password')}" />
