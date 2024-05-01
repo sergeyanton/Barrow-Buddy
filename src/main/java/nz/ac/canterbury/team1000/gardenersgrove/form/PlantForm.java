@@ -4,6 +4,7 @@ import nz.ac.canterbury.team1000.gardenersgrove.entity.Plant;
 import org.springframework.validation.BindingResult;
 
 import java.time.LocalDate;
+import org.springframework.web.multipart.MultipartFile;
 
 import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.*;
 
@@ -12,8 +13,8 @@ public class PlantForm {
     protected String plantCount;
     protected String description;
     protected String plantedOnDate;
-
-    //TODO protected String picturePath;
+    protected String picturePath;
+    protected MultipartFile pictureFile;
 
     // Somehow this is implicitly set by Spring MVC. Despite the setter appearing uncalled, it is in the background.
     protected Long gardenId;
@@ -57,6 +58,21 @@ public class PlantForm {
     public void setGardenId(Long gardenId) {
         this.gardenId = gardenId;
     }
+    public String getPicturePath() {
+        return picturePath;
+    }
+
+    public void setPicturePath(String picturePath) {
+        this.picturePath = picturePath;
+    }
+
+    public MultipartFile getPictureFile() {
+        return pictureFile;
+    }
+
+    public void setPictureFile(MultipartFile pictureFile) {
+        this.pictureFile = pictureFile;
+    }
 
     /**
      * Generates a Plant object with the values from the form.
@@ -68,7 +84,7 @@ public class PlantForm {
                 this.plantCount,
                 this.description,
                 this.plantedOnDate,
-                "/images/defaultPlantPic.png",
+                this.picturePath,
                 this.gardenId);
     }
 
@@ -113,6 +129,15 @@ public class PlantForm {
                 errors.add("plantedOnDate", "Date is not in valid format, DD/MM/YYYY", createPlantForm.getPlantedOnDate());
             } else if (!checkDateBefore(createPlantForm.getPlantedOnDate(), LocalDate.now().plusDays(1))) {
                 errors.add("plantedOnDate", "Date cannot be in the future", createPlantForm.getPlantedOnDate());
+            }
+        }
+
+        // Validate image
+        if (!createPlantForm.getPictureFile().isEmpty()) {
+            if (checkImageWrongType(createPlantForm.getPictureFile())) {
+                errors.add("pictureFile", "Image must be of type png, jpg or svg", null);
+            } else if (checkImageTooBig(createPlantForm.getPictureFile())) {
+                errors.add("pictureFile", "Image must be less than 10MB", null);
             }
         }
     }

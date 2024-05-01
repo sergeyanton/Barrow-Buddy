@@ -319,13 +319,14 @@ public class GardensController {
      */
     @GetMapping("/gardens/{gardenId}/plants/create")
     public String gardenCreatePlantGet(@PathVariable("gardenId") Long gardenId,
-            @ModelAttribute("createPlantForm") PlantForm createPlantForm) {
+            @ModelAttribute("createPlantForm") PlantForm createPlantForm, Model model) {
         logger.info("GET /gardens/" + gardenId + "/plants/create");
-        tryToAccessGarden(gardenId);
+
+        Garden existingGarden = tryToAccessGarden(gardenId);
+        createPlantForm.setPicturePath("/images/defaultPlantPic.png");
+        model.addAttribute("garden", existingGarden);
         return "pages/createPlantPage";
     }
-
-    // TODO handle when the gardenId is not for an existing garden (.getGardenById)
 
     /**
      * Handles POST requests from the /gardens/{gardenId}/plants/create endpoint.
@@ -343,13 +344,31 @@ public class GardensController {
     public String gardenCreatePlantPost(HttpServletRequest request,
             @ModelAttribute("createPlantForm") PlantForm createPlantForm,
             BindingResult bindingResult,
-            @PathVariable("gardenId") Long gardenId) {
+            @PathVariable("gardenId") Long gardenId, Model model) throws IOException{
         logger.info("POST /gardens/" + gardenId + "/plants/create");
 
-        tryToAccessGarden(gardenId);
+        Garden existingGarden = tryToAccessGarden(gardenId);
+        model.addAttribute("garden", existingGarden);
 
         PlantForm.validate(createPlantForm, bindingResult);
+
+        if (!createPlantForm.getPictureFile().isEmpty() && !bindingResult.hasFieldErrors("pictureFile")) {
+            Path uploadDirectoryPath = Paths.get(UPLOAD_DIRECTORY);
+            if (!Files.exists(uploadDirectoryPath)) {
+                try {
+                    Files.createDirectories(uploadDirectoryPath);
+                } catch (IOException e) {
+                    throw new IOException("Failed to create upload directory", e);
+                }
+            }
+            Path filePath = uploadDirectoryPath.resolve(createPlantForm.getPictureFile().getOriginalFilename());
+            Files.write(filePath, createPlantForm.getPictureFile().getBytes());
+            createPlantForm.setPicturePath("/uploads/" + createPlantForm.getPictureFile().getOriginalFilename());
+        }
+
+
         if (bindingResult.hasErrors()) {
+            if (bindingResult.hasFieldErrors("pictureFile")) createPlantForm.setPicturePath("/images/defaultPlantPic.png");
             return "pages/createPlantPage";
         }
 

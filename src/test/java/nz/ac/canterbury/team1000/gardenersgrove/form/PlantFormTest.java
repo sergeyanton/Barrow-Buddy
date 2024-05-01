@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.validation.BindingResult;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Plant;
 
@@ -26,6 +27,7 @@ class PlantFormTest {
         plantForm.setDescription("Smells nice");
         plantForm.setPlantedOnDate("25/12/2000");
         plantForm.setGardenId(1L);
+        plantForm.setPictureFile(new MockMultipartFile("pictureFile", new byte[0]));
 
         bindingResult = Mockito.mock(BindingResult.class);
         Mockito.when(bindingResult.hasErrors()).thenReturn(false);
