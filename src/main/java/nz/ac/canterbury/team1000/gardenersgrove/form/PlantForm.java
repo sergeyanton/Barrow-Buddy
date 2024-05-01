@@ -147,7 +147,7 @@ public class PlantForm {
         }
 
         // Validate image
-        if (!createPlantForm.getPictureFile().isEmpty()) {
+        if (createPlantForm.getPictureFile() != null && !createPlantForm.getPictureFile().isEmpty()) {
             if (checkImageWrongType(createPlantForm.getPictureFile())) {
                 errors.add("pictureFile", "Image must be of type png, jpg or svg", null);
             } else if (checkImageTooBig(createPlantForm.getPictureFile())) {
@@ -177,6 +177,7 @@ public class PlantForm {
         if (plant.getDescription() != null) plantForm.setDescription(plant.getDescription());
         plantForm.setPlantedOnDate(FormUtils.dateToString(plant.getPlantedOnDate()));
         plantForm.setGardenId(plant.getGardenId());
+        plantForm.setPicturePath(plant.getPicturePath());
 
         return plantForm;
     }
