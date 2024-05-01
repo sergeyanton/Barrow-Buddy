@@ -19,7 +19,7 @@ import java.util.Objects;
 
 @Service
 public class LocationSearchService {
-    private final String API_KEY = "pk.dc3a28922b1f87600c4896d50b3aac8c"; // Store here for now. TODO: environment variable
+    private final String API_KEY = System.getenv("API_KEY");
     private final String URL = "https://api.locationiq.com/v1/autocomplete";
 
     private RestTemplate restTemplate = new RestTemplate();
