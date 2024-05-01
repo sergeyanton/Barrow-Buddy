@@ -37,7 +37,7 @@ public class VerificationTokenCleanup {
         List<VerificationToken> expiredTokens = verificationTokenRepository.findByExpiryDateBefore(LocalDateTime.now());
         logger.info("Found {} expired tokens", expiredTokens.size());
         for (VerificationToken token : expiredTokens) {
-            if (!token.isVerified()) {
+            if (token.isVerified() == false) {
                 userRepository.deleteById(token.getUserId());
             }
         }
