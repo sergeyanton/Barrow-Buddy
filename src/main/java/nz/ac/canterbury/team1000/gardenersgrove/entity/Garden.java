@@ -1,6 +1,8 @@
 package nz.ac.canterbury.team1000.gardenersgrove.entity;
 
 import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Entity class reflecting an entry of name, location, and size of a garden Note the @link{Entity}
@@ -157,6 +159,12 @@ public class Garden {
     }
 
     public String getLocationString() {
-        return address + ", " + suburb + ", " + city + " " + postcode + ", " + country;
+        List<String> fields = new ArrayList<>();
+        if (!address.isEmpty()) fields.add(address);
+        if (!suburb.isEmpty()) fields.add(suburb);
+        if (!city.isEmpty()) fields.add(city);
+        if (!postcode.isEmpty()) fields.add(postcode);
+        if (!country.isEmpty()) fields.add(country);
+        return String.join(", ", fields);
     }
 }
