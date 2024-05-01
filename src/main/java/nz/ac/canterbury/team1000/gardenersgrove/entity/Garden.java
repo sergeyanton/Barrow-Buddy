@@ -166,6 +166,5 @@ public class Garden {
         if (!postcode.isEmpty()) fields.add(postcode);
         if (!country.isEmpty()) fields.add(country);
         return String.join(", ", fields);
-//        return address + ", " + suburb + ", " + city + " " + postcode + ", " + country;
     }
 }
