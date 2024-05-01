@@ -6,9 +6,11 @@ import java.util.Objects;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import nz.ac.canterbury.team1000.gardenersgrove.entity.VerificationToken;
 import nz.ac.canterbury.team1000.gardenersgrove.form.GardenForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PictureForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PlantForm;
+import nz.ac.canterbury.team1000.gardenersgrove.service.VerificationTokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -38,6 +40,7 @@ public class GardensController {
     private final GardenService gardenService;
     private final PlantService plantService;
     private final UserService userService;
+    private final VerificationTokenService verificationTokenService;
 
 
     //TODO make a controller dedicated to uploading files.
@@ -45,10 +48,11 @@ public class GardensController {
 
     
     public GardensController(GardenService gardenService, PlantService plantService,
-                                 UserService userService) {
+                                 UserService userService, VerificationTokenService verificationTokenService) {
         this.gardenService = gardenService;
         this.plantService = plantService;
         this.userService = userService;
+        this.verificationTokenService = verificationTokenService;
     }
 
     /**
@@ -159,6 +163,10 @@ public class GardensController {
     public String viewGardens(Model model) {
         logger.info("GET /gardens");
         User loggedInUser = userService.getLoggedInUser();
+        VerificationToken token = verificationTokenService.getVerificationTokenByUserId(loggedInUser.getId());
+        if (token != null && !token.isVerified()) {
+            return "redirect:/landing";
+        }
         model.addAttribute("gardens", gardenService.getUserGardens(loggedInUser.getId()));
         return "pages/gardensPage";
     }
