@@ -19,8 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,7 +29,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.time.LocalDateTime;
 
 @Controller
@@ -259,7 +257,11 @@ public class AccountController {
 
         resetTokenService.addResetToken(token);
 
-        String url = "http://localhost:8080/resetPassword?token=" + token.getToken();
+        String url = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/resetPassword")
+                .queryParam("token", token.getToken())
+                .toUriString();
+
         String htmlBody = "<p>Please click the below link to reset your password:</p>"
                 + "<a href='" + url + "'>Reset Password Link</a>"
                 + "<p>If this was not you, you can ignore this message and the account will be deleted after 10 minutes.</p>";
