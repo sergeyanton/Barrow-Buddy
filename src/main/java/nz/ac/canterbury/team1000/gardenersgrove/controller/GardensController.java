@@ -441,7 +441,7 @@ public class GardensController {
         model.addAttribute("plant", existingPlant);
         PlantForm.validate(editPlantForm, bindingResult);
 
-        if (!editPlantForm.getPictureFile().isEmpty() && !bindingResult.hasFieldErrors("pictureFile")) {
+        if (editPlantForm.getPictureFile() != null && !editPlantForm.getPictureFile().isEmpty() && !bindingResult.hasFieldErrors("pictureFile")) {
             Path uploadDirectoryPath = Paths.get(UPLOAD_DIRECTORY);
             if (!Files.exists(uploadDirectoryPath)) {
                 try {

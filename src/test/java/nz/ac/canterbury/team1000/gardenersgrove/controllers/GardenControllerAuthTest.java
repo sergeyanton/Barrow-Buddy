@@ -80,7 +80,7 @@ public class GardenControllerAuthTest {
         Mockito.when(plantMock.getPlantCount()).thenReturn(1);
         Mockito.when(plantMock.getDescription()).thenReturn("Test plant description...");
         Mockito.when(plantMock.getPlantedOnDate()).thenReturn(LocalDate.of(1, 1, 1));
-        Mockito.when(plantMock.getDescription()).thenReturn("getPicturePath");
+        Mockito.when(plantMock.getPicturePath()).thenReturn("path/of/picture");
 
         Mockito.when(userService.getLoggedInUser()).thenReturn(loggedInUser);
         Mockito.when(gardenService.getGardenById(1L)).thenReturn(gardenMock);
