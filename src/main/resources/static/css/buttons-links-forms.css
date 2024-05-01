@@ -17,6 +17,11 @@ form {
     flex-wrap: wrap;
 }
 
+.form-element .dropdown {
+    display: flex;
+    flex-direction: column;
+}
+
 .form-element.no-label div{
     justify-content: center;
 }
