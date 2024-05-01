@@ -4,6 +4,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 
 import java.time.LocalDate;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Plant;
+import nz.ac.canterbury.team1000.gardenersgrove.form.PlantForm;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -185,6 +186,16 @@ public class GardenControllerAuthTest {
     void testEditPlantPost_WithUnauthenticatedUser_ReturnsUnauthorizedRequest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/plants/1/edit").with(csrf()))
             .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser
+    void testEditPlantPost_WithAuthenticatedUser_ReturnsOkRequest() throws Exception {
+        PlantForm plantForm = PlantForm.fromPlant(plantMock);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/plants/1/edit")
+            .with(csrf()).flashAttr("editPlantForm", plantForm))
+            .andExpect(MockMvcResultMatchers.status().is3xxRedirection());
     }
 
     @Test
