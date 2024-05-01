@@ -391,18 +391,21 @@ public class GardensController {
      *
      * @param gardenId Id of the garden that this plant belongs to
      * @param plantId Id of the plant to edit
+     * @param editPlantForm the PlantForm object representing the plant's details, useful for
+     *                      seeing erroneous inputs of a failed POST request
      * @param model the model to be used by thymeleaf
      * @return thymeleaf pages/editPlantPage
      */
     @GetMapping("/gardens/{gardenId}/plants/{plantId}/edit")
     public String gardenEditPlant(@PathVariable("gardenId") Long gardenId,
             @PathVariable("plantId") Long plantId,
+            @ModelAttribute("editPlantForm") PlantForm editPlantForm,
             Model model){
-
         logger.info("GET /gardens/" + gardenId + "/plants/" + plantId + "/edit");
-
         Garden existingGarden = tryToAccessGarden(gardenId);
         Plant existingPlant = tryToAccessPlant(plantId);
+        String plantPicturePath = plantService.getPlantById(plantId).getPicturePath();
+        editPlantForm.setPicturePath(plantPicturePath);
 
         model.addAttribute("garden", existingGarden);
         model.addAttribute("plant", existingPlant);
@@ -428,24 +431,38 @@ public class GardensController {
             @PathVariable("gardenId") Long gardenId,
             @PathVariable("plantId") Long plantId,
             @ModelAttribute("editPlantForm") PlantForm editPlantForm,
-            BindingResult bindingResult, Model model) {
+            BindingResult bindingResult, Model model) throws IOException{
 
         logger.info("POST /gardens/" + gardenId + "/plants/" + plantId + "/edit");
 
         Garden existingGarden = tryToAccessGarden(gardenId);
         Plant existingPlant = tryToAccessPlant(plantId);
-
         model.addAttribute("garden", existingGarden);
         model.addAttribute("plant", existingPlant);
-
         PlantForm.validate(editPlantForm, bindingResult);
+
+        if (!editPlantForm.getPictureFile().isEmpty() && !bindingResult.hasFieldErrors("pictureFile")) {
+            Path uploadDirectoryPath = Paths.get(UPLOAD_DIRECTORY);
+            if (!Files.exists(uploadDirectoryPath)) {
+                try {
+                    Files.createDirectories(uploadDirectoryPath);
+                } catch (IOException e) {
+                    throw new IOException("Failed to create upload directory", e);
+                }
+            }
+            Path filePath = uploadDirectoryPath.resolve(editPlantForm.getPictureFile().getOriginalFilename());
+            Files.write(filePath, editPlantForm.getPictureFile().getBytes());
+            editPlantForm.setPicturePath("/uploads/" + editPlantForm.getPictureFile().getOriginalFilename());
+        }
+
         if (bindingResult.hasErrors()) {
+            if (bindingResult.hasFieldErrors("pictureFile")) editPlantForm.setPicturePath("/images/defaultPlantPic.png");
             return "pages/editPlantPage";
         }
 
         editPlantForm.updatePlant(existingPlant);
         plantService.updatePlant(existingPlant);
-
+        logger.info("Plant updated: " + existingPlant);
         return "redirect:/gardens/" + gardenId;
     }
 }
