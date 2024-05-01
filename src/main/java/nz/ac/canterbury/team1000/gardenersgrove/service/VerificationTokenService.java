@@ -1,6 +1,5 @@
 package nz.ac.canterbury.team1000.gardenersgrove.service;
 
-import jakarta.transaction.Transactional;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.VerificationToken;
 import nz.ac.canterbury.team1000.gardenersgrove.repository.VerificationTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;

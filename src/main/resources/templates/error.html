@@ -6,10 +6,10 @@
 <body>
     <div th:replace="~{fragments/header :: header}"></div>
     <main>
-        <div class="content">
+        <div class="basic">
             <h1 th:text=" ${status} + ': ' + ${error}"></h1>
             <p th:text="${message}"></p>
-            <a th:href="@{.}">Go back home</a>
+            <a th:href="@{/}">Go back home</a>
         </div>
     </main>
 

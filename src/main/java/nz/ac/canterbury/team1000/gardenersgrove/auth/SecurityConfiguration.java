@@ -65,7 +65,7 @@ public class SecurityConfiguration {
                         // access to
                         // stylesheets
                         .requestMatchers("/", "/hello", "/register", "/login", "/forgotPassword",
-                                "/css/**", "/images/**")
+                            "/resetPassword", "/css/**", "/images/**", "/register/verification")
                         .permitAll()
                         // Only allow admins to reach the "/admin" page
                         .requestMatchers("/admin")

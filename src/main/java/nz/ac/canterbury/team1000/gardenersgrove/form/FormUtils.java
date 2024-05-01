@@ -211,7 +211,7 @@ public class FormUtils {
     /**
      * Checks if an integer fits within the specified range.
      * NOTE: Returns true for blank or invalid strings. Should not be used to check for invalid integers.
-     * 
+     *
      * @param string the string to check
      * @param min the minimum value allowed, or null if there is no minimum
      * @param max the maximum value allowed, or null if there is no maximum
@@ -336,7 +336,7 @@ public class FormUtils {
 
     /**
      * Converts LocalDate to a string in the format "DD/MM/YYYY".
-     * 
+     *
      * @param date the date to convert
      * @return the string representation of the date in the format "DD/MM/YYYY" or an empty string if the date is null.
      */

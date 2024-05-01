@@ -6,13 +6,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
-
-
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * This class represents a verification token entity in the application.
  */
-
 @Entity
 @Table(name = "verification_token")
 public class VerificationToken {
@@ -30,18 +28,16 @@ public class VerificationToken {
     @Transient
     private String plainToken;
 
-
     protected VerificationToken() {
     }
 
-    public VerificationToken(Long userId,PasswordEncoder passwordEncoder) {
+    public VerificationToken(Long userId, PasswordEncoder passwordEncoder) {
         this.userId = userId;
         this.plainToken = generateToken(); // Store the plain token temporarily
-        this.token = passwordEncoder.encode(plainToken); // Store the hashed version of the token
+        this.token =  passwordEncoder.encode(plainToken);; // Store the hashed version of the token
         this.verified = false;
         this.expiryDate = calculateExpiryDate();
     }
-
 
     /**
      * Generates a random 6-digit number for the verification token
@@ -87,5 +83,11 @@ public class VerificationToken {
     public void setVerified(boolean verified) {
         this.verified = verified;
     }
+
+
+    public LocalDateTime getExpiryDate() {
+        return expiryDate;
+    }
+
 
 }
