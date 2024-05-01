@@ -1,11 +1,8 @@
 package nz.ac.canterbury.team1000.gardenersgrove.entity;
 
 import org.junit.jupiter.api.Test;
-import nz.ac.canterbury.team1000.gardenersgrove.entity.Plant;
 import java.time.DateTimeException;
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PlantEntityTest {
@@ -15,8 +12,10 @@ public class PlantEntityTest {
         String plantCount = "3";
         String description = "This plant is cool";
         String dateString = "30/01/2024";
+        String picturePathString = "/images/defaultPlantPic.png";
+
         Long gardenId = 1L;
-        Plant plant = new Plant(plantName, plantCount, description, dateString, gardenId);
+        Plant plant = new Plant(plantName, plantCount, description, dateString, picturePathString, gardenId);
         assertEquals(plantName, plant.getName());
         assertEquals(Integer.parseInt(plantCount), plant.getPlantCount());
         assertEquals(description, plant.getDescription());
@@ -37,7 +36,7 @@ public class PlantEntityTest {
         String newCount = "";
         Plant plant = new Plant();
         plant.setPlantCount(newCount);
-        assertEquals(null, plant.getPlantCount());
+        assertNull(plant.getPlantCount());
     }
 
     @Test
@@ -57,8 +56,8 @@ public class PlantEntityTest {
 
     @Test
     void SetPlantedOnDate_InvalidDateSet_ThrowsDateTimeException() {
-        String dateString = "35/20/2024"; // invalid as no months have 35 days and there are no more
-                                          // than 12 months in a year
+        String dateString = "35/20/2024"; /* invalid as no months have 35 days and there are no more
+                                           than 12 months in a year */
         Plant plant = new Plant();
         assertThrows(DateTimeException.class, () -> plant.setPlantedOnDate(dateString));
     }

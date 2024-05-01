@@ -1,11 +1,11 @@
 package nz.ac.canterbury.team1000.gardenersgrove.form;
 
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
-import nz.ac.canterbury.team1000.gardenersgrove.util.Password;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.*;
 
@@ -17,9 +17,26 @@ public class RegistrationForm {
     protected String lastName;
     protected Boolean noSurnameCheckBox;
     protected String email;
+    protected String dob;
     protected String password;
     protected String retypePassword;
-    protected String dob;
+    protected String picturePath;
+
+    public String getFirstName() {
+        return this.firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return this.lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
     public Boolean getNoSurnameCheckBox() {
         return noSurnameCheckBox;
@@ -35,6 +52,22 @@ public class RegistrationForm {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getDob() {
+        return dob;
+    }
+
+    public LocalDate getDobLocalDate() {
+        try {
+            return LocalDate.parse(dob, VALID_DATE_FORMAT);
+        } catch (DateTimeParseException e) {
+            return null;
+        }
+    }
+
+    public void setDob(String dob) {
+        this.dob = dob;
     }
 
     public String getPassword() {
@@ -53,46 +86,26 @@ public class RegistrationForm {
         this.retypePassword = retypePassword;
     }
 
-    public String getDob() {
-        return dob;
+    public void setProfilePictureUrl(String picturePath) {
+        this.picturePath = picturePath;
+    }
+    public String getProfilePictureUrl() {
+        return this.picturePath;
     }
 
-    public LocalDate getDobLocalDate() {
-        try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            return LocalDate.parse(dob, formatter);
-        } catch (DateTimeParseException e) {
-            return null;
-        }
-    }
-
-    public void setDob(String dob) {
-        this.dob = dob;
-    }
-
-    public String getFirstName() {
-        return this.firstName;
-    }
-
-    public String getLastName() {
-        return this.lastName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public User getUser() {
+    /**
+     * Generates a User object with the values from the form.
+     *
+     * @return new User with attributes directly from the input values in the form.
+     */
+    public User getUser(PasswordEncoder passwordEncoder) {
         return new User(
-            this.firstName,
+                this.firstName,
                 this.lastName,
                 this.email,
-                Password.hashPassword(this.password),
-                this.getDobLocalDate()
+                passwordEncoder.encode(this.password),
+                this.getDobLocalDate(),
+                "/images/default_pic.jpg"
         );
     }
 
@@ -108,27 +121,29 @@ public class RegistrationForm {
 
         // Validate first name
         if (checkBlank(registrationForm.getFirstName())) {
-            errors.add("firstName", "{First/Last} name cannot be empty", registrationForm.getFirstName());
+            errors.add("firstName", "First name cannot be empty", registrationForm.getFirstName());
         } else if (checkOverMaxLength(registrationForm.getFirstName(), 64)) {
-            errors.add("firstName", "{First/Last} name must be 64 characters long or less", registrationForm.getFirstName());
-        } else if (!checkOnlyHasLettersSpacesHyphensApostrophes(registrationForm.getFirstName())) {
-            errors.add("firstName", "{First/Last} name must only include letters, spaces, hyphens or apostrophes", registrationForm.getFirstName());
+            errors.add("firstName", "First name must be 64 characters long or less", registrationForm.getFirstName());
+        } else if (!checkOnlyHasLettersMacronsSpacesHyphensApostrophes(registrationForm.getFirstName())) {
+            errors.add("firstName", "First name must only include letters, spaces, hyphens or apostrophes", registrationForm.getFirstName());
         }
 
         // Validate last name only if checkbox is not checked
         if (!registrationForm.getNoSurnameCheckBox()) {
             if (checkBlank(registrationForm.getLastName())) {
-                errors.add("lastName", "{First/Last} name cannot be empty", registrationForm.getLastName());
+                errors.add("lastName", "Last name cannot be empty", registrationForm.getLastName());
             } else if (checkOverMaxLength(registrationForm.getLastName(), 64)) {
-                errors.add("lastName", "{First/Last} name must be 64 characters long or less", registrationForm.getLastName());
-            } else if (!checkOnlyHasLettersSpacesHyphensApostrophes(registrationForm.getLastName())) {
-                errors.add("lastName", "{First/Last} name must only include letters, spaces, hyphens or apostrophes", registrationForm.getLastName());
+                errors.add("lastName", "Last name must be 64 characters long or less", registrationForm.getLastName());
+            } else if (!checkOnlyHasLettersMacronsSpacesHyphensApostrophes(registrationForm.getLastName())) {
+                errors.add("lastName", "Last name must only include letters, spaces, hyphens or apostrophes", registrationForm.getLastName());
             }
         }
 
         // Validate email
         if (checkBlank(registrationForm.getEmail()) || checkEmailIsInvalid(registrationForm.getEmail())) {
             errors.add("email", "Email address must be in the form ‘jane@doe.nz’", registrationForm.getEmail());
+        } else if (checkOverMaxLength(registrationForm.getEmail(), MAX_DB_STR_LEN)) {
+            errors.add("email", "Email address must be " + MAX_DB_STR_LEN + " characters long or less", registrationForm.getEmail());
         }
 
         // Validate password
@@ -143,16 +158,17 @@ public class RegistrationForm {
             errors.add("retypePassword", "Passwords do not match", registrationForm.getRetypePassword());
         }
 
-        // Validate date of birth
-        if (checkDateNotInCorrectFormat(registrationForm.getDob()) || checkBlank(registrationForm.getDob())) {
-            errors.add("dob", "Date in not in valid format, DD/MM/YYYY", registrationForm.getDob());
-        } else if (!checkDateBefore(registrationForm.getDob(), LocalDate.now().plusDays(1))) {
-            errors.add("dob", "Date cannot be in the future", registrationForm.getDob());
-        } else if (!checkDateBefore(registrationForm.getDob(), LocalDate.now().minusYears(13).plusDays(1))) {
-            errors.add("dob", "You must be 13 years or older to create an account", registrationForm.getDob());
-        } else if (checkDateBefore(registrationForm.getDob(), LocalDate.now().minusYears(120).plusDays(1))) {
-            errors.add("dob", "The maximum age allowed is 120 years", registrationForm.getDob());
+        // Validate date of birth (if there is one)
+        if (!checkBlank(registrationForm.getDob())) {
+            if (checkDateNotInCorrectFormat(registrationForm.getDob())) {
+                errors.add("dob", "Date in not in valid format, DD/MM/YYYY", registrationForm.getDob());
+            } else if (!checkDateBefore(registrationForm.getDob(), LocalDate.now().plusDays(1))) {
+                errors.add("dob", "Date cannot be in the future", registrationForm.getDob());
+            } else if (!checkDateBefore(registrationForm.getDob(), LocalDate.now().minusYears(13).plusDays(1))) {
+                errors.add("dob", "You must be 13 years or older to create an account", registrationForm.getDob());
+            } else if (checkDateBefore(registrationForm.getDob(), LocalDate.now().minusYears(120))) {
+                errors.add("dob", "The maximum age allowed is 120 years", registrationForm.getDob());
+            }
         }
     }
-
 }

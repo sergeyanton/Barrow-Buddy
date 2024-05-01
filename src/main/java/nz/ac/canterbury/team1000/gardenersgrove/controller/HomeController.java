@@ -1,17 +1,11 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
-import java.util.List;
-
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
+import nz.ac.canterbury.team1000.gardenersgrove.service.VerificationTokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import jakarta.servlet.http.HttpServletRequest;
-import nz.ac.canterbury.team1000.gardenersgrove.entity.Garden;
-import nz.ac.canterbury.team1000.gardenersgrove.service.GardenService;
 
 /**
  * This is the controller for the home page.
@@ -20,27 +14,12 @@ import nz.ac.canterbury.team1000.gardenersgrove.service.GardenService;
 public class HomeController {
     Logger logger = LoggerFactory.getLogger(HomeController.class);
 
-    private final GardenService gardenService;
     private final UserService userService;
+    private final VerificationTokenService verificationTokenService;
 
-    @Autowired
-    public HomeController(GardenService gardenService, UserService userService) {
-        this.gardenService = gardenService;
+    public HomeController(UserService userService, VerificationTokenService verificationTokenService) {
         this.userService = userService;
-    }
-
-    @ModelAttribute("currentUrl")
-    private String getCurrentPath(HttpServletRequest request) {
-        // the url path including query parameters
-        if (request.getQueryString() == null) {
-            return request.getRequestURI();
-        }
-        return request.getRequestURI() + "?" + request.getQueryString();
-    }
-
-    @ModelAttribute("allGardens")
-    private List<Garden> getAllGardens() {
-        return gardenService.getGardens();
+        this.verificationTokenService = verificationTokenService;
     }
 
     /**
@@ -48,6 +27,23 @@ public class HomeController {
      */
     @GetMapping("/")
     public String getHome() {
+        // If viewer not verified, redirect to verification page
+        if (userService.getLoggedInUser() != null && verificationTokenService.getVerificationTokenByUserId(userService.getLoggedInUser().getId()) != null) {
+            return "pages/landingPage";
+        }
         return userService.isSignedIn() ? "pages/homePage" : "pages/landingPage";
     }
+
+    @GetMapping("/landing")
+    public String getLandingPage() {
+        logger.info("/GET landing");
+        return "pages/landingPage";
+    }
+
+    @GetMapping("/home")
+    public String getHomePage() {
+        logger.info("/GET home");
+        return "pages/homePage";
+    }
+
 }

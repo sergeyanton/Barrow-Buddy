@@ -2,19 +2,25 @@ package nz.ac.canterbury.team1000.gardenersgrove.form;
 
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Helper class for adding validation errors to a BindingResult.
  */
 class ErrorAdder {
     // The BindingResult object to which errors will be added
-    private BindingResult bindingResult;
+    private final BindingResult bindingResult;
 
     // The name of the object associated with the errors
-    private String objectName;
+    private final String objectName;
 
     /**
      * Constructs an ErrorAdder with the specified BindingResult and object name.
@@ -42,8 +48,30 @@ class ErrorAdder {
  * Utility class for validating form data.
  */
 public class FormUtils {
-    // Date format for validation
-    private static DateTimeFormatter validDateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+    /**
+     * A date formatter used to parse strings of the form "DD/MM/YYYY" into LocalDate objects.
+     * Using 'y' here doesn't work well with the STRICT resolver style unlike 'u'.
+     * We have to use a STRICT resolver style to reject invalid month lengths.
+     * By default, dates such as the 30th of February would be incorrectly accepted.
+     */
+    public static final DateTimeFormatter VALID_DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/uuuu").withResolverStyle(ResolverStyle.STRICT);
+
+    /**
+     * The default maximum length of strings in the database.
+     * Some data might have a lower maximum (first/last name) or a higher maximum (garden description).
+     */
+    public static final int MAX_DB_STR_LEN = 255;
+
+    /**
+     * The allowed MIME types for uploaded images.
+     */
+    public static final List<String> ALLOWED_IMAGE_TYPES = Arrays.asList("image/jpeg", "image/png", "image/svg+xml");
+
+    /**
+     * The maximum size allowed for an image that the user can upload.
+     */
+    public static final int MAX_IMAGE_SIZE_BYTES  = 10 * 1024 * 1024;
 
     /**
      * Checks if the given string is blank.
@@ -67,13 +95,159 @@ public class FormUtils {
     }
 
     /**
-     * Checks if the given string contains only letters, spaces, hyphens, or apostrophes.
+     * Checks if the given string is less than the under length.
+     *
+     * @param string    the string to check
+     * @param underLength the maximum length allowed
+     * @return true if the string is less than the under length, false otherwise
+     */
+    public static boolean checkUnderLength(String string, Integer underLength) {
+        return string.length() < underLength;
+    }
+
+
+    /**
+     * Checks if the given string represents a double bigger than the maximum integer value in java.
+     * NOTE: Returns false if the string doesn't represent a valid double. Only call this method with
+     * valid strings.
+     *
+     * @param string the string representation of the double to check
+     * @return  true if the represented double is greater than the maximum java Integer value,
+     *          false if the represented double is not too big, or if the string doesn't represent a valid double
+     */
+    public static boolean checkDoubleTooBig (String string) {
+        try {
+            return new BigDecimal(string.replace(",", ".")).compareTo(BigDecimal.valueOf(Integer.MAX_VALUE)) > 0;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Checks if the given string represents an integer bigger than the maximum integer value in java.
+     * NOTE: Returns false if the string doesn't represent a valid integer. Only call this method with
+     * valid strings.
+     *
+     * @param string the string representation of the double to check
+     * @return  true if the represented integer is greater than the maximum java Integer value,
+     *          false if the represented integer is not too big, or if the string doesn't represent a valid integer
+     */
+    public static boolean checkIntegerTooBig (String string) {
+        try {
+            return new BigDecimal(string).compareTo(BigDecimal.valueOf(Integer.MAX_VALUE)) > 0;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Checks if the given string contains only letters, accented characters, macrons,
+     * spaces, hyphens, or apostrophes.
      *
      * @param string the string to check
      * @return true if the string contains only valid characters, false otherwise
      */
-    public static boolean checkOnlyHasLettersSpacesHyphensApostrophes (String string) {
-        return !checkNotMatchesRegex(string, "^[a-zA-Z\\s'-]+$");
+    public static boolean checkOnlyHasLettersMacronsSpacesHyphensApostrophes (String string) {
+        return !checkNotMatchesRegex(string, "^[\\p{L}’'-]+(?:\\s[\\p{L}’'-]+)*$");
+    }
+
+    /**
+     * Checks if the given string is only made up of alphanumeric characters, commas,
+     * dots, hyphens, and apostrophes.
+     *
+     * @param string the string to check
+     * @return true if the string contains only valid characters, false otherwise
+     */
+    public static boolean checkValidGardenName (String string) {
+        return !checkNotMatchesRegex(string, "^[\\p{L}0-9\\s,.'-]+$");
+    }
+
+    /**
+     * Checks if the given string is only made up of alphanumeric characters, commas,
+     * dots, hyphens, and apostrophes.
+     *
+     * @param string the string to check
+     * @return true if the string contains only valid characters, false otherwise
+     */
+    public static boolean checkValidLocationName (String string) {
+        return checkValidGardenName(string); // may have different definition later
+    }
+
+    /**
+     * Checks if the given string is only made up of alphanumeric characters, commas,
+     * dots, hyphens, and apostrophes.
+     *
+     * @param string the string to check
+     * @return true if the string contains only valid characters, false otherwise
+     */
+    public static boolean checkValidPlantName (String string) {
+        return checkValidGardenName(string); // may have different definition later
+    }
+
+    /**
+     * Checks if the given string doesn't represent a valid non-negative Double, where the decimal point can also be a comma.
+     * NOTE: Does NOT check upper bound for the number.
+     * NOTE: Returns true for blank strings.
+     *
+     * @param string the string to check
+     * @return true if the string does not represent a valid double, including blank strings
+     */
+    public static boolean checkDoubleIsInvalid (String string) {
+        return checkNotMatchesRegex(string,"^\\d*[,.]?\\d+$");
+    }
+
+    /**
+     * Checks if the given string doesn't represent a valid non-negative Integer
+     * NOTE: Does NOT check upper bound for the number.
+     * NOTE: Returns true for blank strings.
+     *
+     * @param string the string to check
+     * @return true if the string does not represent a valid integer, including blank strings
+     */
+    public static boolean checkIntegerIsInvalid (String string) {
+        return checkNotMatchesRegex(string,"^[0-9]+$");
+    }
+
+    /**
+     * Checks if an integer fits within the specified range.
+     * NOTE: Returns true for blank or invalid strings. Should not be used to check for invalid integers.
+     *
+     * @param string the string to check
+     * @param min the minimum value allowed, or null if there is no minimum
+     * @param max the maximum value allowed, or null if there is no maximum
+     * @return true if the integer is outside the specified range, false otherwise
+     */
+    public static boolean checkIntegerOutsideRange(String string, Integer min, Integer max) {
+        try {
+            int value = Integer.parseInt(string);
+            if (min != null && value < min) return true;
+            if (max != null && value > max) return true;
+            return false;
+        } catch (NumberFormatException e) {
+            // make sure we fail if the string is not a valid integer
+            return true;
+        }
+    }
+
+    /**
+     * Checks if a double fits within the specified range.
+     * NOTE: Returns true for blank or invalid strings. Should not be used to check for invalid doubles.
+     *
+     * @param string the string to check
+     * @param min the minimum value allowed, or null if there is no minimum
+     * @param max the maximum value allowed, or null if there is no maximum
+     * @return true if the double is outside the specified range, false otherwise
+     */
+    public static boolean checkDoubleOutsideRange(String string, Double min, Double max) {
+        try {
+            double value = Double.parseDouble(string.replace(",", "."));
+            if (min != null && value < min) return true;
+            if (max != null && value > max) return true;
+            return false;
+        } catch (NumberFormatException e) {
+            // make sure we fail if the string is not a valid double
+            return true;
+        }
     }
 
     /**
@@ -115,7 +289,7 @@ public class FormUtils {
      */
     public static boolean checkDateNotInCorrectFormat(String dateString) {
         try {
-            LocalDate.parse(dateString, validDateFormat);
+            LocalDate.parse(dateString, VALID_DATE_FORMAT);
         } catch (DateTimeParseException e) {
             // date is incorrect format
             return true;
@@ -133,10 +307,41 @@ public class FormUtils {
      */
     public static boolean checkDateBefore(String dateString, LocalDate before) {
         try {
-            LocalDate date = LocalDate.parse(dateString, validDateFormat);
+            LocalDate date = LocalDate.parse(dateString, VALID_DATE_FORMAT);
             return date.isBefore(before);
         } catch (DateTimeParseException e) {
             return false;
         }
+    }
+
+    /**
+     * Checks if the given image file is an accepted type
+     *
+     * @param image the image file to check
+     * @return true if the image is NOT an accepted type
+     */
+    public static boolean checkImageWrongType(MultipartFile image) {
+        return !ALLOWED_IMAGE_TYPES.contains(image.getContentType());
+    }
+
+    /**
+     * Checks if the given image file is too big
+     *
+     * @param image the image file to check
+     * @return true if the image is over the size limit
+     */
+    public static boolean checkImageTooBig(MultipartFile image) {
+        return image.getSize() > MAX_IMAGE_SIZE_BYTES;
+    }
+
+    /**
+     * Converts LocalDate to a string in the format "DD/MM/YYYY".
+     *
+     * @param date the date to convert
+     * @return the string representation of the date in the format "DD/MM/YYYY" or an empty string if the date is null.
+     */
+    public static String dateToString(LocalDate date) {
+        if (date == null) return "";
+        return date.format(VALID_DATE_FORMAT);
     }
 }

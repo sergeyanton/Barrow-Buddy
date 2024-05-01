@@ -1,52 +1,53 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
 
-<head>
-  <style>
-    table td {
-      vertical-align: top;
-      border: solid 1px #888;
-      padding: 10px;
-    }
-  </style>
-</head>
+<head th:replace="~{fragments/head :: head(title='Gardener\'s Grove - ' + ${errorMessage})}"></head>
 
 <body>
-  <h1>Something went wrong :(</h1>
-  <h4 th:text="${status} + ': ' + ${error}"></h4>
-  <p th:text="${message}"></p>
-  <a th:href="@{.}">Go back home</a>
-  <h1>Basic Thymeleaf Error Page (You may want to make something better)</h1>
-  <table>
-    <tr>
-      <td>Date</td>
-      <td th:text="${timestamp}" />
-    </tr>
-    <tr>
-      <td>Path</td>
-      <td th:text="${path}" />
-    </tr>
-    <tr>
-      <td>Error</td>
-      <td th:text="${error}" />
-    </tr>
-    <tr>
-      <td>Status</td>
-      <td th:text="${status}" />
-    </tr>
-    <tr>
-      <td>Message</td>
-      <td th:text="${message}" />
-    </tr>
-    <tr>
-      <td>Exception</td>
-      <td th:text="${exception}" />
-    </tr>
-    <tr>
-      <td>Trace</td>
-      <td>
-        <pre th:text="${trace}" />
-      </td>
-    </tr>
-  </table>
+    <div th:replace="~{fragments/header :: header}"></div>
+    <main>
+        <div class="basic">
+            <h1 th:text=" ${status} + ': ' + ${error}"></h1>
+            <p th:text="${message}"></p>
+            <a th:href="@{/}">Go back home</a>
+        </div>
+    </main>
+
+    <th:block th:if="${debug}">
+        <table class="error-debug-table">
+            <tr>
+                <td>Date</td>
+                <td th:text="${timestamp}" />
+            </tr>
+            <tr>
+                <td>Path</td>
+                <td th:text="${path}" />
+            </tr>
+            <tr>
+                <td>Error</td>
+                <td th:text="${error}" />
+            </tr>
+            <tr>
+                <td>Status</td>
+                <td th:text="${status}" />
+            </tr>
+            <tr>
+                <td>Message</td>
+                <td th:text="${message}" />
+            </tr>
+            <tr>
+                <td>Exception</td>
+                <td th:text="${exception}" />
+            </tr>
+            <tr>
+                <td>Trace</td>
+                <td>
+                    <pre th:text="${trace}" />
+                </td>
+            </tr>
+        </table>
+    </th:block>
+    </main>
 </body>
+
+</html>
