@@ -221,4 +221,20 @@ class PlantFormTest {
         assertEquals("26/04/2024", form.getPlantedOnDate());
         assertEquals(1L, form.getGardenId());
     }
+
+    @Test
+    void updatePlant_WithValidData_UpdatesPlant() {
+        Plant plant = new Plant("Poppy", 5, "Red", LocalDate.of(2024, 04, 26), "/images/defaultPlantPic.png", 1L);
+        plantForm.setName("Violet");
+        plantForm.setPlantCount("3");
+        plantForm.setDescription("Smells nice");
+        plantForm.setPlantedOnDate("25/12/2000");
+        plantForm.setGardenId(1L);
+        plantForm.updatePlant(plant);
+        assertEquals("Violet", plant.getName());
+        assertEquals(3, plant.getPlantCount());
+        assertEquals("Smells nice", plant.getDescription());
+        assertEquals(LocalDate.of(2000, 12, 25), plant.getPlantedOnDate());
+        assertEquals(1L, plant.getGardenId());
+    }
 }

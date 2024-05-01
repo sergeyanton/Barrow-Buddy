@@ -443,6 +443,9 @@ public class GardensController {
             return "pages/editPlantPage";
         }
 
-        return "pages/editPlantPage";
+        editPlantForm.updatePlant(existingPlant);
+        plantService.updatePlant(existingPlant);
+
+        return "redirect:/gardens/" + gardenId;
     }
 }

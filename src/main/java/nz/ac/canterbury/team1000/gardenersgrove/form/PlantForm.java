@@ -89,6 +89,20 @@ public class PlantForm {
     }
 
     /**
+     * Updates an existing Plant object with the values from the form.
+     * 
+     * @param plant the Plant object to update
+     */
+    public void updatePlant(Plant plant) {
+        plant.setName(this.name);
+        plant.setPlantCount(this.plantCount);
+        plant.setDescription(this.description);
+        plant.setPlantedOnDate(this.plantedOnDate);
+    }
+
+    
+
+    /**
      * Validates the 'New Plant' form data and adds validation errors to the BindingResult.
      *
      * @param createPlantForm the PlantForm object representing the details of the garden being created
@@ -165,5 +179,21 @@ public class PlantForm {
         plantForm.setGardenId(plant.getGardenId());
 
         return plantForm;
+    }
+
+    /**
+     * Returns a string representation of the PlantForm object.
+     * 
+     * @return a string representation of the PlantForm object.
+     */
+    @Override
+    public String toString() {
+        return "PlantForm{" +
+                "name='" + name + '\'' +
+                ", plantCount='" + plantCount + '\'' +
+                ", description='" + description + '\'' +
+                ", plantedOnDate='" + plantedOnDate + '\'' +
+                ", gardenId=" + gardenId +
+                '}';
     }
 }
