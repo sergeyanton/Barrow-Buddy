@@ -5,6 +5,7 @@ import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.EditUserForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PictureForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.UpdatePasswordForm;
+import nz.ac.canterbury.team1000.gardenersgrove.service.EmailService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
 
 import nz.ac.canterbury.team1000.gardenersgrove.service.VerificationTokenService;
@@ -31,11 +32,12 @@ import java.nio.file.Paths;
 @Controller
 public class ProfileController {
     private final UserService userService;
-    private final VerificationTokenService verificationTokenService;
+    private final EmailService emailService;
+
     @Autowired
-    public ProfileController(UserService userService, VerificationTokenService verificationTokenService) {
+    public ProfileController(UserService userService, EmailService emailService) {
         this.userService = userService;
-        this.verificationTokenService = verificationTokenService;
+        this.emailService = emailService;
     }
 
     @Autowired
@@ -243,7 +245,8 @@ public class ProfileController {
 
         currentUser.setPassword(passwordEncoder.encode(updatePasswordForm.getNewPassword()));
         userService.updateUserByEmail(currentUser.getEmail(), currentUser);
-
+        // Send confirmation email to user
+        emailService.sendSimpleMessage(currentUser.getEmail(), "Password Changed", "Your password has been changed successfully");
         return "redirect:/profile";
     }
 
