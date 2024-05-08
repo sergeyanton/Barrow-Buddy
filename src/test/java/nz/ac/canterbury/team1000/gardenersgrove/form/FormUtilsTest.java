@@ -544,4 +544,30 @@ public class FormUtilsTest {
         double max = 10.0;
         Assertions.assertFalse(FormUtils.checkDoubleExceedMaxValue(value, max));
     }
+
+    @Test
+    void checkDoubleNotPositive_WithValueZero_ReturnsTrue() {
+        String value = "0";
+        Assertions.assertTrue(FormUtils.checkDoubleNotPositive(value));
+    }
+    @Test
+    void checkDoubleNotPositive_WithValueNegative_ReturnsTrue() {
+        String value = "-1";
+        Assertions.assertTrue(FormUtils.checkDoubleNotPositive(value));
+    }
+    @Test
+    void checkDoubleNotPositive_WithValueNegativeZero_ReturnsTrue() {
+        String value = "-0";
+        Assertions.assertTrue(FormUtils.checkDoubleNotPositive(value));
+    }
+    @Test
+    void checkDoubleNotPositive_WithValueSmall_ReturnsFalse() {
+        String value = "0.000001";
+        Assertions.assertFalse(FormUtils.checkDoubleNotPositive(value));
+    }
+    @Test
+    void checkDoubleNotPositive_WithValuePositive_ReturnsFalse() {
+        String value = "1";
+        Assertions.assertFalse(FormUtils.checkDoubleNotPositive(value));
+    }
 }
