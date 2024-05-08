@@ -230,19 +230,35 @@ public class FormUtils {
     }
 
     /**
-     * Checks if a double fits within the specified range.
+     * Checks if a double doesn't go over the max value.
      * NOTE: Returns true for blank or invalid strings. Should not be used to check for invalid doubles.
      *
      * @param string the string to check
-     * @param min the minimum value allowed, or null if there is no minimum
      * @param max the maximum value allowed, or null if there is no maximum
-     * @return true if the double is outside the specified range, false otherwise
+     * @return true if the double is too big of what is provided as max value, false otherwise
      */
-    public static boolean checkDoubleOutsideRange(String string, Double min, Double max) {
+    public static boolean checkDoubleExceedMaxValue(String string, Double max) {
         try {
             double value = Double.parseDouble(string.replace(",", "."));
-            if (min != null && value < min) return true;
             if (max != null && value > max) return true;
+            return false;
+        } catch (NumberFormatException e) {
+            // make sure we fail if the string is not a valid double
+            return true;
+        }
+    }
+
+    /**
+     * Checks if a string (gets converted to double) is positive
+     * NOTE: Returns true for invalid strings. Should not be used to check for invalid doubles.
+     *
+     * @param string the string to check
+     * @return true if the double is outside the specified range, false otherwise
+     */
+    public static boolean checkDoubleNotPositive(String string) {
+        try {
+            double value = Double.parseDouble(string.replace(",", "."));
+            if (value <= 0) return true;
             return false;
         } catch (NumberFormatException e) {
             // make sure we fail if the string is not a valid double
