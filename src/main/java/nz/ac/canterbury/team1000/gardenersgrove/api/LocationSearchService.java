@@ -79,19 +79,19 @@ public class LocationSearchService {
 
             switch (addressField) {
                 case "country":
-                    url = URL + "?q=" + query + "&limit=5&key=" + API_KEY + "&tag=place:country";
+                    url = URL + "?q=" + query + "&key=" + API_KEY + "&tag=place:country";
                     break;
                 case "city":
-                    url = URL + "?q=" + query + "&limit=5&key=" + API_KEY + "&tag=place:city";
+                    url = URL + "?q=" + query + "&key=" + API_KEY + "&tag=place:city";
                     break;
                 case "postcode":
-                    url = URL + "?q=" + query + "&limit=5&key=" + API_KEY + "&tag=place:postcode";
+                    url = URL + "?q=" + query + "&key=" + API_KEY + "&tag=place:postcode";
                     break;
                 case "suburb":
-                    url = URL + "?q=" + query + "&limit=5&key=" + API_KEY + "&tag=place:suburb";
+                    url = URL + "?q=" + query + "&key=" + API_KEY + "&tag=place:suburb";
                     break;
                 default:
-                    url = URL + "?q=" + query + "&limit=5&key=" + API_KEY;
+                    url = URL + "?q=" + query + "&key=" + API_KEY;
             }
 
             // Sending a request to the LocationIQ API endpoint and returns a JSON response in string form
@@ -149,8 +149,7 @@ public class LocationSearchService {
                 if (!city.isEmpty() && !country.isEmpty()) {
                     locationAddresses.add(new Location(address, suburb, city, postcode, country, displayPlace));
                 }
-            }
-            if (addressField.equals("city") && locationType.equals("city")) {
+            } else if (addressField.equals("city") && locationType.equals("city")) {
                 city = addressMap.get("name").toString();
                 if (addressMap.containsKey("country")) country = addressMap.get("country").toString();
 
@@ -169,6 +168,7 @@ public class LocationSearchService {
                 if (addressMap.containsKey("house_number")) {
                     String addressCombined = addressMap.get("house_number").toString() + " " + addressMap.get("road").toString();
                     if (addressCombined.startsWith(query)) {
+                        displayPlace = addressCombined;
                         address = addressMap.get("house_number").toString() + " " + addressMap.get("road").toString();
                     }
                 } else {
@@ -179,7 +179,7 @@ public class LocationSearchService {
                 if (addressMap.containsKey("postcode")) postcode = addressMap.get("postcode").toString();
                 if (addressMap.containsKey("country")) country = addressMap.get("country").toString();
 
-                if (!address.isEmpty() && !city.isEmpty() && !country.isEmpty()) {
+                if (!address.isEmpty() && !city.isEmpty() && !country.isEmpty() && address.startsWith(query)) {
                     locationAddresses.add(new Location(address, suburb, city, postcode, country, displayPlace));
                 }
             }
