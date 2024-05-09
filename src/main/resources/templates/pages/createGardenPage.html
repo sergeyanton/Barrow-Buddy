@@ -8,7 +8,7 @@
     <main>
         <div class="basic">
             <h1>Create a garden</h1>
-            <form th:action="@{/gardens/create}" method="post" th:object="${createGardenForm}">
+            <form th:action="@{/gardens/create}" method="post" th:object="${createGardenForm}" autocomplete="off">
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='name', label='Garden Name: ', placeholder='The Hamilton Gardens')}" />
                 <br />
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='size', label='Size in m&sup2; (optional): ', placeholder='540000.0')}" />
