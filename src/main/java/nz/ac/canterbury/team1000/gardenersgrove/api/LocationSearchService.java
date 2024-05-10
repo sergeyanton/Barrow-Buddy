@@ -98,10 +98,10 @@ public class LocationSearchService {
                         fullQuery += ", " + fullAddress[1];
                     }
                     if (!fullAddress[2].isEmpty()) {
-                        fullQuery += ", " + fullAddress[1];
+                        fullQuery += ", " + fullAddress[2];
                     }
                     if (!fullAddress[3].isEmpty()) {
-                        fullQuery += ", " + fullAddress[2];
+                        fullQuery += ", " + fullAddress[3];
                     }
                     if (!fullAddress[4].isEmpty()) {
                         fullQuery += ", " + fullAddress[4];
