@@ -247,14 +247,14 @@ public class FormUtilsTest {
     }
 
     @Test
-    void checkIntegerTooBig_MaximumValue_ReturnsFalse() {
-        String size = "72000"; // maximum integer value
+    void checkIntegerTooBig_MaximumIntegerValue_ReturnsFalse() {
+        String size = "2147483647"; // maximum integer value
         Assertions.assertFalse(FormUtils.checkIntegerTooBig(size));
     }
 
     @Test
-    void checkIntegerTooBig_OverMaximumValue_ReturnsTrue() {
-        String size = "72001";
+    void checkIntegerTooBig_OverMaximumIntegerValue_ReturnsTrue() {
+        String size = "2147483648";
         Assertions.assertTrue(FormUtils.checkIntegerTooBig(size));
     }
 
