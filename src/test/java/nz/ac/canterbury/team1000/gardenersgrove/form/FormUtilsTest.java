@@ -229,21 +229,15 @@ public class FormUtilsTest {
         Assertions.assertTrue(FormUtils.checkDoubleIsInvalid(size));
     }
     @Test
-    void checkDoubleIsInvalid_OverMaximumIntegerValue_ReturnsFalse() {
-        String size = "2147483647.1";
+    void checkDoubleIsInvalid_OverMaximumValue_ReturnsFalse() {
+        String size = "72000.1";
         Assertions.assertFalse(FormUtils.checkDoubleIsInvalid(size));
     }
 
     @Test
-    void checkDoubleTooBig_MaximumIntegerValue_ReturnsFalse() {
-        String size = "2147483647"; // maximum integer value
+    void checkDoubleTooBig_JustMaxValue_ReturnsFalse() {
+        String size = "72000.0";
         Assertions.assertFalse(FormUtils.checkDoubleTooBig(size));
-    }
-
-    @Test
-    void checkDoubleTooBig_OverMaximumIntegerValue_ReturnsTrue() {
-        String size = "2147483647.1";
-        Assertions.assertTrue(FormUtils.checkDoubleTooBig(size));
     }
 
     @Test
@@ -486,106 +480,88 @@ public class FormUtilsTest {
     }
 
     @Test
-    void checkDoubleOutsideRange_WithDoubleStringWithinRange_ReturnsFalse() {
+    void checkDoubleExceedMaxValue_WithDoubleStringAndMax_ReturnsFalse() {
         String value = "5.0";
-        double min = 0.0;
         double max = 10.0;
-        Assertions.assertFalse(FormUtils.checkDoubleOutsideRange(value, min, max));
+        Assertions.assertFalse(FormUtils.checkDoubleExceedMaxValue(value, max));
     }
 
     @Test
-    void checkDoubleOutsideRange_WithDoubleStringEqualToMin_ReturnsFalse() {
+    void checkDoubleExceedMaxValue_WithDoubleStringEqualToMaxZero_ReturnsFalse() {
         String value = "0.0";
-        double min = 0.0;
-        double max = 10.0;
-        Assertions.assertFalse(FormUtils.checkDoubleOutsideRange(value, min, max));
+        double max = 0.0;
+        Assertions.assertFalse(FormUtils.checkDoubleExceedMaxValue(value, max));
     }
 
     @Test
-    void checkDoubleOutsideRange_WithDoubleStringEqualToMax_ReturnsFalse() {
-        String value = "10.0";
-        double min = 0.0;
-        double max = 10.0;
-        Assertions.assertFalse(FormUtils.checkDoubleOutsideRange(value, min, max));
-    }
-
-    @Test
-    void checkDoubleOutsideRange_WithDoubleStringBelowMin_ReturnsTrue() {
-        String value = "-0.1";
-        double min = 0.0;
-        double max = 10.0;
-        Assertions.assertTrue(FormUtils.checkDoubleOutsideRange(value, min, max));
-    }
-
-    @Test
-    void checkDoubleOutsideRange_WithDoubleStringAboveMax_ReturnsTrue() {
-        String value = "10.1";
-        double min = 0.0;
-        double max = 10.0;
-        Assertions.assertTrue(FormUtils.checkDoubleOutsideRange(value, min, max));
-    }
-
-    @Test
-    void checkDoubleOutsideRange_WithNonDoubleString_ReturnsTrue() {
-        String value = "abc";
-        double min = 0.0;
-        double max = 10.0;
-        Assertions.assertTrue(FormUtils.checkDoubleOutsideRange(value, min, max));
-    }
-
-    @Test
-    void checkDoubleOutsideRange_WithNoUpperBoundAndDoubleStringAboveLowerBound_ReturnsFalse() {
-        String value = "5.0";
-        double min = 0.0;
-        Assertions.assertFalse(FormUtils.checkDoubleOutsideRange(value, min, null));
-    }
-
-    @Test
-    void checkDoubleOutsideRange_WithNoUpperBoundAndDoubleStringEqualToLowerBound_ReturnsFalse() {
-        String value = "0.0";
-        double min = 0.0;
-        Assertions.assertFalse(FormUtils.checkDoubleOutsideRange(value, min, null));
-    }
-
-    @Test
-    void checkDoubleOutsideRange_WithNoUpperBoundAndDoubleStringBelowLowerBound_ReturnsTrue() {
-        String value = "-0.1";
-        double min = 0.0;
-        Assertions.assertTrue(FormUtils.checkDoubleOutsideRange(value, min, null));
-    }
-
-    @Test
-    void checkDoubleOutsideRange_WithNoLowerBoundAndDoubleStringBelowUpperBound_ReturnsFalse() {
-        String value = "5.0";
-        double max = 10.0;
-        Assertions.assertFalse(FormUtils.checkDoubleOutsideRange(value, null, max));
-    }
-
-    @Test
-    void checkDoubleOutsideRange_WithNoLowerBoundAndDoubleStringEqualToUpperBound_ReturnsFalse() {
+    void checkDoubleExceedMaxValue_WithDoubleStringEqualToMax_ReturnsFalse() {
         String value = "10.0";
         double max = 10.0;
-        Assertions.assertFalse(FormUtils.checkDoubleOutsideRange(value, null, max));
+        Assertions.assertFalse(FormUtils.checkDoubleExceedMaxValue(value, max));
     }
 
     @Test
-    void checkDoubleOutsideRange_WithNoLowerBoundAndDoubleStringAboveUpperBound_ReturnsTrue() {
+    void checkDoubleExceedMaxValue_WithDoubleStringAboveMax_ReturnsTrue() {
         String value = "10.1";
         double max = 10.0;
-        Assertions.assertTrue(FormUtils.checkDoubleOutsideRange(value, null, max));
+        Assertions.assertTrue(FormUtils.checkDoubleExceedMaxValue(value, max));
     }
 
     @Test
-    void checkDoubleOutsideRange_WithNoBoundsAndNonDoubleString_ReturnsTrue() {
+    void checkDoubleExceedMaxValue_WithNonDoubleString_ReturnsTrue() {
         String value = "abc";
-        Assertions.assertTrue(FormUtils.checkDoubleOutsideRange(value, null, null));
+        double max = 10.0;
+        Assertions.assertTrue(FormUtils.checkDoubleExceedMaxValue(value, max));
+    }
+
+    @Test
+    void checkDoubleExceedMaxValue_WithNoMaxValueStringValid_ReturnsFalse() {
+        String value = "5.0";
+        Assertions.assertFalse(FormUtils.checkDoubleExceedMaxValue(value, null));
+    }
+
+    @Test
+    void checkDoubleExceedMaxValue_WithNoMaxValueStringZero_ReturnsFalse() {
+        String value = "0.0";
+        Assertions.assertFalse(FormUtils.checkDoubleExceedMaxValue(value, null));
+    }
+
+    @Test
+    void checkDoubleOutsideRange_WithNoMaxValueAndNonDoubleString_ReturnsTrue() {
+        String value = "abc";
+        Assertions.assertTrue(FormUtils.checkDoubleExceedMaxValue(value, null));
     }
 
     @Test
     void checkDoubleOutsideRange_WithCommaDecimalSeparator_ReturnsFalse() {
         String value = "5,0";
-        double min = 0.0;
         double max = 10.0;
-        Assertions.assertFalse(FormUtils.checkDoubleOutsideRange(value, min, max));
+        Assertions.assertFalse(FormUtils.checkDoubleExceedMaxValue(value, max));
+    }
+
+    @Test
+    void checkDoubleNotPositive_WithValueZero_ReturnsTrue() {
+        String value = "0";
+        Assertions.assertTrue(FormUtils.checkDoubleNotPositive(value));
+    }
+    @Test
+    void checkDoubleNotPositive_WithValueNegative_ReturnsTrue() {
+        String value = "-1";
+        Assertions.assertTrue(FormUtils.checkDoubleNotPositive(value));
+    }
+    @Test
+    void checkDoubleNotPositive_WithValueNegativeZero_ReturnsTrue() {
+        String value = "-0";
+        Assertions.assertTrue(FormUtils.checkDoubleNotPositive(value));
+    }
+    @Test
+    void checkDoubleNotPositive_WithValueSmall_ReturnsFalse() {
+        String value = "0.000001";
+        Assertions.assertFalse(FormUtils.checkDoubleNotPositive(value));
+    }
+    @Test
+    void checkDoubleNotPositive_WithValuePositive_ReturnsFalse() {
+        String value = "1";
+        Assertions.assertFalse(FormUtils.checkDoubleNotPositive(value));
     }
 }

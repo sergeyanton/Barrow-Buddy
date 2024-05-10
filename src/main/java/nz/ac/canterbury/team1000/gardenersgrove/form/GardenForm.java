@@ -162,8 +162,8 @@ public class GardenForm {
             createGardenForm.setSize(createGardenForm.getSize().replace(',', '.'));
 
             if (checkDoubleTooBig(createGardenForm.getSize())) {
-                errors.add("size", "Garden size must be at most " + Integer.MAX_VALUE + " m²", createGardenForm.getSize());
-            } else if (checkDoubleIsInvalid(createGardenForm.getSize()) || checkDoubleOutsideRange(createGardenForm.getSize(), 0.1, null)) {
+                errors.add("size", "Garden size must be at most 72,000m²", createGardenForm.getSize());
+            } else if (checkDoubleIsInvalid(createGardenForm.getSize()) || checkDoubleNotPositive(createGardenForm.getSize()) || checkDoubleExceedMaxValue(createGardenForm.getSize(), null)) {
                 errors.add("size", "Garden size must be a positive number", createGardenForm.getSize());
             }
         }

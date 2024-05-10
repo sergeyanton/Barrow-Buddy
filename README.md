@@ -19,6 +19,8 @@ Works on production and test, but does not use the persistent database.
 > EMAIL_PORT=587
 > 
 > EMAIL_USERNAME=gardensgroveteam1000@gmail.com
+> 
+> API_KEY=pk.dc3a28922b1f87600c4896d50b3aac8c
 
 ## Test User Information:
 | USERNAME | PASSWORD |
