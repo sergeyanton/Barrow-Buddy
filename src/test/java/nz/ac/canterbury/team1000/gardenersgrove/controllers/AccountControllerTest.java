@@ -86,8 +86,7 @@ class AccountControllerTest {
 
         verificationTokenMock = Mockito.mock(VerificationToken.class);
         Mockito.when(verificationTokenMock.getUserId()).thenReturn(1L);
-        Mockito.when(verificationTokenMock.getHashedToken()).thenReturn("hashed_token");
-        Mockito.when(verificationTokenMock.getPlainToken()).thenReturn("123456");
+        Mockito.when(verificationTokenMock.getToken()).thenReturn("token");
 
 
         registrationForm = new RegistrationForm();
@@ -104,7 +103,7 @@ class AccountControllerTest {
         loginForm.setPassword("Pass123$");
 
         verificationTokenForm = new VerificationTokenForm();
-        verificationTokenForm.setVerificationToken(verificationTokenMock.getPlainToken());
+        verificationTokenForm.setVerificationToken(verificationTokenMock.getToken());
 
         forgotPasswordForm = new ForgotPasswordForm();
         forgotPasswordForm.setEmail(userMock.getEmail());
@@ -127,7 +126,6 @@ class AccountControllerTest {
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/register/verification"));
 
         Mockito.verify(userService).registerUser(Mockito.any());
-        Mockito.verify(userService).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
     }
 
     @Test
@@ -140,7 +138,6 @@ class AccountControllerTest {
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/register/verification"));
 
         Mockito.verify(userService).registerUser(Mockito.any());
-        Mockito.verify(userService).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
     }
     @Test
     public void RegisterPostRequest_ValidDetailsNoLastName_UserRegisteredAndAuthenticated() throws Exception {
@@ -153,7 +150,6 @@ class AccountControllerTest {
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/register/verification"));
 
         Mockito.verify(userService).registerUser(Mockito.any());
-        Mockito.verify(userService).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
     }
 
     @Test
@@ -489,9 +485,11 @@ class AccountControllerTest {
 
     @Test
     public void VerificationPostRequest_Valid_Redirection() throws Exception {
+        verificationTokenForm.setVerificationToken("123456");
         verificationTokenMock.setVerified(true);
-        Mockito.when(userService.getLoggedInUser()).thenReturn(userMock);
-        Mockito.when(verificationTokenService.getVerificationTokenByUserId(Mockito.any())).thenReturn(verificationTokenMock);
+        Mockito.when(verificationTokenService.getVerificationTokenByToken(Mockito.any())).thenReturn(verificationTokenMock);
+        Mockito.when(userService.findById(verificationTokenMock.getUserId())).thenReturn(userMock);
+        Mockito.doNothing().when(verificationTokenService).updateVerifiedByUserId(Mockito.anyLong());
         mockMvc.perform(MockMvcRequestBuilders.post("/register/verification").with(csrf())
                         .flashAttr("verificationTokenForm", verificationTokenForm))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
