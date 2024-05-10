@@ -152,11 +152,15 @@ public class LocationSearchService {
             // to the location list that gets returned at the end of the method
             // Besides the country address field, it makes sure that the location must have a city and country in its
             // address map to deal with the requirement of the form submission containing a non-empty city and country
+
+            // IF INPUT IS DONE IN THE COUNTRY FIELD
             if (addressField.equals("country") && locationType.equals("country")) {
                 country = addressMap.get("name").toString();
 
                 locationAddresses.add(new Location(address, suburb, city, postcode, country, displayPlace));
-            } else if (addressField.equals("postcode") && locationType.equals("postcode")) {
+            }
+            // IF INPUT IS DONE IN THE POSTCODE FIELD
+            else if (addressField.equals("postcode") && locationType.equals("postcode")) {
                 postcode = addressMap.get("name").toString();
                 if (addressMap.containsKey("city")) city = addressMap.get("city").toString();
                 if (addressMap.containsKey("country")) country = addressMap.get("country").toString();
@@ -164,14 +168,18 @@ public class LocationSearchService {
                 if (!city.isEmpty() && !country.isEmpty()) {
                     locationAddresses.add(new Location(address, suburb, city, postcode, country, displayPlace));
                 }
-            } else if (addressField.equals("city") && locationType.equals("city")) {
+            }
+            // IF INPUT IS DONE IN THE CITY FIELD
+            else if (addressField.equals("city") && locationType.equals("city")) {
                 city = addressMap.get("name").toString();
                 if (addressMap.containsKey("country")) country = addressMap.get("country").toString();
 
                 if (!city.isEmpty() && !country.isEmpty()) {
                     locationAddresses.add(new Location(address, suburb, city, postcode, country, displayPlace));
                 }
-            } else if (addressField.equals("suburb") && locationType.equals("suburb")) {
+            }
+            // IF INPUT IS DONE IN THE SUBURB FIELD
+            else if (addressField.equals("suburb") && locationType.equals("suburb")) {
                 suburb = addressMap.get("name").toString();
                 if (addressMap.containsKey("city")) city = addressMap.get("city").toString();
                 if (addressMap.containsKey("country")) country = addressMap.get("country").toString();
@@ -179,22 +187,21 @@ public class LocationSearchService {
                 if (!city.isEmpty() && !country.isEmpty()) {
                     locationAddresses.add(new Location(address, suburb, city, postcode, country, displayPlace));
                 }
-            } else if (addressField.equals("address")) {
+            }
+            // IF INPUT IS DONE IN THE ADDRESS FIELD
+            else if (addressField.equals("address")) {
                 boolean validLocation = true;
 
+                // CHECK IF THE LOCATION IS A HOUSE ADDRESS
                 if (addressMap.containsKey("house_number")) {
                     String addressCombined = addressMap.get("house_number").toString() + " " + addressMap.get("road").toString();
                     if (addressCombined.startsWith(query)) {
                         displayPlace = addressCombined;
                         address = addressMap.get("house_number").toString() + " " + addressMap.get("road").toString();
                     }
-                } else {
+                } else { // OTHERWISE IT WOULD BE A STREET
                     address = addressMap.get("name").toString();
                 }
-                if (addressMap.containsKey("suburb")) suburb = addressMap.get("suburb").toString();
-                if (addressMap.containsKey("city")) city = addressMap.get("city").toString();
-                if (addressMap.containsKey("postcode")) postcode = addressMap.get("postcode").toString();
-                if (addressMap.containsKey("country")) country = addressMap.get("country").toString();
 
                 if (addressMap.containsKey("suburb")) {
                     if (!fullAddress[1].isEmpty()) {
