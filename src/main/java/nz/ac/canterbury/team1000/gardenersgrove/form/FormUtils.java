@@ -206,8 +206,8 @@ public class FormUtils {
      * @param string the string to check
      * @return true if the string does not represent a valid integer, including blank strings
      */
-    public static boolean checkIntegerIsInvalid (String string) {
-        return checkNotMatchesRegex(string,"^[0-9]+$");
+    public static boolean checkNotPositiveInteger (String string) {
+        return checkNotMatchesRegex(string,"^[1-9]\\d*$");
     }
 
     /**
