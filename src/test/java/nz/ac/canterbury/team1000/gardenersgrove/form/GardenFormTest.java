@@ -1,5 +1,6 @@
 package nz.ac.canterbury.team1000.gardenersgrove.form;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -271,10 +272,17 @@ class GardenFormTest {
     }
 
     @Test
-    void validate_SizeComma_DoesNotAddError() {
+    void validate_SizeEuropeanFormat_DoesNotAddError() {
         gardenForm.setSize("0,2");
         GardenForm.validate(gardenForm, bindingResult);
         Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
+
+    @Test
+    void validate_SizeEuropeanFormat_ConvertsToDecimal() {
+        gardenForm.setSize("1,2");
+        GardenForm.validate(gardenForm, bindingResult);
+        Assertions.assertEquals("1.2", gardenForm.getSize());
     }
 
     @Test
