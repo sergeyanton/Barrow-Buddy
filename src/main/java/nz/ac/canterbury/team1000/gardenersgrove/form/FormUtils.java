@@ -117,7 +117,7 @@ public class FormUtils {
      */
     public static boolean checkDoubleTooBig (String string) {
         try {
-            return new BigDecimal(string.replace(",", ".")).compareTo(BigDecimal.valueOf(Integer.MAX_VALUE)) > 0;
+            return new BigDecimal(string.replace(",", ".")).compareTo(BigDecimal.valueOf(72000)) > 0;
         } catch (NumberFormatException e) {
             return false;
         }

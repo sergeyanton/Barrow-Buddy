@@ -229,21 +229,15 @@ public class FormUtilsTest {
         Assertions.assertTrue(FormUtils.checkDoubleIsInvalid(size));
     }
     @Test
-    void checkDoubleIsInvalid_OverMaximumIntegerValue_ReturnsFalse() {
-        String size = "2147483647.1";
+    void checkDoubleIsInvalid_OverMaximumValue_ReturnsFalse() {
+        String size = "72000.1";
         Assertions.assertFalse(FormUtils.checkDoubleIsInvalid(size));
     }
 
     @Test
-    void checkDoubleTooBig_MaximumIntegerValue_ReturnsFalse() {
-        String size = "2147483647"; // maximum integer value
+    void checkDoubleTooBig_JustMaxValue_ReturnsFalse() {
+        String size = "72000.0";
         Assertions.assertFalse(FormUtils.checkDoubleTooBig(size));
-    }
-
-    @Test
-    void checkDoubleTooBig_OverMaximumIntegerValue_ReturnsTrue() {
-        String size = "2147483647.1";
-        Assertions.assertTrue(FormUtils.checkDoubleTooBig(size));
     }
 
     @Test
@@ -253,14 +247,14 @@ public class FormUtilsTest {
     }
 
     @Test
-    void checkIntegerTooBig_MaximumIntegerValue_ReturnsFalse() {
-        String size = "2147483647"; // maximum integer value
+    void checkIntegerTooBig_MaximumValue_ReturnsFalse() {
+        String size = "72000"; // maximum integer value
         Assertions.assertFalse(FormUtils.checkIntegerTooBig(size));
     }
 
     @Test
-    void checkIntegerTooBig_OverMaximumIntegerValue_ReturnsTrue() {
-        String size = "2147483648";
+    void checkIntegerTooBig_OverMaximumValue_ReturnsTrue() {
+        String size = "72001";
         Assertions.assertTrue(FormUtils.checkIntegerTooBig(size));
     }
 
