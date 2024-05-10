@@ -102,14 +102,14 @@ class PlantFormTest {
 
     @Test
     void validate_CountExactlyBig_DoesNotAddError() {
-        plantForm.setPlantCount("34387");
+        plantForm.setPlantCount("268000");
         PlantForm.validate(plantForm, bindingResult);
         Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
     }
 
     @Test
     void validate_CountTooBig_AddsError() {
-        plantForm.setPlantCount("34388");
+        plantForm.setPlantCount("268001");
         PlantForm.validate(plantForm, bindingResult);
         Mockito.verify(bindingResult).addError(Mockito.any());
     }

@@ -63,7 +63,7 @@ public class FormUtils {
      */
     public static final int MAX_DB_STR_LEN = 255;
 
-    public static final int MAX_PLANT_COUNT = 34387;
+    public static final int MAX_PLANT_COUNT = 268000;
     /**
      * The allowed MIME types for uploaded images.
      */

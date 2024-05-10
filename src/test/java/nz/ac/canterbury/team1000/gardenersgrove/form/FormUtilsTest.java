@@ -254,13 +254,13 @@ public class FormUtilsTest {
 
     @Test
     void checkNumberTooBig_MaximumPlantCount_ReturnsFalse() {
-        String size = "34387";
+        String size = "268000";
         Assertions.assertFalse(FormUtils.checkNumberTooBig(size, FormUtils.MAX_PLANT_COUNT));
     }
 
     @Test
     void checkNumberTooBig_OverMaximumPlantCount_ReturnsTrue() {
-        String size = "34388";
+        String size = "268001";
         Assertions.assertTrue(FormUtils.checkNumberTooBig(size, FormUtils.MAX_PLANT_COUNT));
     }
 
