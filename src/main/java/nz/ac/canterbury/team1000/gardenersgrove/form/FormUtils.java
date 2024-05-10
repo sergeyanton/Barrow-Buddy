@@ -64,6 +64,11 @@ public class FormUtils {
     public static final int MAX_DB_STR_LEN = 255;
 
     /**
+     * The default maximum garden size.
+     */
+    public static final int MAX_GARDEN_SIZE = 72000;
+
+    /**
      * The allowed MIME types for uploaded images.
      */
     public static final List<String> ALLOWED_IMAGE_TYPES = Arrays.asList("image/jpeg", "image/png", "image/svg+xml");
@@ -117,7 +122,7 @@ public class FormUtils {
      */
     public static boolean checkDoubleTooBig (String string) {
         try {
-            return new BigDecimal(string.replace(",", ".")).compareTo(BigDecimal.valueOf(72000)) > 0;
+            return new BigDecimal(string.replace(",", ".")).compareTo(BigDecimal.valueOf(MAX_GARDEN_SIZE)) > 0;
         } catch (NumberFormatException e) {
             return false;
         }
