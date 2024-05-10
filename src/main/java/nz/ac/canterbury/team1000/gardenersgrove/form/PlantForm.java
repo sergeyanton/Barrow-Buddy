@@ -124,7 +124,7 @@ public class PlantForm {
 
         // Validate plant count (if there is one)
         if (!checkBlank(createPlantForm.getPlantCount())) {
-            if (checkIntegerIsInvalid(createPlantForm.getPlantCount())) {
+            if (checkNotPositiveInteger(createPlantForm.getPlantCount())) {
                 errors.add("plantCount", "Plant count must be a positive integer",
                     createPlantForm.getPlantCount());
             } else if (checkNumberTooBig(createPlantForm.getPlantCount(), MAX_PLANT_COUNT)) {
