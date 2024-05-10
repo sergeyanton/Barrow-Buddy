@@ -63,6 +63,7 @@ public class FormUtils {
      */
     public static final int MAX_DB_STR_LEN = 255;
 
+    public static final int MAX_PLANT_COUNT = 34387;
     /**
      * The allowed MIME types for uploaded images.
      */
@@ -124,17 +125,18 @@ public class FormUtils {
     }
 
     /**
-     * Checks if the given string represents an integer bigger than the maximum integer value in java.
+     * Checks if the given string represents an integer bigger than the maximum integer that is provided
      * NOTE: Returns false if the string doesn't represent a valid integer. Only call this method with
      * valid strings.
      *
-     * @param string the string representation of the double to check
-     * @return  true if the represented integer is greater than the maximum java Integer value,
-     *          false if the represented integer is not too big, or if the string doesn't represent a valid integer
+     * @param providedValue the string representation of the number to check
+     * @param maxValue the max value that is provided to compare with
+     * @return  true if the provided value is greater than the maximum value,
+     *          false if the provided value is not too big, or if the string doesn't represent a valid integer
      */
-    public static boolean checkIntegerTooBig (String string) {
+    public static boolean checkNumberTooBig (String providedValue, long maxValue) {
         try {
-            return new BigDecimal(string).compareTo(BigDecimal.valueOf(Integer.MAX_VALUE)) > 0;
+            return new BigDecimal(providedValue).compareTo(BigDecimal.valueOf(maxValue)) > 0;
         } catch (NumberFormatException e) {
             return false;
         }
