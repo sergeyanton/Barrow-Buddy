@@ -67,12 +67,38 @@
          * @param addressField the name/id of the particular address field being used for autocomplete
          */
         function getLocationSuggestions(addressField) {
+            let fullAddress = [];
             const query = document.getElementById(addressField).value;
+            // TODO: perhaps, make it so it includes the other address fields into the query???
             if (query.trim().length < MIN_LENGTH_TO_AUTOCOMPLETE) {
                 return;
+            } else {
+                if (addressField === "address") {
+                    fullAddress.push(query);
+                    if (document.getElementById("suburb").value.length > 0) {
+                        fullAddress.push(document.getElementById("suburb").value);
+                    } else {
+                        fullAddress.push("");
+                    }
+                    if (document.getElementById("city").value.length > 0) {
+                        fullAddress.push(document.getElementById("city").value);
+                    } else {
+                        fullAddress.push("");
+                    }
+                    if (document.getElementById("postcode").value.length > 0) {
+                        fullAddress.push(document.getElementById("postcode").value);
+                    } else {
+                        fullAddress.push("");
+                    }
+                    if (document.getElementById("country").value.length > 0) {
+                        fullAddress.push(document.getElementById("country").value);
+                    } else {
+                        fullAddress.push("");
+                    }
+                }
             }
 
-            fetch(`/locationSearch?query=${query}&addressField=${addressField}`)
+            fetch(`/locationSearch?query=${query}&fullAddress=${fullAddress}&addressField=${addressField}`)
             .then(response => response.json())
             .then(locations => {
                 const dropdownMenu = document.getElementById(`${addressField}DropdownMenu`);
