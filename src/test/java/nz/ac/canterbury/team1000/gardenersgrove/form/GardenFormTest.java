@@ -251,14 +251,14 @@ class GardenFormTest {
 
     @Test
     void validate_SizeExactlyBig_DoesNotAddError() {
-        gardenForm.setSize("2147483647");
+        gardenForm.setSize("72000");
         GardenForm.validate(gardenForm, bindingResult);
         Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
     }
 
     @Test
     void validate_SizeTooBig_AddsError() {
-        gardenForm.setSize("2147483648");
+        gardenForm.setSize("72001");
         GardenForm.validate(gardenForm, bindingResult);
         Mockito.verify(bindingResult).addError(Mockito.any());
     }
