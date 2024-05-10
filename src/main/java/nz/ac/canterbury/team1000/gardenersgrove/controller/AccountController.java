@@ -204,7 +204,9 @@ public class AccountController {
     public String login(HttpServletRequest request,
                         @ModelAttribute("loginForm") LoginForm loginForm,
                         BindingResult bindingResult) {
+
         logger.info("POST /login");
+
         if (userService.isSignedIn()) {
             return "redirect:/home";
         }
@@ -213,7 +215,7 @@ public class AccountController {
 
         if (!bindingResult.hasFieldErrors()) {
             User user = userService.findEmail(loginForm.getEmail());
-            // check if email exists
+            // check if account is verified
             if (user != null && verificationTokenService.getVerificationTokenByUserId(user.getId()).isVerified() == false){
                 return "redirect:/register/verification";
             }
