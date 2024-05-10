@@ -4,7 +4,6 @@ import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.ResetToken;
-import java.util.Objects;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.VerificationToken;
 import nz.ac.canterbury.team1000.gardenersgrove.form.ForgotPasswordForm;
@@ -148,7 +147,8 @@ public class AccountController {
         }
 
         String token = verificationTokenForm.getVerificationToken();
-        VerificationToken verificationToken = verificationTokenService.getVerificationTokenByToken(token);
+        VerificationToken verificationToken = verificationTokenService.getVerificationTokenByToken(
+            String.valueOf(token.hashCode()));
         User user = verificationToken != null ? userService.findById(verificationToken.getUserId()) : null;
 
         if (user == null) {
@@ -169,7 +169,7 @@ public class AccountController {
         logger.info("Sending verification email to " + user.getEmail());
         VerificationToken token = new VerificationToken(user.getId());
         verificationTokenService.addVerificationToken(token);
-        String body = "Please verify your account by copying the following code into the prompted field: \n\n" + token.getToken()
+        String body = "Please verify your account by copying the following code into the prompted field: \n\n" + token.getPlainToken()
                 + "\n\nIf this was not you, you can ignore this message and the account will be deleted after 10 minutes";
         emailService.sendSimpleMessage(user.getEmail(), "Gardeners Grove Account Verification", body);
     }

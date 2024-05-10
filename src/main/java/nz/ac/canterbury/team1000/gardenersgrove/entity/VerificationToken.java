@@ -24,13 +24,17 @@ public class VerificationToken {
     private LocalDateTime expiryDate;
     @Column(nullable = false)
     private boolean verified = false;
+    @Transient
+    private String plainToken;
+
 
     protected VerificationToken() {
     }
 
     public VerificationToken(Long userId) {
         this.userId = userId;
-        this.token = generateToken();
+        this.plainToken = generateToken();
+        this.token = String.valueOf(this.plainToken.hashCode());
         this.verified = false;
         this.expiryDate = calculateExpiryDate();
     }
@@ -66,6 +70,9 @@ public class VerificationToken {
 
     public String getToken() {
         return token;
+    }
+    public String getPlainToken() {
+        return plainToken;
     }
 
     public boolean isVerified() {
