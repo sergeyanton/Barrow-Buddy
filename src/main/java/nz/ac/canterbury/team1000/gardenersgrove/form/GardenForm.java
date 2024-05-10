@@ -158,6 +158,9 @@ public class GardenForm {
 
         // Validate garden size (if there is one)
         if (!checkBlank(createGardenForm.getSize())) {
+            // Handle european decimal format
+            createGardenForm.setSize(createGardenForm.getSize().replace(',', '.'));
+
             if (checkDoubleTooBig(createGardenForm.getSize())) {
                 errors.add("size", "Garden size must be at most " + Integer.MAX_VALUE + " m²", createGardenForm.getSize());
             } else if (checkDoubleIsInvalid(createGardenForm.getSize()) || checkDoubleOutsideRange(createGardenForm.getSize(), 0.1, null)) {
