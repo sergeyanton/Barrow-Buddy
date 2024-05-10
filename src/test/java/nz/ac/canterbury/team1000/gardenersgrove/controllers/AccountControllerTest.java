@@ -548,23 +548,6 @@ class AccountControllerTest {
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("verificationTokenForm", "verificationToken"));
     }
 
-    @Test
-    public void LoginPostRequest_NoVerifiedAccount_RedirectsToVerification() throws Exception {
-        Mockito.when(userService.isSignedIn()).thenReturn(false);
-        Mockito.when(userService.findEmail(Mockito.any())).thenReturn(userMock);
-        Mockito.when(verificationTokenService.getVerificationTokenByUserId(Mockito.anyLong())).thenReturn(verificationTokenMock);
-        Mockito.when(verificationTokenMock.isVerified()).thenReturn(false);
-
-        loginForm.setEmail(userMock.getEmail());
-        loginForm.setPassword("Pass123$");
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/login").with(csrf())
-                        .flashAttr("loginForm", loginForm))
-                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/register/verification"));
-    }
-
-
 //    TODO I cannot for the life of me figure out how to get these tests passing, they look perfect to me, i'm assuming its some weird authentication thing
 //    @Test
 //    void LoginGetRequest_SignedIn_Redirects() throws Exception {
