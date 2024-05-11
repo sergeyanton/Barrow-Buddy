@@ -128,7 +128,7 @@ public class PlantForm {
                 errors.add("plantCount", "Plant count must be a positive integer",
                     createPlantForm.getPlantCount());
             } else if (checkNumberTooBig(createPlantForm.getPlantCount(), MAX_PLANT_COUNT)) {
-                errors.add("plantCount", "Plant count must be at most " + MAX_PLANT_COUNT,
+                errors.add("plantCount", "The maximum allowed count is set at 268000 based on data from Quaora on the number of         Angiosperms plants in the world.",
                     createPlantForm.getPlantCount());
             }
         }
