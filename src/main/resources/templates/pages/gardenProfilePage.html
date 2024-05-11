@@ -7,6 +7,9 @@
     <div th:replace="~{fragments/header :: header}"></div>
     <main>
         <div class="basic">
+            <div id="weather">
+
+            </div>
             <h1 th:text="${garden.name}"></h1>
             <a th:href="@{'/gardens/' + ${garden.id} + '/plants/create'}">
                 <button>Add a plant</button>
@@ -78,6 +81,8 @@
                 }
             }
             container.style.maxHeight = height + "px";
+
+            getWeather();
         }
 
         function validateImage(input, id) {
@@ -119,13 +124,38 @@
             document.getElementById('pictureForm' + id).submit();
         }
 
-        // function cancelSelection() {
-        //     document.getElementById('pictureFile').value = '';
-        //     document.getElementById('profileImage').src = initialProfilePictureUrl;
-        //     document.getElementById('pictureFileLabel').style.display = 'inline-block';
-        //     document.getElementById('cancelButton').style.display = 'none';
-        //     document.getElementById('submitButton').style.display = 'none';
-        // }
+        function getWeather() {
+            fetch(`/weatherSearch`)
+            .then(response => response.json())
+            .then(weatherData => {
+                console.log(weatherData);
+
+                const weatherDiv = document.getElementById(`weather`);
+                weatherDiv.textContent = weatherData;
+                // if (locations.length === 0) {
+                //     const noLocations = document.createElement('li');
+                //     noLocations.innerHTML = '<p>No matching location found, location-based services may not work</p>';
+                //     noLocations.classList.add('dropdown-item');
+                //     dropdownMenu.appendChild(noLocations);
+                // } else {
+                //     locations.forEach(location => {
+                //         const option = document.createElement('li');
+                //         option.classList.add('dropdown-item');
+                //         option.innerHTML = `<b>${location.displayPlace}</b>`;
+                //         if (location.displayAddress !== location.displayPlace) {
+                //             option.innerHTML += `<p>${location.displayAddress}</p>`;
+                //         }
+                //         option.addEventListener('mousedown', function() {
+                //             handleDropdownItemClick(location);
+                //         });
+                //         dropdownMenu.appendChild(option);
+                //     });
+                // }
+            })
+            .catch(error => {
+                console.error('Error fetching locations:', error);
+            });
+        }
     </script>
 </body>
 </html>
