@@ -69,7 +69,6 @@
         function getLocationSuggestions(addressField) {
             let fullAddress = [];
             const query = document.getElementById(addressField).value;
-            // TODO: perhaps, make it so it includes the other address fields into the query???
             if (query.trim().length < MIN_LENGTH_TO_AUTOCOMPLETE) {
                 return;
             } else {
