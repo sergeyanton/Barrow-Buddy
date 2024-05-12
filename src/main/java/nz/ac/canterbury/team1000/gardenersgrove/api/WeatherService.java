@@ -2,6 +2,7 @@ package nz.ac.canterbury.team1000.gardenersgrove.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.criteria.CriteriaBuilder.In;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -19,14 +20,19 @@ public class WeatherService {
 
     public WeatherService(RestTemplate restTemplate) {this.restTemplate = restTemplate;}
 
-    public WeatherData getWeatherData() {
+    public List<WeatherData> getWeatherData() {
         String jsonResponse = restTemplate.getForObject(URL, String.class);
         try {
             Map<String, Object> weather = objectMapper.readValue(jsonResponse, Map.class);
-            List<String> weatherCodes = (List<String>) ((Map<String, Object>) weather.get("daily")).get("weather_code");
+            List<Integer> weatherCodes = (List) ((Map<String, Object>) weather.get("daily")).get("weather_code");
             System.out.println(weatherCodes);
 
-			return new WeatherData(jsonResponse);
+            List<WeatherData> weatherDataList = new ArrayList<>();
+            for (Integer code : weatherCodes) {
+                weatherDataList.add(new WeatherData(WeatherType.getByCode(code)));
+            }
+
+			return weatherDataList;
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return null;
