@@ -129,6 +129,8 @@
             .then(response => response.json())
             .then(weatherData => {
                 console.log(weatherData);
+                console.log(weatherData.latitude);
+                console.log(weatherData.latitude);
 
                 const weatherDiv = document.getElementById(`weather`);
                 weatherDiv.textContent = weatherData;
