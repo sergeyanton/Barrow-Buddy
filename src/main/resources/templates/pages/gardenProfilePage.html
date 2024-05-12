@@ -82,7 +82,7 @@
             }
             container.style.maxHeight = height + "px";
 
-            getWeather();
+            // getWeather();
         }
 
         function validateImage(input, id) {
@@ -124,42 +124,22 @@
             document.getElementById('pictureForm' + id).submit();
         }
 
-        function getWeather() {
-            fetch(`/weatherSearch`)
-            .then(response => response.json())
-            .then(weatherDataList => {
-                console.log(weatherDataList);
-                const weatherDiv = document.getElementById(`weather`);
-
-                weatherDataList.forEach(weatherData => {
-                    console.log(weatherData.type)
-                    weatherDiv.textContent += weatherData.text;
-
-                });
-                // if (locations.length === 0) {
-                //     const noLocations = document.createElement('li');
-                //     noLocations.innerHTML = '<p>No matching location found, location-based services may not work</p>';
-                //     noLocations.classList.add('dropdown-item');
-                //     dropdownMenu.appendChild(noLocations);
-                // } else {
-                //     locations.forEach(location => {
-                //         const option = document.createElement('li');
-                //         option.classList.add('dropdown-item');
-                //         option.innerHTML = `<b>${location.displayPlace}</b>`;
-                //         if (location.displayAddress !== location.displayPlace) {
-                //             option.innerHTML += `<p>${location.displayAddress}</p>`;
-                //         }
-                //         option.addEventListener('mousedown', function() {
-                //             handleDropdownItemClick(location);
-                //         });
-                //         dropdownMenu.appendChild(option);
-                //     });
-                // }
-            })
-            .catch(error => {
-                console.error('Error fetching locations:', error);
-            });
-        }
+        // function getWeather() {
+        //     fetch(`/weatherSearch`)
+        //     .then(response => response.json())
+        //     .then(weatherDataList => {
+        //         console.log(weatherDataList);
+        //         const weatherDiv = document.getElementById(`weather`);
+        //
+        //         for (let i = 0; i < weatherDataList.length; i++) {
+        //             console.log(weatherDataList[0].text)
+        //             weatherDiv.textContent += "Day 1: " + weatherData.text;
+        //         }
+        //     })
+        //     .catch(error => {
+        //         console.error('Error fetching locations:', error);
+        //     });
+        // }
     </script>
 </body>
 </html>

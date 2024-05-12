@@ -18,6 +18,6 @@ public class WeatherController {
 
     @GetMapping("/weatherSearch")
     public List<WeatherData> searchLocations() {
-        return weatherService.getWeatherData();
+        return weatherService.getWeatherData(1L);
     }
 }

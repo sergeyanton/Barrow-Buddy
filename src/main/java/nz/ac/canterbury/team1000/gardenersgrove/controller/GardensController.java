@@ -1,11 +1,15 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import nz.ac.canterbury.team1000.gardenersgrove.api.WeatherService;
+import nz.ac.canterbury.team1000.gardenersgrove.api.WeatherType;
+import nz.ac.canterbury.team1000.gardenersgrove.entity.WeatherData;
 import nz.ac.canterbury.team1000.gardenersgrove.form.GardenForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PictureForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PlantForm;
@@ -38,6 +42,8 @@ public class GardensController {
     private final GardenService gardenService;
     private final PlantService plantService;
     private final UserService userService;
+    private final WeatherService weatherService;
+
 
 
     //TODO make a controller dedicated to uploading files.
@@ -45,10 +51,12 @@ public class GardensController {
 
     
     public GardensController(GardenService gardenService, PlantService plantService,
-                                 UserService userService) {
+                                 UserService userService, WeatherService weatherService) {
         this.gardenService = gardenService;
         this.plantService = plantService;
         this.userService = userService;
+        this.weatherService =  weatherService;
+
     }
 
     /**
@@ -178,6 +186,17 @@ public class GardensController {
                              Model model) {
         logger.info("GET /gardens/" + gardenId);
         Garden garden = tryToAccessGarden(gardenId);
+        List<WeatherData> weatherDataList = weatherService.getWeatherByGardenId(gardenId);
+        if (weatherDataList.isEmpty()) {
+            System.out.println("weather does not exist");
+            weatherDataList = weatherService.getWeatherData(gardenId);
+            System.out.println(weatherDataList);
+            if (weatherDataList != null) {
+                for (WeatherData weatherData : weatherDataList) {
+                    weatherService.addWeatherData(weatherData);
+                }
+            }
+        }
         model.addAttribute("garden", garden);
         model.addAttribute("plants", plantService.getPlantsByGardenId(garden.getId()));
         return "pages/gardenProfilePage";
