@@ -15,6 +15,10 @@
             <p th:text="'Location: ' + ${garden.getLocationString}"></p>
             <br>
             <p th:if="${garden.size != null}" th:text="'Size: ' + ${garden.size} + ' m&sup2;'"></p>
+            <div class="form-element">
+                <label for="publicCheckbox"><b>Make Garden Public</b></label>
+                <input type="checkbox" class="form-control" id="publicCheckbox" th:checked="${garden.getPublicity}">
+            </div>
             <br th:if="${garden.size != null}">
             <a th:href="@{'/gardens/' + ${garden.id} + '/edit'}">Edit Garden Details</a>
             <br>

@@ -34,6 +34,9 @@ public class Garden {
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 
+    @Column(name = "is_public", nullable = false)
+    private boolean isPublic = false;
+
     /**
      * JPA required no-args constructor
      */
@@ -52,7 +55,7 @@ public class Garden {
      * @param size     size of garden
      * @param owner    owner of garden
      */
-    public Garden(String name, String address, String suburb, String city, String postcode, String country, Double size, User owner) {
+    public Garden(String name, String address, String suburb, String city, String postcode, String country, Double size, User owner, boolean publicity) {
         this.name = name;
         this.address = address;
         this.suburb = suburb;
@@ -66,6 +69,7 @@ public class Garden {
         }
 
         this.size = size;
+        this.setPublicity(publicity);
         this.owner = owner;
     }
 
@@ -82,15 +86,16 @@ public class Garden {
      * @param size     size of garden
      * @param owner    owner of garden
      */
-    public Garden(String name, String address, String suburb, String city, String postcode, String country, String size, User owner) {
+    public Garden(String name, String address, String suburb, String city, String postcode, String country, String size, User owner, boolean publicity) {
         this.name = name;
         this.address = address;
         this.suburb = suburb;
         this.city = city;
         this.postcode = postcode;
         this.country = country;
-
         this.setSize(size);
+        this.setPublicity(publicity);
+
     }
 
     public Long getId() {
@@ -125,6 +130,10 @@ public class Garden {
         return size;
     }
 
+    public boolean getPublicity() {
+        return isPublic;
+    }
+
     public void setName(String newName) {
         name = newName;
     }
@@ -146,9 +155,14 @@ public class Garden {
         setSize((newSize.isBlank()) ? null : Double.parseDouble(newSize.replace(",", ".")));
     }
 
+    public void setPublicity(boolean publicity) {
+        isPublic = publicity;
+    }
+
     public void setOwner(User newOwner) {
         owner = newOwner;
     }
+
 
     public User getOwner() {
         return owner;
