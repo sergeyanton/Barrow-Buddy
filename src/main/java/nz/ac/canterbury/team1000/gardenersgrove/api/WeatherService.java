@@ -39,13 +39,11 @@ public class WeatherService {
         return weatherRepository.save(weatherData);
     }
 
-
     public List<WeatherData> getWeatherData(Long gardenId) {
         String jsonResponse = restTemplate.getForObject(URL, String.class);
         try {
             Map<String, Object> weather = objectMapper.readValue(jsonResponse, Map.class);
             List<Integer> weatherCodes = (List) ((Map<String, Object>) weather.get("daily")).get("weather_code");
-            System.out.println(weatherCodes);
 
             List<WeatherData> weatherDataList = new ArrayList<>();
             for (Integer code : weatherCodes) {

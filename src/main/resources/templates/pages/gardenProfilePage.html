@@ -7,9 +7,9 @@
     <div th:replace="~{fragments/header :: header}"></div>
     <main>
         <div class="basic">
-            <div id="weather">
-
-            </div>
+            <tr th:each="w : ${weather}">
+                <div th:text="${w.text}"></div>
+            </tr>
             <h1 th:text="${garden.name}"></h1>
             <a th:href="@{'/gardens/' + ${garden.id} + '/plants/create'}">
                 <button>Add a plant</button>

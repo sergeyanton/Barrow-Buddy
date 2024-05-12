@@ -582,8 +582,6 @@ public class GardenControllerTest {
 
         PlantForm plantForm = PlantForm.fromPlant(plant);
 
-        System.out.println(plantForm.toString());
-
         // edit the plant to have some invalid data
         plantForm.setName("Invalid Name!?@");
 

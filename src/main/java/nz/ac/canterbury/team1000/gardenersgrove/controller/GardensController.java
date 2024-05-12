@@ -186,17 +186,22 @@ public class GardensController {
                              Model model) {
         logger.info("GET /gardens/" + gardenId);
         Garden garden = tryToAccessGarden(gardenId);
+
         List<WeatherData> weatherDataList = weatherService.getWeatherByGardenId(gardenId);
+        System.out.println("initial: " + weatherDataList);
+
         if (weatherDataList.isEmpty()) {
             System.out.println("weather does not exist");
             weatherDataList = weatherService.getWeatherData(gardenId);
-            System.out.println(weatherDataList);
+            System.out.println("final: " + weatherDataList);
             if (weatherDataList != null) {
                 for (WeatherData weatherData : weatherDataList) {
                     weatherService.addWeatherData(weatherData);
                 }
             }
         }
+
+        model.addAttribute("weather", weatherService.getWeatherByGardenId(gardenId));
         model.addAttribute("garden", garden);
         model.addAttribute("plants", plantService.getPlantsByGardenId(garden.getId()));
         return "pages/gardenProfilePage";
