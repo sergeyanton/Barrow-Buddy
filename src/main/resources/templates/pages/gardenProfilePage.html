@@ -127,13 +127,15 @@
         function getWeather() {
             fetch(`/weatherSearch`)
             .then(response => response.json())
-            .then(weatherData => {
-                console.log(weatherData);
-                console.log(weatherData.latitude);
-                console.log(weatherData.latitude);
-
+            .then(weatherDataList => {
+                console.log(weatherDataList);
                 const weatherDiv = document.getElementById(`weather`);
-                weatherDiv.textContent = weatherData;
+
+                weatherDataList.forEach(weatherData => {
+                    console.log(weatherData.type)
+                    weatherDiv.textContent += weatherData.type.text;
+
+                });
                 // if (locations.length === 0) {
                 //     const noLocations = document.createElement('li');
                 //     noLocations.innerHTML = '<p>No matching location found, location-based services may not work</p>';
