@@ -12,13 +12,9 @@ import nz.ac.canterbury.team1000.gardenersgrove.repository.WeatherRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito.*;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.web.client.RestTemplate;
 
-@DataJpaTest
 public class WeatherServiceTest {
 	private WeatherService weatherService;
 	@Mock
@@ -33,7 +29,6 @@ public class WeatherServiceTest {
 		weatherRepository = mock(WeatherRepository.class);
 		restTemplate = mock(RestTemplate.class);
 		weatherService = new WeatherService(weatherRepository, restTemplate, new ObjectMapper());
-
 		gardenId = 1L;
 		weatherList = new ArrayList<>();
 		when(weatherRepository.findByGardenId(gardenId)).thenReturn(weatherList);
@@ -64,6 +59,7 @@ public class WeatherServiceTest {
 		when(restTemplate.getForObject(anyString(), any())).thenReturn(generateResponse(codes, temps));
 
 		List<Weather> result = weatherService.getWeatherByGardenId(gardenId);
+
 		verify(weatherRepository, times(3)).save(any());
 
 		for (int i = 0; i < result.size(); i++) {

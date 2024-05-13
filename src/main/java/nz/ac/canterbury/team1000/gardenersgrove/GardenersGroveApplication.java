@@ -1,6 +1,5 @@
 package nz.ac.canterbury.team1000.gardenersgrove;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -12,7 +11,10 @@ import org.springframework.web.client.RestTemplate;
  */
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
 public class GardenersGroveApplication {
-
+	/**
+	 * Configures RestTemplate class as a bean.
+	 * This was discovered to be necessary during testing of the Open-Meteo API.
+	 */
 	@Bean
 	public RestTemplate restTemplate() {
 		return new RestTemplate();

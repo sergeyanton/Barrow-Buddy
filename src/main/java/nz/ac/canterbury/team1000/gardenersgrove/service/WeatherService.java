@@ -15,6 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * Service class for Weather entities, defined by the @link{Service} annotation. This clas links
+ * automatically with @link{WeatherRepository}.
+ *
+ * Also is responsible for calling the Open-Meteo API and parsing the response.
+ */
 @Service
 public class WeatherService {
     final Logger logger = LoggerFactory.getLogger(WeatherService.class);
@@ -31,6 +37,14 @@ public class WeatherService {
         this.objectMapper = objectMapper;
     }
 
+    /**
+     * Gets a list of Weather entities regarding the current day, and the future 5 days for a given
+     * gardenId.
+     * If there is no relevant and up-to-date Weather entities persisted in the database already,
+     * then weather data is fetched from Open-Meteo, and then persisted.
+     * @param gardenId ID of the garden that this weather information is relevant for
+     * @return A list of Weather entities with data on the current and future weather.
+     */
     public List<Weather> getWeatherByGardenId(long gardenId) {
         List<Weather> persistedWeatherList = weatherRepository.findByGardenId(gardenId);
         if (persistedWeatherList.isEmpty()) {
@@ -49,6 +63,11 @@ public class WeatherService {
         return persistedWeatherList;
     }
 
+    /**
+     * Persists a list of Weather entities into the database
+     * @param weatherList The list of weather entities to persist
+     * @return The list of weather entities that are being persisted
+     */
     private List<Weather> persistWeather(List<Weather> weatherList) {
         logger.info("...Persisting...");
 
@@ -58,6 +77,11 @@ public class WeatherService {
         return weatherList;
     }
 
+    /**
+     * Calls the API and parses the response into a list of Weather entities
+     * @param gardenId ID of the garden that this weather information is relevant for
+     * @return A list of Weather entities with data on the current and future weather.
+     */
     public List<Weather> getWeather(Long gardenId) {
         String jsonResponse = restTemplate.getForObject(URL, String.class);
         try {
