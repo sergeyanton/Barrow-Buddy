@@ -11,6 +11,7 @@ import nz.ac.canterbury.team1000.gardenersgrove.entity.Weather;
 import nz.ac.canterbury.team1000.gardenersgrove.repository.WeatherRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -19,10 +20,15 @@ public class WeatherService {
     final Logger logger = LoggerFactory.getLogger(WeatherService.class);
     private final WeatherRepository weatherRepository;
     private final String URL = "https://api.open-meteo.com/v1/forecast?latitude=-43.5333&longitude=172.6333&hourly=temperature_2m,relative_humidity_2m&daily=weather_code";
-    private final RestTemplate restTemplate = new RestTemplate();
-    private final ObjectMapper objectMapper = new ObjectMapper();
-    public WeatherService(WeatherRepository weatherRepository) {
+    private final RestTemplate restTemplate;
+    private final ObjectMapper objectMapper;
+
+    @Autowired
+    public WeatherService(WeatherRepository weatherRepository, RestTemplate restTemplate,
+            ObjectMapper objectMapper) {
         this.weatherRepository = weatherRepository;
+        this.restTemplate = restTemplate;
+        this.objectMapper = objectMapper;
     }
 
     public List<Weather> getWeatherByGardenId(long gardenId) {
@@ -54,6 +60,7 @@ public class WeatherService {
 
     public List<Weather> getWeather(Long gardenId) {
         String jsonResponse = restTemplate.getForObject(URL, String.class);
+        System.out.println(jsonResponse);
         try {
             Map<String, Object> weather = objectMapper.readValue(jsonResponse, Map.class);
             List<Integer> weatherCodes = (ArrayList) ((Map<String, Object>) weather.get("daily")).get("weather_code");
