@@ -15,9 +15,13 @@
             <p th:text="'Location: ' + ${garden.getLocationString}"></p>
             <br>
             <p th:if="${garden.size != null}" th:text="'Size: ' + ${garden.size} + ' m&sup2;'"></p>
+            <br>
+            <p th:text="'Garden Visibility: ' + ${garden.getPublicity ? 'Public' : 'Private'}"></p>
+            <br>
             <div class="form-element">
-                <label for="publicCheckbox"><b>Make Garden Public</b></label>
-                <input type="checkbox" class="form-control" id="publicCheckbox" th:checked="${garden.getPublicity}">
+                <label for="publicCheckbox"><b>Make My Garden Public</b></label>
+
+                <input type="checkbox" class="form-control" id="publicCheckbox" th:checked=${garden.getPublicity} onclick="toggleInput('${garden.getId}')">
             </div>
             <br th:if="${garden.size != null}">
             <a th:href="@{'/gardens/' + ${garden.id} + '/edit'}">Edit Garden Details</a>
@@ -121,6 +125,20 @@
             }
 
             document.getElementById('pictureForm' + id).submit();
+        }
+
+        function toggleInput(gardenId) {
+            let checkbox = document.getElementById("publicCheckbox");
+            console.log(gardenId.value);
+            console.log(checkbox.checked);
+
+            fetch(`/updateGardenPublicity?gardenId=${gardenId}&gardenPublicity=${checkbox.checked}`)
+            .then(() => {
+                console.log("Successfully updated garden publicity")
+            })
+            .catch(error => {
+                console.error("Error updating garden publicity:", error);
+            })
         }
 
         // function cancelSelection() {

@@ -35,7 +35,7 @@ public class Garden {
     private User owner;
 
     @Column(name = "is_public", nullable = false)
-    private boolean isPublic = false;
+    private boolean isPublic;
 
     /**
      * JPA required no-args constructor

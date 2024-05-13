@@ -25,6 +25,7 @@ import nz.ac.canterbury.team1000.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.PlantService;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
@@ -456,5 +457,26 @@ public class GardensController {
         plantService.updatePlant(existingPlant);
         logger.info("Plant updated: " + existingPlant);
         return "redirect:/gardens/" + gardenId;
+    }
+
+    /**
+     * Handles GET requests from the /updateGardenPublicity endpoint.
+     *
+     * This changes the publicity of the garden depending on the state of the checkbox
+     * @param gardenId The id of the garden
+     * @param gardenPublicity The state of the checkbox - checked means garden is public, unchecked means garden is private
+     */
+    @GetMapping("/updateGardenPublicity")
+    public void updateGardenPublicity(@RequestParam(name = "gardenId") Long gardenId, @RequestParam(name = "gardenPublicity") String gardenPublicity) {
+        logger.info("Reached this part");
+        Garden garden = tryToAccessGarden(gardenId);
+        if (gardenPublicity.equals("true")) {
+            garden.setPublicity(true);
+        } else {
+            garden.setPublicity(false);
+        }
+
+        gardenService.updateGardenById(garden.getId(), garden);
+        logger.info("Garden " + gardenId + "'s publicity has been updated to " + gardenPublicity);
     }
 }
