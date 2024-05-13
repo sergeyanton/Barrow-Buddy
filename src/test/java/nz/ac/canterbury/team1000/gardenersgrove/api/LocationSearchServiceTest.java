@@ -38,7 +38,8 @@ public class LocationSearchServiceTest {
         + ":\"Canterbury\",\"postcode\":\"8041\",\"country\":\"New Zealand\",\"country_code\":\"nz\"}}]";
     Mockito.when(restTemplate.getForObject(any(String.class), any(Class.class))).thenReturn(jsonResponse);
 
-    List<Location> locationList = locationSearchService.searchLocations("Ilam Road", "address");
+    List<Location> locationList = locationSearchService.searchLocations("Ilam Road",
+        new String[] {"Ilam Road", "Ilam", "Christchurch", "8041", "New Zealand"},  "address");
     Assertions.assertFalse(locationList.isEmpty());
   }
 
@@ -55,9 +56,10 @@ public class LocationSearchServiceTest {
         + ":\"Canterbury\",\"postcode\":\"8041\",\"country\":\"New Zealand\",\"country_code\":\"nz\"}}]";
     Mockito.when(restTemplate.getForObject(any(String.class), any(Class.class))).thenReturn(jsonResponse);
 
-    locationSearchService.searchLocations("Ilam Road", "address");
-    locationSearchService.searchLocations("Ilam Road", "address");
-    List<Location> locationList = locationSearchService.searchLocations("Ilam Road", "address");
+    locationSearchService.searchLocations("Ilam Road", new String[]{"Ilam Road", "Ilam", "Christchurch", "8041", "New Zealand"}, "address");
+    locationSearchService.searchLocations("Ilam Road", new String[]{"Ilam Road", "Ilam", "Christchurch", "8041", "New Zealand"}, "address");
+    List<Location> locationList = locationSearchService.searchLocations("Ilam Road",
+        new String[] {"Ilam Road", "Ilam", "Christchurch", "8041", "New Zealand"}, "address");
 
     Assertions.assertTrue(locationList.isEmpty());
   }
@@ -68,7 +70,8 @@ public class LocationSearchServiceTest {
     String jsonResponse = "[]";
     Mockito.when(restTemplate.getForObject(any(String.class), any(Class.class))).thenReturn(jsonResponse);
 
-    List<Location> locationList = locationSearchService.searchLocations("Ilam Road", "address");
+    List<Location> locationList = locationSearchService.searchLocations("Ilam Road",
+        new String[] {"Ilam Road", "Ilam", "Christchurch", "8041", "New Zealand"}, "address");
     Assertions.assertTrue(locationList.isEmpty());
   }
 
@@ -84,7 +87,8 @@ public class LocationSearchServiceTest {
         + "\"Ilam Road\",\"suburb\":\"Ilam\",\"city\":\"Christchurch\",\"county\":\"Christchurch City\",\"state\""
         + ":\"Canterbury\",\"postcode\":\"8041\",\"country\":\"New Zealand\",\"country_code\":\"nz\"}}]";
     Mockito.when(restTemplate.getForObject(any(String.class), any(Class.class))).thenReturn(jsonResponse);
-    List<Location> locationList = locationSearchService.searchLocations("Ilam Road", "address");
+    List<Location> locationList = locationSearchService.searchLocations("Ilam Road",
+        new String[] {"Ilam Road", "Ilam", "Christchurch", "8041", "New Zealand"}, "address");
 
     Assertions.assertEquals(1, locationList.size());
   }
@@ -115,7 +119,8 @@ public class LocationSearchServiceTest {
 
     Mockito.when(restTemplate.getForObject(any(String.class), any(Class.class))).thenReturn(jsonResponse);
 
-    List<Location> locationList = locationSearchService.searchLocations("Ilam Road", "address");
+    List<Location> locationList = locationSearchService.searchLocations("Ilam Road",
+        new String[] {"Ilam Road", "Ilam", "Christchurch", "8041", "New Zealand"}, "address");
     Assertions.assertEquals(2, locationList.size());
   }
 
@@ -145,7 +150,8 @@ public class LocationSearchServiceTest {
 
     Mockito.when(restTemplate.getForObject(any(String.class), any(Class.class))).thenReturn(jsonResponse);
 
-    List<Location> locationList = locationSearchService.searchLocations("Ilam Road", "address");
+    List<Location> locationList = locationSearchService.searchLocations("Ilam Road",
+        new String[] {"Ilam Road", "Ilam", "Christchurch", "8041", "New Zealand"}, "address");
     Assertions.assertEquals(3, locationList.size());
   }
 
@@ -175,7 +181,8 @@ public class LocationSearchServiceTest {
 
     Mockito.when(restTemplate.getForObject(any(String.class), any(Class.class))).thenReturn(jsonResponse);
 
-    List<Location> locationList = locationSearchService.searchLocations("Ilam Road", "address");
+    List<Location> locationList = locationSearchService.searchLocations("Ilam Road",
+        new String[] {"Ilam Road", "Ilam", "Christchurch", "8041", "New Zealand"}, "address");
     Assertions.assertEquals(4, locationList.size());
   }
 
@@ -205,7 +212,8 @@ public class LocationSearchServiceTest {
 
     Mockito.when(restTemplate.getForObject(any(String.class), any(Class.class))).thenReturn(jsonResponse);
 
-    List<Location> locationList = locationSearchService.searchLocations("Ilam Road", "address");
+    List<Location> locationList = locationSearchService.searchLocations("Ilam Road",
+        new String[] {"Ilam Road", "Ilam", "Christchurch", "8041", "New Zealand"}, "address");
     Assertions.assertEquals(5, locationList.size());
   }
 
@@ -221,7 +229,8 @@ public class LocationSearchServiceTest {
         + "\"Ilam Road\",\"suburb\":\"Ilam\",\"city\":\"Christchurch\",\"county\":\"Christchurch City\",\"state\""
         + ":\"Canterbury\",\"postcode\":\"8041\",\"country\":\"New Zealand\",\"country_code\":\"nz\"}}]";
     Mockito.when(restTemplate.getForObject(any(String.class), any(Class.class))).thenReturn(jsonResponse);
-    List<Location> locationList = locationSearchService.searchLocations("Ilam Road", "city");
+    List<Location> locationList = locationSearchService.searchLocations("Ilam Road",
+        new String[] {"Ilam Road", "Ilam", "Christchurch", "8041", "New Zealand"}, "city");
 
     Assertions.assertTrue(locationList.isEmpty());
   }
@@ -238,7 +247,8 @@ public class LocationSearchServiceTest {
         + "\"Ilam Road\",\"suburb\":\"Ilam\",\"county\":\"Christchurch City\",\"state\""
         + ":\"Canterbury\",\"postcode\":\"8041\",\"country\":\"New Zealand\",\"country_code\":\"nz\"}}]";
     Mockito.when(restTemplate.getForObject(any(String.class), any(Class.class))).thenReturn(jsonResponse);
-    List<Location> locationList = locationSearchService.searchLocations("Ilam Road", "address");
+    List<Location> locationList = locationSearchService.searchLocations("Ilam Road",
+        new String[] {"Ilam Road", "Ilam", "Christchurch", "8041", "New Zealand"}, "address");
 
     Assertions.assertTrue(locationList.isEmpty());
   }
@@ -255,7 +265,8 @@ public class LocationSearchServiceTest {
         + "\"Ilam Road\",\"suburb\":\"Ilam\",\"city\":\"Christchurch\",\"county\":\"Christchurch City\",\"state\""
         + ":\"Canterbury\",\"postcode\":\"8041\",\"country_code\":\"nz\"}}]";
     Mockito.when(restTemplate.getForObject(any(String.class), any(Class.class))).thenReturn(jsonResponse);
-    List<Location> locationList = locationSearchService.searchLocations("Ilam Road", "address");
+    List<Location> locationList = locationSearchService.searchLocations("Ilam Road",
+        new String[] {"Ilam Road", "Ilam", "Christchurch", "8041"}, "address");
 
     Assertions.assertTrue(locationList.isEmpty());
   }
@@ -269,7 +280,8 @@ public class LocationSearchServiceTest {
         + "New Zealand\",\"display_place\":\"New Zealand\",\"display_address\":\"nz\",\"address\":"
         + "{\"name\":\"New Zealand\",\"country\":\"New Zealand\",\"country_code\":\"nz\"}}]";
     Mockito.when(restTemplate.getForObject(any(String.class), any(Class.class))).thenReturn(jsonResponse);
-    List<Location> locationList = locationSearchService.searchLocations("New Zealand", "country");
+    List<Location> locationList = locationSearchService.searchLocations("New Zealand",
+        new String[] {"Ilam Road", "Ilam", "Christchurch", "8041", "New Zealand"}, "country");
 
     Assertions.assertEquals(1, locationList.size());
   }
