@@ -13,5 +13,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface WeatherRepository extends CrudRepository<Weather, Long> {
-    Optional<List<Weather>> findByGardenId(long gardenId);
+    List<Weather> findByGardenId(long gardenId);
 }

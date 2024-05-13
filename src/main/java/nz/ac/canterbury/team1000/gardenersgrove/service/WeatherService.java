@@ -19,9 +19,9 @@ import org.springframework.web.client.RestTemplate;
 public class WeatherService {
     final Logger logger = LoggerFactory.getLogger(WeatherService.class);
     private final WeatherRepository weatherRepository;
-    private final String URL = "https://api.open-meteo.com/v1/forecast?latitude=-43.5333&longitude=172.6333&hourly=temperature_2m,relative_humidity_2m&daily=weather_code";
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
+    private final String URL = "https://api.open-meteo.com/v1/forecast?latitude=-43.5333&longitude=172.6333&hourly=temperature_2m,relative_humidity_2m&daily=weather_code";
 
     @Autowired
     public WeatherService(WeatherRepository weatherRepository, RestTemplate restTemplate,
@@ -32,7 +32,7 @@ public class WeatherService {
     }
 
     public List<Weather> getWeatherByGardenId(long gardenId) {
-        List<Weather> persistedWeatherList = weatherRepository.findByGardenId(gardenId).get();
+        List<Weather> persistedWeatherList = weatherRepository.findByGardenId(gardenId);
         if (persistedWeatherList.isEmpty()) {
             logger.info("Weather for garden " + gardenId + " has not been persisted yet");
             return persistWeather(getWeather(gardenId));
@@ -60,7 +60,6 @@ public class WeatherService {
 
     public List<Weather> getWeather(Long gardenId) {
         String jsonResponse = restTemplate.getForObject(URL, String.class);
-        System.out.println(jsonResponse);
         try {
             Map<String, Object> weather = objectMapper.readValue(jsonResponse, Map.class);
             List<Integer> weatherCodes = (ArrayList) ((Map<String, Object>) weather.get("daily")).get("weather_code");
@@ -69,7 +68,6 @@ public class WeatherService {
             for (int i = 0; i < hourlyTemps.size(); i += 24) {
                 dailyTemps.add(hourlyTemps.get(i));
             }
-
             List<Weather> weatherList = new ArrayList<>();
             for (int i = 0; i < weatherCodes.size(); i++) {
                 weatherList.add(new Weather(gardenId, LocalDate.now(), WeatherType.getByCode(weatherCodes.get(i)),
@@ -79,7 +77,6 @@ public class WeatherService {
             for (Weather w : weatherList) {
                 logger.info(w.toString());
             }
-
 			return weatherList;
         } catch (Exception e) {
             logger.error(e.getMessage());
