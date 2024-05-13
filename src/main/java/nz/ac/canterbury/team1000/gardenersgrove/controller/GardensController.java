@@ -7,9 +7,8 @@ import java.util.Objects;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import nz.ac.canterbury.team1000.gardenersgrove.api.WeatherService;
-import nz.ac.canterbury.team1000.gardenersgrove.api.WeatherType;
-import nz.ac.canterbury.team1000.gardenersgrove.entity.WeatherData;
+import nz.ac.canterbury.team1000.gardenersgrove.service.WeatherService;
+import nz.ac.canterbury.team1000.gardenersgrove.entity.Weather;
 import nz.ac.canterbury.team1000.gardenersgrove.form.GardenForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PictureForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PlantForm;
@@ -187,21 +186,12 @@ public class GardensController {
         logger.info("GET /gardens/" + gardenId);
         Garden garden = tryToAccessGarden(gardenId);
 
-        List<WeatherData> weatherDataList = weatherService.getWeatherByGardenId(gardenId);
-        System.out.println("initial: " + weatherDataList);
+        List<Weather> weatherList = weatherService.getWeatherByGardenId(gardenId);
 
-        if (weatherDataList.isEmpty()) {
-            System.out.println("weather does not exist");
-            weatherDataList = weatherService.getWeatherData(gardenId);
-            System.out.println("final: " + weatherDataList);
-            if (weatherDataList != null) {
-                for (WeatherData weatherData : weatherDataList) {
-                    weatherService.addWeatherData(weatherData);
-                }
-            }
-        }
+        logger.info("Got weather successfully!");
+        logger.info("EG: " + weatherList.getFirst());
 
-        model.addAttribute("weather", weatherService.getWeatherByGardenId(gardenId));
+        model.addAttribute("weather", weatherList);
         model.addAttribute("garden", garden);
         model.addAttribute("plants", plantService.getPlantsByGardenId(garden.getId()));
         return "pages/gardenProfilePage";

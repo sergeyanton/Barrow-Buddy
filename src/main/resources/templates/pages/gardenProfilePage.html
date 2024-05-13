@@ -8,7 +8,8 @@
     <main>
         <div class="basic">
             <tr th:each="w : ${weather}">
-                <div th:text="${w.text}"></div>
+                <div th:text="${w.type.getText()}"></div>
+                <div th:text="${w.temperature}"></div>
             </tr>
             <h1 th:text="${garden.name}"></h1>
             <a th:href="@{'/gardens/' + ${garden.id} + '/plants/create'}">
@@ -123,23 +124,6 @@
 
             document.getElementById('pictureForm' + id).submit();
         }
-
-        // function getWeather() {
-        //     fetch(`/weatherSearch`)
-        //     .then(response => response.json())
-        //     .then(weatherDataList => {
-        //         console.log(weatherDataList);
-        //         const weatherDiv = document.getElementById(`weather`);
-        //
-        //         for (let i = 0; i < weatherDataList.length; i++) {
-        //             console.log(weatherDataList[0].text)
-        //             weatherDiv.textContent += "Day 1: " + weatherData.text;
-        //         }
-        //     })
-        //     .catch(error => {
-        //         console.error('Error fetching locations:', error);
-        //     });
-        // }
     </script>
 </body>
 </html>

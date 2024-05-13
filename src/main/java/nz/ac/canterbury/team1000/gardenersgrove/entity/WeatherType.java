@@ -1,4 +1,4 @@
-package nz.ac.canterbury.team1000.gardenersgrove.api;
+package nz.ac.canterbury.team1000.gardenersgrove.entity;
 
 import java.util.Arrays;
 import java.util.Optional;
