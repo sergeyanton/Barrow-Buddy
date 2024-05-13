@@ -186,12 +186,9 @@ public class GardensController {
         logger.info("GET /gardens/" + gardenId);
         Garden garden = tryToAccessGarden(gardenId);
 
-        List<Weather> weatherList = weatherService.getWeatherByGardenId(gardenId);
+        List<Weather> weather = weatherService.getWeatherByGardenId(gardenId);
 
-        logger.info("Got weather successfully!");
-        logger.info("EG: " + weatherList.getFirst());
-
-        model.addAttribute("weather", weatherList);
+        model.addAttribute("weather", weather);
         model.addAttribute("garden", garden);
         model.addAttribute("plants", plantService.getPlantsByGardenId(garden.getId()));
         return "pages/gardenProfilePage";

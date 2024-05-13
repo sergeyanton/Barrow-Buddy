@@ -48,9 +48,12 @@ public class WeatherServiceTest {
 				fullTemps[i * 24 + j] = temps[i];
 			}
 		}
+
+		// Stephen Hockey (sho151) ChatGPT attribution: the idea to use Arrays.toString
 		return "{\"daily\": {\"weather_code\": " + Arrays.toString(codes) +
 			"}, \"hourly\": {\"temperature_2m\": " + Arrays.toString(fullTemps) + "}}";
 	}
+
 
 	@Test
 	public void GetWeatherForGarden_FirstGet_PersistsAndReturns() {
