@@ -16,12 +16,12 @@
             <br>
             <p th:if="${garden.size != null}" th:text="'Size: ' + ${garden.size} + ' m&sup2;'"></p>
             <br>
-            <p th:text="'Garden Visibility: ' + ${garden.getPublicity ? 'Public' : 'Private'}"></p>
+            <p id="gardenVisibilityText" th:text="'Garden Visibility: ' + (${garden.getPublicity} ? 'Public' : 'Private')"></p>
+
             <br>
             <div class="form-element">
                 <label for="publicCheckbox"><b>Make My Garden Public</b></label>
-
-                <input type="checkbox" class="form-control" id="publicCheckbox" th:checked=${garden.getPublicity} onclick="toggleInput('${garden.getId}')">
+                <input type="checkbox" class="form-control" id="publicCheckbox" th:checked=${garden.getPublicity} th:attr="onclick='toggleInput(this, ' + ${garden.id} + ')'">
             </div>
             <br th:if="${garden.size != null}">
             <a th:href="@{'/gardens/' + ${garden.id} + '/edit'}">Edit Garden Details</a>
@@ -127,14 +127,23 @@
             document.getElementById('pictureForm' + id).submit();
         }
 
-        function toggleInput(gardenId) {
-            let checkbox = document.getElementById("publicCheckbox");
-            console.log(gardenId.value);
-            console.log(checkbox.checked);
+        function toggleInput(checkbox, gardenId) {
+            let box = checkbox;
+            var gardenVisibilityText = document.getElementById("gardenVisibilityText");
+            console.log(gardenId);
+            console.log(box.checked);
 
-            fetch(`/updateGardenPublicity?gardenId=${gardenId}&gardenPublicity=${checkbox.checked}`)
-            .then(() => {
-                console.log("Successfully updated garden publicity")
+            if (box.checked) {
+                gardenVisibilityText.textContent = "Garden Visibility: Public";
+            } else {
+                gardenVisibilityText.textContent = "Garden Visibility: Private";
+            }
+
+            fetch(`/updateGardenPublicity?gardenId=${gardenId}&gardenPublicity=${box.checked}`)
+            .then(response => {
+                if (response.ok) {
+                    console.log("Successfully updated garden publicity");
+                }
             })
             .catch(error => {
                 console.error("Error updating garden publicity:", error);

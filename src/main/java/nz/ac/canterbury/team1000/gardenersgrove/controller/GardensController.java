@@ -467,16 +467,13 @@ public class GardensController {
      * @param gardenPublicity The state of the checkbox - checked means garden is public, unchecked means garden is private
      */
     @GetMapping("/updateGardenPublicity")
-    public void updateGardenPublicity(@RequestParam(name = "gardenId") Long gardenId, @RequestParam(name = "gardenPublicity") String gardenPublicity) {
-        logger.info("Reached this part");
+    public String updateGardenPublicity(@RequestParam(name = "gardenId") Long gardenId, @RequestParam(name = "gardenPublicity") boolean gardenPublicity) {
         Garden garden = tryToAccessGarden(gardenId);
-        if (gardenPublicity.equals("true")) {
-            garden.setPublicity(true);
-        } else {
-            garden.setPublicity(false);
-        }
+        garden.setPublicity(gardenPublicity);
 
         gardenService.updateGardenById(garden.getId(), garden);
-        logger.info("Garden " + gardenId + "'s publicity has been updated to " + gardenPublicity);
+        logger.info("Garden " + gardenId + "'s publicity has been updated to " + (gardenPublicity ? "Public" : "Private"));
+
+        return "redirect:/gardens/" + gardenId;
     }
 }
