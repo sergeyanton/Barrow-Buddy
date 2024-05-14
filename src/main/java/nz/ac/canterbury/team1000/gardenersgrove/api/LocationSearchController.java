@@ -28,7 +28,7 @@ public class LocationSearchController {
      * results found
      */
     @GetMapping("/locationSearch")
-    public List<Location> searchLocations(@RequestParam(name = "query") String query, @RequestParam(name = "addressField") String addressField) {
-        return locationSearchService.searchLocations(query, addressField);
+    public List<Location> searchLocations(@RequestParam(name = "query") String query, @RequestParam(name = "fullAddress") String[] fullAddress, @RequestParam(name = "addressField") String addressField) {
+        return locationSearchService.searchLocations(query, fullAddress, addressField);
     }
 }

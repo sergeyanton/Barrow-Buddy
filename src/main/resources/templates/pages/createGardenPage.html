@@ -8,10 +8,10 @@
     <main>
         <div class="basic">
             <h1>Create a garden</h1>
-            <form th:action="@{/gardens/create}" method="post" th:object="${createGardenForm}">
+            <form th:action="@{/gardens/create}" method="post" th:object="${createGardenForm}" autocomplete="off">
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='name', label='Garden Name: ', placeholder='The Hamilton Gardens')}" />
                 <br />
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='size', label='Size in m&sup2; (optional): ', placeholder='540000.0')}" />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='size', label='Size in m&sup2; (optional): ', placeholder='1000.0')}" />
 
                 <h2>Garden Location</h2>
                 <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='address', label='Address: (optional)', placeholder='13 Hungerford Crescent')}" />
@@ -68,12 +68,37 @@
          * @param addressField the name/id of the particular address field being used for autocomplete
          */
         function getLocationSuggestions(addressField) {
+            let fullAddress = [];
             const query = document.getElementById(addressField).value;
             if (query.trim().length < MIN_LENGTH_TO_AUTOCOMPLETE) {
                 return;
+            } else {
+                if (addressField === "address") {
+                    fullAddress.push(query);
+                    if (document.getElementById("suburb").value.length > 0) {
+                        fullAddress.push(document.getElementById("suburb").value);
+                    } else {
+                        fullAddress.push("");
+                    }
+                    if (document.getElementById("city").value.length > 0) {
+                        fullAddress.push(document.getElementById("city").value);
+                    } else {
+                        fullAddress.push("");
+                    }
+                    if (document.getElementById("postcode").value.length > 0) {
+                        fullAddress.push(document.getElementById("postcode").value);
+                    } else {
+                        fullAddress.push("");
+                    }
+                    if (document.getElementById("country").value.length > 0) {
+                        fullAddress.push(document.getElementById("country").value);
+                    } else {
+                        fullAddress.push("");
+                    }
+                }
             }
 
-            fetch(`/locationSearch?query=${query}&addressField=${addressField}`)
+            fetch(`/locationSearch?query=${query}&fullAddress=${fullAddress}&addressField=${addressField}`)
                 .then(response => response.json())
                 .then(locations => {
                     const dropdownMenu = document.getElementById(`${addressField}DropdownMenu`);

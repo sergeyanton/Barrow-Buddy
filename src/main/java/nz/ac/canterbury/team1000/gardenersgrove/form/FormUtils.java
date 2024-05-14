@@ -63,6 +63,12 @@ public class FormUtils {
      */
     public static final int MAX_DB_STR_LEN = 255;
 
+    public static final int MAX_PLANT_COUNT = 268000;
+    /**
+     * The default maximum garden size.
+     */
+    public static final int MAX_GARDEN_SIZE = 72000;
+
     /**
      * The allowed MIME types for uploaded images.
      */
@@ -117,24 +123,25 @@ public class FormUtils {
      */
     public static boolean checkDoubleTooBig (String string) {
         try {
-            return new BigDecimal(string.replace(",", ".")).compareTo(BigDecimal.valueOf(Integer.MAX_VALUE)) > 0;
+            return new BigDecimal(string.replace(",", ".")).compareTo(BigDecimal.valueOf(MAX_GARDEN_SIZE)) > 0;
         } catch (NumberFormatException e) {
             return false;
         }
     }
 
     /**
-     * Checks if the given string represents an integer bigger than the maximum integer value in java.
+     * Checks if the given string represents an integer bigger than the maximum integer that is provided
      * NOTE: Returns false if the string doesn't represent a valid integer. Only call this method with
      * valid strings.
      *
-     * @param string the string representation of the double to check
-     * @return  true if the represented integer is greater than the maximum java Integer value,
-     *          false if the represented integer is not too big, or if the string doesn't represent a valid integer
+     * @param providedValue the string representation of the number to check
+     * @param maxValue the max value that is provided to compare with
+     * @return  true if the provided value is greater than the maximum value,
+     *          false if the provided value is not too big, or if the string doesn't represent a valid integer
      */
-    public static boolean checkIntegerTooBig (String string) {
+    public static boolean checkNumberTooBig (String providedValue, long maxValue) {
         try {
-            return new BigDecimal(string).compareTo(BigDecimal.valueOf(Integer.MAX_VALUE)) > 0;
+            return new BigDecimal(providedValue).compareTo(BigDecimal.valueOf(maxValue)) > 0;
         } catch (NumberFormatException e) {
             return false;
         }
@@ -204,8 +211,8 @@ public class FormUtils {
      * @param string the string to check
      * @return true if the string does not represent a valid integer, including blank strings
      */
-    public static boolean checkIntegerIsInvalid (String string) {
-        return checkNotMatchesRegex(string,"^[0-9]+$");
+    public static boolean checkNotPositiveInteger (String string) {
+        return checkNotMatchesRegex(string,"^[1-9]\\d*$");
     }
 
     /**
@@ -230,19 +237,35 @@ public class FormUtils {
     }
 
     /**
-     * Checks if a double fits within the specified range.
+     * Checks if a double doesn't go over the max value.
      * NOTE: Returns true for blank or invalid strings. Should not be used to check for invalid doubles.
      *
      * @param string the string to check
-     * @param min the minimum value allowed, or null if there is no minimum
      * @param max the maximum value allowed, or null if there is no maximum
-     * @return true if the double is outside the specified range, false otherwise
+     * @return true if the double is too big of what is provided as max value, false otherwise
      */
-    public static boolean checkDoubleOutsideRange(String string, Double min, Double max) {
+    public static boolean checkDoubleExceedMaxValue(String string, Double max) {
         try {
             double value = Double.parseDouble(string.replace(",", "."));
-            if (min != null && value < min) return true;
             if (max != null && value > max) return true;
+            return false;
+        } catch (NumberFormatException e) {
+            // make sure we fail if the string is not a valid double
+            return true;
+        }
+    }
+
+    /**
+     * Checks if a string (gets converted to double) is positive
+     * NOTE: Returns true for invalid strings. Should not be used to check for invalid doubles.
+     *
+     * @param string the string to check
+     * @return true if the double is outside the specified range, false otherwise
+     */
+    public static boolean checkDoubleNotPositive(String string) {
+        try {
+            double value = Double.parseDouble(string.replace(",", "."));
+            if (value <= 0) return true;
             return false;
         } catch (NumberFormatException e) {
             // make sure we fail if the string is not a valid double
