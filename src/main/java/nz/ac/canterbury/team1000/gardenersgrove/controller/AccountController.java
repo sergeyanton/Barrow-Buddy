@@ -114,11 +114,14 @@ public class AccountController {
         // Give them the role of user
         newUser.grantAuthority("ROLE_USER");
         userService.registerUser(newUser);
-        userService.authenticateUser(authenticationManager, newUser, request);
         sendVerificationEmail(newUser);
         return "redirect:/register/verification";
     }
 
+    /**
+     * Handles GET requests to the /register/verification endpoint.
+     * @param verificationTokenForm the VerificationTokenForm object representing the user's verification token data
+     */
     @GetMapping("/register/verification")
     public String getRegisterVerificationPage(@ModelAttribute("verificationTokenForm") VerificationTokenForm verificationTokenForm) {
         logger.info("GET /register/verification");
@@ -139,36 +142,22 @@ public class AccountController {
                                        BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         logger.info("POST /register/verification");
         VerificationTokenForm.validate(verificationTokenForm, bindingResult);
-        if (userService.getLoggedInUser() == null) {
-            bindingResult.addError(new FieldError("verificationTokenForm", "verificationToken", verificationTokenForm.getVerificationToken(), false, null, null, "Account expired, please register again"));
+        if (bindingResult.hasErrors()) {
             return "pages/verificationPage";
         }
-        User user = userService.findEmail(userService.getLoggedInUser().getEmail());
-        if (user == null || (!bindingResult.hasFieldErrors("verificationToken") && !validateToken(verificationTokenForm.getVerificationToken(), user.getId()))) {
-            bindingResult.addError(new FieldError("verificationTokenForm", "verificationToken", verificationTokenForm.getVerificationToken(), false, null, null, "Signup code invalid"));
-        }
 
-        if (bindingResult.hasErrors()) {
+        String token = verificationTokenForm.getVerificationToken();
+        VerificationToken verificationToken = verificationTokenService.getVerificationTokenByToken(
+            String.valueOf(token.hashCode()));
+        User user = verificationToken != null ? userService.findById(verificationToken.getUserId()) : null;
+
+        if (user == null) {
+            bindingResult.addError(new FieldError("verificationTokenForm", "verificationToken", verificationTokenForm.getVerificationToken(), false, null, null, "Account expired, please register again"));
             return "pages/verificationPage";
         }
         verificationTokenService.updateVerifiedByUserId(user.getId());
         redirectAttributes.addFlashAttribute("errorMessage", "Your account has been activated, please log in");
         return "redirect:/login";
-    }
-
-    /**
-     * Validates the user's inputted token against the stored token in the database.
-     *
-     * @param userInputToken the user's inputted token as a string
-     * @param userId         the user's id
-     * @return boolean value whether the token is verified(true) or not(false)
-     */
-    private boolean validateToken(String userInputToken, long userId) {
-        logger.info("Validating token");
-        if (verificationTokenService.getVerificationTokenByUserId(userId) == null) {
-            return false;
-        }
-        return passwordEncoder.matches(userInputToken, verificationTokenService.getVerificationTokenByUserId(userId).getHashedToken());
     }
 
     /**
@@ -178,7 +167,7 @@ public class AccountController {
      */
     private void sendVerificationEmail(User user) {
         logger.info("Sending verification email to " + user.getEmail());
-        VerificationToken token = new VerificationToken(user.getId(), passwordEncoder);
+        VerificationToken token = new VerificationToken(user.getId());
         verificationTokenService.addVerificationToken(token);
         String body = "Please verify your account by copying the following code into the prompted field: \n\n" + token.getPlainToken()
                 + "\n\nIf this was not you, you can ignore this message and the account will be deleted after 10 minutes";
@@ -215,7 +204,9 @@ public class AccountController {
     public String login(HttpServletRequest request,
                         @ModelAttribute("loginForm") LoginForm loginForm,
                         BindingResult bindingResult) {
+
         logger.info("POST /login");
+
         if (userService.isSignedIn()) {
             return "redirect:/home";
         }
@@ -224,9 +215,13 @@ public class AccountController {
 
         if (!bindingResult.hasFieldErrors()) {
             User user = userService.findEmail(loginForm.getEmail());
-            // check if email exists
+            // check if account is verified
+            if (user != null && verificationTokenService.getVerificationTokenByUserId(user.getId()).isVerified() == false){
+                return "redirect:/register/verification";
+            }
             String invalidUserError = "The email address is unknown, or the password is invalid";
-            if (user == null) {
+
+            if (user == null){
                 bindingResult.addError(new FieldError("loginForm", "password", loginForm.getPassword(), false, null, null, invalidUserError));
             } else if (!passwordEncoder.matches(loginForm.getPassword(), user.getPassword())) {
                 bindingResult.addError(new FieldError("loginForm", "password", loginForm.getPassword(), false, null, null, invalidUserError));
@@ -241,6 +236,7 @@ public class AccountController {
         // log in the user
         User validUser = userService.findEmail(loginForm.getEmail());
         userService.authenticateUser(authenticationManager, validUser, request);
+
         return "redirect:/home";
     }
 

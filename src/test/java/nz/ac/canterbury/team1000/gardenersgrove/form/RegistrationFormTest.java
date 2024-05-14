@@ -4,6 +4,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -13,12 +14,14 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import org.springframework.validation.FieldError;
 
 public class RegistrationFormTest {
     final RegistrationForm registrationForm = new RegistrationForm();
     @Mock
     BindingResult bindingResult;
     private static MockedStatic<Clock> mockedClock;
+    ArgumentCaptor<FieldError> fieldErrorCaptor = ArgumentCaptor.forClass(FieldError.class);
     // Mocking the date to 2024 April 3rd just to test the dob
     private static final LocalDate APRIL_3_2024 = LocalDate.of(2024, 4, 3);
 
@@ -58,7 +61,9 @@ public class RegistrationFormTest {
     void validate_WithBlankFirstName_AddsError() {
         registrationForm.setFirstName("");
         RegistrationForm.validate(registrationForm, bindingResult);
-        Mockito.verify(bindingResult).addError(Mockito.any());
+        Mockito.verify(bindingResult).addError(fieldErrorCaptor.capture());
+        FieldError fieldError = fieldErrorCaptor.getValue();
+        Assertions.assertEquals("First name cannot be empty", fieldError.getDefaultMessage());
     }
 
     @Test
@@ -76,10 +81,12 @@ public class RegistrationFormTest {
     }
 
     @Test
-    void validate_WithFirstNameWithInvalidCharacters_AddsError() {
+    void validate_WithFirstNameWithNumbers_AddsError() {
         registrationForm.setFirstName("John123");
         RegistrationForm.validate(registrationForm, bindingResult);
-        Mockito.verify(bindingResult).addError(Mockito.any());
+        Mockito.verify(bindingResult).addError(fieldErrorCaptor.capture());
+        FieldError fieldError = fieldErrorCaptor.getValue();
+        Assertions.assertEquals("First name must only include letters, spaces, hyphens or apostrophes", fieldError.getDefaultMessage());
     }
 
     @Test
@@ -94,6 +101,15 @@ public class RegistrationFormTest {
         registrationForm.setFirstName("Mārama");
         RegistrationForm.validate(registrationForm, bindingResult);
         Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
+
+    @Test
+    void validate_WithFirstNameWithEmoji_AddsError() {
+        registrationForm.setFirstName("❤️");
+        RegistrationForm.validate(registrationForm, bindingResult);
+        Mockito.verify(bindingResult).addError(fieldErrorCaptor.capture());
+        FieldError fieldError = fieldErrorCaptor.getValue();
+        Assertions.assertEquals("First name must only include letters, spaces, hyphens or apostrophes", fieldError.getDefaultMessage());
     }
 
     @Test
@@ -140,32 +156,57 @@ public class RegistrationFormTest {
     }
 
     @Test
+    void validate_WithLastNameWithEmoji_AddsError() {
+        registrationForm.setLastName("❤️");
+        RegistrationForm.validate(registrationForm, bindingResult);
+        Mockito.verify(bindingResult).addError(fieldErrorCaptor.capture());
+        FieldError fieldError = fieldErrorCaptor.getValue();
+        Assertions.assertEquals("Last name must only include letters, spaces, hyphens or apostrophes", fieldError.getDefaultMessage());
+    }
+
+    @Test
     void validate_WithBlankEmail_AddsError() {
         registrationForm.setEmail("");
         RegistrationForm.validate(registrationForm, bindingResult);
-        Mockito.verify(bindingResult).addError(Mockito.any());
+        Mockito.verify(bindingResult).addError(fieldErrorCaptor.capture());
+        FieldError fieldError = fieldErrorCaptor.getValue();
+        Assertions.assertEquals("Email address must be in the form ‘jane@doe.nz’", fieldError.getDefaultMessage());
     }
 
     @Test
     void validate_WithInvalidEmail_AddsError() {
         registrationForm.setEmail("john@doe");
         RegistrationForm.validate(registrationForm, bindingResult);
-        Mockito.verify(bindingResult).addError(Mockito.any());
+        Mockito.verify(bindingResult).addError(fieldErrorCaptor.capture());
+        FieldError fieldError = fieldErrorCaptor.getValue();
+        Assertions.assertEquals("Email address must be in the form ‘jane@doe.nz’", fieldError.getDefaultMessage());
     }
 
     @Test
-    void validate_WithEmailExactlyMaxLength_AddsError() {
+    void validate_WithEmailExactlyMaxLength_DoesNotAddError() {
         String ext = "@gmail.com";
         registrationForm.setEmail("a".repeat(FormUtils.MAX_DB_STR_LEN - ext.length()) + ext);
         RegistrationForm.validate(registrationForm, bindingResult);
         Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
     }
+
     @Test
     void validate_WithEmailTooLong_AddsError() {
         String ext = "@gmail.com";
         registrationForm.setEmail("a".repeat(FormUtils.MAX_DB_STR_LEN - ext.length() + 1) + ext);
         RegistrationForm.validate(registrationForm, bindingResult);
-        Mockito.verify(bindingResult).addError(Mockito.any());
+        Mockito.verify(bindingResult).addError(fieldErrorCaptor.capture());
+        FieldError fieldError = fieldErrorCaptor.getValue();
+        Assertions.assertEquals("Email address must be 255 characters long or less", fieldError.getDefaultMessage());
+    }
+
+    @Test
+    void validate_WithEmailWithEmoji_AddsError() {
+        registrationForm.setEmail("john@❤️.com");
+        RegistrationForm.validate(registrationForm, bindingResult);
+        Mockito.verify(bindingResult).addError(fieldErrorCaptor.capture());
+        FieldError fieldError = fieldErrorCaptor.getValue();
+        Assertions.assertEquals("Email address must be in the form ‘jane@doe.nz’", fieldError.getDefaultMessage());
     }
 
     @Test

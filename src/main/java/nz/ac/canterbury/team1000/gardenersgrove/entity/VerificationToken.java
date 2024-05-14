@@ -1,7 +1,6 @@
 package nz.ac.canterbury.team1000.gardenersgrove.entity;
 
 import jakarta.persistence.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.security.SecureRandom;
@@ -28,13 +27,14 @@ public class VerificationToken {
     @Transient
     private String plainToken;
 
+
     protected VerificationToken() {
     }
 
-    public VerificationToken(Long userId, PasswordEncoder passwordEncoder) {
+    public VerificationToken(Long userId) {
         this.userId = userId;
-        this.plainToken = generateToken(); // Store the plain token temporarily
-        this.token =  passwordEncoder.encode(plainToken);; // Store the hashed version of the token
+        this.plainToken = generateToken();
+        this.token = String.valueOf(this.plainToken.hashCode());
         this.verified = false;
         this.expiryDate = calculateExpiryDate();
     }
@@ -68,12 +68,11 @@ public class VerificationToken {
         return userId;
     }
 
+    public String getToken() {
+        return token;
+    }
     public String getPlainToken() {
         return plainToken;
-    }
-
-    public String getHashedToken() {
-        return token;
     }
 
     public boolean isVerified() {
