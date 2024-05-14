@@ -78,8 +78,15 @@ public class UpdatePasswordForm {
             // check that the password does not include other fields
             if (updatePasswordForm.getExistingUser() != null) {
                 String fname = updatePasswordForm.getExistingUser().getFname();
+                String lname = updatePasswordForm.getExistingUser().getLname();
+                String email = updatePasswordForm.getExistingUser().getEmail();
+                String dateOfBirthString = updatePasswordForm.getExistingUser().getDateOfBirthString();
                 boolean includesFname = updatePasswordForm.getNewPassword().toLowerCase().contains(fname.toLowerCase());
-                if (includesFname) {
+                boolean includesLname = updatePasswordForm.getNewPassword().toLowerCase().contains(lname.toLowerCase());
+                boolean includesEmail = updatePasswordForm.getNewPassword().toLowerCase().contains(email.toLowerCase());
+                boolean includesDateOfBirth = updatePasswordForm.getNewPassword().contains(dateOfBirthString);
+                
+                if (includesFname || includesLname || includesEmail || includesDateOfBirth) {
                     errors.add("newPassword", invalidPasswordString,
                             updatePasswordForm.getNewPassword());
                 }

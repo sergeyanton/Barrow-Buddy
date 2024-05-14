@@ -107,4 +107,49 @@ public class UpdatePasswordFormTest {
                 "Your password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.",
                 fieldError.getDefaultMessage());
     }
+
+    @Test
+    void validate_PasswordIncludingLastNames_AddsError() {
+        User existingUser = updatePasswordForm.getExistingUser();
+        existingUser.setLname("English");
+        updatePasswordForm.setNewPassword("EnglishEatsPickles123$");
+        updatePasswordForm.setRetypeNewPassword("EnglishEatsPickles123$");
+        UpdatePasswordForm.validate(updatePasswordForm, bindingResult);
+        // check that the error was added and has correct message
+        Mockito.verify(bindingResult).addError(fieldErrorCaptor.capture());
+        FieldError fieldError = fieldErrorCaptor.getValue();
+        assertEquals(
+                "Your password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.",
+                fieldError.getDefaultMessage());
+    }
+
+    @Test
+    void validate_PasswordIncludingEmail_AddsError() {
+        User existingUser = updatePasswordForm.getExistingUser();
+        existingUser.setEmail("cats@gmail.com");
+        updatePasswordForm.setNewPassword("I<3cats@gmail.com");
+        updatePasswordForm.setRetypeNewPassword("I<3cats@gmail.com");
+        UpdatePasswordForm.validate(updatePasswordForm, bindingResult);
+        // check that the error was added and has correct message
+        Mockito.verify(bindingResult).addError(fieldErrorCaptor.capture());
+        FieldError fieldError = fieldErrorCaptor.getValue();
+        assertEquals(
+                "Your password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.",
+                fieldError.getDefaultMessage());
+    }
+
+    @Test
+    void validate_PasswordIncludingDateOfBirth_AddsError() {
+        User existingUser = updatePasswordForm.getExistingUser();
+        existingUser.setDateOfBirth(LocalDate.of(1998, 10, 18));
+        updatePasswordForm.setNewPassword("MyDOBIs18/10/1998$");
+        updatePasswordForm.setRetypeNewPassword("MyDOBIs18/10/1998$");
+        UpdatePasswordForm.validate(updatePasswordForm, bindingResult);
+        // check that the error was added and has correct message
+        Mockito.verify(bindingResult).addError(fieldErrorCaptor.capture());
+        FieldError fieldError = fieldErrorCaptor.getValue();
+        assertEquals(
+                "Your password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.",
+                fieldError.getDefaultMessage());
+    }
 }
