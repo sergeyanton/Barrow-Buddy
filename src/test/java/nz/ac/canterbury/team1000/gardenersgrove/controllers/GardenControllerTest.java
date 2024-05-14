@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import nz.ac.canterbury.team1000.gardenersgrove.form.GardenForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PlantForm;
+import nz.ac.canterbury.team1000.gardenersgrove.service.WeatherService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,6 +51,9 @@ public class GardenControllerTest {
 
     @MockBean
     private PlantService plantService;
+
+    @MockBean
+    private WeatherService weatherService;
 
     @MockBean
     private VerificationTokenService verificationTokenService;
@@ -593,8 +597,6 @@ public class GardenControllerTest {
         assertEquals(plant, plantService.getPlantById(1L));
 
         PlantForm plantForm = PlantForm.fromPlant(plant);
-
-        System.out.println(plantForm.toString());
 
         // edit the plant to have some invalid data
         plantForm.setName("Invalid Name!?@");

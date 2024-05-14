@@ -7,6 +7,14 @@
     <div th:replace="~{fragments/header :: header}"></div>
     <main>
         <div class="basic">
+<!--            Here is an extremely basic way to display the retrieved weather info-->
+<!--            We use a model attribute sent from the controller, in this example it is called 'weather'-->
+<!--            TODO: display nicely -->
+
+<!--            <tr th:each="w : ${weather}">-->
+<!--                <div th:text="${w.type.getText()}"></div>-->
+<!--                <div th:text="${w.temperature}"></div>-->
+<!--            </tr>-->
             <h1 th:text="${garden.name}"></h1>
             <a th:href="@{'/gardens/' + ${garden.id} + '/plants/create'}">
                 <button>Add a plant</button>
@@ -118,14 +126,6 @@
 
             document.getElementById('pictureForm' + id).submit();
         }
-
-        // function cancelSelection() {
-        //     document.getElementById('pictureFile').value = '';
-        //     document.getElementById('profileImage').src = initialProfilePictureUrl;
-        //     document.getElementById('pictureFileLabel').style.display = 'inline-block';
-        //     document.getElementById('cancelButton').style.display = 'none';
-        //     document.getElementById('submitButton').style.display = 'none';
-        // }
     </script>
 </body>
 </html>

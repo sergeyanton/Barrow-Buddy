@@ -1,11 +1,14 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import nz.ac.canterbury.team1000.gardenersgrove.service.WeatherService;
+import nz.ac.canterbury.team1000.gardenersgrove.entity.Weather;
 import nz.ac.canterbury.team1000.gardenersgrove.form.GardenForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PictureForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PlantForm;
@@ -38,17 +41,19 @@ public class GardensController {
     private final GardenService gardenService;
     private final PlantService plantService;
     private final UserService userService;
-
+    private final WeatherService weatherService;
 
     //TODO make a controller dedicated to uploading files.
     private final static String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/uploads";
 
     
     public GardensController(GardenService gardenService, PlantService plantService,
-                                 UserService userService) {
+                                 UserService userService, WeatherService weatherService) {
         this.gardenService = gardenService;
         this.plantService = plantService;
         this.userService = userService;
+        this.weatherService =  weatherService;
+
     }
 
     /**
@@ -178,6 +183,15 @@ public class GardensController {
                              Model model) {
         logger.info("GET /gardens/" + gardenId);
         Garden garden = tryToAccessGarden(gardenId);
+
+        // This is when the weather info is actual retrieved
+        // TODO: improve getWeatherByGardenId to make it actually search the location of the garden
+        // TODO: also for the purpose of the spike, the parsing was somewhat rushed, i didn't actually parse the humidity
+        // This function is for getting the current and future weather
+        // Stephen has a plan for the previous day's weather so pls talk to him abt that if u are doing that task
+        List<Weather> weather = weatherService.getWeatherByGardenId(gardenId);
+        model.addAttribute("weather", weather);
+
         model.addAttribute("garden", garden);
         model.addAttribute("plants", plantService.getPlantsByGardenId(garden.getId()));
         return "pages/gardenProfilePage";
