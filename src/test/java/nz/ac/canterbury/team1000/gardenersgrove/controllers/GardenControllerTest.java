@@ -556,6 +556,18 @@ public class GardenControllerTest {
     }
 
     @Test
+    void EditGardenPost_ValidSizeWorldsLargestGarden_SavesToService() throws Exception {
+        gardenForm.setSize("72000");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf())
+                .flashAttr("editGardenForm", gardenForm))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
+
+        Mockito.verify(gardenService).updateGardenById(Mockito.anyLong(), Mockito.any());
+   }
+
+    @Test
     public void EditGardenGet_ValidGarden_FormIsPopulated() throws Exception {
         MvcResult result = mockMvc
                 .perform(MockMvcRequestBuilders.get("/gardens/1/edit").with(csrf())

@@ -15,11 +15,9 @@ public class HomeController {
     Logger logger = LoggerFactory.getLogger(HomeController.class);
 
     private final UserService userService;
-    private final VerificationTokenService verificationTokenService;
 
-    public HomeController(UserService userService, VerificationTokenService verificationTokenService) {
+    public HomeController(UserService userService) {
         this.userService = userService;
-        this.verificationTokenService = verificationTokenService;
     }
 
     /**
@@ -28,9 +26,6 @@ public class HomeController {
     @GetMapping("/")
     public String getHome() {
         // If viewer not verified, redirect to verification page
-        if (userService.getLoggedInUser() != null && verificationTokenService.getVerificationTokenByUserId(userService.getLoggedInUser().getId()) != null) {
-            return "pages/landingPage";
-        }
         return userService.isSignedIn() ? "pages/homePage" : "pages/landingPage";
     }
 
