@@ -7,6 +7,14 @@
     <div th:replace="~{fragments/header :: header}"></div>
     <main>
         <div class="basic">
+<!--            Here is an extremely basic way to display the retrieved weather info-->
+<!--            We use a model attribute sent from the controller, in this example it is called 'weather'-->
+<!--            TODO: display nicely -->
+
+<!--            <tr th:each="w : ${weather}">-->
+<!--                <div th:text="${w.type.getText()}"></div>-->
+<!--                <div th:text="${w.temperature}"></div>-->
+<!--            </tr>-->
             <h1 th:text="${garden.name}"></h1>
             <a th:href="@{'/gardens/' + ${garden.id} + '/plants/create'}">
                 <button>Add a plant</button>
@@ -15,6 +23,14 @@
             <p th:text="'Location: ' + ${garden.getLocationString}"></p>
             <br>
             <p th:if="${garden.size != null}" th:text="'Size: ' + ${garden.size} + ' m&sup2;'"></p>
+            <br>
+            <p id="gardenVisibilityText" th:text="'Garden Visibility: ' + (${garden.getIsPublic} ? 'Public' : 'Private')"></p>
+
+            <br>
+            <div class="form-element">
+                <label for="publicCheckbox"><b>Make My Garden Public</b></label>
+                <input type="checkbox" class="form-control" id="publicCheckbox" th:checked=${garden.getIsPublic} th:attr="onclick='toggleInput(this, ' + ${garden.id} + ')'">
+            </div>
             <br th:if="${garden.size != null}">
             <a th:href="@{'/gardens/' + ${garden.id} + '/edit'}">Edit Garden Details</a>
             <br>
@@ -117,6 +133,29 @@
             }
 
             document.getElementById('pictureForm' + id).submit();
+        }
+
+        function toggleInput(checkbox, gardenId) {
+            let box = checkbox;
+            var gardenVisibilityText = document.getElementById("gardenVisibilityText");
+            console.log(gardenId);
+            console.log(box.checked);
+
+            if (box.checked) {
+                gardenVisibilityText.textContent = "Garden Visibility: Public";
+            } else {
+                gardenVisibilityText.textContent = "Garden Visibility: Private";
+            }
+
+            fetch(`/updateGardenPublicity?gardenId=${gardenId}&gardenPublicity=${box.checked}`)
+            .then(response => {
+                if (response.ok) {
+                    console.log("Successfully updated garden publicity");
+                }
+            })
+            .catch(error => {
+                console.error("Error updating garden publicity:", error);
+            })
         }
 
         // function cancelSelection() {

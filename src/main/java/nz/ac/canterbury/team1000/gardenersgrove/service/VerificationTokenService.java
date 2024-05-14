@@ -37,6 +37,11 @@ public class VerificationTokenService {
         });
     }
 
+    public VerificationToken getVerificationTokenByToken(String token) {
+        Optional<VerificationToken> verificationToken = verificationTokenRepository.findByToken(token);
+        return verificationToken.orElse(null);
+    }
+
 
 }
 

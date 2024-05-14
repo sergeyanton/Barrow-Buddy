@@ -27,7 +27,6 @@ public class Plant {
     @Column(nullable = false)
     private Long gardenId;
 
-
     /**
      * JPA required no-args constructor
      */
