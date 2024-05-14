@@ -3,6 +3,8 @@ package nz.ac.canterbury.team1000.gardenersgrove.form;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.validation.BindingResult;
@@ -337,6 +339,29 @@ class GardenFormTest {
     @Test
     void validate_GardenSizeValidZeroPointOne_DoesNotAddError() {
         gardenForm.setSize("0.1");
+        GardenForm.validate(gardenForm, bindingResult);
+        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"000.1", "000,1"})
+    void validate_GardenSizeWithLeadingZeros_DoesNotAddError(String size) {
+        gardenForm.setSize(size);
+        GardenForm.validate(gardenForm, bindingResult);
+        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"0.000000001", "0,000000001"})
+    void validate_GardenSizeSuperSmallNonZero_DoesNotAddError(String size) {
+        gardenForm.setSize(size);
+        GardenForm.validate(gardenForm, bindingResult);
+        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
+
+    @Test
+    void validate_GardenSizeAcceptsWorldLargestGardenSize_DoesNotAddError() {
+        gardenForm.setSize("72000");
         GardenForm.validate(gardenForm, bindingResult);
         Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
     }
