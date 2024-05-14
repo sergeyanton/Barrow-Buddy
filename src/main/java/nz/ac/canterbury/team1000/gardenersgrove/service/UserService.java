@@ -118,4 +118,14 @@ public class UserService {
                     SecurityContextHolder.getContext());
         }
     }
+
+    /**
+     * Find a user by their ID
+     * @param userId The ID of the user to find
+     * @return The user if found, otherwise null
+     */
+    public User findById(Long userId) {
+        Optional<User> user = userRepository.findById(userId);
+        return user.orElse(null);
+    }
 }

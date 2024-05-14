@@ -31,7 +31,7 @@ public class VerificationTokenForm {
         if (checkBlank(verificationTokenForm.getVerificationToken())) {
             errors.add("verificationToken", "Provided sign-up code is invalid", verificationTokenForm.getVerificationToken());
         } else if (checkUnderLength(verificationTokenForm.getVerificationToken(), 6) || checkOverMaxLength(verificationTokenForm.getVerificationToken(), 6)) {
-            errors.add("verificationToken", "Provided sign-up code must be 6 digits", verificationTokenForm.getVerificationToken());
+            errors.add("verificationToken", "Provided sign-up code invalid, code must be 6 digits", verificationTokenForm.getVerificationToken());
         }
     }
 }
