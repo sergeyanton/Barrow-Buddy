@@ -161,7 +161,7 @@ public class RegistrationForm {
         // Validate date of birth (if there is one)
         if (!checkBlank(registrationForm.getDob())) {
             if (checkDateNotInCorrectFormat(registrationForm.getDob())) {
-                errors.add("dob", "Date in not in valid format, DD/MM/YYYY", registrationForm.getDob());
+                errors.add("dob", "Date is not in valid format, DD/MM/YYYY", registrationForm.getDob());
             } else if (!checkDateBefore(registrationForm.getDob(), LocalDate.now().plusDays(1))) {
                 errors.add("dob", "Date cannot be in the future", registrationForm.getDob());
             } else if (!checkDateBefore(registrationForm.getDob(), LocalDate.now().minusYears(13).plusDays(1))) {

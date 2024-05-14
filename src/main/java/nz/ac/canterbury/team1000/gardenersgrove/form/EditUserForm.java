@@ -127,7 +127,7 @@ public class EditUserForm {
         // Validate date of birth (if there is one)
         if (!checkBlank(editUserForm.getDob())) {
             if (checkDateNotInCorrectFormat(editUserForm.getDob())) {
-                errors.add("dob", "Date in not in valid format, DD/MM/YYYY", editUserForm.getDob());
+                errors.add("dob", "Date is not in valid format, DD/MM/YYYY", editUserForm.getDob());
             } else if (!checkDateBefore(editUserForm.getDob(), LocalDate.now().plusDays(1))) {
                 errors.add("dob", "Date cannot be in the future", editUserForm.getDob());
             } else if (!checkDateBefore(editUserForm.getDob(), LocalDate.now().minusYears(13).plusDays(1))) {
