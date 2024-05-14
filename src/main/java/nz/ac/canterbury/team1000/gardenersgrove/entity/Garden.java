@@ -55,7 +55,7 @@ public class Garden {
      * @param size     size of garden
      * @param owner    owner of garden
      */
-    public Garden(String name, String address, String suburb, String city, String postcode, String country, Double size, User owner, boolean publicity) {
+    public Garden(String name, String address, String suburb, String city, String postcode, String country, Double size, User owner, boolean isPublic) {
         this.name = name;
         this.address = address;
         this.suburb = suburb;
@@ -69,7 +69,7 @@ public class Garden {
         }
 
         this.size = size;
-        this.setPublicity(publicity);
+        this.isPublic = isPublic;
         this.owner = owner;
     }
 
@@ -86,7 +86,7 @@ public class Garden {
      * @param size     size of garden
      * @param owner    owner of garden
      */
-    public Garden(String name, String address, String suburb, String city, String postcode, String country, String size, User owner, boolean publicity) {
+    public Garden(String name, String address, String suburb, String city, String postcode, String country, String size, User owner, boolean isPublic) {
         this.name = name;
         this.address = address;
         this.suburb = suburb;
@@ -94,7 +94,7 @@ public class Garden {
         this.postcode = postcode;
         this.country = country;
         this.setSize(size);
-        this.setPublicity(publicity);
+        this.isPublic = isPublic;
 
     }
 
@@ -130,7 +130,7 @@ public class Garden {
         return size;
     }
 
-    public boolean getPublicity() {
+    public boolean getIsPublic() {
         return isPublic;
     }
 
@@ -155,8 +155,8 @@ public class Garden {
         setSize((newSize.isBlank()) ? null : Double.parseDouble(newSize.replace(",", ".")));
     }
 
-    public void setPublicity(boolean publicity) {
-        isPublic = publicity;
+    public void setIsPublic(boolean isPublic) {
+        this.isPublic = isPublic;
     }
 
     public void setOwner(User newOwner) {
