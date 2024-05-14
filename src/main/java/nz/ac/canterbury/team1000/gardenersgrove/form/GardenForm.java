@@ -14,6 +14,7 @@ public class GardenForm {
     protected String postcode;
     protected String country;
     protected String size;
+    protected boolean isPublic;
 
     public String getName() {
         return name;
@@ -21,6 +22,14 @@ public class GardenForm {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean getPublicity() {
+        return this.isPublic;
+    }
+
+    public void setPublicity(boolean publicity) {
+        this.isPublic = publicity;
     }
 
     public String getAddress() {
@@ -88,7 +97,8 @@ public class GardenForm {
                 this.postcode,
                 this.country,
                 getSizeDouble(), //TODO could get rid of some constructor redundancy in either Garden or User
-                owner
+                owner,
+                this.isPublic
         );
     }
 

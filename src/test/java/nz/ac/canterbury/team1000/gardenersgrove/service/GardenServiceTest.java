@@ -102,7 +102,7 @@ public class GardenServiceTest {
                 return null;
             }
         });
-        gardenService.addGarden(new Garden("My Garden", "A", "B", "C", "D", "E", 9000.0, testUser));
+        gardenService.addGarden(new Garden("My Garden", "A", "B", "C", "D", "E", 9000.0, testUser, false));
     }
 
     @Autowired
@@ -111,7 +111,7 @@ public class GardenServiceTest {
     @Test
     public void simpleTest2() {
         GardenService gardenService = new GardenService(gardenRepository);
-        Garden result = gardenService.addGarden(new Garden("My Garden", "A", "B", "C", "D", "E", 9000.0, testUser));
+        Garden result = gardenService.addGarden(new Garden("My Garden", "A", "B", "C", "D", "E", 9000.0, testUser, false));
         Assertions.assertEquals(result.getName(), "My Garden");
     }
 }

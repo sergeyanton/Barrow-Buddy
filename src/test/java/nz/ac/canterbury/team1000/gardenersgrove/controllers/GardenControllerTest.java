@@ -82,6 +82,7 @@ public class GardenControllerTest {
         Mockito.when(gardenMock.getPostcode()).thenReturn("3216");
         Mockito.when(gardenMock.getCountry()).thenReturn("New Zealand");
         Mockito.when(gardenMock.getSize()).thenReturn(46.2);
+        Mockito.when(gardenMock.getIsPublic()).thenReturn(false);
 
         gardenForm = new GardenForm();
         gardenForm.setName(gardenMock.getName());
