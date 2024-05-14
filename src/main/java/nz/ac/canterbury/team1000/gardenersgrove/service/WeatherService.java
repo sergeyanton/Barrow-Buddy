@@ -27,6 +27,7 @@ public class WeatherService {
     private final WeatherRepository weatherRepository;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
+    //TODO actually make this URL the correct URL, not just to prove the spike
     private final String URL = "https://api.open-meteo.com/v1/forecast?latitude=-43.5333&longitude=172.6333&hourly=temperature_2m,relative_humidity_2m&daily=weather_code";
 
     @Autowired
@@ -38,12 +39,13 @@ public class WeatherService {
     }
 
     /**
-     * Gets a list of Weather entities regarding the current day, and the future 5 days for a given
-     * gardenId.
+     * Gets a list of Weather entities describing the type of weather, temperature, and humidity of
+     * the current day and the future 5 days for a garden.
      * If there is no relevant and up-to-date Weather entities persisted in the database already,
      * then weather data is fetched from Open-Meteo, and then persisted.
+     *
      * @param gardenId ID of the garden that this weather information is relevant for
-     * @return A list of Weather entities with data on the current and future weather.
+     * @return A list Weather entities regarding the current day and future 5 days.
      */
     public List<Weather> getWeatherByGardenId(long gardenId) {
         List<Weather> persistedWeatherList = weatherRepository.findByGardenId(gardenId);
@@ -83,6 +85,12 @@ public class WeatherService {
      * @return A list of Weather entities with data on the current and future weather.
      */
     public List<Weather> getWeather(Long gardenId) {
+        // TODO add humidity & temperature properly.
+        // NOTE: temperature has daily values for the min and max temp, but not the average temperature.
+        // temperature has hourly numerical temperature values that perhaps could be more usefully manipulated than the daily min and max
+        // humidity has NO DAILY VALUE, must do something smart with the hourly variable. Perhaps just
+        // average it but I mean, based on the AC, we have a lot of creative
+        // freedom as to how the data is presented.
         String jsonResponse = restTemplate.getForObject(URL, String.class);
         try {
             Map<String, Object> weather = objectMapper.readValue(jsonResponse, Map.class);

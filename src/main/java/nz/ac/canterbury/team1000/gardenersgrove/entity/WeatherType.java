@@ -14,7 +14,10 @@ public enum WeatherType {
 	// TODO MORE ENUMS
 
 	/**
-	 * The Open-Meteo codes that correlate to the given WeatherType
+	 * The Open-Meteo codes that correlate to the given WeatherType.
+	 * For example, a code of 0 correlates to clear weather and the CLEAR WeatherType,
+	 * and the codes 45 and 48 correlate to different types of fog, but the distinction is not
+	 * needed for our purposes so the FOG WeatherType correlates to both codes.s
 	 */
 	private final int[] codes;
 	/**

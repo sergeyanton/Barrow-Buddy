@@ -43,8 +43,6 @@ public class GardensController {
     private final UserService userService;
     private final WeatherService weatherService;
 
-
-
     //TODO make a controller dedicated to uploading files.
     private final static String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/uploads";
 
@@ -186,9 +184,14 @@ public class GardensController {
         logger.info("GET /gardens/" + gardenId);
         Garden garden = tryToAccessGarden(gardenId);
 
+        // This is when the weather info is actual retrieved
+        // TODO: improve getWeatherByGardenId to make it actually search the location of the garden
+        // TODO: also for the purpose of the spike, the parsing was somewhat rushed, i didn't actually parse the humidity
+        // This function is for getting the current and future weather
+        // Stephen has a plan for the previous day's weather so pls talk to him abt that if u are doing that task
         List<Weather> weather = weatherService.getWeatherByGardenId(gardenId);
-
         model.addAttribute("weather", weather);
+
         model.addAttribute("garden", garden);
         model.addAttribute("plants", plantService.getPlantsByGardenId(garden.getId()));
         return "pages/gardenProfilePage";
