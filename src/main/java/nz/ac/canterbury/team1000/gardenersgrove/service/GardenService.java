@@ -41,6 +41,15 @@ public class GardenService {
     }
 
     /**
+     * Gets all public gardens from persistence.
+     *
+     * @return List of gardens with isPublic attribute set to true
+     */
+    public List<Garden> getPublicGardens() {
+        return gardenRepository.findAllByIsPublicTrue();
+    }
+
+    /**
      * Adds a Garden to persistence
      * 
      * @param garden object to persist

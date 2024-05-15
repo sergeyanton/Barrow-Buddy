@@ -502,7 +502,7 @@ public class GardensController {
     public String browseGardens(Model model) {
         logger.info("GET /browseGardens");
         // TODO get public gardens
-//         model.addAttribute("gardens", gardenService.getUserGardens(loggedInUser.getId()));
+        model.addAttribute("gardens", gardenService.getPublicGardens());
         return "pages/browseGardensPage";
     }
 

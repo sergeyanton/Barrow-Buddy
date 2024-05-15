@@ -18,15 +18,15 @@
                     </tr>
                 </thead>
                 <tbody>
-<!--                    <tr th:if="${gardens.empty}">-->
+                    <tr th:if="${gardens.empty}">
                         <td colspan="3"> No public gardens to browse</td>
 
-<!--&lt;!&ndash;                    </tr>&ndash;&gt;-->
-<!--                    <tr th:each="garden : ${gardens}">-->
-<!--                        <td><a th:href="@{/gardens/{id}(id=${garden.id})}" th:text="${garden.name}"> Name </a></td>-->
-<!--                        <td><span th:text="${garden.getLocationString}"> Location </span></td>-->
-<!--                        <td><span th:text="${garden.size}"> Size </span></td>-->
-<!--                    </tr>-->
+                    </tr>
+                    <tr th:each="garden : ${gardens}">
+                        <td><a th:href="@{/gardens/{id}(id=${garden.id})}" th:text="${garden.name}"> Name </a></td>
+                        <td><span th:text="${garden.getLocationString}"> Location </span></td>
+                        <td><span th:text="${garden.size}"> Size </span></td>
+                    </tr>
                 </tbody>
             </table>
         </div>
