@@ -1,6 +1,7 @@
 package nz.ac.canterbury.team1000.gardenersgrove.form;
 
 import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.checkBlank;
+import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.checkFieldIncludesOtherFields;
 import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.checkPasswordIsInvalid;
 
 import org.springframework.validation.BindingResult;
@@ -74,22 +75,16 @@ public class UpdatePasswordForm {
                 .equals(updatePasswordForm.getRetypeNewPassword())) {
             errors.add("retypeNewPassword", "The new passwords do not match",
                     updatePasswordForm.getRetypeNewPassword());
-        } else {
+        } else if (updatePasswordForm.getExistingUser() != null) {
+            User existingUser = updatePasswordForm.getExistingUser();
             // check that the password does not include other fields
-            if (updatePasswordForm.getExistingUser() != null) {
-                String fname = updatePasswordForm.getExistingUser().getFname();
-                String lname = updatePasswordForm.getExistingUser().getLname();
-                String email = updatePasswordForm.getExistingUser().getEmail();
-                String dateOfBirthString = updatePasswordForm.getExistingUser().getDateOfBirthString();
-                boolean includesFname = updatePasswordForm.getNewPassword().toLowerCase().contains(fname.toLowerCase());
-                boolean includesLname = updatePasswordForm.getNewPassword().toLowerCase().contains(lname.toLowerCase());
-                boolean includesEmail = updatePasswordForm.getNewPassword().toLowerCase().contains(email.toLowerCase());
-                boolean includesDateOfBirth = updatePasswordForm.getNewPassword().contains(dateOfBirthString);
-                
-                if (includesFname || includesLname || includesEmail || includesDateOfBirth) {
-                    errors.add("newPassword", invalidPasswordString,
-                            updatePasswordForm.getNewPassword());
-                }
+            Boolean includesAnyOtherFields =
+                    checkFieldIncludesOtherFields(updatePasswordForm.getNewPassword(),
+                            existingUser.getFname(), existingUser.getLname(),
+                            existingUser.getEmail(), existingUser.getDateOfBirthString());
+            if (includesAnyOtherFields) {
+                errors.add("newPassword", invalidPasswordString,
+                        updatePasswordForm.getNewPassword());
             }
         }
     }
