@@ -69,7 +69,8 @@ public class WeatherService {
             }
             return persistWeather(persistedWeatherList);
         }
-        return persistedWeatherList;
+        // TODO: think about wh
+        return persistWeather(getWeather(gardenId));
     }
 
     /**
