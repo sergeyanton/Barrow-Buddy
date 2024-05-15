@@ -81,7 +81,8 @@ public class LocationSearchService {
             String url = "search/structured?key=" + API_KEY;
 
             // STRUCTURED GEOCODING DOES NOT HAVE A SUBURB PARAMETER SO IT IS NOT NEEDED FOR THE URL
-            // Garden's address variable
+            // Indexes: address = 0, city = 1, postcode = 2, city = 3
+            // The garden's address variable
             if (!address[0].isBlank()) {
                 url += "&street=" + address[0];
             }
@@ -104,9 +105,12 @@ public class LocationSearchService {
             // Sending a request to the LocationIQ API endpoint and returns a JSON response in string form
             String jsonResponse = restTemplate.getForObject(newUrl, String.class);
 
+            // Finds the index in jsonResponse string of the "lat='" and "lon='" strings to obtain the values of
+            // latitude and longitude
             int latIndex = jsonResponse.indexOf("lat='") + 5;
             int lonIndex = jsonResponse.indexOf("lon='") + 5;
 
+            // Go forward the string one by one until a ' appears (as the format is lat/lon='<value>'
             StringBuilder latitudeString = new StringBuilder();
             StringBuilder longitudeString = new StringBuilder();
 
@@ -114,7 +118,6 @@ public class LocationSearchService {
                 latitudeString.append(jsonResponse.charAt(latIndex));
                 latIndex++;
             }
-
             while (jsonResponse.charAt(lonIndex) != '\'') {
                 longitudeString.append(jsonResponse.charAt(lonIndex));
                 lonIndex++;
@@ -320,18 +323,4 @@ public class LocationSearchService {
         }
         return locationAddresses;
     }
-    // TODO: delete main method before merge with dev
-    public static void main(String[] args) {
-        LocationSearchService locationSearchService = new LocationSearchService();
-        String[] address = new String[4];
-        address[0] = "";
-        address[1] = "Christchurch";
-        address[2] = "";
-        address[3] = "New Zealand";
-
-        List<Double> locationCoordinates = locationSearchService.getCoordinates(address);
-
-        System.out.println("Latitude: " + locationCoordinates.get(0) + ", Longitude: " + locationCoordinates.get(1));
-    }
-
 }
