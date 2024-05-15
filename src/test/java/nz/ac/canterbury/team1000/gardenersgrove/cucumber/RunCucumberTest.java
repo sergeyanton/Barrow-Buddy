@@ -15,7 +15,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 /**
- * This a required classto set up the cucumber tests. This code was taken from ATDD workshop
+ * This a required class to set up the cucumber tests. This code was taken from ATDD workshop
  */
 @Suite
 @IncludeEngines("cucumber")
