@@ -112,15 +112,15 @@ public class WeatherService {
         String longitude = null;
 
         List<Double> coordinates = locationSearchService.getCoordinates(gardenAddress);
-        if (coordinates.get(0) == null || coordinates.get(1) == null) {
+        if (coordinates.get(0) != null || coordinates.get(1) != null) {
             latitude = coordinates.get(0).toString();
             longitude = coordinates.get(1).toString();
         }
 
         String url = URL + "&latitude=" + latitude + "&longitude=" + longitude;
-        String jsonResponse = restTemplate.getForObject(url, String.class);
 
         try {
+            String jsonResponse = restTemplate.getForObject(url, String.class);
             Map<String, Object> weather = objectMapper.readValue(jsonResponse, Map.class);
             List<Integer> weatherCodes = (ArrayList) ((Map<String, Object>) weather.get("daily")).get("weather_code");
             List<Double> hourlyTemps = (ArrayList) ((Map<String, Object>) weather.get("hourly")).get("temperature_2m");
