@@ -69,7 +69,11 @@ public class WeatherService {
             }
             return persistWeather(persistedWeatherList);
         }
-        return persistWeather(getWeather(gardenId));
+         // IMPORTANT: This persists the weather even if the weather was already persistent recently
+         // This change was to make sure that whenever the user changes the location of the garden, then
+         // it updates the weather too. Not sure if there is another way to do this, but for now this is
+         // the only choice.
+		return persistWeather(getWeather(gardenId));
     }
 
 
@@ -102,6 +106,7 @@ public class WeatherService {
 
         Garden garden = gardenService.getGardenById(gardenId);
 
+        // Obtain the garden location details
         String[] gardenAddress = new String[4];
         gardenAddress[0] = garden.getAddress();
         gardenAddress[1] = garden.getCity();
@@ -111,7 +116,11 @@ public class WeatherService {
         String latitude = null;
         String longitude = null;
 
+        // Calls the getCoordinates() method form locationSearchService to obtain the latitude and longitude
+        // given the garden location details
         List<Double> coordinates = locationSearchService.getCoordinates(gardenAddress);
+
+        // Check that the coordinates are not null - meaning the location is valid
         if (coordinates.get(0) != null || coordinates.get(1) != null) {
             latitude = coordinates.get(0).toString();
             longitude = coordinates.get(1).toString();
