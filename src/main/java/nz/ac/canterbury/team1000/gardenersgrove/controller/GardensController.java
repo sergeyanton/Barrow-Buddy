@@ -490,4 +490,20 @@ public class GardensController {
 
         return "redirect:/gardens/" + gardenId;
     }
+
+    /**
+     * Handles GET requests for the /browseGardens endpoint.
+     * Displays the 10 most recently made public gardens and a garden search bar.
+     *
+     * @param model (map-like) representation of results to be used by thymeleaf
+     * @return thymeleaf pages/browseGardensPage
+     */
+    @GetMapping("/browseGardens")
+    public String browseGardens(Model model) {
+        logger.info("GET /browseGardens");
+        // TODO get public gardens
+//         model.addAttribute("gardens", gardenService.getUserGardens(loggedInUser.getId()));
+        return "pages/browseGardensPage";
+    }
+
 }
