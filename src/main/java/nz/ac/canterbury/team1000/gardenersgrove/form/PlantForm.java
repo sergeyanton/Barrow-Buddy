@@ -118,16 +118,18 @@ public class PlantForm {
             errors.add("name", "Plant name must not be empty", createPlantForm.getName());
         } else if (!checkValidPlantName(createPlantForm.getName())) {
             errors.add("name", "Plant name must only include letters, numbers, spaces, dots, hyphens or apostrophes", createPlantForm.getName());
-        } else if (checkOverMaxLength(createPlantForm.getName(), 255)) { //TODO replace with constant
+        } else if (checkOverMaxLength(createPlantForm.getName(), MAX_DB_STR_LEN)) {
             errors.add("name", "Name must be 255 characters or less", createPlantForm.getName());
         }
 
         // Validate plant count (if there is one)
         if (!checkBlank(createPlantForm.getPlantCount())) {
-            if (checkIntegerTooBig(createPlantForm.getPlantCount())) {
-                errors.add("plantCount", "Plant count must be at most " + Integer.MAX_VALUE, createPlantForm.getPlantCount());
-            } else if (checkIntegerIsInvalid(createPlantForm.getPlantCount()) || checkIntegerOutsideRange(createPlantForm.getPlantCount(), 1, null)) {
-                errors.add("plantCount", "Plant count must be a positive integer", createPlantForm.getPlantCount());
+            if (checkNotPositiveInteger(createPlantForm.getPlantCount())) {
+                errors.add("plantCount", "Plant count must be a positive integer",
+                    createPlantForm.getPlantCount());
+            } else if (checkNumberTooBig(createPlantForm.getPlantCount(), MAX_PLANT_COUNT)) {
+                errors.add("plantCount", "The maximum allowed count is set at 268000 based on data from Quaora on the number of         Angiosperms plants in the world.",
+                    createPlantForm.getPlantCount());
             }
         }
 

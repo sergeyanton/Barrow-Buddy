@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import nz.ac.canterbury.team1000.gardenersgrove.form.GardenForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PlantForm;
+import nz.ac.canterbury.team1000.gardenersgrove.service.WeatherService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,6 +53,9 @@ public class GardenControllerTest {
     private PlantService plantService;
 
     @MockBean
+    private WeatherService weatherService;
+
+    @MockBean
     private VerificationTokenService verificationTokenService;
 
     @Mock
@@ -78,6 +82,7 @@ public class GardenControllerTest {
         Mockito.when(gardenMock.getPostcode()).thenReturn("3216");
         Mockito.when(gardenMock.getCountry()).thenReturn("New Zealand");
         Mockito.when(gardenMock.getSize()).thenReturn(46.2);
+        Mockito.when(gardenMock.getIsPublic()).thenReturn(false);
 
         gardenForm = new GardenForm();
         gardenForm.setName(gardenMock.getName());
@@ -552,6 +557,18 @@ public class GardenControllerTest {
     }
 
     @Test
+    void EditGardenPost_ValidSizeWorldsLargestGarden_SavesToService() throws Exception {
+        gardenForm.setSize("72000");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf())
+                .flashAttr("editGardenForm", gardenForm))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
+
+        Mockito.verify(gardenService).updateGardenById(Mockito.anyLong(), Mockito.any());
+   }
+
+    @Test
     public void EditGardenGet_ValidGarden_FormIsPopulated() throws Exception {
         MvcResult result = mockMvc
                 .perform(MockMvcRequestBuilders.get("/gardens/1/edit").with(csrf())
@@ -581,8 +598,6 @@ public class GardenControllerTest {
         assertEquals(plant, plantService.getPlantById(1L));
 
         PlantForm plantForm = PlantForm.fromPlant(plant);
-
-        System.out.println(plantForm.toString());
 
         // edit the plant to have some invalid data
         plantForm.setName("Invalid Name!?@");

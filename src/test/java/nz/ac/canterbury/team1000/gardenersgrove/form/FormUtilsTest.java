@@ -40,7 +40,8 @@ public class FormUtilsTest {
 
     @Test
     void checkOnlyHasLettersSpacesHyphensApostrophes_WithLettersSpacesHyphensApostrophes_ReturnsTrue() {
-        Assertions.assertTrue(FormUtils.checkOnlyHasLettersMacronsSpacesHyphensApostrophes("abc def-ghi'jkl"));
+        Assertions.assertTrue(
+                FormUtils.checkOnlyHasLettersMacronsSpacesHyphensApostrophes("abc def-ghi'jkl"));
     }
 
     @Test
@@ -132,6 +133,7 @@ public class FormUtilsTest {
     void checkDateNotInCorrectFormat_LeapDayWrongYear_ReturnsTrue() {
         Assertions.assertTrue(FormUtils.checkDateNotInCorrectFormat("29/02/2003"));
     }
+
     @Test
     void checkDateNotInCorrectFormat_LeapDayRightYear_ReturnsFalse() {
         Assertions.assertFalse(FormUtils.checkDateNotInCorrectFormat("29/02/2004"));
@@ -217,6 +219,7 @@ public class FormUtilsTest {
         String size = ".123";
         Assertions.assertFalse(FormUtils.checkDoubleIsInvalid(size));
     }
+
     @Test
     void checkDoubleIsInvalid_WithValidCommaNoIntegerPart_ReturnsFalse() {
         String size = ",123";
@@ -228,6 +231,7 @@ public class FormUtilsTest {
         String size = "3 m^2";
         Assertions.assertTrue(FormUtils.checkDoubleIsInvalid(size));
     }
+
     @Test
     void checkDoubleIsInvalid_OverMaximumValue_ReturnsFalse() {
         String size = "72000.1";
@@ -247,93 +251,94 @@ public class FormUtilsTest {
     }
 
     @Test
-    void checkIntegerTooBig_MaximumIntegerValue_ReturnsFalse() {
-        String size = "2147483647"; // maximum integer value
-        Assertions.assertFalse(FormUtils.checkIntegerTooBig(size));
+    void checkNumberTooBig_MaximumPlantCount_ReturnsFalse() {
+        String size = "268000";
+        Assertions.assertFalse(FormUtils.checkNumberTooBig(size, FormUtils.MAX_PLANT_COUNT));
     }
 
     @Test
-    void checkIntegerTooBig_OverMaximumIntegerValue_ReturnsTrue() {
-        String size = "2147483648";
-        Assertions.assertTrue(FormUtils.checkIntegerTooBig(size));
+    void checkNumberTooBig_OverMaximumPlantCount_ReturnsTrue() {
+        String size = "268001";
+        Assertions.assertTrue(FormUtils.checkNumberTooBig(size, FormUtils.MAX_PLANT_COUNT));
     }
 
     @Test
-    void checkIntegerTooBig_LeadingZeros_ReturnsFalse() {
-        String size = "0".repeat(10000); // maximum integer value
-        Assertions.assertFalse(FormUtils.checkIntegerTooBig(size));
-    }
-
-    @Test
-    void checkIntegerTooBig_NotAValidIntegerString_ReturnsFalse() {
-        String size = "invalid integer obviously";
-        Assertions.assertFalse(FormUtils.checkIntegerTooBig(size));
-    }
-
-    @Test
-    void checkIntegerIsInvalid_ValidInteger_ReturnsFalse() {
-        String size = "3";
-        Assertions.assertFalse(FormUtils.checkIntegerIsInvalid(size));
-    }
-
-    @Test
-    void checkIntegerIsInvalid_Double_ReturnsTrue() {
-        String size = "1.2";
-        Assertions.assertTrue(FormUtils.checkIntegerIsInvalid(size));
-    }
-
-    @Test
-    void checkIntegerIsInvalid_LeadingZeros_ReturnFalse() {
+    void checkNumberTooBig_LeadingZeros_ReturnsFalse() {
         String size = "0".repeat(10000);
-        Assertions.assertFalse(FormUtils.checkIntegerIsInvalid(size));
+        Assertions.assertFalse(FormUtils.checkNumberTooBig(size, FormUtils.MAX_PLANT_COUNT));
     }
 
     @Test
-    void checkIntegerIsInvalid_NotAValidIntegerString_ReturnsTrue() {
+    void checkNumberTooBig_NotAValidIntegerString_ReturnsFalse() {
         String size = "invalid integer obviously";
-        Assertions.assertTrue(FormUtils.checkIntegerIsInvalid(size));
+        Assertions.assertFalse(FormUtils.checkNumberTooBig(size, FormUtils.MAX_PLANT_COUNT));
+    }
+
+    @Test
+    void checkNotPositiveInteger_ValidInteger_ReturnsFalse() {
+        String size = "3";
+        Assertions.assertFalse(FormUtils.checkNotPositiveInteger(size));
+    }
+
+    @Test
+    void checkNotPositiveInteger_Double_ReturnsTrue() {
+        String size = "1.2";
+        Assertions.assertTrue(FormUtils.checkNotPositiveInteger(size));
+    }
+
+    @Test
+    void checkNotPositiveInteger_LeadingZeros_ReturnTrue() {
+        String size = "0".repeat(10000);
+        Assertions.assertTrue(FormUtils.checkNotPositiveInteger(size));
+    }
+
+    @Test
+    void checkNotPositiveInteger_NotAValidIntegerString_ReturnsTrue() {
+        String size = "invalid integer obviously";
+        Assertions.assertTrue(FormUtils.checkNotPositiveInteger(size));
     }
 
     @Test
     void checkImageWrongType_ValidPng_ReturnsFalse() {
-        MultipartFile image = new MockMultipartFile(
-                "pictureFile", "newPfp.png", "image/png", "file contents".getBytes());
+        MultipartFile image = new MockMultipartFile("pictureFile", "newPfp.png", "image/png",
+                "file contents".getBytes());
         Assertions.assertFalse(FormUtils.checkImageWrongType(image));
     }
 
     @Test
     void checkImageWrongType_ValidJpeg_ReturnsFalse() {
-        MultipartFile image = new MockMultipartFile(
-                "pictureFile", "newPfp.jpeg", "image/jpeg", "file contents".getBytes());
+        MultipartFile image = new MockMultipartFile("pictureFile", "newPfp.jpeg", "image/jpeg",
+                "file contents".getBytes());
         Assertions.assertFalse(FormUtils.checkImageWrongType(image));
     }
 
     @Test
     void checkImageWrongType_ValidSvg_ReturnsFalse() {
-        MultipartFile image = new MockMultipartFile(
-                "pictureFile", "newPfp.svg", "image/svg+xml", "file contents".getBytes());
+        MultipartFile image = new MockMultipartFile("pictureFile", "newPfp.svg", "image/svg+xml",
+                "file contents".getBytes());
         Assertions.assertFalse(FormUtils.checkImageWrongType(image));
     }
+
     @Test
     void checkImageWrongType_InvalidType_ReturnsTrue() {
-        MultipartFile image = new MockMultipartFile(
-                "pictureFile", "newPfp.webp", "image/webp", "file contents".getBytes());
+        MultipartFile image = new MockMultipartFile("pictureFile", "newPfp.webp", "image/webp",
+                "file contents".getBytes());
         Assertions.assertTrue(FormUtils.checkImageWrongType(image));
     }
 
     @Test
     void checkImageTooBig_BoundarySize_ReturnsFalse() {
         byte[] exactly10mb = new byte[10 * 1024 * 1024];
-        MultipartFile image = new MockMultipartFile(
-                "pictureFile", "newPfp.png", "image/png", exactly10mb);
+        MultipartFile image =
+                new MockMultipartFile("pictureFile", "newPfp.png", "image/png", exactly10mb);
         Assertions.assertFalse(FormUtils.checkImageTooBig(image));
     }
 
     @Test
     void checkImageTooBig_OverSizeLimit_ReturnsTrue() {
         byte[] over10mb = new byte[10 * 1024 * 1024 + 1];
-        MultipartFile image = new MockMultipartFile(
-                "pictureFile", "newPfp.png", "image/png", over10mb);
+        MultipartFile image =
+                new MockMultipartFile("pictureFile", "newPfp.png", "image/png", over10mb);
         Assertions.assertTrue(FormUtils.checkImageTooBig(image));
     }
 
@@ -544,24 +549,70 @@ public class FormUtilsTest {
         String value = "0";
         Assertions.assertTrue(FormUtils.checkDoubleNotPositive(value));
     }
+
     @Test
     void checkDoubleNotPositive_WithValueNegative_ReturnsTrue() {
         String value = "-1";
         Assertions.assertTrue(FormUtils.checkDoubleNotPositive(value));
     }
+
     @Test
     void checkDoubleNotPositive_WithValueNegativeZero_ReturnsTrue() {
         String value = "-0";
         Assertions.assertTrue(FormUtils.checkDoubleNotPositive(value));
     }
+
     @Test
     void checkDoubleNotPositive_WithValueSmall_ReturnsFalse() {
         String value = "0.000001";
         Assertions.assertFalse(FormUtils.checkDoubleNotPositive(value));
     }
+
     @Test
     void checkDoubleNotPositive_WithValuePositive_ReturnsFalse() {
         String value = "1";
         Assertions.assertFalse(FormUtils.checkDoubleNotPositive(value));
+    }
+
+    @Test
+    void checkFieldIncludesOtherFields_WithFieldContainingOneOtherField_ReturnsTrue() {
+        String field = "I include the secretWord";
+        String otherField = "secretWord";
+        Assertions.assertTrue(FormUtils.checkFieldIncludesOtherFields(field, otherField));
+    }
+
+    @Test
+    void checkFieldIncludesOtherFields_WithFieldNotContainingOneOtherField_ReturnsFalse() {
+        String field = "I do not include the s3cretWord";
+        String otherField = "secretWord";
+        Assertions.assertFalse(FormUtils.checkFieldIncludesOtherFields(field, otherField));
+    }
+
+    @Test
+    void checkFieldIncludesOtherFields_WithFieldContainingMultipleOtherFields_ReturnsTrue() {
+        String field = "I include the secretWord and the secretWord2";
+        String[] otherFields = {"secretWord", "secretWord2"};
+        Assertions.assertTrue(FormUtils.checkFieldIncludesOtherFields(field, otherFields));
+    }
+
+    @Test
+    void checkFieldIncludesOtherFields_WithFieldNotContainingMultipleOtherFields_ReturnsFalse() {
+        String field = "I do not include the s3cretWord or the s3cretWord2";
+        String[] otherFields = {"secretWord", "secretWord2"};
+        Assertions.assertFalse(FormUtils.checkFieldIncludesOtherFields(field, otherFields));
+    }
+
+    @Test
+    void checkFieldIncludesOtherFields_WithOtherFieldInDiffrentCase_ReturnsTrue() {
+        String field = "I include the secretWord";
+        String otherField = "SecretWord";
+        Assertions.assertTrue(FormUtils.checkFieldIncludesOtherFields(field, otherField));
+    }
+
+    @Test
+    void checkFieldIncludesOtherFields_WithFieldContainingOtherFieldWithSpaces_ReturnsTrue() {
+        String field = "I include the secret Word";
+        String otherField = "secret Word";
+        Assertions.assertTrue(FormUtils.checkFieldIncludesOtherFields(field, otherField));
     }
 }

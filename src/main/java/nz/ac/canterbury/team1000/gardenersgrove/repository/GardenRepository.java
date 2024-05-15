@@ -29,6 +29,7 @@ public interface GardenRepository extends CrudRepository<Garden, Long> {
             Garden garden = optionalGarden.get();
             garden.setName(updateGarden.getName());
             garden.setSize(updateGarden.getSize());
+            garden.setIsPublic(updateGarden.getIsPublic());
 
             garden.setAddress(updateGarden.getAddress());
             garden.setSuburb(updateGarden.getSuburb());
