@@ -233,6 +233,7 @@ public class ProfileController {
                                      BindingResult bindingResult) {
         logger.info("POST /editProfile/updatePassword");
         User currentUser = userService.getLoggedInUser();
+        updatePasswordForm.setExistingUser(currentUser);
         UpdatePasswordForm.validate(updatePasswordForm, bindingResult);
 
         if (!(bindingResult.hasFieldErrors("password")) && !passwordEncoder.matches(updatePasswordForm.getPassword(), currentUser.getPassword())) {
