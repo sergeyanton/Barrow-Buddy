@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.EditUserForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PictureForm;
+import nz.ac.canterbury.team1000.gardenersgrove.form.SearchForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.UpdatePasswordForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.EmailService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
@@ -28,6 +29,7 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class ProfileController {
@@ -269,5 +271,33 @@ public class ProfileController {
         }
 
         return ResponseEntity.ok().body(resource);
+    }
+
+    @PostMapping("/searchByEmail")
+    public String postSearchByEmail(HttpServletRequest request,
+                                    @ModelAttribute("searchForm") SearchForm searchForm,
+                                    BindingResult bindingResult) {
+        logger.info("POST /searchByEmail");
+        SearchForm.validate(searchForm, bindingResult);
+
+        if (!bindingResult.hasFieldErrors("email")) {
+            bindingResult.addError(new FieldError("forgotPasswordForm", "email", searchForm.getEmail(), false, null, null, "Invalid email format"));
+        }
+
+        if (bindingResult.hasErrors()) {
+            return "pages/searchByEmailPage";
+        }
+
+
+        return "redirect:/searchByEmailPage";
+    }
+
+    @GetMapping("/searchByEmail")
+    public String getSearchByEmail(@ModelAttribute("searchForm") SearchForm searchForm, Model model, RedirectAttributes redirectAttributes) {
+        logger.info("GET /searchByEmail");
+        if (redirectAttributes.containsAttribute("errorMessage")) {
+            model.addAttribute("errorMessage", redirectAttributes.getAttribute("errorMessage"));
+        }
+        return "pages/searchByEmailPage";
     }
 }
