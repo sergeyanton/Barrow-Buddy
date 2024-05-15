@@ -1,13 +1,32 @@
-Feature: Registering as a new user
+Feature: U1 As Sarah, I want to register on Gardener’s Grove so that I can use its awesome features.
 
-  Scenario: Registering as a new user with valid details
-    Given I am on the registration form and enter first name "John" and last name "Doe"
+#  TODO Because we should ask PO to get rid of the last name checkbox entirely, lastName will become optional
+  Scenario Outline: AC2 - Registering as a new user with valid details
+    Given I am on the registration form and enter first name "<firstName>" and last name "<lastName>"
+    And I enter email "<email>"
+    And I do not tick the checkbox for no last name
+    And I enter password "<password>" and retype password "<password>"
+    And I enter date of birth "<dob>"
+    When I click the sign-up button
+    Then I am successfully registered
+    Examples:
+      | firstName | lastName | email             | password | dob        |
+      | John      | Doe      | johndoe@gmail.com | Pass123! | 12/12/2000 |
+      | John      | Doe      | johndoe@gmail.com | Pass123! |            |
+
+  Scenario Outline: AC4 - Registering as a new user with an invalid first/last name
+    Given I am on the registration form and enter first name "<firstName>" and last name "<lastName>"
     And I enter email "johndoe@gmail.com"
     And I do not tick the checkbox for no last name
     And I enter password "Password!123" and retype password "Password!123"
     And I enter date of birth "12/12/2000"
     When I click the sign-up button
-    Then I am successfully registered
+    Then I am shown the error message "<errorMessage>"
+    Examples:
+      | firstName | lastName | errorMessage |
+      | John      | Doe      |
+      | John      | Doe      |
+
 
   Scenario: Registering as a new user with no first name
     Given I am on the registration form and enter first name "" and last name "Doe"

@@ -24,6 +24,7 @@ public class RegisterAsNewUser {
     registrationForm.setNoSurnameCheckBox(lastName.isBlank());
   }
 
+
   @And("I tick the checkbox for no last name")
   public void iTickTheCheckboxForNoLastName() {
     registrationForm.setNoSurnameCheckBox(true);
@@ -73,5 +74,4 @@ public class RegisterAsNewUser {
   public void cleanUp() {
     bindingResult = null;
   }
-
 }
