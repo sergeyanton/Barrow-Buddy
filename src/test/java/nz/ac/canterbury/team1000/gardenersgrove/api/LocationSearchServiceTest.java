@@ -1,5 +1,6 @@
 package nz.ac.canterbury.team1000.gardenersgrove.api;
 
+import java.util.ArrayList;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Location;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -284,6 +285,25 @@ public class LocationSearchServiceTest {
         new String[] {"Ilam Road", "Ilam", "Christchurch", "8041", "New Zealand"}, "country");
 
     Assertions.assertEquals(1, locationList.size());
+  }
+
+  @Test
+  public void X_X_ReturnsTheCoordinates() {
+    // Mock the returned json response when a restTemplate.getForObject() is called
+    String jsonResponse = "<place place_id='337346061' osm_type='relation' osm_id='2730349' place_rank='14' "
+        + "address_rank='16' boundingbox=\"-43.6292014,-43.3890866,172.3930248,172.8216267\" lat='-43.530955' "
+        + "lon='172.6364343' display_name='Christchurch, Christchurch City, Canterbury, New Zealand' class='boundary' "
+        + "type='administrative' importance='0.90633711648193' icon='https://locationiq.org/static/images/mapicons/poi_boundary_administrative.p.20.png'/>";
+    Mockito.when(restTemplate.getForObject(any(String.class), any(Class.class))).thenReturn(jsonResponse);
+    String[] testLocation = new String[4];
+    testLocation[0] = "";
+    testLocation[1] = "Christchurch";
+    testLocation[2] = "";
+    testLocation[3] = "New Zealand";
+    List<Double> locationCoordinates = locationSearchService.getCoordinates(testLocation);
+
+    Assertions.assertEquals(-43.530955, locationCoordinates.get(0));
+    Assertions.assertEquals(172.6364343, locationCoordinates.get(1));
   }
 }
 
