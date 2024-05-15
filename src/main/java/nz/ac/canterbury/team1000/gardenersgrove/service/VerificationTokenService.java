@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import org.springframework.transaction.annotation.Transactional;
 
 
 /**
@@ -32,9 +33,13 @@ public class VerificationTokenService {
     public void updateVerifiedByUserId(Long userId) {
         Optional<VerificationToken> verificationToken = verificationTokenRepository.findByUserId(userId);
         verificationToken.ifPresent(token -> {
-            token.setVerified(true);
             verificationTokenRepository.save(token);
         });
+    }
+
+    @Transactional
+    public void deleteVerificationTokenByUserId(Long userId) {
+        verificationTokenRepository.deleteByUserId(userId);
     }
 
     public VerificationToken getVerificationTokenByToken(String token) {
