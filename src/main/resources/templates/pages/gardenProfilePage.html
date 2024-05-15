@@ -16,9 +16,11 @@
 <!--                <div th:text="${w.temperature}"></div>-->
 <!--            </tr>-->
             <h1 th:text="${garden.name}"></h1>
-            <a th:href="@{'/gardens/' + ${garden.id} + '/plants/create'}">
+            <div th:if="${garden.owner.id == loggedInUserId}">
+              <a th:href="@{'/gardens/' + ${garden.id} + '/plants/create'}">
                 <button>Add a plant</button>
-            </a>
+              </a>
+            </div>
             <br>
             <p th:text="'Location: ' + ${garden.getLocationString}"></p>
             <br>
@@ -27,12 +29,18 @@
             <p id="gardenVisibilityText" th:text="'Garden Visibility: ' + (${garden.getIsPublic} ? 'Public' : 'Private')"></p>
 
             <br>
-            <div class="form-element">
+            <div th:if="${garden.owner.id == loggedInUserId}">
+              <div class="form-element">
                 <label for="publicCheckbox"><b>Make My Garden Public</b></label>
                 <input type="checkbox" class="form-control" id="publicCheckbox" th:checked=${garden.getIsPublic} th:attr="onclick='toggleInput(this, ' + ${garden.id} + ')'">
+              </div>
             </div>
             <br th:if="${garden.size != null}">
-            <a th:href="@{'/gardens/' + ${garden.id} + '/edit'}">Edit Garden Details</a>
+            <div th:if="${garden.owner.id == loggedInUserId}">
+            <div class="form-element">
+              <a th:href="@{'/gardens/' + ${garden.id} + '/edit'}">Edit Garden Details</a>
+            </div>
+            </div>
             <br>
             <span id="clientSideErrorMessage" class="error"></span>
             <br>
@@ -60,6 +68,7 @@
                                          alt="Plant Picture">
                                     <label th:id="'pictureFileLabel' + ${plant.id}" class="file-upload-plus-button" th:for="'pictureFile' + ${plant.id}">+</label>
                                 </div>
+
                                 <form th:id="'pictureForm' + ${plant.id}" th:action="@{'/gardens/' + ${garden.id} + '/plants/' + ${plant.id}}" th:object="${plantPictureForm}" method="post" enctype="multipart/form-data">
                                     <input type="file" th:field="*{pictureFile}" th:id="'pictureFile' + ${plant.id}" th:attr="onchange='validateImage(this, ' + ${plant.id} + ')'" accept="image/png, image/jpeg, image/svg+xml">
                                 </form>
@@ -68,7 +77,9 @@
                         <td><span th:text="${plant.name}"></span></td>
                         <td><span th:text="${plant.plantCount}"></span></td>
                         <td><span th:text="${plant.description}"></span></td>
+                      <div th:if="${garden.owner.id == loggedInUserId}">
                         <td><a th:href="@{'/gardens/' + ${garden.id} + '/plants/' + ${plant.id} + '/edit'}">Edit Plant</a></td>
+                      </div>
                     </tr>
                     </tbody>
                 </table>

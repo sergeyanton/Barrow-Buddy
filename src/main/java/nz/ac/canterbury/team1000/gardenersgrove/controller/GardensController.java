@@ -184,7 +184,8 @@ public class GardensController {
                              Model model) {
         logger.info("GET /gardens/" + gardenId);
         Garden garden = tryToAccessGarden(gardenId);
-
+        long loggedInUserId = userService.getLoggedInUser().getId();
+        model.addAttribute("loggedInUserId", loggedInUserId);
         // This is when the weather info is actual retrieved
         // TODO: improve getWeatherByGardenId to make it actually search the location of the garden
         // TODO: also for the purpose of the spike, the parsing was somewhat rushed, i didn't actually parse the humidity
