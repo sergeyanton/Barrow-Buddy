@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import nz.ac.canterbury.team1000.gardenersgrove.api.LocationSearchService;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Weather;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.WeatherType;
 import nz.ac.canterbury.team1000.gardenersgrove.repository.WeatherRepository;
@@ -16,7 +17,9 @@ import org.mockito.Mock;
 import org.springframework.web.client.RestTemplate;
 
 public class WeatherServiceTest {
+	private GardenService gardenService;
 	private WeatherService weatherService;
+	private LocationSearchService locationSearchService;
 	@Mock
 	private WeatherRepository weatherRepository;
 	@Mock
@@ -28,7 +31,9 @@ public class WeatherServiceTest {
 	void setUp() {
 		weatherRepository = mock(WeatherRepository.class);
 		restTemplate = mock(RestTemplate.class);
-		weatherService = new WeatherService(weatherRepository, restTemplate, new ObjectMapper());
+		gardenService = mock(GardenService.class);
+		locationSearchService = mock(LocationSearchService.class);
+		weatherService = new WeatherService(weatherRepository, restTemplate, new ObjectMapper(), gardenService, locationSearchService);
 		gardenId = 1L;
 		weatherList = new ArrayList<>();
 		when(weatherRepository.findByGardenId(gardenId)).thenReturn(weatherList);
