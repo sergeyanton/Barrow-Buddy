@@ -6,6 +6,7 @@ import nz.ac.canterbury.team1000.gardenersgrove.controller.ProfileController;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.EditUserForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PictureForm;
+import nz.ac.canterbury.team1000.gardenersgrove.form.SearchForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.UpdatePasswordForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.EmailService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.VerificationTokenService;
@@ -58,6 +59,7 @@ public class ProfileControllerTest {
     private PictureForm profilePictureForm;
 
     private EditUserForm editUserForm;
+    private SearchForm searchForm;
     private UpdatePasswordForm updatePasswordForm;
 
     @BeforeEach
@@ -582,4 +584,19 @@ public class ProfileControllerTest {
 
         Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
     }
+
+//    @Test
+//    public void SearchFormPost_InvalidEmailEmpty_HasFieldErrors() throws Exception {
+//        searchForm.setEmail("");
+//
+//        mockMvc.perform(MockMvcRequestBuilders.post("/searchByEmail")
+//                .with(csrf())
+//                .flashAttr("searchForm", searchForm))
+//            .andExpect(MockMvcResultMatchers.status().isOk())
+//            .andExpect(MockMvcResultMatchers.view().name("pages/searchByEmailPage"))
+//            .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("searchForm", "email"));
+//
+////        Mockito.verify(userService, Mockito.never()).findEmail(Mockito.any());
+//    }
+
 }
