@@ -78,7 +78,7 @@ public class GardensController {
 
         User loggedInUser = userService.getLoggedInUser();
         // check that the garden belongs to the logged in user
-        if (!Objects.equals(garden.getOwner().getId(), loggedInUser.getId())) {
+        if (!garden.getIsPublic() && !Objects.equals(garden.getOwner().getId(), loggedInUser.getId())) {
             // respond with 403 Forbidden
             throw new ResponseStatusException(
                 HttpStatus.FORBIDDEN,
