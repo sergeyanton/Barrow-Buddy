@@ -41,6 +41,7 @@ button, .cancel {
     padding: 8px 18px;
     margin-top: 8px;
     font-size: 16px;
+    font-weight: bold;
     border-radius: 10px;
     color: #FAF9F6;
     background-color: #023020;
@@ -79,4 +80,14 @@ button:hover {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
+}
+
+.search-bar input[type="text"] {
+    width: 320px; /* Adjust the width as needed */
+    height: 35px; /* Adjust the height as needed */
+    padding: 12px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    box-sizing: border-box;
 }

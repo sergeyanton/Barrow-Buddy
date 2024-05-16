@@ -6,8 +6,13 @@
 <body>
     <div th:replace="~{fragments/header :: header}"></div>
     <main>
+<!--        search bar -->
 
         <div class="basic">
+            <div class="search-bar">
+                <input type="text" id="gardenSearchInput" placeholder="Search gardens...">
+                <button onclick="searchGardens()">Search</button>
+            </div>
             <h1>Recent Gardens</h1>
             <table>
                 <thead>
