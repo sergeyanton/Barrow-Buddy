@@ -398,7 +398,10 @@ public class AccountController {
         return "redirect:/login";
     }
 
-
+    /**
+     * Gets the thymeleaf page representing the /friends page.
+     * @return thymeleaf viewFriendsPage
+     */
     @GetMapping("/friends")
     public String getFriendsPage() {
         logger.info("GET /friends");
