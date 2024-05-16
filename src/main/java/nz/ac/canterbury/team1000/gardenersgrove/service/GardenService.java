@@ -70,4 +70,14 @@ public class GardenService {
         gardenRepository.updateGardenById(gardenId, garden);
         return getGardenById(gardenId);
     }
+
+    /**
+     * Queries the repository to find the gardens whose names or plant names match the given query string
+     *
+     * @param query String to be searched
+     * @return List of garden objects that match the query
+     */
+    public List<Garden> searchGardens(String query) {
+        return gardenRepository.searchPublicGardensByKeyword(query);
+    }
 }

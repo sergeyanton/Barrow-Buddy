@@ -9,10 +9,12 @@
 <!--        search bar -->
 
         <div class="basic">
-            <div class="search-bar">
-                <input type="text" id="gardenSearchInput" placeholder="Search gardens...">
-                <button onclick="searchGardens()">Search</button>
-            </div>
+            <form th:action="@{/browseGardens}" method="post">
+                <div class="search-bar">
+                    <input type="text" id="gardenSearchInput" name="query" placeholder="Search gardens..." th:value="${query}">
+                    <button type="submit">Search</button>
+                </div>
+            </form>
             <h1>Recent Gardens</h1>
             <table>
                 <thead>

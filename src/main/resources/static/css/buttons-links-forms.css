@@ -28,7 +28,13 @@ form {
 
 .form-element input[type="text"],
 .form-element input[type="password"]{
-    margin-left: 40px;
+    width: 320px;
+    height: 35px;
+    padding: 12px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    box-sizing: border-box;
 }
 
 .form-element.no-label input {
@@ -83,8 +89,8 @@ button:hover {
 }
 
 .search-bar input[type="text"] {
-    width: 320px; /* Adjust the width as needed */
-    height: 35px; /* Adjust the height as needed */
+    width: 320px;
+    height: 35px;
     padding: 12px;
     border-radius: 5px;
     border: 1px solid #ccc;

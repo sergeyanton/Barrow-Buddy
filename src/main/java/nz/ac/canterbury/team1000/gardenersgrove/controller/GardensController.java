@@ -507,4 +507,12 @@ public class GardensController {
         return "pages/browseGardensPage";
     }
 
+    @PostMapping("/browseGardens")
+    public String browseGardens(@RequestParam("query") String query, Model model) {
+        List<Garden> searchResults = gardenService.searchGardens(query);
+        model.addAttribute("gardens", searchResults);
+        model.addAttribute("query", query);
+        return "pages/browseGardensPage";
+    }
+
 }

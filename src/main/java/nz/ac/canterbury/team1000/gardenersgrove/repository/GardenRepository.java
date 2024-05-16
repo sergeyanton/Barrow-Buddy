@@ -1,5 +1,6 @@
 package nz.ac.canterbury.team1000.gardenersgrove.repository;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Garden;
@@ -42,4 +43,8 @@ public interface GardenRepository extends CrudRepository<Garden, Long> {
         }
 
     }
+
+    @Query("SELECT DISTINCT g FROM Garden g JOIN Plant p ON g.id = p.gardenId WHERE g.isPublic = true "
+        + "AND (LOWER(g.name) LIKE LOWER(concat('%', :keyword, '%')) OR LOWER(p.name) LIKE LOWER(concat('%', :keyword, '%')))")
+    List<Garden> searchPublicGardensByKeyword(String keyword);
 }
