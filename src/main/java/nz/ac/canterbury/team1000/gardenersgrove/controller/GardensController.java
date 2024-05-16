@@ -308,6 +308,7 @@ public class GardensController {
 
         User loggedInUser = userService.getLoggedInUser();
         Garden updatedGarden = editGardenForm.getGarden(loggedInUser);
+        updatedGarden.setLocationValid(editGardenForm.getLocationValid());
 
         gardenService.updateGardenById(garden.getId(), updatedGarden);
 

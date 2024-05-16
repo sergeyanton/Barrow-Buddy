@@ -16,7 +16,7 @@
 <!--                <div th:text="${w.temperature}"></div>-->
 <!--            </tr>-->
             <h1 th:text="${garden.name}"></h1>
-            <p th:if="${weather == null or weather.empty}" th:text="'Location not found, please update your location to see the weather.'"></p>
+            <p th:if="${garden.locationValid == false}" th:text="'Location not found, please update your location to see the weather.'"></p>
             <a th:href="@{'/gardens/' + ${garden.id} + '/plants/create'}">
                 <button>Add a plant</button>
             </a>

@@ -69,11 +69,7 @@ public class WeatherService {
             }
             return persistWeather(persistedWeatherList);
         }
-         // IMPORTANT: This persists the weather even if the weather was already persistent recently
-         // This change was to make sure that whenever the user changes the location of the garden, then
-         // it updates the weather too. Not sure if there is another way to do this, but for now this is
-         // the only choice.
-		return persistWeather(getWeather(gardenId));
+		return persistedWeatherList;
     }
 
 
