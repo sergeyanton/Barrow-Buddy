@@ -12,6 +12,9 @@
                 <a th:replace="~{:: headerA(href=@{/profile}, text='Profile')}"></a>
             </li>
             <li>
+                <a th:replace="~{:: headerA(href=@{/friends}, text='My Friends')}"></a>
+            </li>
+            <li>
                 <!-- /* URL for garden create form, but passing in the next parameter making sure to prevent any loops */ -->
                 <a th:replace="~{:: headerA(href=@{/gardens/create(next=${#strings.replace(currentUrl, '/gardens/create?next=', '')})}, text='New Garden')}"></a>
             </li>
