@@ -21,18 +21,18 @@
             <tr>
               <th>Name</th>
               <th>Email</th>
-              <th></th>
             </tr>
             </thead>
             <tbody>
-            <tr >
-              <td colspan="2"> There is nobody with that email in Gardener’s Grove</td>
+            <tr th:if="${searchResult == null}">
+              <td colspan="5">There is nobody with that email in Gardener’s Grove</td>
+            <tr th:if="${searchResult != null}">
+              <td th:text="${searchResult.fname}"></td>
+              <td th:text="${searchResult.email}"></td>
             </tr>
             </tbody>
           </table>
-
-
-    <!--      <a class="cancel" th:href="@{login}">Cancel</a>-->
+          <a class="cancel" th:href="@{login}">Cancel</a>
         </form>
       </div>
     </main>

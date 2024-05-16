@@ -273,31 +273,52 @@ public class ProfileController {
         return ResponseEntity.ok().body(resource);
     }
 
+    /**
+     * Handles the HTTP POST request for searching by email.
+     *
+     * @param request       The HTTP servlet request.
+     * @param searchForm    The model attribute containing the search form data.
+     * @param bindingResult The result of the data binding and validation.
+     * @param model         The model to which attributes are added for rendering the view.
+     * @return The logical view name to redirect to after processing the search by email.
+     */
     @PostMapping("/searchByEmail")
     public String postSearchByEmail(HttpServletRequest request,
                                     @ModelAttribute("searchForm") SearchForm searchForm,
-                                    BindingResult bindingResult) {
+                                    BindingResult bindingResult,Model model) {
         logger.info("POST /searchByEmail");
         SearchForm.validate(searchForm, bindingResult);
 
-        if (!bindingResult.hasFieldErrors("email")) {
-            bindingResult.addError(new FieldError("forgotPasswordForm", "email", searchForm.getEmail(), false, null, null, "Invalid email format"));
-        }
+//        if (!bindingResult.hasFieldErrors("email")) {
+//            bindingResult.addError(new FieldError("searchForm", "email", searchForm.getEmail(), false, null, null, ""));
+//        }
+//
+//        if (bindingResult.hasErrors()) {
+//            return "pages/searchByEmailPage";
+//        }
 
-        if (bindingResult.hasErrors()) {
-            return "pages/searchByEmailPage";
-        }
+        User x =  userService.findEmail(searchForm.getEmail());
+        System.out.println(x);
+        model.addAttribute("searchResult", userService.findEmail(searchForm.getEmail()));
 
-
-        return "redirect:/searchByEmailPage";
+        return "redirect:/searchByEmail";
     }
 
+    /**
+     * Handles the HTTP GET request for searching by email.
+     *
+     * @param searchForm          The model attribute containing the search form data.
+     * @param model               The model to which attributes are added for rendering the view.
+     * @param redirectAttributes  The redirect attributes, used to carry error messages from a redirect.
+     * @return The logical view name of the page to display for searching by email.
+     */
     @GetMapping("/searchByEmail")
     public String getSearchByEmail(@ModelAttribute("searchForm") SearchForm searchForm, Model model, RedirectAttributes redirectAttributes) {
         logger.info("GET /searchByEmail");
         if (redirectAttributes.containsAttribute("errorMessage")) {
             model.addAttribute("errorMessage", redirectAttributes.getAttribute("errorMessage"));
         }
+
         return "pages/searchByEmailPage";
     }
 }

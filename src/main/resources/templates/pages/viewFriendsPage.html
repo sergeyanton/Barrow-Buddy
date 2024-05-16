@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
 
-<head th:replace="~{fragments/head :: head(title='My Friends')}"></head>
+<head th:replace="~{fragments/head :: head(title='My Friends')}"></head><tr th:each="result : ${searchResults}">
+        <td th:text="${result.name}"></td>
+        <td th:text="${result.email}"></td>
+    </tr>
 
 <body>
 <div th:replace="~{fragments/header :: header}"></div>
