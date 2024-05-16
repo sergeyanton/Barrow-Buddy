@@ -101,6 +101,16 @@ public class GardenServiceTest {
             public List<Garden> findByOwnerId(long ownerId) {
                 return null;
             }
+
+            @Override
+            public List<Garden> findAllByIsPublicTrue() {
+                return null;
+            }
+
+            @Override
+            public List<Garden> searchPublicGardensByKeyword(String keyword) {
+                return null;
+            }
         });
         gardenService.addGarden(new Garden("My Garden", "A", "B", "C", "D", "E", 9000.0, testUser, false));
     }
