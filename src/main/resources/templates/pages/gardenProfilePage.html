@@ -16,17 +16,15 @@
 <!--                <div th:text="${w.temperature}"></div>-->
 <!--            </tr>-->
             <h1 th:text="${garden.name}"></h1>
-            <div th:if="${garden.owner.id == loggedInUserId}">
-              <a th:href="@{'/gardens/' + ${garden.id} + '/plants/create'}">
-                <button>Add a plant</button>
-              </a>
-            </div>
+            <a th:if="${garden.owner.id == loggedInUserId}" th:href="@{'/gardens/' + ${garden.id} + '/plants/create'}">
+              <button>Add a plant</button>
+            </a>
             <br>
-            <p th:text="'Location: ' + ${garden.getLocationString}"></p>
+            <p th:if="${garden.owner.id == loggedInUserId}" th:text="'Location: ' + ${garden.getLocationString}"></p>
             <br>
             <p th:if="${garden.size != null}" th:text="'Size: ' + ${garden.size} + ' m&sup2;'"></p>
             <br>
-            <p id="gardenVisibilityText" th:text="'Garden Visibility: ' + (${garden.getIsPublic} ? 'Public' : 'Private')"></p>
+            <p id="gardenVisibilityText" th:if="${garden.owner.id == loggedInUserId}" th:text="'Garden Visibility: ' + (${garden.getIsPublic} ? 'Public' : 'Private')"></p>
 
             <br>
             <div th:if="${garden.owner.id == loggedInUserId}">
@@ -36,10 +34,8 @@
               </div>
             </div>
             <br th:if="${garden.size != null}">
-            <div th:if="${garden.owner.id == loggedInUserId}">
-            <div class="form-element">
+            <div th:if="${garden.owner.id == loggedInUserId}" class="form-element">
               <a th:href="@{'/gardens/' + ${garden.id} + '/edit'}">Edit Garden Details</a>
-            </div>
             </div>
             <br>
             <span id="clientSideErrorMessage" class="error"></span>
@@ -66,10 +62,11 @@
                                     <img class="plant-picture" th:id="'plantImage' + ${plant.id}"
                                          th:src="${plant.picturePath}"
                                          alt="Plant Picture">
-                                    <label th:id="'pictureFileLabel' + ${plant.id}" class="file-upload-plus-button" th:for="'pictureFile' + ${plant.id}">+</label>
+                                      <label th:if="${garden.owner.id == loggedInUserId}" th:id="'pictureFileLabel' + ${plant.id}" class="file-upload-plus-button" th:for="'pictureFile' + ${plant.id}">+</label>
+
                                 </div>
 
-                                <form th:id="'pictureForm' + ${plant.id}" th:action="@{'/gardens/' + ${garden.id} + '/plants/' + ${plant.id}}" th:object="${plantPictureForm}" method="post" enctype="multipart/form-data">
+                                <form th:if="${garden.owner.id == loggedInUserId}" th:id="'pictureForm' + ${plant.id}" th:action="@{'/gardens/' + ${garden.id} + '/plants/' + ${plant.id}}" th:object="${plantPictureForm}" method="post" enctype="multipart/form-data">
                                     <input type="file" th:field="*{pictureFile}" th:id="'pictureFile' + ${plant.id}" th:attr="onchange='validateImage(this, ' + ${plant.id} + ')'" accept="image/png, image/jpeg, image/svg+xml">
                                 </form>
                             </div>
@@ -77,16 +74,17 @@
                         <td><span th:text="${plant.name}"></span></td>
                         <td><span th:text="${plant.plantCount}"></span></td>
                         <td><span th:text="${plant.description}"></span></td>
-                      <div th:if="${garden.owner.id == loggedInUserId}">
-                        <td><a th:href="@{'/gardens/' + ${garden.id} + '/plants/' + ${plant.id} + '/edit'}">Edit Plant</a></td>
-                      </div>
+                        <td><a th:if="${garden.owner.id == loggedInUserId}" th:href="@{'/gardens/' + ${garden.id} + '/plants/' + ${plant.id} + '/edit'}">Edit Plant</a></td>
                     </tr>
                     </tbody>
                 </table>
             </div>
             <br>
-            <a th:href="@{/gardens}">
+            <a th:if="${garden.owner.id == loggedInUserId && fromMyGardens}" th:href="@{/gardens}">
                 <button>Back to My Gardens</button>
+            </a>
+            <a th:unless="${garden.owner.id == loggedInUserId && fromMyGardens}" th:href="@{/browseGardens}">
+              <button>Back to Browse Gardens</button>
             </a>
         </div>
     </main>
