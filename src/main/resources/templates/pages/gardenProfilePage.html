@@ -80,10 +80,10 @@
                 </table>
             </div>
             <br>
-            <a th:if="${garden.owner.id == loggedInUserId && fromMyGardens}" th:href="@{/gardens}">
+            <a th:if="${garden.owner.id == loggedInUserId}" th:href="@{/gardens}">
                 <button>Back to My Gardens</button>
             </a>
-            <a th:unless="${garden.owner.id == loggedInUserId && fromMyGardens}" th:href="@{/browseGardens}">
+            <a th:unless="${garden.owner.id == loggedInUserId}" th:href="@{/browseGardens}">
               <button>Back to Browse Gardens</button>
             </a>
         </div>
