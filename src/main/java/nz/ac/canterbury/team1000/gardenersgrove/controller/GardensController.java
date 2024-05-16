@@ -507,6 +507,14 @@ public class GardensController {
         return "pages/browseGardensPage";
     }
 
+    /**
+     * Handles POST requests to the /browseGardens endpoint.
+     * Performs searching of the database for gardens that match the query string.
+     *
+     * @param query String input to be searched against the database with.
+     * @param model (map-like) representation of results to be used by thymeleaf
+     * @return the browseGardensPage with the search results displaying
+     */
     @PostMapping("/browseGardens")
     public String browseGardens(@RequestParam("query") String query, Model model) {
         List<Garden> searchResults = gardenService.searchGardens(query);
