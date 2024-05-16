@@ -36,6 +36,7 @@ public interface GardenRepository extends CrudRepository<Garden, Long> {
             garden.setCity(updateGarden.getCity());
             garden.setPostcode(updateGarden.getPostcode());
             garden.setCountry(updateGarden.getCountry());
+            garden.setLocationValid(updateGarden.getLocationValid());
 
             save(garden);
         }

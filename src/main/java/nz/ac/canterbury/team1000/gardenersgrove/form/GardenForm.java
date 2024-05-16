@@ -95,15 +95,14 @@ public class GardenForm {
         this.size = size;
     }
 
-    public boolean locationIsValid() {
+    public void locationIsValid() {
         String[] location = Arrays.asList(this.address, this.city, this.postcode, this.country).toArray(new String[0]);
         List<Double> latAndLon = locationSearchService.getCoordinates(location);
         if (latAndLon.get(0) == null && latAndLon.get(1) == null) {
-            locationValid = false;
+            this.locationValid = false;
         } else {
-            locationValid = true;
+            this.locationValid = true;
         }
-        return locationValid;
     }
 
     /**
