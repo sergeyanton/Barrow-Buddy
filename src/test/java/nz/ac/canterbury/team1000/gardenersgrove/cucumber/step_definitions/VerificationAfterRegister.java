@@ -2,6 +2,7 @@ package nz.ac.canterbury.team1000.gardenersgrove.cucumber.step_definitions;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
+import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -32,16 +33,20 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 public class VerificationAfterRegister {
 
-  private final MockMvc mockMvc;
+  @Autowired
+  private WebApplicationContext webApplicationContext;
+  private MockMvc mockMvc;
 
 
-  public VerificationAfterRegister(CucumberSpringConfiguration cucumberSpringConfiguration) {
-    this.mockMvc = cucumberSpringConfiguration.getMockMvc();
-    Assertions.assertNotNull(this.mockMvc);
-  }
+//  public VerificationAfterRegister(CucumberSpringConfiguration cucumberSpringConfiguration) {
+//    this.mockMvc = cucumberSpringConfiguration.getMockMvc();
+//    Assertions.assertNotNull(this.mockMvc);
+//  }
 
   @MockBean
   private UserService userService;
@@ -58,12 +63,17 @@ public class VerificationAfterRegister {
   @MockBean
   private GardenService gardenService;
 
+  @MockBean
+  private AuthenticationManager authenticationManager;
   @Mock
   private VerificationToken verificationTokenMock;
 
   private RegistrationForm registrationForm;
 
-
+  @Before
+  public void setUp() {
+    mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+  }
   @BeforeEach
   public void beforeEach() {
     registrationForm = new RegistrationForm();

@@ -7,6 +7,7 @@ import nz.ac.canterbury.team1000.gardenersgrove.GardenersGroveApplication;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.platform.suite.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -17,6 +18,7 @@ import org.springframework.web.context.WebApplicationContext;
 /**
  * This a required class to set up the cucumber tests. This code was taken from ATDD workshop
  */
+@AutoConfigureMockMvc
 @Suite
 @IncludeEngines("cucumber")
 @SelectClasspathResource("features")
@@ -25,7 +27,7 @@ import org.springframework.web.context.WebApplicationContext;
     @ConfigurationParameter(key = Constants.PLUGIN_PROPERTY_NAME, value = "pretty, html:target/cucumber-report/cucumber.html"),
     @ConfigurationParameter(key = Constants.PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, value = "true")
 })
-@ContextConfiguration(classes = {GardenersGroveApplication.class, CucumberSpringConfiguration.class})
+@ContextConfiguration(classes = {GardenersGroveApplication.class})
 @SpringBootTest
 @ActiveProfiles("cucumber")
 public class RunCucumberTest {
