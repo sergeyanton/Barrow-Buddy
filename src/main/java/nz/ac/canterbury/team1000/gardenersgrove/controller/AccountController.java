@@ -399,4 +399,9 @@ public class AccountController {
     }
 
 
+    @GetMapping("/friends")
+    public String getFriendsPage() {
+        logger.info("GET /friends");
+        return "pages/viewFriendsPage";
+    }
 }
