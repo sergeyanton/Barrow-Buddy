@@ -183,7 +183,7 @@ public class LocationSearchService {
                     if (!fullAddress[4].isEmpty()) {
                         fullQuery += ", " + fullAddress[4];
                     }
-                    url = URL + "?q=" + fullQuery + "&key=" + API_KEY + "&normalizecity=1";
+                    url = URL + "autocomplete?q=" + fullQuery + "&key=" + API_KEY + "&normalizecity=1";
             }
 
             // Sending a request to the LocationIQ API endpoint and returns a JSON response in string form
