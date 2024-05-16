@@ -27,7 +27,6 @@
             <tr th:if="${searchResult == null}">
               <td colspan="5">There is nobody with that email in Gardener’s Grove</td>
             <tr th:if="${searchResult != null}">
-              <td th:text="${searchResult.fname}"></td>
               <td th:text="${searchResult.email}"></td>
             </tr>
             </tbody>

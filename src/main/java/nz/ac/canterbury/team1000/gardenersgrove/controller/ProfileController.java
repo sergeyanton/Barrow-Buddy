@@ -290,17 +290,22 @@ public class ProfileController {
         SearchForm.validate(searchForm, bindingResult);
 
 //        if (!bindingResult.hasFieldErrors("email")) {
-//            bindingResult.addError(new FieldError("searchForm", "email", searchForm.getEmail(), false, null, null, ""));
+//            bindingResult.addError(new FieldError("searchForm", "email", searchForm.getEmail(), false, null, null, "Error"));
 //        }
 //
 //        if (bindingResult.hasErrors()) {
 //            return "pages/searchByEmailPage";
 //        }
 
-        User x =  userService.findEmail(searchForm.getEmail());
-        System.out.println(x);
-        model.addAttribute("searchResult", userService.findEmail(searchForm.getEmail()));
+        User userResult =  userService.findEmail(searchForm.getEmail());
+        System.out.println(userResult);
 
+        if (userResult == null) {
+            model.addAttribute("errorMessage", "User not found with the provided email.");
+            return "pages/searchByEmailPage";
+        }
+
+        model.addAttribute("userResult", userResult);
         return "redirect:/searchByEmail";
     }
 
