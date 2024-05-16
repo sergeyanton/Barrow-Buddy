@@ -486,10 +486,8 @@ class AccountControllerTest {
     @Test
     public void VerificationPostRequest_Valid_Redirection() throws Exception {
         verificationTokenForm.setVerificationToken("123456");
-        verificationTokenMock.setVerified(true);
         Mockito.when(verificationTokenService.getVerificationTokenByToken(Mockito.any())).thenReturn(verificationTokenMock);
         Mockito.when(userService.findById(verificationTokenMock.getUserId())).thenReturn(userMock);
-        Mockito.doNothing().when(verificationTokenService).updateVerifiedByUserId(Mockito.anyLong());
         mockMvc.perform(MockMvcRequestBuilders.post("/register/verification").with(csrf())
                         .flashAttr("verificationTokenForm", verificationTokenForm))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
@@ -498,7 +496,6 @@ class AccountControllerTest {
 
     @Test
     public void VerificationPostRequest_InvalidTokenTooShort_HasFieldErrors() throws Exception {
-        verificationTokenMock.setVerified(false);
         Mockito.when(userService.getLoggedInUser()).thenReturn(userMock);
         Mockito.when(verificationTokenService.getVerificationTokenByUserId(Mockito.any())).thenReturn(verificationTokenMock);
         verificationTokenForm.setVerificationToken("12345");
@@ -512,7 +509,6 @@ class AccountControllerTest {
 
     @Test
     public void VerificationPostRequest_InvalidTokenTooLong_HasFieldErrors() throws Exception {
-        verificationTokenMock.setVerified(false);
         Mockito.when(userService.getLoggedInUser()).thenReturn(userMock);
         Mockito.when(verificationTokenService.getVerificationTokenByUserId(Mockito.any())).thenReturn(verificationTokenMock);
         verificationTokenForm.setVerificationToken("1234567");
@@ -526,7 +522,6 @@ class AccountControllerTest {
 
     @Test
     public void VerificationPostRequest_InvalidTokenEmpty_HasFieldErrors() throws Exception {
-        verificationTokenMock.setVerified(false);
         Mockito.when(userService.getLoggedInUser()).thenReturn(userMock);
         Mockito.when(verificationTokenService.getVerificationTokenByUserId(Mockito.any())).thenReturn(verificationTokenMock);
         verificationTokenForm.setVerificationToken("");

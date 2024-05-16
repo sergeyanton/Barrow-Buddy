@@ -22,11 +22,8 @@ public class VerificationToken {
     private String token;
     @Column(nullable = false)
     private LocalDateTime expiryDate;
-    @Column(nullable = false)
-    private boolean verified = false;
     @Transient
     private String plainToken;
-
 
     protected VerificationToken() {
     }
@@ -35,7 +32,6 @@ public class VerificationToken {
         this.userId = userId;
         this.plainToken = generateToken();
         this.token = String.valueOf(this.plainToken.hashCode());
-        this.verified = false;
         this.expiryDate = calculateExpiryDate();
     }
 
@@ -49,7 +45,6 @@ public class VerificationToken {
         int code = secureRandom.nextInt(900000) + 100000; // Generates a random 6-digit number
         return String.valueOf(code);
     }
-
 
     /**
      * Calculates the expiry date of the token which is 10 minutes from the request time.
@@ -74,19 +69,5 @@ public class VerificationToken {
     public String getPlainToken() {
         return plainToken;
     }
-
-    public boolean isVerified() {
-        return verified;
-    }
-
-    public void setVerified(boolean verified) {
-        this.verified = verified;
-    }
-
-
-    public LocalDateTime getExpiryDate() {
-        return expiryDate;
-    }
-
 
 }

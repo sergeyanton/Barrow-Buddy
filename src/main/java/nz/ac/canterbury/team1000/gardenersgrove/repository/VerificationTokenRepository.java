@@ -17,4 +17,6 @@ public interface VerificationTokenRepository extends CrudRepository<Verification
     Optional<VerificationToken> findByUserId(Long userId);
     Optional<VerificationToken> findByToken(String token);
     List<VerificationToken> findByExpiryDateBefore(LocalDateTime now);
+
+    void deleteByUserId(Long userId);
 }
