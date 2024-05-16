@@ -14,8 +14,24 @@
           </div>
           <input th:replace="~{fragments/formElement :: formElementField(fieldName='email', label='Email: ', placeholder='jane@doe.nz')}" />
           <br />
-
           <button type="submit">Search</button>
+
+          <table>
+            <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr >
+              <td colspan="2"> There is nobody with that email in Gardener’s Grove</td>
+            </tr>
+            </tbody>
+          </table>
+
+
     <!--      <a class="cancel" th:href="@{login}">Cancel</a>-->
         </form>
       </div>
