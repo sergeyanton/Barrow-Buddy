@@ -90,9 +90,11 @@ public class ProfileControllerTest {
         updatePasswordForm.setNewPassword("Pass123$");
         updatePasswordForm.setRetypeNewPassword("Pass123$");
 
+        searchForm = new SearchForm();
+        searchForm.setEmail(userMock.getEmail());
+
         Mockito.when(userService.getLoggedInUser()).thenReturn(userMock);
         Mockito.when(userService.checkEmail(Mockito.any())).thenReturn(true);
-
         Mockito.when(passwordEncoder.matches(Mockito.any(), Mockito.any())).thenReturn(true);
     }
 
@@ -589,14 +591,14 @@ public class ProfileControllerTest {
 //    public void SearchFormPost_InvalidEmailEmpty_HasFieldErrors() throws Exception {
 //        searchForm.setEmail("");
 //
-//        mockMvc.perform(MockMvcRequestBuilders.post("/searchByEmail")
+//        mockMvc.perform(MockMvcRequestBuilders.get("/searchByEmail")
 //                .with(csrf())
 //                .flashAttr("searchForm", searchForm))
 //            .andExpect(MockMvcResultMatchers.status().isOk())
 //            .andExpect(MockMvcResultMatchers.view().name("pages/searchByEmailPage"))
 //            .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("searchForm", "email"));
 //
-////        Mockito.verify(userService, Mockito.never()).findEmail(Mockito.any());
+//        Mockito.verify(userService, Mockito.never()).findEmail(Mockito.any());
 //    }
 
 }
