@@ -308,8 +308,6 @@ public class ProfileController {
             }
         } else {
             userResult = null;
-            bindingResult.addError(new FieldError("searchForm", "email", searchForm.getEmail(), false, null, null, "Please Search!!!!!!!!!!!!"));
-
         }
         model.addAttribute("email", email);
         model.addAttribute("userResult", userResult);
