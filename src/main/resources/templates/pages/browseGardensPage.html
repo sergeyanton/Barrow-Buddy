@@ -9,13 +9,17 @@
 <!--        search bar -->
 
         <div class="basic">
-            <form th:action="@{/browseGardens}" method="post">
+            <h1>Browse Gardens</h1>
+            <form th:action="@{/browseGardens}" method="get">
                 <div class="search-bar">
                     <input type="text" id="gardenSearchInput" name="query" placeholder="Search gardens..." th:value="${query}">
                     <button type="submit">Search</button>
                 </div>
             </form>
-            <h1 th:if="${query.empty}"> Recent Gardens</h1>
+<!--            <h1 th:if="${query.empty}"> Recent Gardens</h1>-->
+            <h2 th:if="${query.empty}"> Showing Recent Gardens</h2>
+            <h2 th:unless="${query.empty}"> Showing Search Results</h2>
+            <br>
             <table>
                 <thead>
                     <tr>

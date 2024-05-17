@@ -495,32 +495,23 @@ public class GardensController {
     /**
      * Handles GET requests for the /browseGardens endpoint.
      * Displays the 10 most recently made public gardens and a garden search bar.
+     * If a query is present, searches and displays for gardens with matching string.
      *
      * @param model (map-like) representation of results to be used by thymeleaf
      * @return thymeleaf pages/browseGardensPage
      */
     @GetMapping("/browseGardens")
-    public String browseGardens(Model model) {
+    public String browseGardens(@RequestParam(required = false, defaultValue = "") String query, Model model) {
         logger.info("GET /browseGardens");
-        // TODO get public gardens
-        model.addAttribute("gardens", gardenService.getPublicGardens());
-        model.addAttribute("query", "");
-        return "pages/browseGardensPage";
-    }
-
-    /**
-     * Handles POST requests to the /browseGardens endpoint.
-     * Performs searching of the database for gardens that match the query string.
-     *
-     * @param query String input to be searched against the database with.
-     * @param model (map-like) representation of results to be used by thymeleaf
-     * @return the browseGardensPage with the search results displaying
-     */
-    @PostMapping("/browseGardens")
-    public String browseGardens(@RequestParam("query") String query, Model model) {
-        List<Garden> searchResults = gardenService.searchGardens(query);
-        model.addAttribute("gardens", searchResults);
+        List<Garden> gardens;
+        // if query search results
+        if (!query.isBlank()) {
+            gardens = gardenService.searchGardens(query);
+        } else {
+            gardens = gardenService.getPublicGardens();
+        }
         model.addAttribute("query", query);
+        model.addAttribute("gardens", gardens);
         return "pages/browseGardensPage";
     }
 
