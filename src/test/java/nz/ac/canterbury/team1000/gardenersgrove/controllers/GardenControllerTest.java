@@ -10,6 +10,7 @@ import java.util.List;
 import nz.ac.canterbury.team1000.gardenersgrove.form.GardenForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PlantForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.WeatherService;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -67,13 +68,21 @@ public class GardenControllerTest {
     @Mock
     private Garden gardenMock;
 
+    @Mock
+    private Garden publicGardenMock;
+
     private GardenForm gardenForm;
+
+    private GardenForm publicGardenForm;
 
     @Mock
     private Model model;
 
     @Mock
     private User loggedInUser;
+
+    private List<Garden> publicGardens;
+    private List<Garden> allGardens;
 
     @BeforeEach
     public void BeforeEach() {
@@ -93,6 +102,19 @@ public class GardenControllerTest {
         when(gardenMock.getSize()).thenReturn(46.2);
         when(gardenMock.getIsPublic()).thenReturn(false);
 
+        // mock a public garden
+        publicGardenMock = Mockito.mock(Garden.class);
+        when(publicGardenMock.getId()).thenReturn(2L);
+        when(publicGardenMock.getOwner()).thenReturn(loggedInUser);
+        when(publicGardenMock.getName()).thenReturn("Public Garden");
+        when(publicGardenMock.getAddress()).thenReturn("123 Sesame Street");
+        when(publicGardenMock.getSuburb()).thenReturn("Sesame");
+        when(publicGardenMock.getCity()).thenReturn("Street");
+        when(publicGardenMock.getPostcode()).thenReturn("3216");
+        when(publicGardenMock.getCountry()).thenReturn("New Zealand");
+        when(publicGardenMock.getSize()).thenReturn(100.0);
+        when(publicGardenMock.getIsPublic()).thenReturn(true);
+
         gardenForm = new GardenForm();
         gardenForm.setName(gardenMock.getName());
         gardenForm.setAddress(gardenMock.getAddress());
@@ -101,6 +123,26 @@ public class GardenControllerTest {
         gardenForm.setPostcode(gardenMock.getPostcode());
         gardenForm.setCountry(gardenMock.getCountry());
         gardenForm.setSize(gardenMock.getSize().toString());
+        gardenForm.setPublicity(gardenMock.getIsPublic());
+
+        // form for public garden
+        publicGardenForm = new GardenForm();
+        publicGardenForm.setName(publicGardenMock.getName());
+        publicGardenForm.setAddress(publicGardenMock.getAddress());
+        publicGardenForm.setSuburb(publicGardenMock.getSuburb());
+        publicGardenForm.setCity(publicGardenMock.getCity());
+        publicGardenForm.setPostcode(publicGardenMock.getPostcode());
+        publicGardenForm.setCountry(publicGardenMock.getCountry());
+        publicGardenForm.setSize(publicGardenMock.getSize().toString());
+        publicGardenForm.setPublicity(publicGardenMock.getIsPublic());
+
+        // array list of public gardens and all gardens
+        publicGardens = new ArrayList<>();
+        publicGardens.add(publicGardenMock);
+
+        allGardens = new ArrayList<>();
+        allGardens.add(publicGardenMock);
+        allGardens.add(gardenMock);
 
         // Mock addGarden(), updateGarden(), and getPlantById to always simply use id = 1
         when(gardenService.addGarden(Mockito.any(Garden.class))).thenAnswer(invocation -> {
@@ -116,6 +158,8 @@ public class GardenControllerTest {
                 });
 
         when(gardenService.getGardenById(1L)).thenReturn(gardenMock);
+
+        when(gardenService.getPublicGardens()).thenReturn(publicGardens);
     }
 
     @Test
@@ -650,19 +694,52 @@ public class GardenControllerTest {
     }
 
     @Test
-    public void BrowseGardensPost_WithQuery_ReturnsPageWithQuerySearch() throws Exception {
-        String query = "test";
-        List<Garden> searchResults = new ArrayList<>();
-        when(gardenService.searchGardens(query)).thenReturn(searchResults);
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/browseGardens").param("query", query).with(csrf()))
+    public void BrowseGardensGet_WithoutQuery_ReturnsPageWithDefaultPublicGardens() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/browseGardens").with(csrf()))
             .andExpect(MockMvcResultMatchers.status().isOk())
             .andExpect(MockMvcResultMatchers.view().name("pages/browseGardensPage"))
             .andExpect(MockMvcResultMatchers.model().attributeExists("gardens"))
-            .andExpect(MockMvcResultMatchers.model().attribute("gardens", searchResults))
-            .andExpect(MockMvcResultMatchers.model().attribute("query", query));
+            .andExpect(MockMvcResultMatchers.model().attribute("gardens", publicGardens));
+        verify(gardenService).getPublicGardens();
+    }
 
+    @Test
+    public void BrowseGardensGet_WithQueryWithMatch_ReturnsPageWithQuerySearch() throws Exception {
+        String publicGardenQuery = "Public Garden";
+        when(gardenService.searchGardens(publicGardenQuery)).thenReturn(publicGardens);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/browseGardens").param("query", publicGardenQuery).with(csrf()))
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.view().name("pages/browseGardensPage"))
+            .andExpect(MockMvcResultMatchers.model().attributeExists("gardens"))
+            .andExpect(MockMvcResultMatchers.model().attribute("gardens", publicGardens));
+        verify(gardenService).searchGardens(publicGardenQuery);
+    }
+
+    @Test
+    public void BrowseGardensGet_WithQueryWithNoMatch_ReturnsPageWithEmptyResults() throws Exception {
+        String query = "No match";
+        when(gardenService.searchGardens(query)).thenReturn(new ArrayList<>());
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/browseGardens").param("query", query).with(csrf()))
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.view().name("pages/browseGardensPage"))
+            .andExpect(MockMvcResultMatchers.model().attributeExists("gardens"))
+            .andExpect(MockMvcResultMatchers.model().attribute("gardens", Matchers.empty()));
         verify(gardenService).searchGardens(query);
+    }
+
+    @Test
+    public void BrowseGardensGet_WithPrivateGardenQuery_ReturnsPageWithEmptyResults() throws Exception {
+        String privateGardenQuery = "Hamilton";
+        when(gardenService.searchGardens(privateGardenQuery)).thenReturn(new ArrayList<>());
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/browseGardens").param("query", privateGardenQuery).with(csrf()))
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.view().name("pages/browseGardensPage"))
+            .andExpect(MockMvcResultMatchers.model().attributeExists("gardens"))
+            .andExpect(MockMvcResultMatchers.model().attribute("gardens", Matchers.empty()));
+        verify(gardenService).searchGardens(privateGardenQuery);
     }
 
 }
