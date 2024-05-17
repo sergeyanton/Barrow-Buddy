@@ -6,9 +6,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import nz.ac.canterbury.team1000.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.WeatherType;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Weather;
 import nz.ac.canterbury.team1000.gardenersgrove.repository.WeatherRepository;
+import nz.ac.canterbury.team1000.gardenersgrove.api.LocationSearchService;
+import nz.ac.canterbury.team1000.gardenersgrove.service.GardenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,15 +30,19 @@ public class WeatherService {
     private final WeatherRepository weatherRepository;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
+    private final GardenService gardenService;
+    private final LocationSearchService locationSearchService;
     //TODO actually make this URL the correct URL, not just to prove the spike
-    private final String URL = "https://api.open-meteo.com/v1/forecast?latitude=-43.5333&longitude=172.6333&hourly=temperature_2m,relative_humidity_2m&daily=weather_code";
+    private final String URL = "https://api.open-meteo.com/v1/forecast?hourly=temperature_2m,relative_humidity_2m&daily=weather_code";
 
     @Autowired
     public WeatherService(WeatherRepository weatherRepository, RestTemplate restTemplate,
-            ObjectMapper objectMapper) {
+        ObjectMapper objectMapper, GardenService gardenService, LocationSearchService locationSearchService) {
         this.weatherRepository = weatherRepository;
         this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;
+        this.gardenService = gardenService;
+        this.locationSearchService = locationSearchService;
     }
 
     /**
@@ -62,8 +69,9 @@ public class WeatherService {
             }
             return persistWeather(persistedWeatherList);
         }
-        return persistedWeatherList;
+		return persistedWeatherList;
     }
+
 
     /**
      * Persists a list of Weather entities into the database
@@ -91,8 +99,33 @@ public class WeatherService {
         // humidity has NO DAILY VALUE, must do something smart with the hourly variable. Perhaps just
         // average it but I mean, based on the AC, we have a lot of creative
         // freedom as to how the data is presented.
-        String jsonResponse = restTemplate.getForObject(URL, String.class);
+
+        Garden garden = gardenService.getGardenById(gardenId);
+
+        // Obtain the garden location details
+        String[] gardenAddress = new String[4];
+        gardenAddress[0] = garden.getAddress();
+        gardenAddress[1] = garden.getCity();
+        gardenAddress[2] = garden.getPostcode();
+        gardenAddress[3] = garden.getCountry();
+
+        String latitude = null;
+        String longitude = null;
+
+        // Calls the getCoordinates() method form locationSearchService to obtain the latitude and longitude
+        // given the garden location details
+        List<Double> coordinates = locationSearchService.getCoordinates(gardenAddress);
+
+        // Check that the coordinates are not null - meaning the location is valid
+        if (coordinates.get(0) != null || coordinates.get(1) != null) {
+            latitude = coordinates.get(0).toString();
+            longitude = coordinates.get(1).toString();
+        }
+
+        String url = URL + "&latitude=" + latitude + "&longitude=" + longitude;
+
         try {
+            String jsonResponse = restTemplate.getForObject(url, String.class);
             Map<String, Object> weather = objectMapper.readValue(jsonResponse, Map.class);
             List<Integer> weatherCodes = (ArrayList) ((Map<String, Object>) weather.get("daily")).get("weather_code");
             List<Double> hourlyTemps = (ArrayList) ((Map<String, Object>) weather.get("hourly")).get("temperature_2m");
@@ -109,7 +142,7 @@ public class WeatherService {
             for (Weather w : weatherList) {
                 logger.info(w.toString());
             }
-			return weatherList;
+            return weatherList;
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ArrayList<>();

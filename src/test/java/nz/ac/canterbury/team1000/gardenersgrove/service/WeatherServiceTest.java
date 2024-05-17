@@ -6,9 +6,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import nz.ac.canterbury.team1000.gardenersgrove.api.LocationSearchService;
+import nz.ac.canterbury.team1000.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Weather;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.WeatherType;
 import nz.ac.canterbury.team1000.gardenersgrove.repository.WeatherRepository;
+import nz.ac.canterbury.team1000.gardenersgrove.service.GardenService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,6 +24,10 @@ public class WeatherServiceTest {
 	private WeatherRepository weatherRepository;
 	@Mock
 	private RestTemplate restTemplate;
+	@Mock
+	private GardenService gardenService;
+	@Mock
+	private LocationSearchService locationSearchService;
 	private Long gardenId;
 	private List<Weather> weatherList;
 
@@ -28,11 +35,16 @@ public class WeatherServiceTest {
 	void setUp() {
 		weatherRepository = mock(WeatherRepository.class);
 		restTemplate = mock(RestTemplate.class);
-		weatherService = new WeatherService(weatherRepository, restTemplate, new ObjectMapper());
+		gardenService = mock(GardenService.class);
+		locationSearchService = mock(LocationSearchService.class);
+		weatherService = new WeatherService(weatherRepository, restTemplate, new ObjectMapper(), gardenService, locationSearchService);
 		gardenId = 1L;
 		weatherList = new ArrayList<>();
 		when(weatherRepository.findByGardenId(gardenId)).thenReturn(weatherList);
 		when(weatherRepository.save(any())).thenReturn(null);
+		when(gardenService.getGardenById(gardenId)).thenReturn(new Garden("Name", "Address",
+			"Suburb", "City", "Postcode", "Country", false, 1.0, null, true));
+		when(locationSearchService.getCoordinates(any())).thenReturn(Arrays.asList(-1.0, -1.0));
 	}
 
 	/**
