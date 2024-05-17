@@ -504,6 +504,7 @@ public class GardensController {
         logger.info("GET /browseGardens");
         // TODO get public gardens
         model.addAttribute("gardens", gardenService.getPublicGardens());
+        model.addAttribute("query", "");
         return "pages/browseGardensPage";
     }
 
