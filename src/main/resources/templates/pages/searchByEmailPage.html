@@ -14,6 +14,7 @@
           </div>
 
           <input th:replace="~{fragments/formElement :: formElementField(fieldName='email', label='Email: ', placeholder='jane@doe.nz')}" />
+          <button type="submit">Search</button>
 
           <br />
 
@@ -28,6 +29,7 @@
             <tr th:if="${userResult == null}">
               <td colspan="5">There is nobody with that email in Gardener’s Grove</td>
             <tr th:if="${userResult != null}">
+              <td th:text="${userResult.fname} + (${userResult.lname} ? ' ' + ${userResult.lname} : '')"></td>
               <td th:text="${userResult.email}"></td>
             </tr>
             </tbody>
