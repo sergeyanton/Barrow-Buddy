@@ -28,6 +28,14 @@ main.centred {
 
 h1 {
     text-align: center;
+    color: #023020;
+}
+
+h2 {
+    text-align: left;
+    align-self: flex-start;
+    font-size: 1em;
+    font-weight:500;
 }
 
 .basic {
