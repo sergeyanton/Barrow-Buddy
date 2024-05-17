@@ -160,10 +160,12 @@ public class GardenForm {
          * TODO: profanity check on garden description =)
          */
         // Validate garden description
-        if (!checkValidGardenDescription(createGardenForm.getDescription())) {
-            errors.add("description", "Description must contain some text", createGardenForm.getDescription());
-        } else if (checkOverMaxLength(createGardenForm.getDescription(), 512)) {
-            errors.add("description", "Description must be 512 characters or less", createGardenForm.getDescription());
+        if (createGardenForm.getDescription() != null && !createGardenForm.getDescription().isBlank()) {
+            if (!checkValidGardenDescription(createGardenForm.getDescription())) {
+                errors.add("description", "Description must contain some text", createGardenForm.getDescription());
+            } else if (checkOverMaxLength(createGardenForm.getDescription(), 512)) {
+                errors.add("description", "Description must be 512 characters or less", createGardenForm.getDescription());
+            }
         }
 
         // Validate garden location - Address

@@ -269,8 +269,6 @@ public class GardensController {
 
         Garden garden = tryToAccessGarden(gardenId);
 
-        logger.info(garden.getDescription());
-
         editGardenForm.setName(garden.getName());
 
         editGardenForm.setAddress(garden.getAddress());
@@ -279,8 +277,6 @@ public class GardensController {
         editGardenForm.setPostcode(garden.getPostcode());
         editGardenForm.setCountry(garden.getCountry());
         editGardenForm.setDescription(garden.getDescription());
-
-        logger.info(editGardenForm.getDescription());
 
         if (garden.getSize() != null) editGardenForm.setSize(garden.getSize().toString());
 
@@ -311,12 +307,8 @@ public class GardensController {
             return "pages/editGardenPage";
         }
 
-        logger.info(editGardenForm.getDescription());
-
         User loggedInUser = userService.getLoggedInUser();
         Garden updatedGarden = editGardenForm.getGarden(loggedInUser);
-
-        logger.info(updatedGarden.getDescription());
 
         gardenService.updateGardenById(garden.getId(), updatedGarden);
 

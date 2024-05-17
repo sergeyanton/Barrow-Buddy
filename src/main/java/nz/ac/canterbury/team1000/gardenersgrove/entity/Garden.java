@@ -177,10 +177,10 @@ public class Garden {
     public void setDescription(String description) {
         if (description == null) {
             this.description = null;
-        } else if (description.isBlank()) {
+        } else if (description.trim().isBlank()) {
             this.description = null;
         } else {
-            this.description = description;
+            this.description = description.trim();
         }
     }
 
