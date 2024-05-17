@@ -1,6 +1,7 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.EditUserForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PictureForm;
@@ -282,47 +283,71 @@ public class ProfileController {
      * @param model         The model to which attributes are added for rendering the view.
      * @return The logical view name to redirect to after processing the search by email.
      */
-    @PostMapping("/searchByEmail")
-    public String postSearchByEmail(HttpServletRequest request,
-                                    @ModelAttribute("searchForm") SearchForm searchForm,
-                                    BindingResult bindingResult,Model model) {
-        logger.info("POST /searchByEmail");
-        SearchForm.validate(searchForm, bindingResult);
-
-//        if (!bindingResult.hasFieldErrors("email")) {
-//            bindingResult.addError(new FieldError("searchForm", "email", searchForm.getEmail(), false, null, null, "Error"));
-//        }
+//    @PostMapping("/searchByEmail")
+//    public String postSearchByEmail(HttpServletRequest request,
+//                                    @ModelAttribute("searchForm") SearchForm searchForm,
+//                                    @RequestParam("email") String userEmail,
+//                                    BindingResult bindingResult,Model model,
+//                                    HttpSession session, RedirectAttributes redirectAttributes) {
+//        logger.info("POST /searchByEmail");
+////        SearchForm.validate(searchForm, bindingResult);
+////
+////        if (!bindingResult.hasFieldErrors("email")) {
+////            bindingResult.addError(new FieldError("searchForm", "email", searchForm.getEmail(), false, null, null, "Error"));
+////        }
+////
+////        User userResult =  userService.findEmail(userEmail);
+////
+////        System.out.println(userResult);
+////
+////        if (userResult == null) {
+////            bindingResult.addError(new FieldError("searchForm", "email", searchForm.getEmail(), false, null, null, "There is nobody with that email in Gardener’s Grove"));
+////        }
+////
+////        if (bindingResult.hasErrors()) {
+////            return "pages/searchByEmailPage";
+////        }
 //
-//        if (bindingResult.hasErrors()) {
-//            return "pages/searchByEmailPage";
-//        }
-
-        User userResult =  userService.findEmail(searchForm.getEmail());
-        System.out.println(userResult);
-
-        if (userResult == null) {
-            model.addAttribute("errorMessage", "User not found with the provided email.");
-            return "pages/searchByEmailPage";
-        }
-
-        model.addAttribute("userResult", userResult);
-        return "redirect:/searchByEmail";
-    }
+////        model.addAttribute("email", userResult.getEmail());
+//        return "pages/searchByEmailPage";
+//    }
 
     /**
      * Handles the HTTP GET request for searching by email.
-     *
-     * @param searchForm          The model attribute containing the search form data.
      * @param model               The model to which attributes are added for rendering the view.
-     * @param redirectAttributes  The redirect attributes, used to carry error messages from a redirect.
      * @return The logical view name of the page to display for searching by email.
      */
     @GetMapping("/searchByEmail")
-    public String getSearchByEmail(@ModelAttribute("searchForm") SearchForm searchForm, Model model, RedirectAttributes redirectAttributes) {
+    public String getSearchByEmail(HttpServletRequest request,
+                                    @ModelAttribute("searchForm") SearchForm searchForm,
+                                    @RequestParam(required = false, defaultValue = "") String email,
+                                    BindingResult bindingResult,Model model) {
         logger.info("GET /searchByEmail");
-        if (redirectAttributes.containsAttribute("errorMessage")) {
-            model.addAttribute("errorMessage", redirectAttributes.getAttribute("errorMessage"));
+        User userResult;
+        if (!email.isBlank()) {
+            SearchForm.validate(searchForm, bindingResult);
+
+            userResult =  userService.findEmail(email);
+
+            System.out.println(userResult);
+
+            if (userResult == null) {
+                bindingResult.addError(new FieldError("searchForm", "email", searchForm.getEmail(), false, null, null, "There is nobody with that email in Gardener’s Grove"));
+            }
+
+            if (bindingResult.hasErrors()) {
+                return "pages/searchByEmailPage";
+            }
+        } else {
+
+            userResult = null;
+            System.out.println("im in else - the user is null");
+
+            bindingResult.addError(new FieldError("searchForm", "email", searchForm.getEmail(), false, null, null, "Please Search!!!!!!!!!!!!"));
+
         }
+        model.addAttribute("email", email);
+        model.addAttribute("userResult", userResult);
 
         return "pages/searchByEmailPage";
     }

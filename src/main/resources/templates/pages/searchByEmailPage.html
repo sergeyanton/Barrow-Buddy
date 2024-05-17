@@ -8,13 +8,14 @@
     <main clas="centred">
       <div class="basic">
         <h1>Search By Email</h1>
-        <form th:action="@{/searchByEmail}" method="post" th:object="${searchForm}">
+        <form th:action="@{/searchByEmail}" method="get" th:object="${searchForm}">
           <div th:if="${errorMessage}" class="error-message">
             <p th:text="${errorMessage}"></p>
           </div>
+
           <input th:replace="~{fragments/formElement :: formElementField(fieldName='email', label='Email: ', placeholder='jane@doe.nz')}" />
+
           <br />
-          <button type="submit">Search</button>
 
           <table>
             <thead>
@@ -24,13 +25,15 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:if="${searchResult == null}">
+            <tr th:if="${userResult == null}">
               <td colspan="5">There is nobody with that email in Gardener’s Grove</td>
-            <tr th:if="${searchResult != null}">
-              <td th:text="${searchResult.email}"></td>
+            <tr th:if="${userResult != null}">
+              <td th:text="${userResult.email}"></td>
             </tr>
             </tbody>
           </table>
+
+          <button type="submit">Search</button>
           <a class="cancel" th:href="@{login}">Cancel</a>
         </form>
       </div>
