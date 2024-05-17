@@ -275,74 +275,35 @@ public class ProfileController {
     }
 
     /**
-     * Handles the HTTP POST request for searching by email.
+     * Handles GET requests for searching users by email.
      *
-     * @param request       The HTTP servlet request.
-     * @param searchForm    The model attribute containing the search form data.
-     * @param bindingResult The result of the data binding and validation.
-     * @param model         The model to which attributes are added for rendering the view.
-     * @return The logical view name to redirect to after processing the search by email.
-     */
-//    @PostMapping("/searchByEmail")
-//    public String postSearchByEmail(HttpServletRequest request,
-//                                    @ModelAttribute("searchForm") SearchForm searchForm,
-//                                    @RequestParam("email") String userEmail,
-//                                    BindingResult bindingResult,Model model,
-//                                    HttpSession session, RedirectAttributes redirectAttributes) {
-//        logger.info("POST /searchByEmail");
-////        SearchForm.validate(searchForm, bindingResult);
-////
-////        if (!bindingResult.hasFieldErrors("email")) {
-////            bindingResult.addError(new FieldError("searchForm", "email", searchForm.getEmail(), false, null, null, "Error"));
-////        }
-////
-////        User userResult =  userService.findEmail(userEmail);
-////
-////        System.out.println(userResult);
-////
-////        if (userResult == null) {
-////            bindingResult.addError(new FieldError("searchForm", "email", searchForm.getEmail(), false, null, null, "There is nobody with that email in Gardener’s Grove"));
-////        }
-////
-////        if (bindingResult.hasErrors()) {
-////            return "pages/searchByEmailPage";
-////        }
-//
-////        model.addAttribute("email", userResult.getEmail());
-//        return "pages/searchByEmailPage";
-//    }
-
-    /**
-     * Handles the HTTP GET request for searching by email.
-     * @param model               The model to which attributes are added for rendering the view.
-     * @return The logical view name of the page to display for searching by email.
+     * @param searchForm    the SearchForm object containing the search parameters
+     * @param email         the email address to search for, which is optional and defaults to an empty string if not provided
+     * @param bindingResult the BindingResult object for validation errors
+     * @param model         the Model object to add attributes to be accessed in the view
+     * @return the name of the view template to render
      */
     @GetMapping("/searchByEmail")
-    public String getSearchByEmail(HttpServletRequest request,
-                                    @ModelAttribute("searchForm") SearchForm searchForm,
+    public String getSearchByEmail( @ModelAttribute("searchForm") SearchForm searchForm,
                                     @RequestParam(required = false, defaultValue = "") String email,
                                     BindingResult bindingResult,Model model) {
         logger.info("GET /searchByEmail");
         User userResult;
         if (!email.isBlank()) {
             SearchForm.validate(searchForm, bindingResult);
-
             userResult =  userService.findEmail(email);
 
-            System.out.println(userResult);
-
-            if (userResult == null) {
-                bindingResult.addError(new FieldError("searchForm", "email", searchForm.getEmail(), false, null, null, "There is nobody with that email in Gardener’s Grove"));
+            if (!bindingResult.hasErrors()) {
+                if (userResult == null) {
+                    bindingResult.addError(new FieldError("searchForm", "email", searchForm.getEmail(), false, null, null, "There is nobody with that email in Gardener’s Grove"));
+                }
             }
 
             if (bindingResult.hasErrors()) {
                 return "pages/searchByEmailPage";
             }
         } else {
-
             userResult = null;
-            System.out.println("im in else - the user is null");
-
             bindingResult.addError(new FieldError("searchForm", "email", searchForm.getEmail(), false, null, null, "Please Search!!!!!!!!!!!!"));
 
         }
