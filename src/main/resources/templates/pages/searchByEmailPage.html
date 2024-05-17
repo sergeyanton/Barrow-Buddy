@@ -15,7 +15,6 @@
 
           <input th:replace="~{fragments/formElement :: formElementField(fieldName='email', label='Email: ', placeholder='jane@doe.nz')}" />
           <button type="submit">Search</button>
-
           <br />
 
           <table>
@@ -33,7 +32,7 @@
             </tbody>
           </table>
 
-          <a class="cancel" th:href="@{login}">Cancel</a>
+          <a class="cancel" th:href="@{friends}">Back</a>
         </form>
       </div>
     </main>
