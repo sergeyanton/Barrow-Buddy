@@ -2,6 +2,7 @@ package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import java.util.Objects;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.EditUserForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PictureForm;
@@ -289,6 +290,7 @@ public class ProfileController {
                                     BindingResult bindingResult,Model model) {
         logger.info("GET /searchByEmail");
         User userResult;
+        User currentUser = userService.getLoggedInUser();
         if (!email.isBlank()) {
             SearchForm.validate(searchForm, bindingResult);
             userResult =  userService.findEmail(email);
@@ -296,6 +298,8 @@ public class ProfileController {
             if (!bindingResult.hasErrors()) {
                 if (userResult == null) {
                     bindingResult.addError(new FieldError("searchForm", "email", searchForm.getEmail(), false, null, null, "There is nobody with that email in Gardener’s Grove"));
+                } else if (Objects.equals(currentUser.getEmail(), email)) {
+                    bindingResult.addError(new FieldError("searchForm", "email", searchForm.getEmail(), false, null, null, "You've searched for your own email. Now, let's find some friends!"));
                 }
             }
 
