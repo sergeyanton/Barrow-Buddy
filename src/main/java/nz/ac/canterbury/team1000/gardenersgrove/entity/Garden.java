@@ -30,7 +30,7 @@ public class Garden {
     private boolean locationValid;
     @Column
     private Double size;
-    @Column
+    @Column(length = 512)
     private String description;
 
 

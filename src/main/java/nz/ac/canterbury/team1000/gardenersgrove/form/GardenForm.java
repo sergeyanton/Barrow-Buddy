@@ -157,11 +157,14 @@ public class GardenForm {
         }
 
         /*
-         * TODO: validate the garden description
-         * Default error message: Description must be 512 characters or less and contain some text
-         * - Check the description contains letters. Otherwise, display error message
-         * - Check the description length is 512 characters or less. Otherwise, display error message
+         * TODO: profanity check on garden description =)
          */
+        // Validate garden description
+        if (!checkValidGardenDescription(createGardenForm.getDescription())) {
+            errors.add("description", "Description must contain some text", createGardenForm.getDescription());
+        } else if (checkOverMaxLength(createGardenForm.getDescription(), 512)) {
+            errors.add("description", "Description must be 512 characters or less", createGardenForm.getDescription());
+        }
 
         // Validate garden location - Address
         if (!checkBlank(createGardenForm.getAddress())) {
