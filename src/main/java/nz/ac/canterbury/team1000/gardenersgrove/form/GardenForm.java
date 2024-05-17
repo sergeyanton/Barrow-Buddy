@@ -156,6 +156,13 @@ public class GardenForm {
             errors.add("name", "Name must be 255 characters or less", createGardenForm.getName());
         }
 
+        /*
+         * TODO: validate the garden description
+         * Default error message: Description must be 512 characters or less and contain some text
+         * - Check the description contains letters. Otherwise, display error message
+         * - Check the description length is 512 characters or less. Otherwise, display error message
+         */
+
         // Validate garden location - Address
         if (!checkBlank(createGardenForm.getAddress())) {
             if (!checkValidLocationName(createGardenForm.getAddress())) {

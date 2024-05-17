@@ -11,6 +11,7 @@
             <form th:action="@{'/gardens/' + ${gardenId} + '/edit'}" method="post" th:object="${editGardenForm}" autocomplete="off">
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='name', label='Garden Name: ', placeholder='The Hamilton Gardens')}" />
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='size', label='Size in m&sup2; (optional): ', placeholder='540000.0')}" />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='description', label='Description (optional): ', placeholder='Cool garden')}" />
 
                 <h2>Edit Garden Location</h2>
                 <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='address', label='Address: ', placeholder='13 Hungerford Crescent')}" />

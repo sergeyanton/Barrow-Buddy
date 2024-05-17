@@ -12,6 +12,8 @@
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='name', label='Garden Name: ', placeholder='The Hamilton Gardens')}" />
                 <br />
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='size', label='Size in m&sup2; (optional): ', placeholder='1000.0')}" />
+                <br />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='description', label='Description (optional): ', placeholder='Cool garden')}" />
 
                 <h2>Garden Location</h2>
                 <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='address', label='Address: (optional)', placeholder='13 Hungerford Crescent')}" />
