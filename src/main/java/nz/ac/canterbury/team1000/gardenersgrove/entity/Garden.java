@@ -26,8 +26,10 @@ public class Garden {
     private String postcode;
     @Column(nullable = false)
     private String country;
-    @Column(name = "location_valid", nullable = false)
-    private boolean locationValid;
+    @Column
+    private Double latitude;
+    @Column
+    private Double longitude;
     @Column
     private Double size;
 
@@ -58,14 +60,15 @@ public class Garden {
      * @param size     size of garden
      * @param owner    owner of garden
      */
-    public Garden(String name, String address, String suburb, String city, String postcode, String country, boolean locationValid, Double size, User owner, boolean isPublic) {
+    public Garden(String name, String address, String suburb, String city, String postcode, String country, Double latitude, Double longitude, Double size, User owner, boolean isPublic) {
         this.name = name;
         this.address = address;
         this.suburb = suburb;
         this.city = city;
         this.postcode = postcode;
         this.country = country;
-        this.locationValid = locationValid;
+        this.latitude = latitude;
+        this.longitude = longitude;
 
 
         if (size != null && size < 0) {
@@ -90,14 +93,15 @@ public class Garden {
      * @param size     size of garden
      * @param owner    owner of garden
      */
-    public Garden(String name, String address, String suburb, String city, String postcode, String country, boolean locationValid, String size, User owner, boolean isPublic) {
+    public Garden(String name, String address, String suburb, String city, String postcode, String country, Double latitude, Double longitude, String size, User owner, boolean isPublic) {
         this.name = name;
         this.address = address;
         this.suburb = suburb;
         this.city = city;
         this.postcode = postcode;
         this.country = country;
-        this.locationValid = locationValid;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.setSize(size);
         this.isPublic = isPublic;
 
@@ -130,8 +134,12 @@ public class Garden {
     public String getCountry() {
         return country;
     }
-    public boolean getLocationValid() {
-        return locationValid;
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
     }
 
     public Double getSize() {
@@ -151,9 +159,13 @@ public class Garden {
     public void setCity(String newCity) { city = newCity; }
     public void setPostcode(String newPostcode) { postcode = newPostcode; }
     public void setCountry(String newCountry) { country = newCountry; }
-    public void setLocationValid(boolean locationValid) {
-        this.locationValid = locationValid;
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
     }
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
 
     public void setSize(Double newSize) {
         if (newSize != null && newSize < 0) {
@@ -189,6 +201,6 @@ public class Garden {
      * @return the full address as a String in the format: address, suburb, city, postcode, country
      */
     public String getLocationString() {
-        return new Location(this.address, this.suburb, this.city, this.postcode, this.country, "").displayAddress();
+        return new Location(this.address, this.suburb, this.city, this.postcode, this.country, this.latitude, this.latitude, "").displayAddress();
     }
 }

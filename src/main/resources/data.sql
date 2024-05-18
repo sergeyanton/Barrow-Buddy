@@ -8,7 +8,7 @@ INSERT INTO tab_user(date_of_birth, email, fName, lName, password, picture_path)
 
 
 -- Create a garden the Hamilton Garden (id = 1)
-INSERT INTO garden (name, address, suburb, city, postcode, country, location_valid, size, owner_id, is_public) VALUES ('The Hamilton Gardens', '21 Hungerford Crescent', 'Hamilton East', 'Hamilton', '3216', 'New Zealand', true, 540000, 1, true);
+INSERT INTO garden (name, address, suburb, city, postcode, country, latitude, longitude, size, owner_id, is_public) VALUES ('The Hamilton Gardens', '21 Hungerford Crescent', 'Hamilton East', 'Hamilton', '3216', 'New Zealand', 37.8057, 175.3049, 540000, 1, true);
 -- add some plants to the Hamilton Garden
 INSERT INTO plant (name, plant_count, description, planted_on_date, picture_path, garden_id) VALUES ('Rose Bush', 200, 'Fragrant, colorful garden flower.', null, '/images/defaultPlantPic.png', 1),
                                                                                       ('Lavender', 50, 'Aromatic purple herb.', null, '/images/defaultPlantPic.png', 1),
@@ -23,7 +23,7 @@ INSERT INTO plant (name, plant_count, description, planted_on_date, picture_path
 
 
 -- Create a garden called the Christchurch Botanic Gardens (id = 2)
-INSERT INTO garden (name, address, suburb, city, postcode, country, location_valid, size, owner_id, is_public) VALUES ('The Christchurch Botanic Gardens', 'Rolleston Avenue', 'Christchurch Central', 'Christchurch', '8013', 'New Zealand', true, 210000, 1, false);
+INSERT INTO garden (name, address, suburb, city, postcode, country, latitude, longitude, size, owner_id, is_public) VALUES ('The Christchurch Botanic Gardens', 'Rolleston Avenue', 'Christchurch Central', 'Christchurch', '8013', 'New Zealand', 43.5307, 172.6232, 210000, 1, false);
 -- add some plants to the Christchurch Botanic Gardens (all the plants in this garden ar very stinky! They are also terribly disorganized and have no plant counts)
 INSERT INTO plant (name, description, picture_path, garden_id) VALUES ('Corpse Flower', 'The worlds smelliest flower.', '/images/defaultPlantPic.png', 2),
                                                         ('Durian', 'The worlds smelliest fruit.', '/images/defaultPlantPic.png', 2),
@@ -32,7 +32,7 @@ INSERT INTO plant (name, description, picture_path, garden_id) VALUES ('Corpse F
                                                         ('Skunk Cabbage', 'The worlds smelliest cabbage.', '/images/defaultPlantPic.png', 2);
 
 -- Create a garden called the Jack Erskine Foyer Garden Set (id = 3) this garden has no size
-INSERT INTO garden (name, address, suburb, city, postcode, country, location_valid, owner_id, is_public) VALUES ('The Jack Erskine Foyer Garden Set', 'University of Canterbury', 'Ilam', 'Christchurch', '8041', 'New Zealand', true, 1, false);
+INSERT INTO garden (name, address, suburb, city, postcode, country, latitude, longitude, owner_id, is_public) VALUES ('The Jack Erskine Foyer Garden Set', 'University of Canterbury', 'Ilam', 'Christchurch', '8041', 'New Zealand', 43.5225, 172.5794, 1, false);
 -- add some plants to the Jack Erskine Foyer Garden Set these are all house plants and there is at lease 3 of each kind
 INSERT INTO plant (name, plant_count, description, picture_path, garden_id) VALUES ('Spider Plant', 3, 'A hardy house plant with long, thin leaves.', '/images/defaultPlantPic.png', 3),
                                                                      ('Peace Lily', 3, 'A hardy house plant with large, white flowers.', '/images/defaultPlantPic.png', 3),
@@ -41,7 +41,7 @@ INSERT INTO plant (name, plant_count, description, picture_path, garden_id) VALU
                                                                      ('Pothos', 3, 'A hardy house plant with heart-shaped leaves.', '/images/defaultPlantPic.png', 3);
 
 -- Create a garden called User Test's Secret Garden (id = 4) This is for testing garden ownership and plant ownership
-INSERT INTO garden (name, address, suburb, city, postcode, country, location_valid, size, owner_id, is_public) VALUES ('User Test''s Secret Garden', '123 Fake Street', 'Fake Suburb', 'Fake City', '1234', 'Fake Country', false, 100, 2, false);
+INSERT INTO garden (name, address, suburb, city, postcode, country, latitude, longitude, size, owner_id, is_public) VALUES ('User Test''s Secret Garden', '123 Fake Street', 'Fake Suburb', 'Fake City', '1234', 'Fake Country', null, null, 100, 2, false);
 -- add some plants to User Test's Secret Garden these should all be plants that are illegal to own in New Zealand This user has a LARGE QUANTITY of each plant
 INSERT INTO plant (name, plant_count, description, picture_path, garden_id) VALUES ('Cannabis', 420, 'A psychoactive drug plant.', '/images/defaultPlantPic.png', 4),
                                                                                           ('Coca', 100000, 'A psychoactive drug plant.', '/images/defaultPlantPic.png', 4),
