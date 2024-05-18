@@ -5,6 +5,8 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import nz.ac.canterbury.team1000.gardenersgrove.form.RegistrationForm;
 import org.junit.jupiter.api.Assertions;
 import org.mockito.ArgumentCaptor;
@@ -12,7 +14,7 @@ import org.mockito.Mockito;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
-public class RegisterAsNewUser {
+public class U1_StepDefinitions {
   RegistrationForm registrationForm = new RegistrationForm();
   BindingResult bindingResult;
   ArgumentCaptor<FieldError> fieldErrorCaptor = ArgumentCaptor.forClass(FieldError.class);
@@ -24,6 +26,12 @@ public class RegisterAsNewUser {
     registrationForm.setNoSurnameCheckBox(lastName.isBlank());
   }
 
+  @Given("I am on the registration form and enter a first name {int} characters long and a last name {int} characters long")
+  public void iAmOnTheRegistrationFormAndEnterAFirstNameFirstNameLengthCharactersLongAndALastNameLastNameLengthCharactersLong(int firstNameLength, int lastNameLength) {
+    registrationForm.setFirstName("F".repeat(firstNameLength));
+    registrationForm.setLastName("L".repeat(lastNameLength));
+    registrationForm.setNoSurnameCheckBox(lastNameLength == 0);
+  }
 
   @And("I tick the checkbox for no last name")
   public void iTickTheCheckboxForNoLastName() {
@@ -49,6 +57,11 @@ public class RegisterAsNewUser {
   @And("I enter date of birth {string}")
   public void iEnterDateOfBirth(String dob) {
     registrationForm.setDob(dob);
+  }
+
+  @And("I enter a date of birth that means I turn {int} years old in {int} days")
+  public void iEnterADateOfBirthThatMeansITurnYearsOldInDays(int age, int numDays) {
+    registrationForm.setDob(LocalDate.now().minusYears(age).plusDays(numDays).format(DateTimeFormatter.ofPattern("dd/MM/uuuu")));
   }
 
   @When("I click the sign-up button")
