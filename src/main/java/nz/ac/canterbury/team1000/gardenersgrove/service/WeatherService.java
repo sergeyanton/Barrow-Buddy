@@ -102,29 +102,11 @@ public class WeatherService {
 
         Garden garden = gardenService.getGardenById(gardenId);
 
-        // Obtain the garden location details
-        String[] gardenAddress = new String[4];
-        gardenAddress[0] = garden.getAddress();
-        gardenAddress[1] = garden.getCity();
-        gardenAddress[2] = garden.getPostcode();
-        gardenAddress[3] = garden.getCountry();
-
-        String latitude = null;
-        String longitude = null;
-
-        // Calls the getCoordinates() method form locationSearchService to obtain the latitude and longitude
-        // given the garden location details
-        List<Double> coordinates = locationSearchService.getCoordinates(gardenAddress);
-
-        // Check that the coordinates are not null - meaning the location is valid
-        if (coordinates.get(0) != null || coordinates.get(1) != null) {
-            latitude = coordinates.get(0).toString();
-            longitude = coordinates.get(1).toString();
-        }
-
-        String url = URL + "&latitude=" + latitude + "&longitude=" + longitude;
-
         try {
+            String latitude = garden.getLatitude().toString();
+            String longitude = garden.getLongitude().toString();
+
+            String url = URL + "&latitude=" + latitude + "&longitude=" + longitude;
             String jsonResponse = restTemplate.getForObject(url, String.class);
             Map<String, Object> weather = objectMapper.readValue(jsonResponse, Map.class);
             List<Integer> weatherCodes = (ArrayList) ((Map<String, Object>) weather.get("daily")).get("weather_code");
