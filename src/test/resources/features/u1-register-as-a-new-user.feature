@@ -1,4 +1,4 @@
-Feature: U1 As Sarah, I want to register on Gardener’s Grove so that I can use its awesome features.
+Feature: U1 - As Sarah, I want to register on Gardener’s Grove so that I can use its awesome features.
 
 # Not sure how AC1 would be tested with cucumber tests. It would at least be very different to how
 # the rest of the ACs are tested.
