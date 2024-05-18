@@ -6,35 +6,32 @@ Feature: U4 - As Sarah, I want to edit my user profile so that I can keep my det
     Given I am on the edit user profile form and enter first name <firstName> and last name <lastName>
     And I enter email <email> on the edit user profile form
     And I do not tick the checkbox for no last name on the edit user profile form
-    And I enter password <password> and retype password <password> on the edit user profile form
     And I enter date of birth <dob> on the edit user profile form
-    When I click the sign-up button on the edit user profile form
+    When I click the edit profile button
     Then My new details are saved
     Examples:
-      | firstName           | lastName | email               | password   | dob          |
-      | "John"              | "Doe"    | "johndoe@gmail.com" | "Pass123!" | "12/12/2000" |
-      | "John"              | "Doe"    | "johndoe@gmail.com" | "Pass123!" | ""           |
-      | "John McGe'e-Smith" | "Doe"    | "johndoe@gmail.com" | "Pass123!" | "12/12/2000" |
-      | "John McGe'e-Smith" | "Doe"    | "johndoe@gmail.com" | "Pass123!" | "12/12/2000" |
-      | "Léo"               | "Dęõn"   | "leodeon@gmail.com" | "Pass123!" | "12/12/2000" |
+      | firstName           | lastName | email               | dob          |
+      | "John"              | "Doe"    | "johndoe@gmail.com" | "12/12/2000" |
+      | "John"              | "Doe"    | "johndoe@gmail.com" | ""           |
+      | "John McGe'e-Smith" | "Doe"    | "johndoe@gmail.com" | "12/12/2000" |
+      | "John McGe'e-Smith" | "Doe"    | "johndoe@gmail.com" | "12/12/2000" |
+      | "Léo"               | "Dęõn"   | "leodeon@gmail.com" | "12/12/2000" |
 
   Scenario: AC4 - Editing my profile to have no last name
-    Given I am on the registration form and enter first name "John" and last name ""
-    And I enter email "johndoe@gmail.com"
-    And I tick the checkbox for no last name
-    And I enter password "Password!123" and retype password "Password!123"
-    And I enter date of birth "12/12/2000"
-    When I click the sign-up button
-    Then I am successfully registered
+    Given I am on the edit user profile form and enter first name "John" and last name ""
+    And I enter email "johndoe@gmail.com" on the edit user profile form
+    And I tick the checkbox for no last name on the edit user profile form
+    And I enter date of birth "12/12/2000" on the edit user profile form
+    When I click the edit profile button
+    Then My new details are saved
 
   Scenario Outline: AC5 - Editing my profile with an invalid first/last name
-    Given I am on the registration form and enter first name <firstName> and last name <lastName>
-    And I enter email "johndoe@gmail.com"
-    And I do not tick the checkbox for no last name
-    And I enter password "Password!123" and retype password "Password!123"
-    And I enter date of birth "12/12/2000"
-    When I click the sign-up button
-    Then I am shown the error message <errorMessage>
+    Given I am on the edit user profile form and enter first name <firstName> and last name <lastName>
+    And I enter email "johndoe@gmail.com" on the edit user profile form
+    And I do not tick the checkbox for no last name on the edit user profile form
+    And I enter date of birth "12/12/2000" on the edit user profile form
+    When I click the edit profile button
+    Then I am shown the error message <errorMessage> on the edit user profile form
     Examples:
       | firstName   | lastName   | errorMessage                                                           |
       | ""          | "Doe"      | "First name cannot be empty"                                           |
@@ -47,35 +44,32 @@ Feature: U4 - As Sarah, I want to edit my user profile so that I can keep my det
       | "John"      | "Doe%"     | "Last name must only include letters, spaces, hyphens or apostrophes"  |
 
   Scenario: AC6.1 - Editing my profile with a valid length first/last name.
-    Given I am on the registration form and enter a first name 64 characters long and a last name 64 characters long
-    And I enter email "johndoe@gmail.com"
-    And I do not tick the checkbox for no last name
-    And I enter password "Password!123" and retype password "Password!123"
-    And I enter date of birth "12/12/2000"
-    When I click the sign-up button
-    Then I am successfully registered
+    Given I am on the edit user profile form and enter a first name 64 characters long and a last name 64 characters long
+    And I enter email "johndoe@gmail.com" on the edit user profile form
+    And I do not tick the checkbox for no last name on the edit user profile form
+    And I enter date of birth "12/12/2000" on the edit user profile form
+    When I click the edit profile button
+    Then My new details are saved
 
   Scenario Outline: AC6.2 - Editing my profile with an invalid length first/last name
-    Given I am on the registration form and enter a first name <firstNameLength> characters long and a last name <lastNameLength> characters long
-    And I enter email "johndoe@gmail.com"
-    And I do not tick the checkbox for no last name
-    And I enter password "Password!123" and retype password "Password!123"
-    And I enter date of birth "12/12/2000"
-    When I click the sign-up button
-    Then I am shown the error message <errorMessage>
+    Given I am on the edit user profile form and enter a first name <firstNameLength> characters long and a last name <lastNameLength> characters long
+    And I enter email "johndoe@gmail.com" on the edit user profile form
+    And I do not tick the checkbox for no last name on the edit user profile form
+    And I enter date of birth "12/12/2000" on the edit user profile form
+    When I click the edit profile button
+    Then I am shown the error message <errorMessage> on the edit user profile form
     Examples:
       | firstNameLength | lastNameLength | errorMessage                                    |
       | 65              | 3              | "First name must be 64 characters long or less" |
       | 4               | 65             | "Last name must be 64 characters long or less" |
 
   Scenario Outline: AC7 - Editing my profile with an invalid email
-    Given I am on the registration form and enter first name "John" and last name "Doe"
-    And I enter email <email>
-    And I do not tick the checkbox for no last name
-    And I enter password "Password!123" and retype password "Password!123"
-    And I enter date of birth "12/12/2000"
-    When I click the sign-up button
-    Then I am shown the error message "Email address must be in the form ‘jane@doe.nz’"
+    Given I am on the edit user profile form and enter first name "John" and last name "Doe"
+    And I enter email <email> on the edit user profile form
+    And I do not tick the checkbox for no last name on the edit user profile form
+    And I enter date of birth "12/12/2000" on the edit user profile form
+    When I click the edit profile button
+    Then I am shown the error message "Email address must be in the form ‘jane@doe.nz’" on the edit user profile form
     Examples:
       | email                   |
       | "abc@123"               |
@@ -83,13 +77,12 @@ Feature: U4 - As Sarah, I want to edit my user profile so that I can keep my det
       | "email@email@email.com" |
 
   Scenario Outline: AC9 - Editing my profile with invalid date format
-    Given I am on the registration form and enter first name "John" and last name "Doe"
-    And I enter email "johndoe@gmail.com"
-    And I do not tick the checkbox for no last name
-    And I enter password "Password!123" and retype password "Password!123"
-    And I enter date of birth <dob>
-    When I click the sign-up button
-    Then I am shown the error message "Date is not in valid format, DD/MM/YYYY"
+    Given I am on the edit user profile form and enter first name "John" and last name "Doe"
+    And I enter email "johndoe@gmail.com" on the edit user profile form
+    And I do not tick the checkbox for no last name on the edit user profile form
+    And I enter date of birth <dob> on the edit user profile form
+    When I click the edit profile button
+    Then I am shown the error message "Date is not in valid format, DD/MM/YYYY" on the edit user profile form
     Examples:
       | dob           |
       | "abc"         |
@@ -101,37 +94,33 @@ Feature: U4 - As Sarah, I want to edit my user profile so that I can keep my det
       | "01-01-2000"  |
 
   Scenario: AC10.1 - Editing my profile and changing my date of birth to make me just old enough for the website
-    Given I am on the registration form and enter first name "John" and last name "Doe"
-    And I enter email "johndoe@gmail.com"
-    And I do not tick the checkbox for no last name
-    And I enter password "Password!123" and retype password "Password!123"
-    And I enter a date of birth that means I turn 13 years old in 0 days
-    When I click the sign-up button
-    Then I am successfully registered
+    Given I am on the edit user profile form and enter first name "John" and last name "Doe"
+    And I enter email "johndoe@gmail.com" on the edit user profile form
+    And I do not tick the checkbox for no last name on the edit user profile form
+    And I enter a date of birth that means I turn 13 years old in 0 days on the edit user profile form
+    When I click the edit profile button
+    Then My new details are saved
 
   Scenario: AC10.2 - Editing my profile and changing my date of birth to make me too young for the website
-    Given I am on the registration form and enter first name "John" and last name "Doe"
-    And I enter email "johndoe@gmail.com"
-    And I do not tick the checkbox for no last name
-    And I enter password "Password!123" and retype password "Password!123"
-    And I enter a date of birth that means I turn 13 years old in 1 days
-    When I click the sign-up button
-    Then I am shown the error message "You must be 13 years or older to create an account"
+    Given I am on the edit user profile form and enter first name "John" and last name "Doe"
+    And I enter email "johndoe@gmail.com" on the edit user profile form
+    And I do not tick the checkbox for no last name on the edit user profile form
+    And I enter a date of birth that means I turn 13 years old in 1 days on the edit user profile form
+    When I click the edit profile button
+    Then I am shown the error message "You must be 13 years or older to create an account" on the edit user profile form
 
   Scenario: AC11.1 - Editing my profile and changing my date of birth to make me just young enough for the website
-    Given I am on the registration form and enter first name "John" and last name "Doe"
-    And I enter email "johndoe@gmail.com"
+    Given I am on the edit user profile form and enter first name "John" and last name "Doe"
+    And I enter email "johndoe@gmail.com" on the edit user profile form
     And I do not tick the checkbox for no last name
-    And I enter password "Password!123" and retype password "Password!123"
-    And I enter a date of birth that means I turn 121 years old in 1 days
-    When I click the sign-up button
-    Then I am successfully registered
+    And I enter a date of birth that means I turn 121 years old in 1 days on the edit user profile form
+    When I click the edit profile button
+    Then My new details are saved
 
   Scenario: AC11.2 - Editing my profile and changing my date of birth to make me too old for the website
-    Given I am on the registration form and enter first name "John" and last name "Doe"
-    And I enter email "johndoe@gmail.com"
-    And I do not tick the checkbox for no last name
-    And I enter password "Password!123" and retype password "Password!123"
-    And I enter a date of birth that means I turn 121 years old in 0 days
-    When I click the sign-up button
-    Then I am shown the error message "The maximum age allowed is 120 years"
+    Given I am on the edit user profile form and enter first name "John" and last name "Doe"
+    And I enter email "johndoe@gmail.com" on the edit user profile form
+    And I do not tick the checkbox for no last name on the edit user profile form
+    And I enter a date of birth that means I turn 121 years old in 0 days on the edit user profile form
+    When I click the edit profile button
+    Then I am shown the error message "The maximum age allowed is 120 years" on the edit user profile form
