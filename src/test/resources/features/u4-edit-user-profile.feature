@@ -1,0 +1,137 @@
+Feature: U4 - As Sarah, I want to edit my user profile so that I can keep my details accurate.
+
+#TODO AC1, AC2, AC8, AC12
+
+  Scenario Outline: AC3 - Editing my profile with valid details
+    Given I am on the registration form and enter first name <firstName> and last name <lastName>
+    And I enter email <email>
+    And I do not tick the checkbox for no last name
+    And I enter password <password> and retype password <password>
+    And I enter date of birth <dob>
+    When I click the sign-up button
+    Then I am successfully registered
+    Examples:
+      | firstName           | lastName | email               | password   | dob          |
+      | "John"              | "Doe"    | "johndoe@gmail.com" | "Pass123!" | "12/12/2000" |
+      | "John"              | "Doe"    | "johndoe@gmail.com" | "Pass123!" | ""           |
+      | "John McGe'e-Smith" | "Doe"    | "johndoe@gmail.com" | "Pass123!" | "12/12/2000" |
+      | "John McGe'e-Smith" | "Doe"    | "johndoe@gmail.com" | "Pass123!" | "12/12/2000" |
+      | "Léo"               | "Dęõn"   | "leodeon@gmail.com" | "Pass123!" | "12/12/2000" |
+
+  Scenario: AC4 - Editing my profile to have no last name
+    Given I am on the registration form and enter first name "John" and last name ""
+    And I enter email "johndoe@gmail.com"
+    And I tick the checkbox for no last name
+    And I enter password "Password!123" and retype password "Password!123"
+    And I enter date of birth "12/12/2000"
+    When I click the sign-up button
+    Then I am successfully registered
+
+  Scenario Outline: AC5 - Editing my profile with an invalid first/last name
+    Given I am on the registration form and enter first name <firstName> and last name <lastName>
+    And I enter email "johndoe@gmail.com"
+    And I do not tick the checkbox for no last name
+    And I enter password "Password!123" and retype password "Password!123"
+    And I enter date of birth "12/12/2000"
+    When I click the sign-up button
+    Then I am shown the error message <errorMessage>
+    Examples:
+      | firstName   | lastName   | errorMessage                                                           |
+      | ""          | "Doe"      | "First name cannot be empty"                                           |
+      | "    "      | "Doe"      | "First name cannot be empty"                                           |
+      | "John2"     | "Doe"      | "First name must only include letters, spaces, hyphens or apostrophes" |
+      | "John$"     | "Doe"     | "First name must only include letters, spaces, hyphens or apostrophes" |
+      | "John"      | ""         | "Last name cannot be empty"                                            |
+      | "John"      | "   "      | "Last name cannot be empty"                                            |
+      | "John"      | "Doe3"     | "Last name must only include letters, spaces, hyphens or apostrophes"  |
+      | "John"      | "Doe%"     | "Last name must only include letters, spaces, hyphens or apostrophes"  |
+
+  Scenario: AC6.1 - Editing my profile with a valid length first/last name.
+    Given I am on the registration form and enter a first name 64 characters long and a last name 64 characters long
+    And I enter email "johndoe@gmail.com"
+    And I do not tick the checkbox for no last name
+    And I enter password "Password!123" and retype password "Password!123"
+    And I enter date of birth "12/12/2000"
+    When I click the sign-up button
+    Then I am successfully registered
+
+  Scenario Outline: AC6.2 - Editing my profile with an invalid length first/last name
+    Given I am on the registration form and enter a first name <firstNameLength> characters long and a last name <lastNameLength> characters long
+    And I enter email "johndoe@gmail.com"
+    And I do not tick the checkbox for no last name
+    And I enter password "Password!123" and retype password "Password!123"
+    And I enter date of birth "12/12/2000"
+    When I click the sign-up button
+    Then I am shown the error message <errorMessage>
+    Examples:
+      | firstNameLength | lastNameLength | errorMessage                                    |
+      | 65              | 3              | "First name must be 64 characters long or less" |
+      | 4               | 65             | "Last name must be 64 characters long or less" |
+
+  Scenario Outline: AC7 - Editing my profile with an invalid email
+    Given I am on the registration form and enter first name "John" and last name "Doe"
+    And I enter email <email>
+    And I do not tick the checkbox for no last name
+    And I enter password "Password!123" and retype password "Password!123"
+    And I enter date of birth "12/12/2000"
+    When I click the sign-up button
+    Then I am shown the error message "Email address must be in the form ‘jane@doe.nz’"
+    Examples:
+      | email                   |
+      | "abc@123"               |
+      | "bad"                   |
+      | "email@email@email.com" |
+
+  Scenario Outline: AC9 - Editing my profile with invalid date format
+    Given I am on the registration form and enter first name "John" and last name "Doe"
+    And I enter email "johndoe@gmail.com"
+    And I do not tick the checkbox for no last name
+    And I enter password "Password!123" and retype password "Password!123"
+    And I enter date of birth <dob>
+    When I click the sign-up button
+    Then I am shown the error message "Date is not in valid format, DD/MM/YYYY"
+    Examples:
+      | dob           |
+      | "abc"         |
+      | "1/1/2000"    |
+      | "05/13/2000"  |
+      | "01/01/20000" |
+      | "32/01/2000"  |
+      | "29/02/2001"  |
+      | "01-01-2000"  |
+
+  Scenario: AC10.1 - Editing my profile and changing my date of birth to make me just old enough for the website
+    Given I am on the registration form and enter first name "John" and last name "Doe"
+    And I enter email "johndoe@gmail.com"
+    And I do not tick the checkbox for no last name
+    And I enter password "Password!123" and retype password "Password!123"
+    And I enter a date of birth that means I turn 13 years old in 0 days
+    When I click the sign-up button
+    Then I am successfully registered
+
+  Scenario: AC10.2 - Editing my profile and changing my date of birth to make me too young for the website
+    Given I am on the registration form and enter first name "John" and last name "Doe"
+    And I enter email "johndoe@gmail.com"
+    And I do not tick the checkbox for no last name
+    And I enter password "Password!123" and retype password "Password!123"
+    And I enter a date of birth that means I turn 13 years old in 1 days
+    When I click the sign-up button
+    Then I am shown the error message "You must be 13 years or older to create an account"
+
+  Scenario: AC11.1 - Editing my profile and changing my date of birth to make me just young enough for the website
+    Given I am on the registration form and enter first name "John" and last name "Doe"
+    And I enter email "johndoe@gmail.com"
+    And I do not tick the checkbox for no last name
+    And I enter password "Password!123" and retype password "Password!123"
+    And I enter a date of birth that means I turn 121 years old in 1 days
+    When I click the sign-up button
+    Then I am successfully registered
+
+  Scenario: AC11.2 - Editing my profile and changing my date of birth to make me too old for the website
+    Given I am on the registration form and enter first name "John" and last name "Doe"
+    And I enter email "johndoe@gmail.com"
+    And I do not tick the checkbox for no last name
+    And I enter password "Password!123" and retype password "Password!123"
+    And I enter a date of birth that means I turn 121 years old in 0 days
+    When I click the sign-up button
+    Then I am shown the error message "The maximum age allowed is 120 years"
