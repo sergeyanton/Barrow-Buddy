@@ -5,6 +5,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import io.cucumber.spring.CucumberContextConfiguration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import nz.ac.canterbury.team1000.gardenersgrove.form.RegistrationForm;

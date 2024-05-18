@@ -3,13 +3,13 @@ Feature: U4 - As Sarah, I want to edit my user profile so that I can keep my det
 #TODO AC1, AC2, AC8, AC12
 
   Scenario Outline: AC3 - Editing my profile with valid details
-    Given I am on the registration form and enter first name <firstName> and last name <lastName>
-    And I enter email <email>
-    And I do not tick the checkbox for no last name
-    And I enter password <password> and retype password <password>
-    And I enter date of birth <dob>
-    When I click the sign-up button
-    Then I am successfully registered
+    Given I am on the edit user profile form and enter first name <firstName> and last name <lastName>
+    And I enter email <email> on the edit user profile form
+    And I do not tick the checkbox for no last name on the edit user profile form
+    And I enter password <password> and retype password <password> on the edit user profile form
+    And I enter date of birth <dob> on the edit user profile form
+    When I click the sign-up button on the edit user profile form
+    Then My new details are saved
     Examples:
       | firstName           | lastName | email               | password   | dob          |
       | "John"              | "Doe"    | "johndoe@gmail.com" | "Pass123!" | "12/12/2000" |
