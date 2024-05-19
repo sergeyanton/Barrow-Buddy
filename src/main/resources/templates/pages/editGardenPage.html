@@ -23,6 +23,7 @@
                 <br />
                 <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='country', label='Country: ', placeholder='New Zealand')}" />
                 <br />
+                <!-- Hidden field that stores the value of the latitude and longitude of the location - null if it is invalid -->
                 <input type="hidden" th:field="*{latitude}" id="latitude" />
                 <input type="hidden" th:field="*{longitude}" id="longitude" />
                 <p>Search by <a href="https://locationiq.com">LocationIQ.com</a></p>
