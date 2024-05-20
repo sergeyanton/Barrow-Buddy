@@ -13,15 +13,19 @@ public class Location {
     public String city;
     public String postcode;
     public String country;
+    public Double latitude;
+    public Double longitude;
     public String displayPlace;
     public String displayAddress;
 
-    public Location(String address, String suburb, String city, String postcode, String country, String displayPlace) {
+    public Location(String address, String suburb, String city, String postcode, String country, Double latitude, Double longitude, String displayPlace) {
         this.address = address;
         this.suburb = suburb;
         this.city = city;
         this.postcode = postcode;
         this.country = country;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.displayPlace = displayPlace;
         this.displayAddress = displayAddress();
     }

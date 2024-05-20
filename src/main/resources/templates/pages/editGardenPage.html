@@ -23,6 +23,9 @@
                 <br />
                 <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='country', label='Country: ', placeholder='New Zealand')}" />
                 <br />
+                <!-- Hidden field that stores the value of the latitude and longitude of the location - null if it is invalid -->
+                <input type="hidden" th:field="*{latitude}" id="latitude" />
+                <input type="hidden" th:field="*{longitude}" id="longitude" />
                 <p>Search by <a href="https://locationiq.com">LocationIQ.com</a></p>
                 <div class="cancel-submit-wrapper">
                     <a class="cancel button" th:href="@{'/gardens/' + ${gardenId}}">Cancel</a>
@@ -33,18 +36,20 @@
     </main>
     <script>
         // ChatGPT assisted, particularly with fetch, timeouts, and the creation of html via js
-        const LOCATION_FIELD_IDS = ['address', 'suburb', 'city', 'postcode', 'country'];
+        const LOCATION_FIELD_IDS = ['address', 'suburb', 'city', 'postcode', 'country', 'latitude', 'longitude'];
         const MIN_LENGTH_TO_AUTOCOMPLETE = 3;
 
         let locationFields = [];
         for (const id of LOCATION_FIELD_IDS) {
-            locationFields.push(document.getElementById(id))
-            locationFields[locationFields.length-1].addEventListener('input', () => {
-                debounce(() => getLocationSuggestions(id), 500);
-            });
-            locationFields[locationFields.length-1].addEventListener('blur', function() {
-                document.getElementById(`${id}DropdownMenu`).style.display = 'none';
-            });
+            if (id !== 'latitude' && id !== 'longitude') {
+                locationFields.push(document.getElementById(id))
+                locationFields[locationFields.length-1].addEventListener('input', () => {
+                    debounce(() => getLocationSuggestions(id), 500);
+                });
+                locationFields[locationFields.length-1].addEventListener('blur', function() {
+                    document.getElementById(`${id}DropdownMenu`).style.display = 'none';
+                });
+            }
         }
 
         let timeoutId;
@@ -98,35 +103,35 @@
             }
 
             fetch(`/locationSearch?query=${query}&fullAddress=${fullAddress}&addressField=${addressField}`)
-            .then(response => response.json())
-            .then(locations => {
-                const dropdownMenu = document.getElementById(`${addressField}DropdownMenu`);
-                dropdownMenu.innerHTML = '';
+                .then(response => response.json())
+                .then(locations => {
+                    const dropdownMenu = document.getElementById(`${addressField}DropdownMenu`);
+                    dropdownMenu.innerHTML = '';
 
-                dropdownMenu.style.display = 'block';
-                if (locations.length === 0) {
-                    const noLocations = document.createElement('li');
-                    noLocations.innerHTML = '<p>No matching location found, location-based services may not work</p>';
-                    noLocations.classList.add('dropdown-item');
-                    dropdownMenu.appendChild(noLocations);
-                } else {
-                    locations.forEach(location => {
-                        const option = document.createElement('li');
-                        option.classList.add('dropdown-item');
-                        option.innerHTML = `<b>${location.displayPlace}</b>`;
-                        if (location.displayAddress !== location.displayPlace) {
-                            option.innerHTML += `<p>${location.displayAddress}</p>`;
-                        }
-                        option.addEventListener('mousedown', function() {
-                            handleDropdownItemClick(location);
+                    dropdownMenu.style.display = 'block';
+                    if (locations.length === 0) {
+                        const noLocations = document.createElement('li');
+                        noLocations.innerHTML = '<p>No matching location found, location-based services may not work</p>';
+                        noLocations.classList.add('dropdown-item');
+                        dropdownMenu.appendChild(noLocations);
+                    } else {
+                        locations.forEach(location => {
+                            const option = document.createElement('li');
+                            option.classList.add('dropdown-item');
+                            option.innerHTML = `<b>${location.displayPlace}</b>`;
+                            if (location.displayAddress !== location.displayPlace) {
+                                option.innerHTML += `<p>${location.displayAddress}</p>`;
+                            }
+                            option.addEventListener('mousedown', function() {
+                                handleDropdownItemClick(location);
+                            });
+                            dropdownMenu.appendChild(option);
                         });
-                        dropdownMenu.appendChild(option);
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching locations:', error);
-            });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching locations:', error);
+                });
         }
 
         function handleDropdownItemClick(location) {
