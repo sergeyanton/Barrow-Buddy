@@ -8,15 +8,17 @@
         <div class="basic">
             <h1>Register</h1>
             <form th:action="@{/register}" method="post" th:object="${registrationForm}">
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='firstName', label='First Name: ', placeholder='Fabian')}" />
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='lastName', label='Last Name: ', placeholder='Gilson')}" />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='firstName', label='First Name *', placeholder='Fabian')}" />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='lastName', label='Last Name ', placeholder='Gilson')}" />
                 <div class="form-element">
-                    <label for="noSurnameCheckBox"> I have no surname </label>
-                    <input type="checkbox" class="form-control" id="noSurnameCheckBox" th:field="*{noSurnameCheckBox}" onclick="toggleInput()">
+                    <div style="display: flex; align-items: center;">
+                        <label for="noSurnameCheckBox">I have no last name </label>
+                        <input type="checkbox" class="form-control" id="noSurnameCheckBox" th:field="*{noSurnameCheckBox}" onclick="toggleInput()">
+                    </div>
                 </div>
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='email', label='Email: ', placeholder='jane@doe.nz')}" />
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='password', label='Password: ', placeholder='*******', type='password')}" />
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='retypePassword', label='Re-Type Password: ', placeholder='*******', type='password')}" />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='email', label='Email *', placeholder='jane@doe.nz')}" />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='password', label='Password *', placeholder='*******', type='password')}" />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='retypePassword', label='Re-Type Password *', placeholder='*******', type='password')}" />
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='dob', label='Date of Birth: ', placeholder='DD/MM/YYYY')}" />
 
                 <div class="cancel-submit-wrapper">
