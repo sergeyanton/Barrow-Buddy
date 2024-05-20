@@ -1,8 +1,11 @@
 package nz.ac.canterbury.team1000.gardenersgrove.form;
 
+import nz.ac.canterbury.team1000.gardenersgrove.api.LocationSearchService;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import org.springframework.validation.BindingResult;
+import java.util.Arrays;
+import java.util.List;
 
 import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.*;
 
@@ -13,6 +16,8 @@ public class GardenForm {
     protected String city;
     protected String postcode;
     protected String country;
+    protected Double latitude;
+    protected Double longitude;
     protected String size;
     protected boolean isPublic;
 
@@ -49,6 +54,15 @@ public class GardenForm {
         return country;
     }
 
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+
     public void setAddress(String address) {
         this.address = address;
     }
@@ -65,6 +79,15 @@ public class GardenForm {
     public void setCountry(String country) {
         this.country = country;
     }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
 
     public String getSize() {
         return size;
@@ -96,6 +119,8 @@ public class GardenForm {
                 this.city,
                 this.postcode,
                 this.country,
+                this.latitude,
+                this.longitude,
                 getSizeDouble(), //TODO could get rid of some constructor redundancy in either Garden or User
                 owner,
                 this.isPublic
