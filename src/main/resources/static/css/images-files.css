@@ -2,10 +2,13 @@
 
 .profile-picture-wrapper {
     margin: 5px auto;
-    width: 100px;
-    height: 100px;
+    width: 150px;
+    height: 150px;
     position: relative;
     box-sizing: border-box;
+    border: 4px solid rgba(2, 48, 32, 0.77);
+    border-radius: 50%;
+
 }
 
 .profile-picture {
@@ -26,9 +29,9 @@ input[type="file"] {
     display: inline-block;
     color: #FAF9F6;
     background-color: #023020;
-    font-size: 16px;
-    border-radius: 10px;
     cursor: pointer;
+    font-size: 20px;
+    border-radius: 4px;
 }
 
 .file-upload-label:hover {
