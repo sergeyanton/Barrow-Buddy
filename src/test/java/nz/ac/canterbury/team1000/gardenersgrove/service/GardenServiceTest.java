@@ -63,6 +63,8 @@ public class GardenServiceTest {
             "Christchurch",
             "8041",
             "New Zealand",
+            null,
+            null,
             100.0,
             testUser,
             true
@@ -82,6 +84,8 @@ public class GardenServiceTest {
             "Christchurch",
             "8041",
             "New Zealand",
+            null,
+            null,
             100.0,
             testUser,
             true
@@ -101,6 +105,8 @@ public class GardenServiceTest {
             "Christchurch",
             "8041",
             "New Zealand",
+            null,
+            null,
             100.0,
             testUser,
             false
@@ -121,6 +127,8 @@ public class GardenServiceTest {
             "Christchurch",
             "8041",
             "New Zealand",
+            null,
+            null,
             100.0,
             testUser,
             true
@@ -139,6 +147,8 @@ public class GardenServiceTest {
             "Christchurch",
             "8041",
             "New Zealand",
+            null,
+            null,
             100.0,
             testUser,
             false
@@ -158,6 +168,8 @@ public class GardenServiceTest {
             "Christchurch",
             "8041",
             "New Zealand",
+            null,
+            null,
             100.0,
             testUser,
             true
@@ -189,6 +201,8 @@ public class GardenServiceTest {
             "Christchurch",
             "8041",
             "New Zealand",
+            null,
+            null,
             100.0,
             testUser,
             false
