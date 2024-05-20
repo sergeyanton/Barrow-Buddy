@@ -66,7 +66,7 @@ sonar {
 // Code taken from ATDD workshop
 tasks.register("cucumber", Test) {
 	testLogging.showStandardStreams = true
-	systemProperty "spring.config.additional-location", "classpath:/cucumber.properties"
+	systemProperty "spring.config.additional-location", "classpath:/application-cucumber.properties"
 	useJUnitPlatform()
 	filter {
 		// Ensure this lines up with the package your cucumber tests are located in
