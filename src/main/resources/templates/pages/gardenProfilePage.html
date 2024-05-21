@@ -16,26 +16,35 @@
 <!--                <div th:text="${w.temperature}"></div>-->
 <!--            </tr>-->
             <h1 th:text="${garden.name}"></h1>
-            <p th:if="${garden.description != null}" th:text="${garden.description}"></p>
-            <p th:if="${garden.locationValid != true}" th:text="'Location not found, please update your location to see the weather.'"></p>
+
+            <p th:if="${garden.description != null}">
+              <b th:text="${garden.description}"></b>
+            </p>
             <a th:href="@{'/gardens/' + ${garden.id} + '/plants/create'}">
                 <button>Add a plant</button>
             </a>
+
             <br>
-            <p th:text="'Location: ' + ${garden.getLocationString}"></p>
+            <p th:text="${garden.getLocationString}" style="font-size: 18px;"></p>
+            <p th:if="${garden.latitude == null and garden.longitude == null}" th:text="'Location not found, please update your location to see the weather.'"></p>
             <br>
-            <p th:if="${garden.size != null}" th:text="'Size: ' + ${garden.size} + ' m&sup2;'"></p>
+            <p th:if="${garden.size != null}" th:text="${garden.size} + ' m&sup2;'" style="font-size: 18px;"></p>
             <br>
-            <p id="gardenVisibilityText" th:text="'Garden Visibility: ' + (${garden.getIsPublic} ? 'Public' : 'Private')"></p>
+            <p id="gardenVisibilityText" th:text="'Garden Visibility: ' + (${garden.getIsPublic} ? 'Public' : 'Private')" style="font-size: 18px;"></p>
 
             <br>
             <div class="form-element">
-                <label for="publicCheckbox"><b>Make My Garden Public</b></label>
+              <div style="display: flex; align-items: center;">
+                <label for="publicCheckbox" style="margin-right: 10px; font-size: 18px;"><b>Make My Garden Public</b></label>
                 <input type="checkbox" class="form-control" id="publicCheckbox" th:checked=${garden.getIsPublic} th:attr="onclick='toggleInput(this, ' + ${garden.id} + ')'">
+              </div>
             </div>
+
             <br th:if="${garden.size != null}">
-            <a th:href="@{'/gardens/' + ${garden.id} + '/edit'}">Edit Garden Details</a>
-            <br>
+            <a class="submit" th:href="@{'/gardens/' + ${garden.id} + '/edit'}">Edit Garden Details</a>
+            <a th:href="@{'/gardens/' + ${garden.id} + '/plants/create'}">
+              <button>Add a plant</button>
+            </a>
             <span id="clientSideErrorMessage" class="error"></span>
             <br>
             <div class="scroll-plants-container">

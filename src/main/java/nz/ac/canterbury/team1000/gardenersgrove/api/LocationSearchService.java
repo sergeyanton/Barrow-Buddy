@@ -58,82 +58,6 @@ public class LocationSearchService {
         this.restTemplate = restTemplate;
     }
 
-    /**
-     * Using the garden's address variables, we obtain the latitude and longitude of the garden's location by sending
-     * an API call to LocationAPI. This call returns a JSON response that contains the latitude and longitude.
-     *
-     * @param address list containing the given garden's address, city, postcode, country (if any)
-     * @return List containing the latitude and longitude coordinates of the garden's location
-     */
-    public List<Double> getCoordinates(String[] address) {
-        // List that will hold the coordinate values, if the location does not exist, it will be [null, null]
-        List<Double> coordinateList = new ArrayList<>();
-
-        // If the number of requests exceed the rate limit (2 requests per second, 60 requests per minute, or 5000 requests per day),
-        // then it will not continue with sending the request and instead return an empty array list.
-        if (!TWO_REQUESTS_PER_SECOND_RATE_LIMITER.consumeToken() || !SIXTY_REQUESTS_PER_MINUTE_RATE_LIMITER.consumeToken() || !FIVE_THOUSAND_REQUESTS_PER_DAY_RATE_LIMITER.consumeToken()) {
-            coordinateList.add(null);
-            coordinateList.add(null);
-            return coordinateList;
-        }
-
-        try {
-            String url = "search/structured?key=" + API_KEY;
-
-            // STRUCTURED GEOCODING DOES NOT HAVE A SUBURB PARAMETER SO IT IS NOT NEEDED FOR THE URL
-            // Indexes: address = 0, city = 1, postcode = 2, city = 3
-            // The garden's address variable
-            if (!address[0].isBlank()) {
-                url += "&street=" + address[0];
-            }
-            // Garden's city variable
-            if (!address[1].isBlank()) {
-                url += "&city=" + address[1];
-            }
-            // Garden's postcode variable
-            if (!address[2].isBlank()) {
-                url += "&postalcode=" + address[2];
-            }
-            // Garden's country variable
-            if (!address[3].isBlank()) {
-                url += "&country=" + address[3];
-            }
-
-            // Creating the URL where the JSON response will be obtained
-            String newUrl = URL + url;
-
-            // Sending a request to the LocationIQ API endpoint and returns a JSON response in string form
-            String jsonResponse = restTemplate.getForObject(newUrl, String.class);
-
-            // Finds the index in jsonResponse string of the "lat='" and "lon='" strings to obtain the values of
-            // latitude and longitude
-            int latIndex = jsonResponse.indexOf("lat='") + 5;
-            int lonIndex = jsonResponse.indexOf("lon='") + 5;
-
-            // Go forward the string one by one until a ' appears (as the format is lat/lon='<value>'
-            StringBuilder latitudeString = new StringBuilder();
-            StringBuilder longitudeString = new StringBuilder();
-
-            while (jsonResponse.charAt(latIndex) != '\'') {
-                latitudeString.append(jsonResponse.charAt(latIndex));
-                latIndex++;
-            }
-            while (jsonResponse.charAt(lonIndex) != '\'') {
-                longitudeString.append(jsonResponse.charAt(lonIndex));
-                lonIndex++;
-            }
-
-            coordinateList.add(Double.parseDouble(latitudeString.toString()));
-            coordinateList.add(Double.parseDouble(longitudeString.toString()));
-
-            return coordinateList;
-
-        } catch (Exception e) {
-            coordinateList.add(null);
-            coordinateList.add(null);
-            return coordinateList;
-        }
-    }
 
     /**
      * Using user input and specifying the address field, a request is sent to the LocationIQ API to find a location
@@ -215,6 +139,8 @@ public class LocationSearchService {
 
         // Obtain the type of the location, the display format of the location, and the address map of the location
         for (Map<String, Object> location : locations) {
+            Double latitude = Double.parseDouble(location.get("lat").toString());
+            Double longitude = Double.parseDouble(location.get("lon").toString());
             String locationType = (String) location.get("type");
             String displayPlace = (String) location.get("display_place");
             Map<String, Object> addressMap = (Map<String, Object>) location.get("address");
@@ -234,7 +160,7 @@ public class LocationSearchService {
             if (addressField.equals("country") && locationType.equals("country")) {
                 country = addressMap.get("name").toString();
 
-                locationAddresses.add(new Location(address, suburb, city, postcode, country, displayPlace));
+                locationAddresses.add(new Location(address, suburb, city, postcode, country, latitude, longitude, displayPlace));
             }
             // IF INPUT IS DONE IN THE POSTCODE FIELD
             else if (addressField.equals("postcode") && locationType.equals("postcode")) {
@@ -243,7 +169,7 @@ public class LocationSearchService {
                 if (addressMap.containsKey("country")) country = addressMap.get("country").toString();
 
                 if (!city.isEmpty() && !country.isEmpty()) {
-                    locationAddresses.add(new Location(address, suburb, city, postcode, country, displayPlace));
+                    locationAddresses.add(new Location(address, suburb, city, postcode, country, latitude, longitude, displayPlace));
                 }
             }
             // IF INPUT IS DONE IN THE CITY FIELD
@@ -252,7 +178,7 @@ public class LocationSearchService {
                 if (addressMap.containsKey("country")) country = addressMap.get("country").toString();
 
                 if (!city.isEmpty() && !country.isEmpty()) {
-                    locationAddresses.add(new Location(address, suburb, city, postcode, country, displayPlace));
+                    locationAddresses.add(new Location(address, suburb, city, postcode, country, latitude, longitude, displayPlace));
                 }
             }
             // IF INPUT IS DONE IN THE SUBURB FIELD
@@ -262,7 +188,7 @@ public class LocationSearchService {
                 if (addressMap.containsKey("country")) country = addressMap.get("country").toString();
 
                 if (!city.isEmpty() && !country.isEmpty()) {
-                    locationAddresses.add(new Location(address, suburb, city, postcode, country, displayPlace));
+                    locationAddresses.add(new Location(address, suburb, city, postcode, country, latitude, longitude, displayPlace));
                 }
             }
             // IF INPUT IS DONE IN THE ADDRESS FIELD
@@ -317,7 +243,7 @@ public class LocationSearchService {
                 }
 
                 if (!address.isEmpty() && !city.isEmpty() && !country.isEmpty() && address.startsWith(query) && validLocation) {
-                    locationAddresses.add(new Location(address, suburb, city, postcode, country, displayPlace));
+                    locationAddresses.add(new Location(address, suburb, city, postcode, country, latitude, longitude, displayPlace));
                 }
             }
         }

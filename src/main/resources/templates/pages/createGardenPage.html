@@ -9,23 +9,27 @@
         <div class="basic">
             <h1>Create a garden</h1>
             <form th:action="@{/gardens/create}" method="post" th:object="${createGardenForm}" autocomplete="off">
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='name', label='Garden Name: ', placeholder='The Hamilton Gardens')}" />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='name', label='Garden Name *', placeholder='The Hamilton Gardens')}" />
                 <br />
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='size', label='Size in m&sup2; (optional): ', placeholder='1000.0')}" />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='size', label='Size in m&sup2; ', placeholder='1000.0')}" />
                 <br />
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='description', label='Description (optional): ', placeholder='Cool garden')}" />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='description', label='Description ', placeholder='Cool garden')}" />
 
                 <h2>Garden Location</h2>
-                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='address', label='Address: (optional)', placeholder='13 Hungerford Crescent')}" />
+                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='address', label='Address ', placeholder='13 Hungerford Crescent')}" />
                 <br />
-                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='suburb', label='Suburb: (optional)', placeholder='Ilam')}" />
+                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='suburb', label='Suburb ', placeholder='Ilam')}" />
                 <br />
-                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='city', label='City: ', placeholder='Christchurch')}" />
+                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='city', label='City * ', placeholder='Christchurch')}" />
                 <br />
-                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='postcode', label='Postcode: (optional)', placeholder='8041')}" />
+                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='postcode', label='Postcode ', placeholder='8041')}" />
                 <br />
-                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='country', label='Country: ', placeholder='New Zealand')}" />
+                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='country', label='Country * ', placeholder='New Zealand')}" />
                 <br />
+                <!-- Hidden field that stores the value of the latitude and longitude of the location - null if it is invalid -->
+                <input type="hidden" th:field="*{latitude}" id="latitude" />
+                <input type="hidden" th:field="*{longitude}" id="longitude" />
+
                 <p>Search by <a href="https://locationiq.com">LocationIQ.com</a></p>
                 <div class="cancel-submit-wrapper">
                     <a class="cancel button" th:href="@{/gardens}">Cancel</a> <!--TODO cancel back to the previous page-->
@@ -36,18 +40,20 @@
     </main>
     <script>
         // ChatGPT assisted, particularly with fetch, timeouts, and the creation of html via js
-        const LOCATION_FIELD_IDS = ['address', 'suburb', 'city', 'postcode', 'country'];
+        const LOCATION_FIELD_IDS = ['address', 'suburb', 'city', 'postcode', 'country', 'latitude', 'longitude'];
         const MIN_LENGTH_TO_AUTOCOMPLETE = 3;
 
         let locationFields = [];
         for (const id of LOCATION_FIELD_IDS) {
-            locationFields.push(document.getElementById(id))
-            locationFields[locationFields.length-1].addEventListener('input', () => {
-                debounce(() => getLocationSuggestions(id), 500);
-            });
-            locationFields[locationFields.length-1].addEventListener('blur', function() {
-                document.getElementById(`${id}DropdownMenu`).style.display = 'none';
-            });
+            if (id !== 'latitude' && id !== 'longitude') {
+                locationFields.push(document.getElementById(id))
+                locationFields[locationFields.length-1].addEventListener('input', () => {
+                    debounce(() => getLocationSuggestions(id), 500);
+                });
+                locationFields[locationFields.length-1].addEventListener('blur', function() {
+                    document.getElementById(`${id}DropdownMenu`).style.display = 'none';
+                });
+            }
         }
 
         let timeoutId;

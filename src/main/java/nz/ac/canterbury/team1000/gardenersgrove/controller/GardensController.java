@@ -149,7 +149,9 @@ public class GardensController {
 
         User loggedInUser = userService.getLoggedInUser();
         Garden newGarden = createGardenForm.getGarden(loggedInUser);
+        logger.info(newGarden.getLatitude() + " " + newGarden.getLongitude());
         gardenService.addGarden(newGarden);
+
         logger.info("Garden created: " + newGarden);
         return "redirect:/gardens/" + newGarden.getId();
     }

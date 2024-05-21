@@ -16,11 +16,11 @@ public class GardenForm {
     protected String city;
     protected String postcode;
     protected String country;
-    protected boolean locationValid;
+    protected Double latitude;
+    protected Double longitude;
     protected String size;
     protected String description;
     protected boolean isPublic;
-    private static final LocationSearchService locationSearchService = new LocationSearchService();
 
     public String getName() {
         return name;
@@ -55,9 +55,22 @@ public class GardenForm {
         return country;
     }
 
-    public boolean getLocationValid() {
-        return locationValid;
+    public Double getLatitude() {
+        return latitude;
     }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
 
     public void setAddress(String address) {
         this.address = address;
@@ -76,9 +89,14 @@ public class GardenForm {
         this.country = country;
     }
 
-    public void setLocationValid(boolean locationValid) {
-        this.locationValid = locationValid;
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
     }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
 
     public String getSize() {
         return size;
@@ -96,23 +114,6 @@ public class GardenForm {
         this.size = size;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void locationIsValid() {
-        String[] location = Arrays.asList(this.address, this.city, this.postcode, this.country).toArray(new String[0]);
-        List<Double> latAndLon = locationSearchService.getCoordinates(location);
-        if (latAndLon.get(0) == null && latAndLon.get(1) == null) {
-            this.locationValid = false;
-        } else {
-            this.locationValid = true;
-        }
-    }
 
     /**
      * Generates a Garden object with the values from the form.
@@ -121,7 +122,6 @@ public class GardenForm {
      * @return new Garden with attributes directly from the input values in the form.
      */
     public Garden getGarden(User owner) {
-        locationIsValid();
         return new Garden(
                 this.name,
                 this.address,
@@ -129,7 +129,8 @@ public class GardenForm {
                 this.city,
                 this.postcode,
                 this.country,
-                this.locationValid,
+                this.latitude,
+                this.longitude,
                 getSizeDouble(), //TODO could get rid of some constructor redundancy in either Garden or User
                 this.description,
                 owner,
