@@ -67,6 +67,7 @@ public class GardenServiceTest {
             null,
             null,
             100.0,
+            "",
             testUser,
             true
         );
@@ -88,6 +89,7 @@ public class GardenServiceTest {
             null,
             null,
             100.0,
+            "",
             testUser,
             true
         );
@@ -109,6 +111,7 @@ public class GardenServiceTest {
             null,
             null,
             100.0,
+            "",
             testUser,
             false
         );
@@ -131,6 +134,7 @@ public class GardenServiceTest {
             null,
             null,
             100.0,
+            "",
             testUser,
             true
         );Garden savedGarden = gardenService.addGarden(publicGarden);
@@ -151,6 +155,7 @@ public class GardenServiceTest {
             null,
             null,
             100.0,
+            "",
             testUser,
             false
         );
@@ -172,6 +177,7 @@ public class GardenServiceTest {
             null,
             null,
             100.0,
+            "",
             testUser,
             true
         );
@@ -205,6 +211,7 @@ public class GardenServiceTest {
             null,
             null,
             100.0,
+            "",
             testUser,
             false
         );

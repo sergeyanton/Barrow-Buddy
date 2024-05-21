@@ -50,11 +50,8 @@ form {
 button, .cancel, .submit {
     padding: 8px 18px;
     margin-top: 8px;
-    /*font-size: 16px;*/
-    /*border-radius: 10px;*/
-    font-weight: bold;
-    font-size: 20px;
-    border-radius: 4px;
+    font-size: 18px;
+    border-radius: 10px;
     color: #FAF9F6;
     background-color: #023020;
     border: none;
@@ -77,11 +74,8 @@ button:hover, .submit:hover {
 #landing a {
     margin: 0 5px;
     padding: 10px 22px;
-    /*font-size: 18px;*/
-    /*border-radius: 10px;*/
-    font-size: 20px;
-    border-radius: 4px;
-    font-weight: bold;
+    font-size: 18px;
+    border-radius: 10px;
     color: #FAF9F6;
     background-color: #023020;
     text-decoration: none;
@@ -99,10 +93,10 @@ button:hover, .submit:hover {
 
 .search-bar input[type="text"] {
     width: 320px;
-    height: 35px;
+    height: 38px;
     padding: 12px;
     border-radius: 5px;
     border: 1px solid #ccc;
-    font-size: 16px;
+    font-size: 18px;
     box-sizing: border-box;
 }
