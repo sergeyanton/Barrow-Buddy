@@ -35,7 +35,6 @@ public class Garden {
     @Column(length = 512)
     private String description;
 
-
     @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
@@ -64,6 +63,7 @@ public class Garden {
      */
 
     public Garden(String name, String address, String suburb, String city, String postcode, String country, Double latitude, Double longitude, Double size, String description, User owner, boolean isPublic) {
+
         this.name = name;
         this.address = address;
         this.suburb = suburb;
@@ -99,6 +99,7 @@ public class Garden {
      */
 
     public Garden(String name, String address, String suburb, String city, String postcode, String country, Double latitude, Double longitude, String size, String description, User owner, boolean isPublic) {
+
         this.name = name;
         this.address = address;
         this.suburb = suburb;
@@ -107,7 +108,7 @@ public class Garden {
         this.country = country;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.setSize(size);
+        setSize(size);
         this.setDescription(description);
         this.isPublic = isPublic;
 

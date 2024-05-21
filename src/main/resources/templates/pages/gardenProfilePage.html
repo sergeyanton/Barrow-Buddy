@@ -20,6 +20,7 @@
             <p th:if="${garden.description != null}">
               <b th:text="${garden.description}"></b>
             </p>
+
             <a th:href="@{'/gardens/' + ${garden.id} + '/plants/create'}">
                 <button>Add a plant</button>
             </a>
