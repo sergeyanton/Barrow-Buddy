@@ -334,6 +334,7 @@ public class GardensController {
         editGardenForm.setCity(garden.getCity());
         editGardenForm.setPostcode(garden.getPostcode());
         editGardenForm.setCountry(garden.getCountry());
+        editGardenForm.setDescription(garden.getDescription());
 
         if (garden.getSize() != null) editGardenForm.setSize(garden.getSize().toString());
 

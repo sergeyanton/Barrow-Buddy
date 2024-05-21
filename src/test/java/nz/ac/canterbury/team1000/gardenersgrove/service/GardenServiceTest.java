@@ -50,7 +50,8 @@ public class GardenServiceTest {
     @Test
     public void simpleTest2() {
         GardenService gardenService = new GardenService(gardenRepository);
-        Garden result = gardenService.addGarden(new Garden("My Garden", "A", "B", "C", "D", "E", null, null, 9000.0, testUser, false));
+
+        Garden result = gardenService.addGarden(new Garden("My Garden", "A", "B", "C", "D", "E", null, null, 9000.0, "", testUser, false));
         Assertions.assertEquals(result.getName(), "My Garden");
     }
 

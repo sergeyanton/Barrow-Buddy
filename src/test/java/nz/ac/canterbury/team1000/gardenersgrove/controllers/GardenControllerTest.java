@@ -20,6 +20,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -81,26 +82,45 @@ public class GardenControllerTest {
     @Mock
     private User loggedInUser;
 
-    private List<Garden> publicGardens;
-    private List<Garden> allGardens;
+    // ValueSource does not like it when I use "a".repeat(512) as it does not see it as a constant
+    private static final String stringWithLength512 = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        + "aaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 
-    @BeforeEach
+    // ValueSource does not like it when I use "a".repeat(513) as it does not see it as a constant
+    private static final String stringWithLength513 = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+
+	private List<Garden> publicGardens;
+	private List<Garden> allGardens;
+
+	@BeforeEach
     public void BeforeEach() {
         loggedInUser = Mockito.mock(User.class);
-        when(userService.getLoggedInUser()).thenReturn(loggedInUser);
-        when(loggedInUser.getId()).thenReturn(1L);
+        Mockito.when(userService.getLoggedInUser()).thenReturn(loggedInUser);
+        Mockito.when(loggedInUser.getId()).thenReturn(1L);
 
         gardenMock = Mockito.mock(Garden.class);
-        when(gardenMock.getId()).thenReturn(1L);
-        when(gardenMock.getOwner()).thenReturn(loggedInUser);
-        when(gardenMock.getName()).thenReturn("Hamilton Gardens");
-        when(gardenMock.getAddress()).thenReturn("13 Hungerford Crescent");
-        when(gardenMock.getSuburb()).thenReturn("Ilam");
-        when(gardenMock.getCity()).thenReturn("Hamilton");
-        when(gardenMock.getPostcode()).thenReturn("3216");
-        when(gardenMock.getCountry()).thenReturn("New Zealand");
-        when(gardenMock.getSize()).thenReturn(46.2);
-        when(gardenMock.getIsPublic()).thenReturn(false);
+		Mockito.when(gardenMock.getId()).thenReturn(1L);
+		Mockito.when(gardenMock.getOwner()).thenReturn(loggedInUser);
+		Mockito.when(gardenMock.getName()).thenReturn("Hamilton Gardens");
+		Mockito.when(gardenMock.getAddress()).thenReturn("13 Hungerford Crescent");
+		Mockito.when(gardenMock.getSuburb()).thenReturn("Ilam");
+		Mockito.when(gardenMock.getCity()).thenReturn("Hamilton");
+		Mockito.when(gardenMock.getPostcode()).thenReturn("3216");
+		Mockito.when(gardenMock.getCountry()).thenReturn("New Zealand");
+		Mockito.when(gardenMock.getSize()).thenReturn(46.2);
+		Mockito.when(gardenMock.getDescription()).thenReturn("A very cool garden");
+		Mockito.when(gardenMock.getIsPublic()).thenReturn(false);
 
         // mock a public garden
         publicGardenMock = Mockito.mock(Garden.class);
@@ -113,7 +133,8 @@ public class GardenControllerTest {
         when(publicGardenMock.getPostcode()).thenReturn("3216");
         when(publicGardenMock.getCountry()).thenReturn("New Zealand");
         when(publicGardenMock.getSize()).thenReturn(100.0);
-        when(publicGardenMock.getIsPublic()).thenReturn(true);
+		Mockito.when(gardenMock.getDescription()).thenReturn("A great garden");
+		when(publicGardenMock.getIsPublic()).thenReturn(true);
 
         gardenForm = new GardenForm();
         gardenForm.setName(gardenMock.getName());
@@ -123,43 +144,44 @@ public class GardenControllerTest {
         gardenForm.setPostcode(gardenMock.getPostcode());
         gardenForm.setCountry(gardenMock.getCountry());
         gardenForm.setSize(gardenMock.getSize().toString());
-        gardenForm.setPublicity(gardenMock.getIsPublic());
+        gardenForm.setDescription(gardenMock.getDescription());
+		gardenForm.setPublicity(gardenMock.getIsPublic());
 
-        // form for public garden
-        publicGardenForm = new GardenForm();
-        publicGardenForm.setName(publicGardenMock.getName());
-        publicGardenForm.setAddress(publicGardenMock.getAddress());
-        publicGardenForm.setSuburb(publicGardenMock.getSuburb());
-        publicGardenForm.setCity(publicGardenMock.getCity());
-        publicGardenForm.setPostcode(publicGardenMock.getPostcode());
-        publicGardenForm.setCountry(publicGardenMock.getCountry());
-        publicGardenForm.setSize(publicGardenMock.getSize().toString());
-        publicGardenForm.setPublicity(publicGardenMock.getIsPublic());
+		// form for public garden
+		publicGardenForm = new GardenForm();
+		publicGardenForm.setName(publicGardenMock.getName());
+		publicGardenForm.setAddress(publicGardenMock.getAddress());
+		publicGardenForm.setSuburb(publicGardenMock.getSuburb());
+		publicGardenForm.setCity(publicGardenMock.getCity());
+		publicGardenForm.setPostcode(publicGardenMock.getPostcode());
+		publicGardenForm.setCountry(publicGardenMock.getCountry());
+		publicGardenForm.setSize(publicGardenMock.getSize().toString());
+		publicGardenForm.setPublicity(publicGardenMock.getIsPublic());
 
-        // array list of public gardens and all gardens
-        publicGardens = new ArrayList<>();
-        publicGardens.add(publicGardenMock);
+		// array list of public gardens and all gardens
+		publicGardens = new ArrayList<>();
+		publicGardens.add(publicGardenMock);
 
-        allGardens = new ArrayList<>();
-        allGardens.add(publicGardenMock);
-        allGardens.add(gardenMock);
+		allGardens = new ArrayList<>();
+		allGardens.add(publicGardenMock);
+		allGardens.add(gardenMock);
 
-        // Mock addGarden(), updateGarden(), and getPlantById to always simply use id = 1
-        when(gardenService.addGarden(Mockito.any(Garden.class))).thenAnswer(invocation -> {
+		// Mock addGarden(), updateGarden(), and getPlantById to always simply use id = 1
+        Mockito.when(gardenService.addGarden(Mockito.any(Garden.class))).thenAnswer(invocation -> {
             Garden addedGarden = invocation.getArgument(0);
             addedGarden.setId(1L);
             return addedGarden;
         });
-        when(gardenService.updateGardenById(Mockito.anyLong(), Mockito.any(Garden.class)))
+        Mockito.when(gardenService.updateGardenById(Mockito.anyLong(), Mockito.any(Garden.class)))
                 .thenAnswer(invocation -> {
                     Garden updatedGarden = invocation.getArgument(1);
                     updatedGarden.setId(1L);
                     return updatedGarden;
                 });
 
-        when(gardenService.getGardenById(1L)).thenReturn(gardenMock);
+        Mockito.when(gardenService.getGardenById(1L)).thenReturn(gardenMock);
 
-        when(gardenService.getPublicGardens()).thenReturn(publicGardens);
+        Mockito.when(gardenService.getPublicGardens()).thenReturn(publicGardens);
     }
 
     @Test
@@ -169,7 +191,7 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
 
-        verify(gardenService).addGarden(Mockito.any());
+        Mockito.verify(gardenService).addGarden(Mockito.any());
     }
 
     @ParameterizedTest
@@ -182,7 +204,7 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
 
-        verify(gardenService).addGarden(Mockito.any());
+        Mockito.verify(gardenService).addGarden(Mockito.any());
     }
 
     @ParameterizedTest
@@ -196,7 +218,7 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
 
-        verify(gardenService).addGarden(Mockito.any());
+        Mockito.verify(gardenService).addGarden(Mockito.any());
     }
 
     @ParameterizedTest
@@ -210,7 +232,7 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
 
-        verify(gardenService).addGarden(Mockito.any());
+        Mockito.verify(gardenService).addGarden(Mockito.any());
     }
 
     @ParameterizedTest
@@ -223,7 +245,7 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
 
-        verify(gardenService).addGarden(Mockito.any());
+        Mockito.verify(gardenService).addGarden(Mockito.any());
     }
 
     @ParameterizedTest
@@ -237,7 +259,7 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
 
-        verify(gardenService).addGarden(Mockito.any());
+        Mockito.verify(gardenService).addGarden(Mockito.any());
     }
 
     @ParameterizedTest
@@ -250,7 +272,7 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
 
-        verify(gardenService).addGarden(Mockito.any());
+        Mockito.verify(gardenService).addGarden(Mockito.any());
     }
 
     @ParameterizedTest
@@ -264,7 +286,21 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
 
-        verify(gardenService).addGarden(Mockito.any());
+        Mockito.verify(gardenService).addGarden(Mockito.any());
+    }
+
+    @ParameterizedTest
+    @EmptySource
+    @ValueSource(strings = {"", " ", "\t", "\n", "abc", "abc123", "abc123!@#", stringWithLength512})
+    void CreateGardenPost_ValidDescription_SavesToService(String descriptionField) throws Exception {
+        gardenForm.setDescription(descriptionField);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/create").with(csrf())
+                .flashAttr("createGardenForm", gardenForm))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
+
+        Mockito.verify(gardenService).addGarden(Mockito.any());
     }
 
     @ParameterizedTest
@@ -281,7 +317,7 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("createGardenForm",
                         "name"));
 
-        verify(gardenService, Mockito.never()).addGarden(Mockito.any());
+        Mockito.verify(gardenService, Mockito.never()).addGarden(Mockito.any());
     }
 
     @ParameterizedTest
@@ -297,7 +333,7 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("createGardenForm",
                         "address"));
 
-        verify(gardenService, Mockito.never()).addGarden(Mockito.any());
+        Mockito.verify(gardenService, Mockito.never()).addGarden(Mockito.any());
     }
 
     @ParameterizedTest
@@ -313,7 +349,7 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("createGardenForm",
                         "suburb"));
 
-        verify(gardenService, Mockito.never()).addGarden(Mockito.any());
+        Mockito.verify(gardenService, Mockito.never()).addGarden(Mockito.any());
     }
 
     @ParameterizedTest
@@ -330,7 +366,7 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("createGardenForm",
                         "city"));
 
-        verify(gardenService, Mockito.never()).addGarden(Mockito.any());
+        Mockito.verify(gardenService, Mockito.never()).addGarden(Mockito.any());
     }
 
     @ParameterizedTest
@@ -346,7 +382,7 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("createGardenForm",
                         "postcode"));
 
-        verify(gardenService, Mockito.never()).addGarden(Mockito.any());
+        Mockito.verify(gardenService, Mockito.never()).addGarden(Mockito.any());
     }
 
     @ParameterizedTest
@@ -363,7 +399,7 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("createGardenForm",
                         "country"));
 
-        verify(gardenService, Mockito.never()).addGarden(Mockito.any());
+        Mockito.verify(gardenService, Mockito.never()).addGarden(Mockito.any());
     }
 
     @ParameterizedTest
@@ -379,7 +415,22 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("createGardenForm",
                         "size"));
 
-        verify(gardenService, Mockito.never()).addGarden(Mockito.any());
+        Mockito.verify(gardenService, Mockito.never()).addGarden(Mockito.any());
+    }
+    @ParameterizedTest
+    @ValueSource(
+        strings = {"123", "!@#", stringWithLength513})
+    void CreateGardenPost_InvalidDescription_ReturnsError(String descriptionField) throws Exception {
+        gardenForm.setDescription(descriptionField);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/create").with(csrf())
+                .flashAttr("createGardenForm", gardenForm))
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.view().name("pages/createGardenPage"))
+            .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("createGardenForm",
+                "description"));
+
+        Mockito.verify(gardenService, Mockito.never()).addGarden(Mockito.any());
     }
 
     @Test
@@ -389,7 +440,7 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
 
-        verify(gardenService).updateGardenById(Mockito.anyLong(), Mockito.any());
+        Mockito.verify(gardenService).updateGardenById(Mockito.anyLong(), Mockito.any());
     }
 
     @ParameterizedTest
@@ -402,7 +453,7 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
 
-        verify(gardenService).updateGardenById(Mockito.anyLong(), Mockito.any());
+        Mockito.verify(gardenService).updateGardenById(Mockito.anyLong(), Mockito.any());
     }
 
     @ParameterizedTest
@@ -416,7 +467,7 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
 
-        verify(gardenService).updateGardenById(Mockito.anyLong(), Mockito.any());
+        Mockito.verify(gardenService).updateGardenById(Mockito.anyLong(), Mockito.any());
     }
 
     @ParameterizedTest
@@ -430,7 +481,7 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
 
-        verify(gardenService).updateGardenById(Mockito.anyLong(), Mockito.any());
+        Mockito.verify(gardenService).updateGardenById(Mockito.anyLong(), Mockito.any());
     }
 
     @ParameterizedTest
@@ -443,7 +494,7 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
 
-        verify(gardenService).updateGardenById(Mockito.anyLong(), Mockito.any());
+        Mockito.verify(gardenService).updateGardenById(Mockito.anyLong(), Mockito.any());
     }
 
     @ParameterizedTest
@@ -457,7 +508,7 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
 
-        verify(gardenService).updateGardenById(Mockito.anyLong(), Mockito.any());
+        Mockito.verify(gardenService).updateGardenById(Mockito.anyLong(), Mockito.any());
     }
 
     @ParameterizedTest
@@ -470,7 +521,7 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
 
-        verify(gardenService).updateGardenById(Mockito.anyLong(), Mockito.any());
+        Mockito.verify(gardenService).updateGardenById(Mockito.anyLong(), Mockito.any());
     }
 
     @ParameterizedTest
@@ -484,7 +535,21 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
 
-        verify(gardenService).updateGardenById(Mockito.anyLong(), Mockito.any());
+        Mockito.verify(gardenService).updateGardenById(Mockito.anyLong(), Mockito.any());
+    }
+
+    @ParameterizedTest
+    @EmptySource
+    @ValueSource(strings = {"", " ", "\t", "\n", "abc", "abc123", "abc123!@#", stringWithLength512})
+    void EditGardenPost_ValidDescription_SavesToService(String descriptionField) throws Exception {
+        gardenForm.setDescription(descriptionField);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf())
+                .flashAttr("editGardenForm", gardenForm))
+            .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+            .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
+
+        Mockito.verify(gardenService).updateGardenById(Mockito.anyLong(), Mockito.any());
     }
 
     @ParameterizedTest
@@ -501,7 +566,7 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editGardenForm",
                         "name"));
 
-        verify(gardenService, Mockito.never()).updateGardenById(Mockito.anyLong(),
+        Mockito.verify(gardenService, Mockito.never()).updateGardenById(Mockito.anyLong(),
                 Mockito.any());
     }
 
@@ -518,7 +583,7 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editGardenForm",
                         "address"));
 
-        verify(gardenService, Mockito.never()).updateGardenById(Mockito.anyLong(),
+        Mockito.verify(gardenService, Mockito.never()).updateGardenById(Mockito.anyLong(),
                 Mockito.any());
     }
 
@@ -535,7 +600,7 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editGardenForm",
                         "suburb"));
 
-        verify(gardenService, Mockito.never()).updateGardenById(Mockito.anyLong(),
+        Mockito.verify(gardenService, Mockito.never()).updateGardenById(Mockito.anyLong(),
                 Mockito.any());
     }
 
@@ -553,7 +618,7 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editGardenForm",
                         "city"));
 
-        verify(gardenService, Mockito.never()).updateGardenById(Mockito.anyLong(),
+        Mockito.verify(gardenService, Mockito.never()).updateGardenById(Mockito.anyLong(),
                 Mockito.any());
     }
 
@@ -570,7 +635,7 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editGardenForm",
                         "postcode"));
 
-        verify(gardenService, Mockito.never()).updateGardenById(Mockito.anyLong(),
+        Mockito.verify(gardenService, Mockito.never()).updateGardenById(Mockito.anyLong(),
                 Mockito.any());
     }
 
@@ -588,7 +653,7 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editGardenForm",
                         "country"));
 
-        verify(gardenService, Mockito.never()).updateGardenById(Mockito.anyLong(),
+        Mockito.verify(gardenService, Mockito.never()).updateGardenById(Mockito.anyLong(),
                 Mockito.any());
     }
 
@@ -605,8 +670,25 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editGardenForm",
                         "size"));
 
-        verify(gardenService, Mockito.never()).updateGardenById(Mockito.anyLong(),
+        Mockito.verify(gardenService, Mockito.never()).updateGardenById(Mockito.anyLong(),
                 Mockito.any());
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+        strings = {"123", "!@#", stringWithLength513})
+    void EditGardenPost_InvalidDescription_ReturnsError(String descriptionField) throws Exception {
+        gardenForm.setDescription(descriptionField);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf())
+                .flashAttr("editGardenForm", gardenForm))
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.view().name("pages/editGardenPage"))
+            .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editGardenForm",
+                "description"));
+
+        Mockito.verify(gardenService, Mockito.never()).updateGardenById(Mockito.anyLong(),
+            Mockito.any());
     }
 
     @Test
@@ -618,7 +700,7 @@ public class GardenControllerTest {
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
 
-        verify(gardenService).updateGardenById(Mockito.anyLong(), Mockito.any());
+        Mockito.verify(gardenService).updateGardenById(Mockito.anyLong(), Mockito.any());
    }
 
     @Test
@@ -630,13 +712,14 @@ public class GardenControllerTest {
         GardenForm modelEditGardenForm =
                 (GardenForm) result.getModelAndView().getModel().get("editGardenForm");
         Assertions.assertEquals(gardenMock.getName(), modelEditGardenForm.getName());
+        Assertions.assertEquals(gardenMock.getDescription(), modelEditGardenForm.getDescription());
         Assertions.assertEquals(gardenMock.getAddress(), modelEditGardenForm.getAddress());
         Assertions.assertEquals(gardenMock.getSuburb(), modelEditGardenForm.getSuburb());
         Assertions.assertEquals(gardenMock.getCity(), modelEditGardenForm.getCity());
         Assertions.assertEquals(gardenMock.getPostcode(), modelEditGardenForm.getPostcode());
         Assertions.assertEquals(gardenMock.getCountry(), modelEditGardenForm.getCountry());
         Assertions.assertEquals(gardenMock.getSize(), modelEditGardenForm.getSizeDouble());
-        verify(gardenService).getGardenById(1L);
+        Mockito.verify(gardenService).getGardenById(1L);
     }
 
     @Test
@@ -645,8 +728,8 @@ public class GardenControllerTest {
         Plant plant = Mockito.spy(originalPlant);
         // make a copy of the plant so we can check it was unmodified later
         Plant plantCopy = new Plant(plant.getName(), plant.getPlantCount(), plant.getDescription(), plant.getPlantedOnDate(), plant.getPicturePath(), plant.getGardenId());
-        when(plant.getId()).thenReturn(1L);
-        when(plantService.getPlantById(1L)).thenReturn(plant);
+        Mockito.when(plant.getId()).thenReturn(1L);
+        Mockito.when(plantService.getPlantById(1L)).thenReturn(plant);
 
         assertEquals(plant, plantService.getPlantById(1L));
 
@@ -661,7 +744,7 @@ public class GardenControllerTest {
         .andExpect(MockMvcResultMatchers.view().name("pages/editPlantPage"));
 
         // check that the plant was not updated
-        verify(plantService, Mockito.never()).updatePlant(Mockito.any());
+        Mockito.verify(plantService, Mockito.never()).updatePlant(Mockito.any());
         assertEquals(plantCopy.getName(), plant.getName());
         assertEquals(plantCopy.getPlantCount(), plant.getPlantCount());
         assertEquals(plantCopy.getDescription(), plant.getDescription());
@@ -673,8 +756,8 @@ public class GardenControllerTest {
     public void EditGardenPlantPost_WithValidFormData_UpdatesThePlant() throws Exception {
         Plant originalPlant = new Plant("Poppy", "5", "Red", "26/04/2024", "/images/defaultPlantPic.png", 1L); 
         Plant plant = Mockito.spy(originalPlant);
-        when(plant.getId()).thenReturn(1L);
-        when(plantService.getPlantById(1L)).thenReturn(plant);
+        Mockito.when(plant.getId()).thenReturn(1L);
+        Mockito.when(plantService.getPlantById(1L)).thenReturn(plant);
 
         assertEquals(plant, plantService.getPlantById(1L));
 
@@ -689,7 +772,7 @@ public class GardenControllerTest {
         .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
 
         // check that the plant was updated
-        verify(plantService).updatePlant(plant);
+        Mockito.verify(plantService).updatePlant(plant);
         assertEquals("Violet", plant.getName());
     }
 

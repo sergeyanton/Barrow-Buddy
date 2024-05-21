@@ -13,6 +13,7 @@
                 <thead>
                     <tr>
                         <th>Name</th>
+                        <th>Description</th>
                         <th>Location</th>
                         <th>Size (m&sup2;)</th>
                     </tr>
@@ -23,6 +24,7 @@
                     </tr>
                     <tr th:each="garden : ${gardens}">
                         <td><a th:href="@{/gardens/{id}(id=${garden.id})}" th:text="${garden.name}"> Name </a></td>
+                        <td><span th:text="${garden.getDescription}"> Description </span></td>
                         <td><span th:text="${garden.getLocationString}"> Location </span></td>
                         <td><span th:text="${garden.size}"> Size </span></td>
                     </tr>
