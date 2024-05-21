@@ -23,7 +23,7 @@ public class Weather {
     @Column(nullable = false)
     private Long gardenId;
     @Column(nullable = false)
-    public LocalDate date;
+    public LocalDateTime dateTime;
     @Column(nullable = false)
     public WeatherType type;
     @Column(nullable = false)
@@ -48,22 +48,22 @@ public class Weather {
     /**
      * Creates a new Weather object
      * @param gardenId    ID of the garden where this Weather is relevant
-     * @param date        date that this Weather is relevant for
+     * @param dateTime        date and time that this Weather is relevant for
      * @param type        type of Weather, e.g. CLEAR, OVERCAST, RAIN
      * @param temperature the temperature for the relevant day
      * @param humidity    the humidity for the relevant day
      */
-    public Weather(Long gardenId, LocalDate date, WeatherType type, Double temperature, Double humidity) {
+    public Weather(Long gardenId, LocalDateTime dateTime, WeatherType type, Double temperature, Double humidity) {
         this.gardenId = gardenId;
-        this.date = date;
+        this.dateTime = dateTime;
         this.type = type;
         this.temperature = temperature;
         this.humidity = humidity;
         updateExpiry();
     }
 
-  public LocalDate getDate() {
-      return date;
+  public LocalDateTime getDateTime() {
+      return dateTime;
     }
 
     public WeatherType getType() {
@@ -89,7 +89,7 @@ public class Weather {
    * @param newWeather the Weather object that you want to replace this Weather entity with
    */
   public void setTo(Weather newWeather) {
-        this.date = newWeather.getDate();
+        this.dateTime = newWeather.getDateTime();
         this.type = newWeather.getType();
         this.temperature = newWeather.getTemperature();
         this.humidity = newWeather.getHumidity();
@@ -108,7 +108,7 @@ public class Weather {
         return "Weather{" +
             "id=" + id +
             ", gardenId=" + gardenId +
-            ", date=" + date +
+            ", dateTime=" + dateTime.toString() +
             ", type=" + type +
             ", temperature=" + temperature +
             ", humidity=" + humidity +
