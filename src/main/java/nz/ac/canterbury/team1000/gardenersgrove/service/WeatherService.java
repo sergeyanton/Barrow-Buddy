@@ -3,6 +3,7 @@ package nz.ac.canterbury.team1000.gardenersgrove.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,7 @@ public class WeatherService {
     private final GardenService gardenService;
     private final LocationSearchService locationSearchService;
     //TODO actually make this URL the correct URL, not just to prove the spike
-    private final String URL = "https://api.open-meteo.com/v1/forecast?hourly=temperature_2m,relative_humidity_2m&daily=weather_code";
+    private final String URL = "https://api.open-meteo.com/v1/forecast?hourly=temperature_2m,relative_humidity_2m,weather_code";
 
     @Autowired
     public WeatherService(WeatherRepository weatherRepository, RestTemplate restTemplate,
@@ -72,6 +73,25 @@ public class WeatherService {
 		return persistedWeatherList;
     }
 
+    public List<Weather> getCurrentWeatherByGardenId(Long gardenId) {
+        List<Weather> beforeAndAfterWeather = new ArrayList<>();
+        List<Weather> weathers = getWeather(gardenId);
+        for (int i = 0; i < weathers.size(); i++) {
+            LocalDateTime weatherDateTime = weathers.get(i).getDateTime();
+            LocalDateTime nextWeatherHour = weatherDateTime.plusHours(1);
+
+            LocalDateTime timeRightNow = LocalDateTime.now();
+
+            if (weatherDateTime.isBefore(timeRightNow.plusMinutes(1)) && nextWeatherHour.isAfter(timeRightNow.minusMinutes(1))) {
+                beforeAndAfterWeather.add(weathers.get(i));
+                beforeAndAfterWeather.add(weathers.get(i+1));
+
+                break;
+            }
+
+        }
+        return beforeAndAfterWeather;
+    }
 
     /**
      * Persists a list of Weather entities into the database
@@ -109,17 +129,29 @@ public class WeatherService {
             String url = URL + "&latitude=" + latitude + "&longitude=" + longitude;
             String jsonResponse = restTemplate.getForObject(url, String.class);
             Map<String, Object> weather = objectMapper.readValue(jsonResponse, Map.class);
-            List<Integer> weatherCodes = (ArrayList) ((Map<String, Object>) weather.get("daily")).get("weather_code");
+            List<Integer> weatherCodes = (ArrayList) ((Map<String, Object>) weather.get("hourly")).get("weather_code");
             List<Double> hourlyTemps = (ArrayList) ((Map<String, Object>) weather.get("hourly")).get("temperature_2m");
+            List<String> hourlyTime = (ArrayList) ((Map<String, Object>) weather.get("hourly")).get("time");
+
+            List<LocalDateTime> hourlyTimeParsed = new ArrayList<>();
+
+			for (String s : hourlyTime) {
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+				LocalDateTime localDateTime = LocalDateTime.parse(s, formatter);
+				hourlyTimeParsed.add(localDateTime);
+			}
+
             List<Double> dailyTemps = new ArrayList<>();
-            for (int i = 0; i < hourlyTemps.size(); i += 24) {
-                dailyTemps.add(hourlyTemps.get(i));
-            }
+			for (Double hourlyTemp : hourlyTemps) {
+				dailyTemps.add(hourlyTemp);
+			}
             List<Weather> weatherList = new ArrayList<>();
             for (int i = 0; i < weatherCodes.size(); i++) {
-                weatherList.add(new Weather(gardenId, LocalDate.now(), WeatherType.getByCode(weatherCodes.get(i)),
+                weatherList.add(new Weather(gardenId, hourlyTimeParsed.get(i), WeatherType.getByCode(weatherCodes.get(i)),
                     dailyTemps.get(i), 0.0));
             }
+
+            logger.info(String.valueOf(weatherList.size()));
 
             for (Weather w : weatherList) {
                 logger.info(w.toString());
