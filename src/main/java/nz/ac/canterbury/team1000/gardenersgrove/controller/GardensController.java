@@ -60,6 +60,9 @@ public class GardensController {
     /**
      * Gets the garden with the given id, if the garden can be accessed.
      * Otherwise, throws an HTTP response exception like 403 or 404
+     * User must be logged in to view their own gardens.
+     * User must be logged in to view other's (public) gardens.
+     *
      * @param gardenId The id of the garden to access
      * @return The garden object accessed
      * @throws ResponseStatusException An exception that has occurred when trying to access the garden
@@ -77,12 +80,15 @@ public class GardensController {
         }
 
         User loggedInUser = userService.getLoggedInUser();
-        // check that the garden belongs to the logged in user
-        if (!garden.getIsPublic() && !Objects.equals(garden.getOwner().getId(), loggedInUser.getId())) {
+
+        // if garden is private it must belong to the logged-in user to view
+        // if garden is public, a user must be logged-in to view
+        boolean gardenIsPrivate = !garden.getIsPublic();
+        if (gardenIsPrivate && !Objects.equals(garden.getOwner().getId(), loggedInUser.getId())) {
             // respond with 403 Forbidden
             throw new ResponseStatusException(
                 HttpStatus.FORBIDDEN,
-                "You don't own this garden"
+                "This garden is private. Only the owner can view it."
             );
         }
 
