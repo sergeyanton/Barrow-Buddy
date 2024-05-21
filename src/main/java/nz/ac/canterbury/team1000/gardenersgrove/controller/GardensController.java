@@ -275,7 +275,12 @@ public class GardensController {
       @ModelAttribute("editGardenForm") GardenForm editGardenForm) {
     logger.info("GET /gardens/" + gardenId + "/edit");
 
-    Garden garden = tryToAccessGarden(gardenId);
+        editGardenForm.setAddress(garden.getAddress());
+        editGardenForm.setSuburb(garden.getSuburb());
+        editGardenForm.setCity(garden.getCity());
+        editGardenForm.setPostcode(garden.getPostcode());
+        editGardenForm.setCountry(garden.getCountry());
+        editGardenForm.setDescription(garden.getDescription());
 
     editGardenForm.setName(garden.getName());
 

@@ -32,7 +32,8 @@ public class Garden {
     private Double longitude;
     @Column
     private Double size;
-
+    @Column(length = 512)
+    private String description;
 
     @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)
@@ -60,7 +61,9 @@ public class Garden {
      * @param size     size of garden
      * @param owner    owner of garden
      */
-    public Garden(String name, String address, String suburb, String city, String postcode, String country, Double latitude, Double longitude, Double size, User owner, boolean isPublic) {
+
+    public Garden(String name, String address, String suburb, String city, String postcode, String country, Double latitude, Double longitude, Double size, String description, User owner, boolean isPublic) {
+
         this.name = name;
         this.address = address;
         this.suburb = suburb;
@@ -76,6 +79,7 @@ public class Garden {
         }
 
         this.size = size;
+        this.setDescription(description);
         this.isPublic = isPublic;
         this.owner = owner;
     }
@@ -93,7 +97,9 @@ public class Garden {
      * @param size     size of garden
      * @param owner    owner of garden
      */
-    public Garden(String name, String address, String suburb, String city, String postcode, String country, Double latitude, Double longitude, String size, User owner, boolean isPublic) {
+
+    public Garden(String name, String address, String suburb, String city, String postcode, String country, Double latitude, Double longitude, String size, String description, User owner, boolean isPublic) {
+
         this.name = name;
         this.address = address;
         this.suburb = suburb;
@@ -102,7 +108,8 @@ public class Garden {
         this.country = country;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.setSize(size);
+        setSize(size);
+        this.setDescription(description);
         this.isPublic = isPublic;
 
     }
@@ -146,6 +153,10 @@ public class Garden {
         return size;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
     public boolean getIsPublic() {
         return isPublic;
     }
@@ -176,6 +187,16 @@ public class Garden {
 
     public void setSize(String newSize) {
         setSize((newSize.isBlank()) ? null : Double.parseDouble(newSize.replace(",", ".")));
+    }
+
+    public void setDescription(String description) {
+        if (description == null) {
+            this.description = null;
+        } else if (description.trim().isBlank()) {
+            this.description = null;
+        } else {
+            this.description = description.trim();
+        }
     }
 
     public void setIsPublic(boolean isPublic) {
