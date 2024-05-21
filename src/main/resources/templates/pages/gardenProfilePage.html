@@ -38,11 +38,6 @@
           </div>
 
             <br th:if="${garden.size != null}">
-<!--          TODO HERE-->
-<!--          <a th:if="${garden.owner.id == loggedInUserId}" th:href="@{'/gardens/' + ${garden.id} + '/plants/create'}">-->
-<!--            <button>Add a plant</button>-->
-<!--          </a>-->
-
             <div th:if="${garden.owner.id == loggedInUserId}" class="form-element">
                   <a class="submit" th:href="@{'/gardens/' + ${garden.id} + '/edit'}">Edit Garden Details</a>
               <a th:href="@{'/gardens/' + ${garden.id} + '/plants/create'}">
