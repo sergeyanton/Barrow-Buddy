@@ -22,9 +22,9 @@
                     <span id="clientSideErrorMessage" class="error"></span>
                 </div>
 
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='firstName', label='First Name: ', placeholder='Fabian')}" />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='firstName', label='First Name * ', placeholder='Fabian')}" />
                 <br />
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='lastName', label='Last Name: ', placeholder='Gilson')}" />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='lastName', label='Last Name ', placeholder='Gilson')}" />
                 <br />
                 <div class="form-element">
                     <div style="display: flex; align-items: center;">
@@ -33,9 +33,9 @@
                     </div>
                 </div>
                 <br />
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='email', label='Email: ', placeholder='jane@doe.nz')}" />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='email', label='Email * ', placeholder='jane@doe.nz')}" />
                 <br />
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='dob', label='Date of Birth: ', placeholder='DD/MM/YYYY')}" />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='dob', label='Date of Birth ', placeholder='DD/MM/YYYY')}" />
                 <br />
                 <a th:href="@{editProfile/updatePassword}">Update Password</a>
                 <div class="cancel-submit-wrapper">
