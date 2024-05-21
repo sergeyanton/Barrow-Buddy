@@ -28,7 +28,7 @@
                 </thead>
                 <tbody>
                     <tr th:if="${gardens.empty}">
-                        <td colspan="3"> No public gardens to browse</td>
+                        <td colspan="3" th:text="${query.empty} ? ' No public gardens to browse' : ' No gardens match your search'"></td>
 
                     </tr>
                     <tr th:each="garden : ${gardens}">

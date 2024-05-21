@@ -22,8 +22,8 @@
             </p>
 
             <br>
-            <p th:text="${garden.getLocationString}" style="font-size: 18px;"></p>
-            <p th:if="${garden.latitude == null and garden.longitude == null}" th:text="'Location not found, please update your location to see the weather.'"></p>
+            <p th:if="${garden.owner.id == loggedInUserId}" th:text="${garden.getLocationString}" style="font-size: 18px;"></p>
+            <p th:if="${(garden.owner.id == loggedInUserId) && garden.latitude == null and garden.longitude == null}" th:text="'Location not found, please update your location to see the weather.'"></p>
             <br>
             <p th:if="${garden.size != null}" th:text="${garden.size} + ' m&sup2;'" style="font-size: 18px;"></p>
             <br>
