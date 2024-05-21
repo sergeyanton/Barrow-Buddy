@@ -14,9 +14,13 @@ public enum WeatherType {
 	THUNDERSTORM(new int[]{ 13, 17, 95, 96, 97, 98, 99 }, "It thurnderstormed", ""),
 	DUST_SAND_STORM(new int[]{ 30, 31, 32, 33, 34, 35 }, "It thurnderstormed", ""),
 	FOG(new int[]{ 10, 11, 12, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49}, "It fogged", ""),
-	CLOUDY(new int[]{ 19, }, "It fogged", ""),
+	CLOUDY(new int[]{ 1, 19, 3 }, "It fogged", ""),
+	HAZE(new int[]{ 5 }, "Haze", ""),
+	CLEAR(new int[]{ 0 }, "Haze", ""),
 	HAIL(new int[]{ 27, 87, 88, 89, 90 }, "It hailed", ""),
-	RAIN_SHOWER(new int[]{ 14, 15, 16, 18, 21, 23, 24, 25, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 80, 81, 82, 83, 84, 85, 86, 91, 92}, "It showered", "");
+	RAIN_SHOWER(new int[]{ 14, 15, 16, 18, 21, 23, 24, 25, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 80, 81, 82, 83, 84, 85, 86, 91, 92}, "It showered", ""),
+	// 2: State of sky on the whole unchanged, 4: Visibility reduced by smoke, e.g. veldt or forest fires, industrial smoke or volcanic ashes
+	EXTRAS(new int[]{ 2, 4 }, "Extras", "");
 
 	// TODO MORE ENUMS
 
