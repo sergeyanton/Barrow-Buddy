@@ -56,23 +56,23 @@ public class WeatherService {
 	 * @param gardenId ID of the garden that this weather information is relevant for
 	 * @return A list Weather entities regarding the current day and future 5 days.
 	 */
-//    public List<Weather> getWeatherByGardenId(long gardenId) {
-//        List<Weather> persistedWeatherList = weatherRepository.findByGardenId(gardenId);
-//        if (persistedWeatherList.isEmpty()) {
-//            logger.info("Weather for garden " + gardenId + " has not been persisted yet");
-//            return persistWeather(getWeather(gardenId));
-//        }
-//        logger.info("Weather for garden " + gardenId + " has been persisted before");
-//        if (persistedWeatherList.getFirst().getExpiry().isBefore(LocalDateTime.now())) {
-//            logger.info("But it has since expired");
-//            List<Weather> newWeatherList = getWeather(gardenId);
-//            for (int i = 0; i < persistedWeatherList.size(); i++) {
-//                persistedWeatherList.get(i).setTo(newWeatherList.get(i));
-//            }
-//            return persistWeather(persistedWeatherList);
-//        }
-//		return persistedWeatherList;
-//    }
+    public List<Weather> getWeatherByGardenId(long gardenId) {
+        List<Weather> persistedWeatherList = weatherRepository.findByGardenId(gardenId);
+        if (persistedWeatherList.isEmpty()) {
+            logger.info("Weather for garden " + gardenId + " has not been persisted yet");
+            return persistWeather(getWeather(gardenId));
+        }
+        logger.info("Weather for garden " + gardenId + " has been persisted before");
+        if (persistedWeatherList.getFirst().getExpiry().isBefore(LocalDateTime.now())) {
+            logger.info("But it has since expired");
+            List<Weather> newWeatherList = getWeather(gardenId);
+            for (int i = 0; i < persistedWeatherList.size(); i++) {
+                persistedWeatherList.get(i).setTo(newWeatherList.get(i));
+            }
+            return persistWeather(persistedWeatherList);
+        }
+		return persistedWeatherList;
+    }
 
 
 	/**
