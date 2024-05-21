@@ -54,13 +54,13 @@ public class GardenControllerAuthTest {
     private VerificationTokenService verificationTokenService;
 
     @Mock
-    private Garden gardenMock;
+    private Garden privateGardenMock;
 
     @Mock
     private Garden publicGardenMock;
 
     @Mock
-    private Plant plantMock;
+    private Plant privatePlantMock;
 
     @Mock
     private Plant publicPlantMock;
@@ -73,23 +73,23 @@ public class GardenControllerAuthTest {
         loggedInUser = Mockito.mock(User.class);
         Mockito.when(loggedInUser.getId()).thenReturn(1L);
 
-        gardenMock = Mockito.mock(Garden.class);
-        Mockito.when(gardenMock.getId()).thenReturn(1L);
-        Mockito.when(gardenMock.getOwner()).thenReturn(loggedInUser);
-        Mockito.when(gardenMock.getName()).thenReturn("Test Garden");
-        Mockito.when(gardenMock.getName()).thenReturn("Hamilton Gardens");
-        Mockito.when(gardenMock.getAddress()).thenReturn("13 Hungerford Crescent");
-        Mockito.when(gardenMock.getSuburb()).thenReturn("Ilam");
-        Mockito.when(gardenMock.getCity()).thenReturn("Hamilton");
-        Mockito.when(gardenMock.getPostcode()).thenReturn("3216");
-        Mockito.when(gardenMock.getCountry()).thenReturn("New Zealand");
-        Mockito.when(gardenMock.getSize()).thenReturn(10.0);
-        Mockito.when(gardenMock.getIsPublic()).thenReturn(false);
+        privateGardenMock = Mockito.mock(Garden.class);
+        Mockito.when(privateGardenMock.getId()).thenReturn(1L);
+        Mockito.when(privateGardenMock.getOwner()).thenReturn(loggedInUser);
+        Mockito.when(privateGardenMock.getName()).thenReturn("Test Private Garden");
+        Mockito.when(privateGardenMock.getName()).thenReturn("Hamilton Gardens");
+        Mockito.when(privateGardenMock.getAddress()).thenReturn("13 Hungerford Crescent");
+        Mockito.when(privateGardenMock.getSuburb()).thenReturn("Ilam");
+        Mockito.when(privateGardenMock.getCity()).thenReturn("Hamilton");
+        Mockito.when(privateGardenMock.getPostcode()).thenReturn("3216");
+        Mockito.when(privateGardenMock.getCountry()).thenReturn("New Zealand");
+        Mockito.when(privateGardenMock.getSize()).thenReturn(10.0);
+        Mockito.when(privateGardenMock.getIsPublic()).thenReturn(false);
 
         publicGardenMock = Mockito.mock(Garden.class);
         when(publicGardenMock.getId()).thenReturn(2L);
         when(publicGardenMock.getOwner()).thenReturn(loggedInUser);
-        when(publicGardenMock.getName()).thenReturn("Public Garden");
+        when(publicGardenMock.getName()).thenReturn("Test Public Garden");
         when(publicGardenMock.getAddress()).thenReturn("123 Sesame Street");
         when(publicGardenMock.getSuburb()).thenReturn("Sesame");
         when(publicGardenMock.getCity()).thenReturn("Street");
@@ -98,26 +98,27 @@ public class GardenControllerAuthTest {
         when(publicGardenMock.getSize()).thenReturn(100.0);
         when(publicGardenMock.getIsPublic()).thenReturn(true);
 
-        plantMock = Mockito.mock(Plant.class);
-        Mockito.when(plantMock.getId()).thenReturn(1L);
-        Mockito.when(plantMock.getName()).thenReturn("Test Plant");
-        Mockito.when(plantMock.getPlantCount()).thenReturn(1);
-        Mockito.when(plantMock.getDescription()).thenReturn("Test plant description...");
-        Mockito.when(plantMock.getPlantedOnDate()).thenReturn(LocalDate.of(1, 1, 1));
-        Mockito.when(plantMock.getPicturePath()).thenReturn("path/of/picture");
+        privatePlantMock = Mockito.mock(Plant.class);
+        Mockito.when(privatePlantMock.getId()).thenReturn(1L);
+        Mockito.when(privatePlantMock.getName()).thenReturn("Test Private Plant");
+        Mockito.when(privatePlantMock.getPlantCount()).thenReturn(1);
+        Mockito.when(privatePlantMock.getDescription()).thenReturn("Test plant description...");
+        Mockito.when(privatePlantMock.getPlantedOnDate()).thenReturn(LocalDate.of(1, 1, 1));
+        Mockito.when(privatePlantMock.getPicturePath()).thenReturn("path/of/picture");
 
         publicPlantMock = Mockito.mock(Plant.class);
-        Mockito.when(publicPlantMock.getId()).thenReturn(1L);
-        Mockito.when(publicPlantMock.getName()).thenReturn("Test Plant");
+        Mockito.when(publicPlantMock.getId()).thenReturn(2L);
+        Mockito.when(publicPlantMock.getName()).thenReturn("Test Public Plant");
         Mockito.when(publicPlantMock.getPlantCount()).thenReturn(1);
         Mockito.when(publicPlantMock.getDescription()).thenReturn("Test plant description...");
         Mockito.when(publicPlantMock.getPlantedOnDate()).thenReturn(LocalDate.of(1, 1, 1));
         Mockito.when(publicPlantMock.getPicturePath()).thenReturn("path/of/picture");
 
         Mockito.when(userService.getLoggedInUser()).thenReturn(loggedInUser);
-        Mockito.when(gardenService.getGardenById(1L)).thenReturn(gardenMock);
-        Mockito.when(gardenService.getGardenById(2L)).thenReturn(gardenMock);
-        Mockito.when(plantService.getPlantById(1L)).thenReturn(plantMock);
+        Mockito.when(gardenService.getGardenById(1L)).thenReturn(privateGardenMock);
+        Mockito.when(gardenService.getGardenById(2L)).thenReturn(publicGardenMock);
+        Mockito.when(plantService.getPlantById(1L)).thenReturn(privatePlantMock);
+        Mockito.when(plantService.getPlantById(2L)).thenReturn(publicPlantMock);
     }
 
     @Test
@@ -142,12 +143,19 @@ public class GardenControllerAuthTest {
     }
 
     @Test
+    @WithAnonymousUser
+    void testGetPublicGarden_WithUnauthenticatedUser_ReturnsUnauthorizedRequest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/gardens/2"))
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+    }
+
+    @Test
     @WithMockUser
     void testGetPrivateGarden_WithAuthenticatedUserThatDoesNotOwnGarden_ReturnsForbiddenRequest() throws Exception {
         // make another user mock and say that the garden belongs to them
         User otherUser = Mockito.mock(User.class);
         Mockito.when(otherUser.getId()).thenReturn(2L);
-        Mockito.when(gardenMock.getOwner()).thenReturn(otherUser);
+        Mockito.when(privateGardenMock.getOwner()).thenReturn(otherUser);
         
         mockMvc.perform(MockMvcRequestBuilders.get("/gardens/1"))
                 .andExpect(MockMvcResultMatchers.status().isForbidden());
@@ -156,7 +164,7 @@ public class GardenControllerAuthTest {
     @Test
     @WithMockUser
     void testGetPublicGarden_WithAuthenticatedUserThatDoesNotOwnGarden_ReturnsOkRequest() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/gardens/1"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/gardens/2"))
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
@@ -168,8 +176,15 @@ public class GardenControllerAuthTest {
     }
 
     @Test
+    @WithMockUser
+    void testGetPublicGarden_WithAuthenticatedUserThatOwnsGarden_ReturnsOkRequest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/gardens/2"))
+            .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
     @WithAnonymousUser
-    void testEditGarden_WithUnauthenticatedUser_ReturnsUnauthorizedRequest() throws Exception {
+    void testEditPrivateGarden_WithUnauthenticatedUser_ReturnsUnauthorizedRequest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/gardens/1/edit"))
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized());
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf()))
@@ -177,11 +192,20 @@ public class GardenControllerAuthTest {
     }
 
     @Test
+    @WithAnonymousUser
+    void testEditPublicGarden_WithUnauthenticatedUser_ReturnsUnauthorizedRequest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/gardens/2/edit"))
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/2/edit").with(csrf()))
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+    }
+
+    @Test
     @WithMockUser
-    void testEditGarden_WithAuthenticatedUserThatDoesNotOwnGarden_ReturnsForbiddenRequest() throws Exception {
+    void testEditPrivateGarden_WithAuthenticatedUserThatDoesNotOwnGarden_ReturnsForbiddenRequest() throws Exception {
         User otherUser = Mockito.mock(User.class);
         Mockito.when(otherUser.getId()).thenReturn(2L);
-        Mockito.when(gardenMock.getOwner()).thenReturn(otherUser);
+        Mockito.when(privateGardenMock.getOwner()).thenReturn(otherUser);
         
         mockMvc.perform(MockMvcRequestBuilders.get("/gardens/1/edit"))
                 .andExpect(MockMvcResultMatchers.status().isForbidden());
@@ -189,50 +213,105 @@ public class GardenControllerAuthTest {
                 .andExpect(MockMvcResultMatchers.status().isForbidden());
     }
 
+    // TODO fix
     @Test
     @WithMockUser
-    void testEditGarden_WithAuthenticatedUserThatOwnsGarden_ReturnsOkRequest() throws Exception {
+    void testEditPublicGarden_WithAuthenticatedUserThatDoesNotOwnGarden_ReturnsForbiddenRequest() throws Exception {
+        User otherUser = Mockito.mock(User.class);
+        Mockito.when(otherUser.getId()).thenReturn(2L);
+        Mockito.when(publicGardenMock.getOwner()).thenReturn(otherUser);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/gardens/2/edit"))
+            .andExpect(MockMvcResultMatchers.status().isForbidden());
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/2/edit").with(csrf()))
+            .andExpect(MockMvcResultMatchers.status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser
+    void testEditPrivateGarden_WithAuthenticatedUserThatOwnsGarden_ReturnsOkRequest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/gardens/1/edit"))
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
+    @WithMockUser
+    void testEditPublicGarden_WithAuthenticatedUserThatOwnsGarden_ReturnsOkRequest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/gardens/2/edit"))
+            .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
     @WithAnonymousUser
-    void testGetEditPlantPage_WithUnauthenticatedUser_ReturnsUnauthorizedRequest() throws Exception {
+    void testGetEditPrivatePlantPage_WithUnauthenticatedUser_ReturnsUnauthorizedRequest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/gardens/1/plants/1/edit"))
             .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
 
     @Test
+    @WithAnonymousUser
+    void testGetEditPublicPlantPage_WithUnauthenticatedUser_ReturnsUnauthorizedRequest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/gardens/2/plants/2/edit"))
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+    }
+
+    @Test
     @WithMockUser
-    void testGetEditPlantPage_WithAuthenticatedUser_ReturnsOkRequest() throws Exception {
+    void testGetEditPrivatePlantPage_WithAuthenticatedUser_ReturnsOkRequest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/gardens/1/plants/1/edit"))
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
     @WithMockUser
-    void testGetEditPlantPage_WithAuthenticatedUserThatDoesNotOwnGarden_ReturnsForbiddenRequest() throws Exception {
+    void testGetEditPublicPlantPage_WithAuthenticatedUser_ReturnsOkRequest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/gardens/2/plants/2/edit"))
+            .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    @WithMockUser
+    void testGetEditPrivatePlantPage_WithAuthenticatedUserThatDoesNotOwnGarden_ReturnsForbiddenRequest() throws Exception {
         // make another user mock and say that the garden belongs to them
         User otherUser = Mockito.mock(User.class);
         Mockito.when(otherUser.getId()).thenReturn(2L);
-        Mockito.when(gardenMock.getOwner()).thenReturn(otherUser);
+        Mockito.when(privateGardenMock.getOwner()).thenReturn(otherUser);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/gardens/1/plants/1/edit"))
             .andExpect(MockMvcResultMatchers.status().isForbidden());
     }
 
+    // TODO fix
+    @Test
+    @WithMockUser
+    void testGetEditPublicPlantPage_WithAuthenticatedUserThatDoesNotOwnGarden_ReturnsForbiddenRequest() throws Exception {
+        // make another user mock and say that the garden belongs to them
+        User otherUser = Mockito.mock(User.class);
+        Mockito.when(otherUser.getId()).thenReturn(2L);
+        Mockito.when(publicGardenMock.getOwner()).thenReturn(otherUser);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/gardens/2/plants/2/edit"))
+            .andExpect(MockMvcResultMatchers.status().isForbidden());
+    }
+
     @Test
     @WithAnonymousUser
-    void testEditPlantPost_WithUnauthenticatedUser_ReturnsUnauthorizedRequest() throws Exception {
+    void testEditPrivatePlantPost_WithUnauthenticatedUser_ReturnsUnauthorizedRequest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/plants/1/edit").with(csrf()))
             .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
 
     @Test
+    @WithAnonymousUser
+    void testEditPublicPlantPost_WithUnauthenticatedUser_ReturnsUnauthorizedRequest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/2/plants/2/edit").with(csrf()))
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+    }
+
+    @Test
     @WithMockUser
-    void testEditPlantPost_WithAuthenticatedUser_ReturnsOkRequest() throws Exception {
-        PlantForm plantForm = PlantForm.fromPlant(plantMock);
+    void testEditPrivatePlantPost_WithAuthenticatedUser_ReturnsOkRequest() throws Exception {
+        PlantForm plantForm = PlantForm.fromPlant(privatePlantMock);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/plants/1/edit")
             .with(csrf()).flashAttr("editPlantForm", plantForm))
@@ -241,13 +320,36 @@ public class GardenControllerAuthTest {
 
     @Test
     @WithMockUser
-    void testEditPlantPost_WithAuthenticatedUserThatDoesNotOwnGarden_ReturnsForbiddenRequest() throws Exception {
+    void testEditPublicPlantPost_WithAuthenticatedUser_ReturnsOkRequest() throws Exception {
+        PlantForm plantForm = PlantForm.fromPlant(publicPlantMock);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/2/plants/2/edit")
+                .with(csrf()).flashAttr("editPlantForm", plantForm))
+            .andExpect(MockMvcResultMatchers.status().is3xxRedirection());
+    }
+
+    @Test
+    @WithMockUser
+    void testEditPrivatePlantPost_WithAuthenticatedUserThatDoesNotOwnGarden_ReturnsForbiddenRequest() throws Exception {
         // make another user mock and say that the garden belongs to them
         User otherUser = Mockito.mock(User.class);
         Mockito.when(otherUser.getId()).thenReturn(2L);
-        Mockito.when(gardenMock.getOwner()).thenReturn(otherUser);
+        Mockito.when(privateGardenMock.getOwner()).thenReturn(otherUser);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/plants/1/edit").with(csrf()))
             .andExpect(MockMvcResultMatchers.status().isForbidden());
     }
+
+    @Test
+    @WithMockUser
+    void testEditPublicPlantPost_WithAuthenticatedUserThatDoesNotOwnGarden_ReturnsForbiddenRequest() throws Exception {
+        // make another user mock and say that the garden belongs to them
+        User otherUser = Mockito.mock(User.class);
+        Mockito.when(otherUser.getId()).thenReturn(2L);
+        Mockito.when(publicGardenMock.getOwner()).thenReturn(otherUser);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/2/plants/2/edit").with(csrf()))
+            .andExpect(MockMvcResultMatchers.status().isForbidden());
+    }
+
 }

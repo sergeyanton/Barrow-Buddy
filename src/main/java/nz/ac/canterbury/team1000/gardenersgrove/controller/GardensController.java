@@ -358,7 +358,7 @@ public class GardensController {
             @PathVariable("gardenId") Long gardenId) {
         logger.info("POST /gardens/" + gardenId + "/edit");
 
-        Garden garden = tryToAccessGarden(gardenId);
+        Garden garden = tryToEditGarden(gardenId);
         GardenForm.validate(editGardenForm, bindingResult);
         if (bindingResult.hasErrors()) {
             return "pages/editGardenPage";
@@ -411,7 +411,7 @@ public class GardensController {
             @PathVariable("gardenId") Long gardenId, Model model) throws IOException{
         logger.info("POST /gardens/" + gardenId + "/plants/create");
 
-        Garden existingGarden = tryToAccessGarden(gardenId);
+        Garden existingGarden = tryToEditGarden(gardenId);
         model.addAttribute("garden", existingGarden);
 
         PlantForm.validate(createPlantForm, bindingResult);
