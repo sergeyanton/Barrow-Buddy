@@ -14,6 +14,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -66,6 +67,24 @@ public class GardenControllerTest {
     @Mock
     private User loggedInUser;
 
+    // ValueSource does not like it when I use "a".repeat(512) as it does not see it as a constant
+    private static final String stringWithLength512 = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        + "aaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+
+    // ValueSource does not like it when I use "a".repeat(513) as it does not see it as a constant
+    private static final String stringWithLength513 = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+
     @BeforeEach
     public void BeforeEach() {
         loggedInUser = Mockito.mock(User.class);
@@ -82,6 +101,7 @@ public class GardenControllerTest {
         Mockito.when(gardenMock.getPostcode()).thenReturn("3216");
         Mockito.when(gardenMock.getCountry()).thenReturn("New Zealand");
         Mockito.when(gardenMock.getSize()).thenReturn(46.2);
+        Mockito.when(gardenMock.getDescription()).thenReturn("A very cool garden");
         Mockito.when(gardenMock.getIsPublic()).thenReturn(false);
 
         gardenForm = new GardenForm();
@@ -92,6 +112,7 @@ public class GardenControllerTest {
         gardenForm.setPostcode(gardenMock.getPostcode());
         gardenForm.setCountry(gardenMock.getCountry());
         gardenForm.setSize(gardenMock.getSize().toString());
+        gardenForm.setDescription(gardenMock.getDescription());
 
         // Mock addGarden(), updateGarden(), and getPlantById to always simply use id = 1
         Mockito.when(gardenService.addGarden(Mockito.any(Garden.class))).thenAnswer(invocation -> {
@@ -216,6 +237,20 @@ public class GardenControllerTest {
 
     @ParameterizedTest
     @EmptySource
+    @ValueSource(strings = {"", " ", "\t", "\n", "abc", "abc123", "abc123!@#", stringWithLength512})
+    void CreateGardenPost_ValidDescription_SavesToService(String descriptionField) throws Exception {
+        gardenForm.setDescription(descriptionField);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/create").with(csrf())
+                .flashAttr("createGardenForm", gardenForm))
+            .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+            .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
+
+        Mockito.verify(gardenService).addGarden(Mockito.any());
+    }
+
+    @ParameterizedTest
+    @EmptySource
     @ValueSource(strings = {"    ", "\t", "\n", "Not #", "Not $", "Not %", "Not @", "Not ^",
             "Not *", "Not &"})
     void CreateGardenPost_InvalidName_ReturnsError(String nameField) throws Exception {
@@ -328,16 +363,33 @@ public class GardenControllerTest {
 
         Mockito.verify(gardenService, Mockito.never()).addGarden(Mockito.any());
     }
+    @ParameterizedTest
+    @ValueSource(
+        strings = {"123", "!@#", stringWithLength513})
+    void CreateGardenPost_InvalidDescription_ReturnsError(String descriptionField) throws Exception {
+        gardenForm.setDescription(descriptionField);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/create").with(csrf())
+                .flashAttr("createGardenForm", gardenForm))
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.view().name("pages/createGardenPage"))
+            .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("createGardenForm",
+                "description"));
+
+        Mockito.verify(gardenService, Mockito.never()).addGarden(Mockito.any());
+    }
+
 
     @Test
     public void EditGardenPost_ValidGarden_SavesToService() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf())
                 .flashAttr("editGardenForm", gardenForm))
-                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
+            .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+            .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
 
         Mockito.verify(gardenService).updateGardenById(Mockito.anyLong(), Mockito.any());
     }
+
 
     @ParameterizedTest
     @ValueSource(strings = {"1,5", "Abc", "A b 123", "A-b c. de, f"})
@@ -430,6 +482,20 @@ public class GardenControllerTest {
                 .flashAttr("editGardenForm", gardenForm))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
+
+        Mockito.verify(gardenService).updateGardenById(Mockito.anyLong(), Mockito.any());
+    }
+
+    @ParameterizedTest
+    @EmptySource
+    @ValueSource(strings = {"", " ", "\t", "\n", "abc", "abc123", "abc123!@#", stringWithLength512})
+    void EditGardenPost_ValidDescription_SavesToService(String descriptionField) throws Exception {
+        gardenForm.setDescription(descriptionField);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf())
+                .flashAttr("editGardenForm", gardenForm))
+            .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+            .andExpect(MockMvcResultMatchers.redirectedUrl("/gardens/1"));
 
         Mockito.verify(gardenService).updateGardenById(Mockito.anyLong(), Mockito.any());
     }
@@ -556,6 +622,23 @@ public class GardenControllerTest {
                 Mockito.any());
     }
 
+    @ParameterizedTest
+    @ValueSource(
+        strings = {"123", "!@#", stringWithLength513})
+    void EditGardenPost_InvalidDescription_ReturnsError(String descriptionField) throws Exception {
+        gardenForm.setDescription(descriptionField);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf())
+                .flashAttr("editGardenForm", gardenForm))
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.view().name("pages/editGardenPage"))
+            .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("editGardenForm",
+                "description"));
+
+        Mockito.verify(gardenService, Mockito.never()).updateGardenById(Mockito.anyLong(),
+            Mockito.any());
+    }
+
     @Test
     void EditGardenPost_ValidSizeWorldsLargestGarden_SavesToService() throws Exception {
         gardenForm.setSize("72000");
@@ -577,6 +660,7 @@ public class GardenControllerTest {
         GardenForm modelEditGardenForm =
                 (GardenForm) result.getModelAndView().getModel().get("editGardenForm");
         Assertions.assertEquals(gardenMock.getName(), modelEditGardenForm.getName());
+        Assertions.assertEquals(gardenMock.getDescription(), modelEditGardenForm.getDescription());
         Assertions.assertEquals(gardenMock.getAddress(), modelEditGardenForm.getAddress());
         Assertions.assertEquals(gardenMock.getSuburb(), modelEditGardenForm.getSuburb());
         Assertions.assertEquals(gardenMock.getCity(), modelEditGardenForm.getCity());

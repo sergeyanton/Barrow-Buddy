@@ -19,6 +19,7 @@ public class GardenForm {
     protected Double latitude;
     protected Double longitude;
     protected String size;
+    protected String description;
     protected boolean isPublic;
 
     public String getName() {
@@ -60,6 +61,14 @@ public class GardenForm {
 
     public Double getLongitude() {
         return longitude;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
 
@@ -105,6 +114,7 @@ public class GardenForm {
         this.size = size;
     }
 
+
     /**
      * Generates a Garden object with the values from the form.
      *
@@ -122,6 +132,7 @@ public class GardenForm {
                 this.latitude,
                 this.longitude,
                 getSizeDouble(), //TODO could get rid of some constructor redundancy in either Garden or User
+                this.description,
                 owner,
                 this.isPublic
         );
@@ -144,6 +155,18 @@ public class GardenForm {
             errors.add("name", "Garden name must only include letters, numbers, spaces, dots, hyphens or apostrophes", createGardenForm.getName());
         } else if (checkOverMaxLength(createGardenForm.getName(), MAX_DB_STR_LEN)) {
             errors.add("name", "Name must be 255 characters or less", createGardenForm.getName());
+        }
+
+        /*
+         * TODO: profanity check on garden description =)
+         */
+        // Validate garden description
+        if (createGardenForm.getDescription() != null && !createGardenForm.getDescription().isBlank()) {
+            if (!checkValidGardenDescription(createGardenForm.getDescription())) {
+                errors.add("description", "Description must contain some text", createGardenForm.getDescription());
+            } else if (checkOverMaxLength(createGardenForm.getDescription(), 512)) {
+                errors.add("description", "Description must be 512 characters or less", createGardenForm.getDescription());
+            }
         }
 
         // Validate garden location - Address

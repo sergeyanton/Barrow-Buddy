@@ -13,6 +13,8 @@
                 <br />
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='size', label='Size in m&sup2; ', placeholder='1000.0')}" />
                 <br />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='description', label='Description ', placeholder='Cool garden')}" />
+
                 <h2>Garden Location</h2>
                 <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='address', label='Address ', placeholder='13 Hungerford Crescent')}" />
                 <br />
