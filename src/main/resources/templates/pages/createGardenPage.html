@@ -11,16 +11,16 @@
             <form th:action="@{/gardens/create}" method="post" th:object="${createGardenForm}" autocomplete="off">
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='name', label='Garden Name *', placeholder='The Hamilton Gardens')}" />
                 <br />
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='size', label='Size in m&sup2; (optional) ', placeholder='1000.0')}" />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='size', label='Size in m&sup2; ', placeholder='1000.0')}" />
                 <br />
                 <h2>Garden Location</h2>
-                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='address', label='Address (optional)', placeholder='13 Hungerford Crescent')}" />
+                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='address', label='Address ', placeholder='13 Hungerford Crescent')}" />
                 <br />
-                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='suburb', label='Suburb (optional)', placeholder='Ilam')}" />
+                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='suburb', label='Suburb ', placeholder='Ilam')}" />
                 <br />
                 <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='city', label='City * ', placeholder='Christchurch')}" />
                 <br />
-                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='postcode', label='Postcode (optional)', placeholder='8041')}" />
+                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='postcode', label='Postcode ', placeholder='8041')}" />
                 <br />
                 <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='country', label='Country * ', placeholder='New Zealand')}" />
                 <br />
