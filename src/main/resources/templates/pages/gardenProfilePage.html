@@ -11,10 +11,12 @@
 <!--            We use a model attribute sent from the controller, in this example it is called 'weather'-->
 <!--            TODO: display nicely -->
 
-<!--            <tr th:each="w : ${weather}">-->
-<!--                <div th:text="${w.type.getText()}"></div>-->
+            <tr th:each="w : ${weather}">
+              <div th:text="${w}"></div>
+
+                <div th:text="${w.type.getText()}"></div>
 <!--                <div th:text="${w.temperature}"></div>-->
-<!--            </tr>-->
+            </tr>
             <h1 th:text="${garden.name}"></h1>
             <p th:if="${garden.latitude == null and garden.longitude == null}" th:text="'Location not found, please update your location to see the weather.'"></p>
 

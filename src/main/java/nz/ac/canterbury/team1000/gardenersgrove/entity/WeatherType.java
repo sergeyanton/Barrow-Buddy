@@ -9,7 +9,14 @@ import java.util.Optional;
  */
 public enum WeatherType {
 	NO_RAIN(new int[]{0, 1, 2, 3, 45, 48, 71, 73, 75, 77, 85, 86, 96, 99}, "It did not rain", ""),
-	RAIN(new int[]{51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82, 95}, "It rained", "");
+	DRIZZLE(new int[]{20, 25, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59 }, "It drizzled", ""),
+	SNOW(new int[]{22, 26, 36, 37, 38, 39, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 93, 94}, "It snowed", ""),
+	THUNDERSTORM(new int[]{ 13, 17, 95, 96, 97, 98, 99 }, "It thurnderstormed", ""),
+	DUST_SAND_STORM(new int[]{ 30, 31, 32, 33, 34, 35 }, "It thurnderstormed", ""),
+	FOG(new int[]{ 10, 11, 12, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49}, "It fogged", ""),
+	CLOUDY(new int[]{ 19, }, "It fogged", ""),
+	HAIL(new int[]{ 27, 87, 88, 89, 90 }, "It hailed", ""),
+	RAIN_SHOWER(new int[]{ 14, 15, 16, 18, 21, 23, 24, 25, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 80, 81, 82, 83, 84, 85, 86, 91, 92}, "It showered", "");
 
 	// TODO MORE ENUMS
 
