@@ -60,8 +60,7 @@ public class GardensController {
     /**
      * Gets the garden with the given id, if the garden can be accessed.
      * Otherwise, throws an HTTP response exception like 403 or 404
-     * User must be logged in to view their own gardens.
-     * User must be logged in to view other's (public) gardens.
+     * Users cannot view private gardens that don't belong to them.
      *
      * @param gardenId The id of the garden to access
      * @return The garden object accessed
@@ -79,13 +78,11 @@ public class GardensController {
             );
         }
 
-        User loggedInUser = userService.getLoggedInUser();
-
-        // if garden is private it must belong to the logged-in user to view
-        // if garden is public, a user must be logged-in to view
+        // Garden must be public for any user to view it
+        // If private, user must own the garden to view it
         boolean gardenIsPrivate = !garden.getIsPublic();
-        if (gardenIsPrivate && !Objects.equals(garden.getOwner().getId(), loggedInUser.getId())) {
-            // respond with 403 Forbidden
+        boolean userOwnsGarden = doesUserOwnGarden(garden);
+        if (gardenIsPrivate && !userOwnsGarden) {
             throw new ResponseStatusException(
                 HttpStatus.FORBIDDEN,
                 "This garden is private. Only the owner can view it."
@@ -96,13 +93,47 @@ public class GardensController {
     }
 
     /**
+     * Gets the garden with the given id, if the garden can be accessed and edited.
+     * Otherwise, throws an HTTP response exception like 403 or 404
+     * User must be own the garden to edit it.
+     *
+     * @param gardenId The id of the garden to be edited.
+     * @return The garden object accessed.
+     * @throws ResponseStatusException An exception that has occurred when trying to access the garden
+     */
+    private Garden tryToEditGarden(Long gardenId) throws ResponseStatusException {
+        Garden garden = null;
+        // Make sure the garden exists
+        try {
+            garden = gardenService.getGardenById(gardenId);
+        } catch (IllegalArgumentException exception) {
+            throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Garden not found"
+            );
+        }
+
+        // User must own the garden to edit it
+        boolean userOwnsGarden = doesUserOwnGarden(garden);
+        if (!userOwnsGarden) {
+            throw new ResponseStatusException(
+                HttpStatus.FORBIDDEN,
+                "This garden does not belong to you. Only the owner can edit their garden."
+            );
+        }
+        return garden;
+    }
+
+    /**
      * Gets the plant with the given id, if the plant can be accessed.
      * Otherwise, throws an HTTP response exception like 403 or 404
+     * User must own the garden to edit any of its plants.
+     *
      * @param plantId The id of the plant to access
      * @return The plant object accessed
      * @throws ResponseStatusException An exception that has occurred when trying to access the plant
      */
-    private Plant tryToAccessPlant(Long plantId) throws ResponseStatusException {
+    private Plant tryToEditPlant(Long plantId, Long gardenId) throws ResponseStatusException {
         Plant plant = null;
         // Make sure the plant exists
         try {
@@ -114,9 +145,27 @@ public class GardensController {
             );
         }
 
+        // User must own the garden in order to edit the plant
+        boolean userOwnsGarden = doesUserOwnGarden(gardenService.getGardenById(gardenId));
+        if (!userOwnsGarden) {
+            throw new ResponseStatusException(
+                HttpStatus.FORBIDDEN,
+                "This plant does not belong to you. Only the owner of the garden can edit the plants."
+            );
+        }
+
         return plant;
     }
 
+    /**
+     * Helper method to check if the logged-in user owns the given garden.
+     *
+     * @param garden Garden object that is trying to be accessed.
+     * @return boolean if the user currently logged-in owns the garden or not.
+     */
+    public boolean doesUserOwnGarden(Garden garden) {
+        return Objects.equals(garden.getOwner().getId(), userService.getLoggedInUser().getId());
+    }
 
     /**
      * Handles GET requests from the /gardens/create endpoint. Displays results of previous form
@@ -276,7 +325,7 @@ public class GardensController {
             @ModelAttribute("editGardenForm") GardenForm editGardenForm) {
         logger.info("GET /gardens/" + gardenId + "/edit");
 
-        Garden garden = tryToAccessGarden(gardenId);
+        Garden garden = tryToEditGarden(gardenId);
 
         editGardenForm.setName(garden.getName());
 
@@ -337,8 +386,7 @@ public class GardensController {
     public String gardenCreatePlantGet(@PathVariable("gardenId") Long gardenId,
             @ModelAttribute("createPlantForm") PlantForm createPlantForm, Model model) {
         logger.info("GET /gardens/" + gardenId + "/plants/create");
-
-        Garden existingGarden = tryToAccessGarden(gardenId);
+        Garden existingGarden = tryToEditGarden(gardenId);
         createPlantForm.setPicturePath("/images/defaultPlantPic.png");
         model.addAttribute("garden", existingGarden);
         return "pages/createPlantPage";
@@ -418,8 +466,8 @@ public class GardensController {
             @ModelAttribute("editPlantForm") PlantForm editPlantForm,
             Model model){
         logger.info("GET /gardens/" + gardenId + "/plants/" + plantId + "/edit");
-        Garden existingGarden = tryToAccessGarden(gardenId);
-        Plant existingPlant = tryToAccessPlant(plantId);
+        Garden existingGarden = tryToEditGarden(gardenId);
+        Plant existingPlant = tryToEditPlant(plantId, gardenId);
         String plantPicturePath = plantService.getPlantById(plantId).getPicturePath();
         editPlantForm.setPicturePath(plantPicturePath);
 
@@ -451,8 +499,8 @@ public class GardensController {
 
         logger.info("POST /gardens/" + gardenId + "/plants/" + plantId + "/edit");
 
-        Garden existingGarden = tryToAccessGarden(gardenId);
-        Plant existingPlant = tryToAccessPlant(plantId);
+        Garden existingGarden = tryToEditGarden(gardenId);
+        Plant existingPlant = tryToEditPlant(plantId, existingGarden.getId());
         model.addAttribute("garden", existingGarden);
         model.addAttribute("plant", existingPlant);
         PlantForm.validate(editPlantForm, bindingResult);
@@ -493,6 +541,8 @@ public class GardensController {
     public String updateGardenPublicity(@RequestParam(name = "gardenId") Long gardenId, @RequestParam(name = "gardenPublicity") boolean isPublic) {
         Garden garden = tryToAccessGarden(gardenId);
         garden.setIsPublic(isPublic);
+
+        // TODO make sure they own the garden
 
         gardenService.updateGardenById(garden.getId(), garden);
         logger.info("Garden " + gardenId + "'s publicity has been updated to " + (isPublic ? "Public" : "Private"));
