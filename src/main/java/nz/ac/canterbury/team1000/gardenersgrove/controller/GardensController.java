@@ -262,12 +262,12 @@ public class GardensController {
   }
 
   /**
-   * Handles GET requests from the /gardens/{gardenId}/edit endpoint. Displays the 'Edit Garden'
-   * form.
+   * Handles GET requests from the /gardens/{gardenId}/edit endpoint.
+   * Displays the 'Edit Garden' form.
    *
-   * @param gardenId       the id of the garden being got
+   * @param gardenId the id of the garden being got
    * @param editGardenForm the GardenForm object representing the edited garden's details, useful
-   *                       for seeing erroneous inputs of a failed POST request
+   *        for seeing erroneous inputs of a failed POST request
    * @return thymeleaf pages/editGardenPage
    */
   @GetMapping("/gardens/{gardenId}/edit")
@@ -275,12 +275,7 @@ public class GardensController {
       @ModelAttribute("editGardenForm") GardenForm editGardenForm) {
     logger.info("GET /gardens/" + gardenId + "/edit");
 
-        editGardenForm.setAddress(garden.getAddress());
-        editGardenForm.setSuburb(garden.getSuburb());
-        editGardenForm.setCity(garden.getCity());
-        editGardenForm.setPostcode(garden.getPostcode());
-        editGardenForm.setCountry(garden.getCountry());
-        editGardenForm.setDescription(garden.getDescription());
+    Garden garden = tryToAccessGarden(gardenId);
 
     editGardenForm.setName(garden.getName());
 
@@ -289,13 +284,14 @@ public class GardensController {
     editGardenForm.setCity(garden.getCity());
     editGardenForm.setPostcode(garden.getPostcode());
     editGardenForm.setCountry(garden.getCountry());
+    editGardenForm.setDescription(garden.getDescription());
 
-    if (garden.getSize() != null) {
-      editGardenForm.setSize(garden.getSize().toString());
-    }
+    if (garden.getSize() != null) editGardenForm.setSize(garden.getSize().toString());
 
     return "pages/editGardenPage";
   }
+
+
 
   /**
    * Handles POST requests from the /gardens/{gardenId}/edit endpoint. Handles editing of gardens
