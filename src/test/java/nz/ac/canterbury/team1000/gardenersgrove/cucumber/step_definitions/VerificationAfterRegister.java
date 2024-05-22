@@ -2,6 +2,7 @@ package nz.ac.canterbury.team1000.gardenersgrove.cucumber.step_definitions;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -64,11 +65,26 @@ public class VerificationAfterRegister {
         .andExpect(MockMvcResultMatchers.redirectedUrl("/register/verification"));
   }
 
-   @When("I access {string} page without verifying my account")
-   public void iAccessLoginPageWithoutVerifyingMyAccount(String pageURL) throws Exception {
-     mockMvc.perform(MockMvcRequestBuilders.get(pageURL))
-         .andExpect(MockMvcResultMatchers.status().isOk())
-         .andExpect(MockMvcResultMatchers.view().name("pages/loginPage"));
+   @When("I access log in")
+   public void iAccessLoginPage() throws Exception {
+     LoginForm loginForm = new LoginForm();
+     loginForm.setEmail(testUser.getEmail());
+     loginForm.setPassword(testUser.getPassword());
+
+     mockMvc.perform(MockMvcRequestBuilders.post("/login").with(csrf())
+             .flashAttr("loginForm", loginForm))
+         .andExpect(MockMvcResultMatchers.status().is3xxRedirection());
+     
+//     mockMvc.perform(MockMvcRequestBuilders.get("/login"))
+//         .andExpect(MockMvcResultMatchers.status().isOk())
+//         .andExpect(MockMvcResultMatchers.view().name("pages/loginPage"));
+  }
+
+  @When("I don't verify my account")
+  public void iDonTVerifyMyAccount() throws Exception {
+    mockMvc.perform(MockMvcRequestBuilders.get("/").with(csrf()))
+        .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+        .andExpect(MockMvcResultMatchers.view().name("pages/landingPage"));
   }
    @Then("I am redirected to the page with URL {string}")
    public void iAmRedirectedToThePageWithURL(String pageURL) throws Exception {
@@ -81,6 +97,7 @@ public class VerificationAfterRegister {
           .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
           .andExpect(MockMvcResultMatchers.redirectedUrl(pageURL));
    }
+
 
 }
 
