@@ -155,8 +155,14 @@
         const descriptionField = document.getElementById("description");
         const characterCountDisplay = document.getElementById("descriptionCharacterCount");
         const characterCount = descriptionField.value.replace(/\s+/g, '').length;
+
+        if (characterCount> 512 ) {
+            descriptionField.value = descriptionField.value.substring(0, 512);
+        }
         characterCountDisplay.textContent = `${characterCount}/512`;
+
     }
+
     // Update the character count when the description field is changed
     document.getElementById("description").addEventListener("input", updateCharacterCount);
     updateCharacterCount();
