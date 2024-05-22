@@ -15,7 +15,7 @@
 
             <h1 th:text="${garden.name}"></h1>
             <p th:if="${garden.latitude == null and garden.longitude == null}" th:text="'Location not found, please update your location to see the weather.'"></p>
-
+            <p th:text="${garden.getLocationString}"></p>
             <br>
             <p th:if="${garden.size != null}" th:text="'Size: ' + ${garden.size} + ' m&sup2;'"></p>
             <br>
@@ -35,20 +35,28 @@
           <div id="weather-container" class="weather-box">
             <div class="weather-info">
               <div style="align-content: center; display: inline">
-                <h3>Today is</h3>
-                <div id="day-of-the-week" th:text="${weather[0].dayOfTheWeek}"></div>
+                <h3 th:text="'Today is ' + ${weather[0].dayOfTheWeek}"></h3>
               </div>
               <h2>My Location</h2>
-              <p th:text="${garden.getLocationString}"></p>
+              <p th:text="${garden.getSuburb()} + ', ' + ${garden.getCity}"></p>
               <br>
-              <table>
-                <tr th:each="w : ${weather}">
-                  <td class="hourly-weather">
-                    <div id="weather-description" th:text="${w.type.getText()}"></div>
-                    <span id="weather-temperature" th:text="${w.temperature}"></span>&deg;C, <span id="weather-humidity" th:text="${w.humidity}"></span>% Humidity
-                  </td>
-                </tr>
-              </table>
+              <h2 th:text="${weather[0].temperature} + '°C'"></h2>
+              <h2 th:text="${weather[0].type.getText()}"></h2>
+              <h2 th:text="${weather[0].humidity} + '%'" style="color: dimgrey"></h2>
+              <br>
+              <div>
+                <h3>Next Hour's Weather</h3>
+                <h4 style="font-weight: normal;">
+                  <span th:text="${weather[1].temperature} + '°C'"></span>
+                </h4>
+                <h4 style="font-weight: normal;">
+                  <span th:text="${weather[1].type.getText()}"></span>
+                </h4>
+                <h4>
+                  <span th:text="${weather[1].humidity} + '%'" style="color: dimgrey"></span>
+                </h4>
+              </div>
+
             </div>
           </div>
 
