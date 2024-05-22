@@ -67,7 +67,7 @@
                             <div class="plant-picture-upload-wrapper">
                                 <div class="plant-picture-wrapper">
                                     <img class="plant-picture" th:id="'plantImage' + ${plant.id}"
-                                         th:src="${plant.picturePath}"
+                                         th:src="@{${plant.picturePath}}"
                                          alt="Plant Picture">
                                       <label th:if="${garden.owner.id == loggedInUserId}" th:id="'pictureFileLabel' + ${plant.id}" class="file-upload-plus-button" th:for="'pictureFile' + ${plant.id}">+</label>
 
