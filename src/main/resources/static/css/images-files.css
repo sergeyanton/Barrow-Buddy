@@ -30,8 +30,8 @@ input[type="file"] {
     color: #FAF9F6;
     background-color: #023020;
     cursor: pointer;
-    font-size: 20px;
-    border-radius: 4px;
+    font-size: 18px;
+    border-radius: 10px;
 }
 
 .file-upload-label:hover {

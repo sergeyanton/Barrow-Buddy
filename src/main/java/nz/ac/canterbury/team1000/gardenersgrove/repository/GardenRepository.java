@@ -1,5 +1,6 @@
 package nz.ac.canterbury.team1000.gardenersgrove.repository;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Garden;
@@ -16,6 +17,7 @@ public interface GardenRepository extends CrudRepository<Garden, Long> {
 
     List<Garden> findAll();
     List<Garden> findByOwnerId(long ownerId);
+    List<Garden> findAllByIsPublicTrue();
 
     /**
      * Updates the garden with the given id to the new garden details.
@@ -45,4 +47,16 @@ public interface GardenRepository extends CrudRepository<Garden, Long> {
         }
 
     }
+
+    /**
+     * Searches for public gardens that match the given keyword String.
+     * ChatGPT used for help with the query.
+     *
+     * @param keyword String to search by.
+     * @return List of Garden objects whose name or plants' name matches the keyword.
+     */
+    @Query("SELECT DISTINCT g FROM Garden g LEFT JOIN Plant p ON g.id = p.gardenId "
+        + "WHERE g.isPublic = true AND (LOWER(g.name) LIKE LOWER(concat('%', :keyword, '%')) "
+        + "OR (p.name IS NOT NULL AND LOWER(p.name) LIKE LOWER(concat('%', :keyword, '%'))))")
+    List<Garden> searchPublicGardensByKeyword(String keyword);
 }
