@@ -12,9 +12,13 @@
 
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='name', label='Garden Name * ', placeholder='The Hamilton Gardens')}" />
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='size', label='Size in m&sup2; ', placeholder='540000.0')}" />
-              <input th:replace="~{fragments/formElement :: formElementField(fieldName='description', label='Description ', placeholder='Cool garden')}" />
 
-                <h2>Edit Garden Location</h2>
+              <div class="description-container">
+                <input id="description" th:replace="~{fragments/formElement :: formElementField(fieldName='description', label='Description ', placeholder='Cool garden')}" />
+                <div id="descriptionCharacterCount" style="display: inline-block; margin-left: 10px;">0/512</div>
+              </div>
+
+              <h2>Edit Garden Location</h2>
                 <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='address', label='Address ', placeholder='13 Hungerford Crescent')}" />
                 <br />
                 <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='suburb', label='Suburb ', placeholder='Ilam')}" />
@@ -141,6 +145,25 @@
                 document.getElementById(id).value = location[id];
             }
         }
+
+        /**
+         * Updates the word count for the description field to show the user how many words they have used.
+         */
+        function updateCharacterCount() {
+          const descriptionField = document.getElementById("description");
+          const characterCountDisplay = document.getElementById("descriptionCharacterCount");
+          const characterCount = descriptionField.value.length;
+
+          // ChatGPT used for this statement
+          if (characterCount > 512) {
+            descriptionField.value = descriptionField.value.substring(0, 512);
+          }
+
+          characterCountDisplay.textContent = `${descriptionField.value.length}/512`;
+        }
+
+        document.getElementById("description").addEventListener("input", updateCharacterCount);
+        updateCharacterCount();
     </script>
 </body>
 </html>
