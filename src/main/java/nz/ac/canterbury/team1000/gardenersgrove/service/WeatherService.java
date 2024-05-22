@@ -131,6 +131,7 @@ public class WeatherService {
             Map<String, Object> weather = objectMapper.readValue(jsonResponse, Map.class);
             List<Integer> weatherCodes = (ArrayList) ((Map<String, Object>) weather.get("hourly")).get("weather_code");
             List<Double> hourlyTemps = (ArrayList) ((Map<String, Object>) weather.get("hourly")).get("temperature_2m");
+            List<Integer> hourlyHumidity = (ArrayList) ((Map<String, Object>) weather.get("hourly")).get("relative_humidity_2m");
             List<String> hourlyTime = (ArrayList) ((Map<String, Object>) weather.get("hourly")).get("time");
 
             List<LocalDateTime> hourlyTimeParsed = new ArrayList<>();
@@ -141,14 +142,14 @@ public class WeatherService {
 				hourlyTimeParsed.add(localDateTime);
 			}
 
-            List<Double> dailyTemps = new ArrayList<>();
-			for (Double hourlyTemp : hourlyTemps) {
-				dailyTemps.add(hourlyTemp);
-			}
+			List<Double> dailyTemps = new ArrayList<>(hourlyTemps);
+            List<Integer> dailyHumidity = new ArrayList<>(hourlyHumidity);
+
+
             List<Weather> weatherList = new ArrayList<>();
             for (int i = 0; i < weatherCodes.size(); i++) {
                 weatherList.add(new Weather(gardenId, hourlyTimeParsed.get(i), WeatherType.getByCode(weatherCodes.get(i)),
-                    dailyTemps.get(i), 0.0));
+                    dailyTemps.get(i), dailyHumidity.get(i)));
             }
 
             logger.info(String.valueOf(weatherList.size()));

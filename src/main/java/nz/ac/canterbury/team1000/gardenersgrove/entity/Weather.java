@@ -29,7 +29,7 @@ public class Weather {
     @Column(nullable = false)
     public Double temperature;
     @Column(nullable = false)
-    public Double humidity;
+    public Integer humidity;
     @Column(nullable = false)
     public LocalDateTime expiry;
 
@@ -53,7 +53,7 @@ public class Weather {
      * @param temperature the temperature for the relevant day
      * @param humidity    the humidity for the relevant day
      */
-    public Weather(Long gardenId, LocalDateTime dateTime, WeatherType type, Double temperature, Double humidity) {
+    public Weather(Long gardenId, LocalDateTime dateTime, WeatherType type, Double temperature, Integer humidity) {
         this.gardenId = gardenId;
         this.dateTime = dateTime;
         this.type = type;
@@ -74,7 +74,7 @@ public class Weather {
       return temperature;
     }
 
-    public Double getHumidity() {
+    public Integer getHumidity() {
       return humidity;
     }
 
