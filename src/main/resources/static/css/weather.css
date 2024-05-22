@@ -1,5 +1,6 @@
 .weather-box {
   display: flex;
+  min-width: 450px;
   align-items: center;
   text-align: center;
   border: 3px solid rgba(2, 48, 32, 0.77);
