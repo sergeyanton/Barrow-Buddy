@@ -25,6 +25,7 @@ class GardenFormTest {
         gardenForm.setPostcode("E");
         gardenForm.setCountry("F");
         gardenForm.setSize("6.5");
+        gardenForm.setDescription("");
 
         bindingResult = Mockito.mock(BindingResult.class);
         Mockito.when(bindingResult.hasErrors()).thenReturn(false);
@@ -384,5 +385,54 @@ class GardenFormTest {
         gardenForm.setSize("72000");
         GardenForm.validate(gardenForm, bindingResult);
         Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
+
+    @Test
+    void validate_GardenDescriptionIsNull_DoesNotAddError() {
+        gardenForm.setDescription(null);
+        GardenForm.validate(gardenForm, bindingResult);
+        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
+
+    @Test
+    void validate_GardenDescriptionIsEmpty_DoesNotAddError() {
+        gardenForm.setDescription("");
+        GardenForm.validate(gardenForm, bindingResult);
+        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
+
+    @Test
+    void validate_GardenDescriptionIsWhitespace_DoesNotAddError() {
+        gardenForm.setDescription(" ");
+        GardenForm.validate(gardenForm, bindingResult);
+        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
+
+    @Test
+    void validate_GardenDescriptionContainsAtLeastOneLetter_DoesNotAddError() {
+        gardenForm.setDescription("123456789a");
+        GardenForm.validate(gardenForm, bindingResult);
+        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
+
+    @Test
+    void validate_GardenDescriptionLength512_DoesNotAddError() {
+        gardenForm.setDescription("a".repeat(512));
+        GardenForm.validate(gardenForm, bindingResult);
+        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
+
+    @Test
+    void validate_GardenDescriptionDoesNotContainAnyLetters_AddsError() {
+        gardenForm.setDescription("123456789");
+        GardenForm.validate(gardenForm, bindingResult);
+        Mockito.verify(bindingResult).addError(Mockito.any());
+    }
+
+    @Test
+    void validate_GardenDescriptionLengthOver512_AddsError() {
+        gardenForm.setDescription("a".repeat(513));
+        GardenForm.validate(gardenForm, bindingResult);
+        Mockito.verify(bindingResult).addError(Mockito.any());
     }
 }

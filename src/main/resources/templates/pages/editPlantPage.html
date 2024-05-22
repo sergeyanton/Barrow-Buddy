@@ -22,13 +22,13 @@
                     <span id="clientSideErrorMessage" class="error"></span>
                 </div>
 
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='name', label='Plant Name: ', placeholder='Red Roses')}" />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='name', label='Plant Name * ', placeholder='Red Roses')}" />
                 <br />
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='plantCount', label='How many? (optional): ', placeholder='1')}" />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='plantCount', label='How many? ', placeholder='1')}" />
                 <br />
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='description', label='Description (optional): ', placeholder='Rather thorny')}" />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='description', label='Description ', placeholder='Rather thorny')}" />
                 <br />
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='plantedOnDate', label='Planted Date (optional): ', placeholder='15/12/2023')}" />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='plantedOnDate', label='Planted Date ', placeholder='15/12/2023')}" />
                 <br />
                 <div class="cancel-submit-wrapper">
                     <a class="cancel" th:href="@{'/gardens/' + ${gardenId}}">Cancel</a>

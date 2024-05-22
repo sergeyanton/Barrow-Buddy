@@ -82,10 +82,12 @@ public class WeatherService {
 
             LocalDateTime timeRightNow = LocalDateTime.now();
 
-            if (weatherDateTime.isBefore(timeRightNow.plusMinutes(1)) && nextWeatherHour.isAfter(timeRightNow.minusMinutes(1))) {
+            if (weatherDateTime.isBefore(timeRightNow.plusMinutes(1)) && nextWeatherHour.isAfter(timeRightNow)) {
                 beforeAndAfterWeather.add(weathers.get(i));
+                if (weathers.get(i+1).getType() == WeatherType.EXTRAS) {
+                    weathers.get(i+1).setType(weathers.get(i).getType());
+                }
                 beforeAndAfterWeather.add(weathers.get(i+1));
-
                 break;
             }
 

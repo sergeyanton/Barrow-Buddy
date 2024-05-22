@@ -70,6 +70,10 @@ public class Weather {
       return type;
     }
 
+    public void setType(WeatherType weatherType) {
+        this.type = weatherType;
+    }
+
     public Double getTemperature() {
       return temperature;
     }
