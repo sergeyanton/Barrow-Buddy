@@ -12,7 +12,7 @@
                 <div class="profile-picture-wrapper">
                 <input th:field="*{picturePath}" type="hidden"/>
                 <img class="profile-picture" id="profileImage"
-                     th:src="${editUserForm.picturePath}"
+                     th:src="@{${editUserForm.picturePath}}"
                      alt="Profile Picture">
                 </div>
 
