@@ -7,26 +7,19 @@
     <div th:replace="~{fragments/header :: header}"></div>
     <main>
         <div class="basic">
-<!--            Here is an extremely basic way to display the retrieved weather info-->
-<!--            We use a model attribute sent from the controller, in this example it is called 'weather'-->
-<!--            TODO: display nicely -->
+<!--            <tr th:each="w : ${weather}">-->
+<!--              <div th:text="${w}"></div>-->
 
-            <tr th:each="w : ${weather}">
-              <div th:text="${w}"></div>
+<!--                <div th:text="${w.type.getText()}"></div>-->
+<!--            </tr>-->
 
-                <div th:text="${w.type.getText()}"></div>
-<!--                <div th:text="${w.temperature}"></div>-->
-            </tr>
             <h1 th:text="${garden.name}"></h1>
             <p th:if="${garden.latitude == null and garden.longitude == null}" th:text="'Location not found, please update your location to see the weather.'"></p>
 
             <br>
-            <p th:text="${garden.getLocationString}"></p>
-            <br>
             <p th:if="${garden.size != null}" th:text="'Size: ' + ${garden.size} + ' m&sup2;'"></p>
             <br>
             <p id="gardenVisibilityText" th:text="'Garden Visibility: ' + (${garden.getIsPublic} ? 'Public' : 'Private')"></p>
-
             <br>
             <div class="form-element">
                 <label for="publicCheckbox"><b>Make My Garden Public</b></label>
@@ -41,13 +34,24 @@
 
           <div id="weather-container" class="weather-box">
             <div class="weather-info">
-              <h2>Weather</h2>
-              <h3>Today is Thursday</h3>
-              <div id="weather-description">sunny</div>
-              <span id="weather-temperature"></span>&deg;C, <span id="weather-humidity"></span>% Humidity
+              <div style="align-content: center; display: inline">
+                <h3>Today is</h3>
+                <div id="day-of-the-week" th:text="${weather[0].dayOfTheWeek}"></div>
+              </div>
+              <h2>My Location</h2>
+              <p th:text="${garden.getLocationString}"></p>
+              <br>
+              <table>
+                <tr th:each="w : ${weather}">
+                  <td class="hourly-weather">
+                    <div id="weather-description" th:text="${w.type.getText()}"></div>
+                    <span id="weather-temperature" th:text="${w.temperature}"></span>&deg;C, <span id="weather-humidity" th:text="${w.humidity}"></span>% Humidity
+                  </td>
+                </tr>
+              </table>
             </div>
-            <img id="weather-icon" src="/images/weather-icon.png" alt="Weather Icon" width="50" height="50">
           </div>
+
           <p>Search by <a href="https://open-meteo.com/">open-meteo.com</a></p>
 
           <br>

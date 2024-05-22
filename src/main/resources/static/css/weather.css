@@ -1,6 +1,7 @@
 .weather-box {
   display: flex;
   align-items: center;
+  text-align: center;
   border: 3px solid rgba(2, 48, 32, 0.77);
   padding: 10px;
   border-radius: 3%;
@@ -16,6 +17,6 @@
   margin: 0;
 }
 
-#weather-icon {
-  margin-left: 10px;
+.hourly-weather {
+  text-align: center;
 }
