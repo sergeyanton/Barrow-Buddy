@@ -34,7 +34,9 @@ public class WeatherService {
     private final GardenService gardenService;
     private final LocationSearchService locationSearchService;
     //TODO actually make this URL the correct URL, not just to prove the spike
-    private final String URL = "https://api.open-meteo.com/v1/forecast?hourly=temperature_2m,relative_humidity_2m,weather_code";
+    LocalDate dateTwoDaysAgo = LocalDate.now().minusDays(2);
+    LocalDate dateFiveDaysLater = LocalDate.now().plusDays(5);
+    private final String URL = "https://api.open-meteo.com/v1/forecast?hourly=temperature_2m,relative_humidity_2m,weather_code&start_date=" + dateTwoDaysAgo + "&end_date=" + dateFiveDaysLater;
 
     @Autowired
     public WeatherService(WeatherRepository weatherRepository, RestTemplate restTemplate,
@@ -83,11 +85,19 @@ public class WeatherService {
             LocalDateTime timeRightNow = LocalDateTime.now();
 
             if (weatherDateTime.isBefore(timeRightNow.plusMinutes(1)) && nextWeatherHour.isAfter(timeRightNow)) {
-                beforeAndAfterWeather.add(weathers.get(i));
-                if (weathers.get(i+1).getType() == WeatherType.EXTRAS) {
-                    weathers.get(i+1).setType(weathers.get(i).getType());
+                int prev = i - 1;
+                while (weathers.get(prev).getType() == WeatherType.SAME && prev < weathers.size()) {
+                    weathers.get(prev).setType(weathers.get(i).getType());
+                    prev--;
+                }
+                if (weathers.get(prev).getType() != WeatherType.SAME) {
+                    beforeAndAfterWeather.add(weathers.get(prev));
+                }
+                if (weathers.get(i+1).getType() == WeatherType.SAME) {
+                    weathers.get(i+1).setType(weathers.get(prev).getType());
                 }
                 beforeAndAfterWeather.add(weathers.get(i+1));
+
                 break;
             }
 
