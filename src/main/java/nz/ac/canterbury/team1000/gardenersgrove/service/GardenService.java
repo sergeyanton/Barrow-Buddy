@@ -1,6 +1,8 @@
 package nz.ac.canterbury.team1000.gardenersgrove.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.team1000.gardenersgrove.repository.GardenRepository;
@@ -43,10 +45,11 @@ public class GardenService {
     /**
      * Gets all public gardens from persistence.
      *
-     * @return List of gardens with isPublic attribute set to true
+     * @param pageable the Pageable object to specify the page and size
+     * @return Page of gardens with isPublic attribute set to true
      */
-    public List<Garden> getPublicGardens() {
-        return gardenRepository.findAllByIsPublicTrue();
+    public Page<Garden> getPublicGardens(Pageable pageable) {
+        return gardenRepository.findByIsPublicTrue(pageable);
     }
 
     /**
@@ -75,9 +78,10 @@ public class GardenService {
      * Queries the repository to find the gardens whose names or plant names match the given query string
      *
      * @param query String to be searched
-     * @return List of garden objects that match the query
+     * @param pageable the Pageable object to specify the page and size
+     * @return Page of garden objects that match the query
      */
-    public List<Garden> searchGardens(String query) {
-        return gardenRepository.searchPublicGardensByKeyword(query);
+    public Page<Garden> searchGardens(String query, Pageable pageable) {
+        return gardenRepository.searchPublicGardensByKeyword(query, pageable);
     }
 }

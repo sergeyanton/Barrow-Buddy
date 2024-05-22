@@ -14,6 +14,9 @@ import nz.ac.canterbury.team1000.gardenersgrove.form.PictureForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PlantForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -557,17 +560,18 @@ public class GardensController {
      * If a query is present, searches and displays for gardens with matching string.
      *
      * @param model (map-like) representation of results to be used by thymeleaf
+     * @param query the search query to search for gardens
      * @return thymeleaf pages/browseGardensPage
      */
     @GetMapping("/browseGardens")
-    public String browseGardens(@RequestParam(required = false, defaultValue = "") String query, Model model) {
+    public String browseGardens(@RequestParam(name = "query", required = false, defaultValue = "") String query, @PageableDefault(size = 10) Pageable pageable, Model model) {
         logger.info("GET /browseGardens");
-        List<Garden> gardens;
+        Page<Garden> gardens;
         // if query search results
         if (!query.isBlank()) {
-            gardens = gardenService.searchGardens(query);
+            gardens = gardenService.searchGardens(query, pageable);
         } else {
-            gardens = gardenService.getPublicGardens();
+            gardens = gardenService.getPublicGardens(pageable);
         }
         model.addAttribute("query", query);
         model.addAttribute("gardens", gardens);
