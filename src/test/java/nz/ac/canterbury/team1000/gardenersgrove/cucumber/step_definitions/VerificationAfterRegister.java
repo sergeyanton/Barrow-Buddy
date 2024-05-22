@@ -3,6 +3,8 @@ package nz.ac.canterbury.team1000.gardenersgrove.cucumber.step_definitions;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 import java.time.LocalDate;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.RegistrationForm;
@@ -11,9 +13,11 @@ import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 public class VerificationAfterRegister {
 
@@ -29,9 +33,12 @@ public class VerificationAfterRegister {
   @Autowired
   private UserService userService;
 
+//  @Autowired
+//  @MockBean
+//  private EmailService emailService = Mockito.mock(EmailService.class);
+
   @Autowired
-  @MockBean
-  private EmailService emailService = Mockito.mock(EmailService.class);
+  private JavaMailSender emailSender;
 
   @Given("I have registered with the first name {string} and last name {string}, email {string} and password {string}")
   public void iHaveRegisteredWithValidCredentials(String firstName, String lastName, String email,
@@ -51,50 +58,16 @@ public class VerificationAfterRegister {
         .flashAttr("registrationForm", registrationForm)).andReturn();
   }
 
-  // @Before
-  // public void beforeEach() {
-  // userService = new UserService(userRepository);
-  // verificationTokenService = new VerificationTokenService(verificationTokenRepository);
-  // resetTokenService = new ResetTokenService(resetTokenRepository);
-  // emailService = new EmailService(Mockito.mock(JavaMailSender.class));
-  // AccountController accountController = new AccountController(userService,
-  // verificationTokenService, emailService, resetTokenService);
-  //
-  // MOCK_MVC = MockMvcBuilders.standaloneSetup(accountController).build();
-  // registrationForm = new RegistrationForm();
-  //
-  //
-  //
-  // }
-  //
-  // @Given("I have registered with the first name {string} and last name {string}, email {string}
-  // and password {string}")
-  // public void iHaveRegisteredWithValidCredentials(String firstName, String lastName, String
-  // email,
-  // String password) throws Exception {
-  // registrationForm.setFirstName(firstName);
-  // registrationForm.setLastName(lastName);
-  // registrationForm.setEmail(email);
-  // registrationForm.setPassword(password);
-  // registrationForm.setRetypePassword(password);
-  // registrationForm.setDob("01/01/2000");
-  // registrationForm.setNoSurnameCheckBox(false);
-  //
-  // MvcResult result = MOCK_MVC.perform(MockMvcRequestBuilders.post("/register").with(csrf())
-  // .flashAttr("registrationForm", registrationForm)).andReturn();
-  // }
-  //
-  // @When("I access log in page without verifying my account")
-  // public void iAccessLoginPageWithoutVerifyingMyAccount() throws Exception {
-  // MOCK_MVC.perform(MockMvcRequestBuilders.get("/login"))
-  // .andExpect(MockMvcResultMatchers.status().isOk());
-  // }
-  //
-  // @Then("I am redirected to the page with URL {string}")
-  // public void iAmRedirectedToThePageWithURL(String pageURL) throws Exception {
-  // MOCK_MVC.perform(MockMvcRequestBuilders.get(pageURL))
-  // .andExpect(MockMvcResultMatchers.redirectedUrl(pageURL));
-  // }
+   @When("I access log in page without verifying my account")
+   public void iAccessLoginPageWithoutVerifyingMyAccount() throws Exception {
+     mockMvc.perform(MockMvcRequestBuilders.get("/login"))
+         .andExpect(MockMvcResultMatchers.status().isOk());
+  }
+   @Then("I am redirected to the page with URL {string}")
+   public void iAmRedirectedToThePageWithURL(String pageURL) throws Exception {
+      mockMvc.perform(MockMvcRequestBuilders.get(pageURL))
+     .andExpect(MockMvcResultMatchers.redirectedUrl(pageURL));
+   }
 
 }
 
