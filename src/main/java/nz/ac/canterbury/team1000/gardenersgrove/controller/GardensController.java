@@ -47,9 +47,9 @@ public class GardensController {
     //TODO make a controller dedicated to uploading files.
     private final static String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/uploads";
 
-    
+
     public GardensController(GardenService gardenService, PlantService plantService,
-                                 UserService userService, WeatherService weatherService) {
+        UserService userService, WeatherService weatherService) {
         this.gardenService = gardenService;
         this.plantService = plantService;
         this.userService = userService;
@@ -193,8 +193,8 @@ public class GardensController {
      */
     @PostMapping("/gardens/create")
     public String gardenCreatePost(HttpServletRequest request,
-            @ModelAttribute("createGardenForm") GardenForm createGardenForm,
-            BindingResult bindingResult) {
+        @ModelAttribute("createGardenForm") GardenForm createGardenForm,
+        BindingResult bindingResult) {
         logger.info("POST /gardens/create");
 
         GardenForm.validate(createGardenForm, bindingResult);
@@ -237,8 +237,8 @@ public class GardensController {
      */
     @GetMapping("/gardens/{gardenId}")
     public String viewGarden(@PathVariable("gardenId") Long gardenId,
-                             @ModelAttribute("plantPictureForm") PictureForm plantPictureForm,
-                             Model model) {
+        @ModelAttribute("plantPictureForm") PictureForm plantPictureForm,
+        Model model) {
         logger.info("GET /gardens/" + gardenId);
         Garden garden = tryToAccessGarden(gardenId);
         long loggedInUserId = userService.getLoggedInUser().getId();
@@ -273,11 +273,11 @@ public class GardensController {
      */
     @PostMapping("/gardens/{gardenId}/plants/{plantId}")
     public String changePlantPictureFromGardenPage(HttpServletRequest request,
-                                                   @PathVariable("gardenId") Long gardenId,
-                                                   @PathVariable("plantId") Long plantId,
-                                                   @ModelAttribute("plantPictureForm") PictureForm plantPictureForm,
-                                                   BindingResult bindingResult,
-                                                   Model model) throws IOException {
+        @PathVariable("gardenId") Long gardenId,
+        @PathVariable("plantId") Long plantId,
+        @ModelAttribute("plantPictureForm") PictureForm plantPictureForm,
+        BindingResult bindingResult,
+        Model model) throws IOException {
         logger.info("POST /gardens/" + gardenId);
         Plant plant = plantService.getPlantById(plantId);
 
@@ -322,7 +322,7 @@ public class GardensController {
      */
     @GetMapping("/gardens/{gardenId}/edit")
     public String gardenEditGet(@PathVariable("gardenId") Long gardenId,
-            @ModelAttribute("editGardenForm") GardenForm editGardenForm) {
+        @ModelAttribute("editGardenForm") GardenForm editGardenForm) {
         logger.info("GET /gardens/" + gardenId + "/edit");
 
         Garden garden = tryToEditGarden(gardenId);
@@ -354,9 +354,9 @@ public class GardensController {
      */
     @PostMapping("/gardens/{gardenId}/edit")
     public String gardenEditPost(HttpServletRequest request,
-            @ModelAttribute("editGardenForm") GardenForm editGardenForm,
-            BindingResult bindingResult,
-            @PathVariable("gardenId") Long gardenId) {
+        @ModelAttribute("editGardenForm") GardenForm editGardenForm,
+        BindingResult bindingResult,
+        @PathVariable("gardenId") Long gardenId) {
         logger.info("POST /gardens/" + gardenId + "/edit");
 
         Garden garden = tryToEditGarden(gardenId);
@@ -385,7 +385,7 @@ public class GardensController {
      */
     @GetMapping("/gardens/{gardenId}/plants/create")
     public String gardenCreatePlantGet(@PathVariable("gardenId") Long gardenId,
-            @ModelAttribute("createPlantForm") PlantForm createPlantForm, Model model) {
+        @ModelAttribute("createPlantForm") PlantForm createPlantForm, Model model) {
         logger.info("GET /gardens/" + gardenId + "/plants/create");
         Garden existingGarden = tryToEditGarden(gardenId);
         createPlantForm.setPicturePath("/images/defaultPlantPic.png");
@@ -407,9 +407,9 @@ public class GardensController {
      */
     @PostMapping("/gardens/{gardenId}/plants/create")
     public String gardenCreatePlantPost(HttpServletRequest request,
-            @ModelAttribute("createPlantForm") PlantForm createPlantForm,
-            BindingResult bindingResult,
-            @PathVariable("gardenId") Long gardenId, Model model) throws IOException{
+        @ModelAttribute("createPlantForm") PlantForm createPlantForm,
+        BindingResult bindingResult,
+        @PathVariable("gardenId") Long gardenId, Model model) throws IOException{
         logger.info("POST /gardens/" + gardenId + "/plants/create");
 
         Garden existingGarden = tryToEditGarden(gardenId);
@@ -463,9 +463,9 @@ public class GardensController {
      */
     @GetMapping("/gardens/{gardenId}/plants/{plantId}/edit")
     public String gardenEditPlant(@PathVariable("gardenId") Long gardenId,
-            @PathVariable("plantId") Long plantId,
-            @ModelAttribute("editPlantForm") PlantForm editPlantForm,
-            Model model){
+        @PathVariable("plantId") Long plantId,
+        @ModelAttribute("editPlantForm") PlantForm editPlantForm,
+        Model model){
         logger.info("GET /gardens/" + gardenId + "/plants/" + plantId + "/edit");
         Garden existingGarden = tryToEditGarden(gardenId);
         Plant existingPlant = tryToEditPlant(plantId, gardenId);
@@ -493,10 +493,10 @@ public class GardensController {
      */
     @PostMapping("/gardens/{gardenId}/plants/{plantId}/edit")
     public String gardenEditPlantPost(HttpServletRequest request,
-            @PathVariable("gardenId") Long gardenId,
-            @PathVariable("plantId") Long plantId,
-            @ModelAttribute("editPlantForm") PlantForm editPlantForm,
-            BindingResult bindingResult, Model model) throws IOException{
+        @PathVariable("gardenId") Long gardenId,
+        @PathVariable("plantId") Long plantId,
+        @ModelAttribute("editPlantForm") PlantForm editPlantForm,
+        BindingResult bindingResult, Model model) throws IOException{
 
         logger.info("POST /gardens/" + gardenId + "/plants/" + plantId + "/edit");
 
