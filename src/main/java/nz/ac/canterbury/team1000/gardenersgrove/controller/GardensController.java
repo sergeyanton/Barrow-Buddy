@@ -192,7 +192,8 @@ public class GardensController {
         // TODO: also for the purpose of the spike, the parsing was somewhat rushed, i didn't actually parse the humidity
         // This function is for getting the current and future weather
         // Stephen has a plan for the previous day's weather so pls talk to him abt that if u are doing that task
-        List<Weather> weather = weatherService.getWeatherByGardenId(gardenId);
+//        List<Weather> weather = weatherService.getWeatherByGardenId(gardenId);
+        List<Weather> weather = weatherService.getCurrentWeatherByGardenId(gardenId);
         model.addAttribute("weather", weather);
 
         model.addAttribute("garden", garden);
