@@ -21,7 +21,8 @@ public class BuildPropertiesController {
      */
     @ModelAttribute("debug")
     public boolean isDev() {
-        String debugFlag = System.getenv("DEBUG");
-        return debugFlag != null && debugFlag.equals("true");
+        return true;
+        // String debugFlag = System.getenv("DEBUG");
+        // return debugFlag != null && debugFlag.equals("true");
     }
 }

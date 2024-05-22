@@ -560,7 +560,7 @@ public class GardensController {
      * @return thymeleaf pages/browseGardensPage
      */
     @GetMapping("/browseGardens")
-    public String browseGardens(@RequestParam(required = false, defaultValue = "") String query, Model model) {
+    public String browseGardens(@RequestParam(name="query", required = false, defaultValue = "") String query, Model model) {
         logger.info("GET /browseGardens");
         List<Garden> gardens;
         // if query search results
