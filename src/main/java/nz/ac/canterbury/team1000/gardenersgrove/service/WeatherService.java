@@ -151,7 +151,7 @@ public class WeatherService {
             List<Weather> weatherList = new ArrayList<>();
             for (int i = 0; i < weatherCodes.size(); i++) {
                 weatherList.add(new Weather(gardenId, hourlyTimeParsed.get(i), WeatherType.getByCode(weatherCodes.get(i)),
-                    dailyTemps.get(i), dailyHumidity.get(i)));
+                    dailyTemps.get(i), dailyHumidity.get(i), hourlyTimeParsed.get(i).getDayOfWeek().toString()));
             }
 
             logger.info(String.valueOf(weatherList.size()));

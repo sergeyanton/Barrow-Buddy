@@ -25,6 +25,8 @@ public class Weather {
     @Column(nullable = false)
     public LocalDateTime dateTime;
     @Column(nullable = false)
+    public String dayOfTheWeek;
+    @Column(nullable = false)
     public WeatherType type;
     @Column(nullable = false)
     public Double temperature;
@@ -53,9 +55,12 @@ public class Weather {
      * @param temperature the temperature for the relevant day
      * @param humidity    the humidity for the relevant day
      */
-    public Weather(Long gardenId, LocalDateTime dateTime, WeatherType type, Double temperature, Integer humidity) {
+    public Weather(Long gardenId, LocalDateTime dateTime, WeatherType type, Double temperature,
+            Integer humidity, String dayOfTheWeek)
+    {
         this.gardenId = gardenId;
         this.dateTime = dateTime;
+        this.dayOfTheWeek = dayOfTheWeek;
         this.type = type;
         this.temperature = temperature;
         this.humidity = humidity;
@@ -82,6 +87,10 @@ public class Weather {
       return humidity;
     }
 
+    public String getDayOfTheWeek() {
+        return dayOfTheWeek.substring(0, 1).toUpperCase() + dayOfTheWeek.substring(1).toLowerCase();
+    }
+
     public LocalDateTime getExpiry() {
       return expiry;
     }
@@ -96,6 +105,7 @@ public class Weather {
         this.dateTime = newWeather.getDateTime();
         this.type = newWeather.getType();
         this.temperature = newWeather.getTemperature();
+        this.dayOfTheWeek = newWeather.getDayOfTheWeek();
         this.humidity = newWeather.getHumidity();
         updateExpiry();
     }
@@ -116,6 +126,7 @@ public class Weather {
             ", type=" + type +
             ", temperature=" + temperature +
             ", humidity=" + humidity +
+            ", dayOfTheWeek=" + dayOfTheWeek +
             ", expiry=" + expiry +
             '}';
     }
