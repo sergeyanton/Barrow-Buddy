@@ -35,8 +35,11 @@ public class WeatherService {
     private final LocationSearchService locationSearchService;
     LocalDate dateTwoDaysAgo = LocalDate.now().minusDays(2);
     LocalDate dateFiveDaysLater = LocalDate.now().plusDays(5);
-    private final String URL = "https://api.open-meteo.com/v1/forecast?hourly=temperature_2m,relative_humidity_2m,weather_code&start_date=" + dateTwoDaysAgo + "&end_date=" + dateFiveDaysLater;
-
+    private final String URL = String.format(
+        "https://api.open-meteo.com/v1/forecast?hourly=temperature_2m,relative_humidity_2m,weather_code&start_date=%s&end_date=%s",
+        dateTwoDaysAgo,
+        dateFiveDaysLater
+    );
     @Autowired
     public WeatherService(WeatherRepository weatherRepository, RestTemplate restTemplate,
         ObjectMapper objectMapper, GardenService gardenService, LocationSearchService locationSearchService) {
@@ -74,6 +77,14 @@ public class WeatherService {
 		return persistedWeatherList;
     }
 
+    /**
+     * Retrieves the current weather and the weather immediately before or after the current time for a given garden.
+     * This method checks the list of weather data for a garden and identifies the weather condition that is
+     * currently in effect.
+     *
+     * @param gardenId the ID of the garden for which to retrieve the weather information
+     * @return a list of Weather objects containing the current weather - the weather for previous hour and the next hour
+     */
     public List<Weather> getCurrentWeatherByGardenId(Long gardenId) {
         List<Weather> beforeAndAfterWeather = new ArrayList<>();
         List<Weather> weathers = getWeather(gardenId);
@@ -123,9 +134,12 @@ public class WeatherService {
     }
 
     /**
-     * Calls the API and parses the response into a list of Weather entities
-     * @param gardenId ID of the garden that this weather information is relevant for
-     * @return A list of Weather entities with data on the current and future weather.
+     * Retrieves the weather data for a specified garden by its ID, including weather codes, temperatures,
+     * humidity, and timestamps. The weather data is fetched from an API and parsed into a list of
+     * Weather objects.
+     *
+     * @param gardenId the ID of the garden for which to retrieve the weather data
+     * @return a list of Weather objects containing the weather data for the garden
      */
     public List<Weather> getWeather(Long gardenId) {
         // TODO add humidity & temperature properly.
@@ -148,7 +162,6 @@ public class WeatherService {
             List<Double> hourlyTemps = (ArrayList) ((Map<String, Object>) weather.get("hourly")).get("temperature_2m");
             List<Integer> hourlyHumidity = (ArrayList) ((Map<String, Object>) weather.get("hourly")).get("relative_humidity_2m");
             List<String> hourlyTime = (ArrayList) ((Map<String, Object>) weather.get("hourly")).get("time");
-
             List<LocalDateTime> hourlyTimeParsed = new ArrayList<>();
 
 			for (String s : hourlyTime) {
@@ -160,19 +173,17 @@ public class WeatherService {
 			List<Double> dailyTemps = new ArrayList<>(hourlyTemps);
             List<Integer> dailyHumidity = new ArrayList<>(hourlyHumidity);
 
-
             List<Weather> weatherList = new ArrayList<>();
             for (int i = 0; i < weatherCodes.size(); i++) {
                 weatherList.add(new Weather(gardenId, hourlyTimeParsed.get(i), WeatherType.getByCode(weatherCodes.get(i)),
                     dailyTemps.get(i), dailyHumidity.get(i), hourlyTimeParsed.get(i).getDayOfWeek().toString()));
             }
 
-            logger.info(String.valueOf(weatherList.size()));
-
             for (Weather w : weatherList) {
                 logger.info(w.toString());
             }
             return weatherList;
+
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ArrayList<>();
