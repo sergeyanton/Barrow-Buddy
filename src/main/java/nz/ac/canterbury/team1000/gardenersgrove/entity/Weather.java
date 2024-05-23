@@ -87,6 +87,7 @@ public class Weather {
       return humidity;
     }
 
+
     public String getDayOfTheWeek() {
         return dayOfTheWeek.substring(0, 1).toUpperCase() + dayOfTheWeek.substring(1).toLowerCase();
     }

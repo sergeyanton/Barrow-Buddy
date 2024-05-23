@@ -33,7 +33,6 @@ public class WeatherService {
     private final ObjectMapper objectMapper;
     private final GardenService gardenService;
     private final LocationSearchService locationSearchService;
-    //TODO actually make this URL the correct URL, not just to prove the spike
     LocalDate dateTwoDaysAgo = LocalDate.now().minusDays(2);
     LocalDate dateFiveDaysLater = LocalDate.now().plusDays(5);
     private final String URL = "https://api.open-meteo.com/v1/forecast?hourly=temperature_2m,relative_humidity_2m,weather_code&start_date=" + dateTwoDaysAgo + "&end_date=" + dateFiveDaysLater;
