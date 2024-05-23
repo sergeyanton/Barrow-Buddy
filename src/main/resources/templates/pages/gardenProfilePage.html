@@ -38,7 +38,7 @@
 
               <div th:if="${weather != null && weather.size() > 0}">
                 <div style="align-content: center; display: inline">
-                  <h3 th:text="'Today is ' + ${weather[0].dayOfTheWeek}"></h3>
+                  <h3 th:text="'Today is ' + ${weather[0].dayOfTheWeek} + ', ' + ${weather[0].dateTime.toLocalDate}"></h3>
                 </div>
                 <br>
                 <h3>My Location</h3>

@@ -8,7 +8,6 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import nz.ac.canterbury.team1000.gardenersgrove.api.LocationSearchService;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Weather;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.WeatherType;
@@ -27,8 +26,6 @@ public class WeatherServiceTest {
 	private RestTemplate restTemplate;
 	@Mock
 	private GardenService gardenService;
-	@Mock
-	private LocationSearchService locationSearchService;
 	private Long gardenId;
 
 	@BeforeEach
@@ -36,8 +33,7 @@ public class WeatherServiceTest {
 		weatherRepository = mock(WeatherRepository.class);
 		restTemplate = mock(RestTemplate.class);
 		gardenService = mock(GardenService.class);
-		locationSearchService = mock(LocationSearchService.class);
-		weatherService = new WeatherService(weatherRepository, restTemplate, new ObjectMapper(), gardenService, locationSearchService);
+		weatherService = new WeatherService(weatherRepository, restTemplate, new ObjectMapper(), gardenService);
 		gardenId = 1L;
 		List<Weather> weatherList = new ArrayList<>();
 		when(weatherRepository.findByGardenId(gardenId)).thenReturn(weatherList);

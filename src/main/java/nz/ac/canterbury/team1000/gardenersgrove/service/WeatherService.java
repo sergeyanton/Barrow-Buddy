@@ -11,7 +11,6 @@ import nz.ac.canterbury.team1000.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.WeatherType;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Weather;
 import nz.ac.canterbury.team1000.gardenersgrove.repository.WeatherRepository;
-import nz.ac.canterbury.team1000.gardenersgrove.api.LocationSearchService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.GardenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +21,6 @@ import org.springframework.web.client.RestTemplate;
 /**
  * Service class for Weather entities, defined by the @link{Service} annotation. This clas links
  * automatically with @link{WeatherRepository}.
- *
  * Also is responsible for calling the Open-Meteo API and parsing the response.
  */
 @Service
@@ -32,7 +30,6 @@ public class WeatherService {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
     private final GardenService gardenService;
-    private final LocationSearchService locationSearchService;
     LocalDate dateTwoDaysAgo = LocalDate.now().minusDays(2);
     LocalDate dateFiveDaysLater = LocalDate.now().plusDays(5);
     private final String URL =
@@ -41,12 +38,11 @@ public class WeatherService {
 
     @Autowired
     public WeatherService(WeatherRepository weatherRepository, RestTemplate restTemplate,
-        ObjectMapper objectMapper, GardenService gardenService, LocationSearchService locationSearchService) {
+        ObjectMapper objectMapper, GardenService gardenService) {
         this.weatherRepository = weatherRepository;
         this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;
         this.gardenService = gardenService;
-        this.locationSearchService = locationSearchService;
     }
 
     /**
@@ -98,8 +94,8 @@ public class WeatherService {
                     beforeAndAfterWeather.add(weathers.get(i));
                 } else {
                     int prev = i - 1;
-                    while (weathers.get(prev).getType() == WeatherType.SAME) {
-                        weathers.get(prev).setType(weathers.get(prev-1).getType());
+                    while (weathers.get(i-1).getType() == WeatherType.SAME) {
+                        weathers.get(i-1).setType(weathers.get(prev-1).getType());
                         prev--;
                     }
                     if (weathers.get(i-1).getType() != WeatherType.SAME) {
