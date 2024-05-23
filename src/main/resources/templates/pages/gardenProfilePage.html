@@ -14,7 +14,6 @@
 <!--            </tr>-->
 
             <h1 th:text="${garden.name}"></h1>
-            <p th:if="${garden.latitude == null and garden.longitude == null}" th:text="'Location not found, please update your location to see the weather.'"></p>
             <p th:text="${garden.getLocationString}"></p>
             <br>
             <p th:if="${garden.size != null}" th:text="'Size: ' + ${garden.size} + ' m&sup2;'"></p>
@@ -34,35 +33,39 @@
 
           <div id="weather-container" class="weather-box">
             <div class="weather-info">
-              <div style="align-content: center; display: inline">
-                <h3 th:text="'Today is ' + ${weather[0].dayOfTheWeek}"></h3>
-              </div>
-              <h2>My Location</h2>
-              <p th:if="${garden.latitude == null and garden.longitude == null}" th:text="'Location not found, please update your location to see the weather.'"></p>
-              <p th:text="${garden.getCity()} + ', ' + ${garden.getCountry()}"></p>
-              <img th:src="@{${weather[1].type.getPicturePath()}}" alt="Weather Image" width="150" height="150">
-              <h2 th:text="${weather[0].temperature} + '°C'"></h2>
-              <h3 th:text="${weather[0].type.getText()}"></h3>
-              <h3 th:text="${weather[0].humidity} + '%'" style="color: dimgrey"></h3>
-              <br>
-              <div>
-                <h3>Next Hour's Weather</h3>
-                <h4 style="font-weight: normal;">
-                  <span th:text="${weather[1].temperature} + '°C'"></span>
-                </h4>
-                <h4 style="font-weight: normal;">
-                  <span th:text="${weather[1].type.getText()}"></span>
-                </h4>
-                <h4>
-                  <span th:text="${weather[1].humidity} + '%'" style="color: dimgrey"></span>
-                </h4>
+
+              <h5 th:if="${weather == null || weather.size() == 0}" th:text="'Location not found, please update your location to see the weather.'"></h5>
+
+              <div th:if="${weather != null && weather.size() > 0}">
+                <div style="align-content: center; display: inline">
+                  <h3 th:text="'Today is ' + ${weather[0].dayOfTheWeek}"></h3>
+                </div>
+                <h2>My Location</h2>
+                <p th:text="${garden.getCity()} + ', ' + ${garden.getCountry()}"></p>
+                <img th:src="@{${weather[1].type.getPicturePath()}}" alt="Weather Image" width="150" height="150">
+                <h2 th:text="${weather[0].temperature} + '°C'"></h2>
+                <h3 th:text="${weather[0].type.getText()}"></h3>
+                <h3 th:text="${weather[0].humidity} + '%'" style="color: dimgrey"></h3>
+                <br>
+                <div>
+                  <h3>Next Hour's Weather</h3>
+                  <h4 style="font-weight: normal;">
+                    <span th:text="${weather[1].temperature} + '°C'"></span>
+                  </h4>
+                  <h4 style="font-weight: normal;">
+                    <span th:text="${weather[1].type.getText()}"></span>
+                  </h4>
+                  <h4>
+                    <span th:text="${weather[1].humidity} + '%'" style="color: dimgrey"></span>
+                  </h4>
+                </div>
               </div>
 
             </div>
           </div>
 
           <p>Search by <a href="https://open-meteo.com/">open-meteo.com</a></p>
-          <p>Weather icon provided by <a href="https://www.flaticon.com">flaticon.com</a></p>
+          <p>Weather Icon provided by <a href="https://www.flaticon.com">flaticon.com</a></p>
 
           <br>
 
