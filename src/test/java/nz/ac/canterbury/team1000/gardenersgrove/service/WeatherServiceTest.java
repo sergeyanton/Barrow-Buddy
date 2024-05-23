@@ -90,21 +90,27 @@ public class WeatherServiceTest {
 	}
 
 	@Test
-	public void GetCurrentWeatherForGarden() {
-		int[] codes = new int[]{1, 1, 1};
-		double[] temps = new double[]{20.0, 18.0, 22.5};
-		int[] humidity = new int[]{90, 87, 88};
-		String[] times = new String[3];
+	public void GetCurrentWeatherForGarden_ReturnsWeatherList_WeatherListIsCorrectSize() {
+		int[] codes = new int[]{1, 2, 3, 4, 5};
+		double[] temps = new double[]{20.0, 18.0, 22.5, 20.0, 18.0};
+		int[] humidity = new int[]{90, 87, 88, 90, 87};
+		String[] times = new String[5];
 		String date = LocalDate.now().toString();
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < 5; i++) {
 			if (i == 0) {
-				String time = LocalTime.of(LocalTime.now().getHour(), 0).toString();
+				String time = LocalTime.of(LocalTime.now().minusHours(2).getHour(), 0).toString();
 				times[i] = date + "T" + time;
 			} else if (i == 1) {
+				String time = LocalTime.of(LocalTime.now().minusHours(1).getHour(), 0).toString();
+				times[i] = date + "T" + time;
+			} else if (i == 2) {
+				String time = LocalTime.of(LocalTime.now().getHour(), 0).toString();
+				times[i] = date + "T" + time;
+			} else if (i == 3) {
 				String time = LocalTime.of(LocalTime.now().plusHours(1).getHour(), 0).toString();
 				times[i] = date + "T" + time;
 			} else {
-				String time = LocalTime.of(LocalTime.now().plusHours(2).getHour(), 0).toString();
+				String time = LocalTime.of(LocalTime.now().plusHours(1).getHour(), 0).toString();
 				times[i] = date + "T" + time;
 			}
 		}
@@ -115,4 +121,7 @@ public class WeatherServiceTest {
 
 		Assertions.assertEquals(2, weatherList.size());
 	}
+
+	// TODO: test for each weather type
+	// TODO: test that if weather type is same, it gets previous - as well as if previous weather type is also same
 }
