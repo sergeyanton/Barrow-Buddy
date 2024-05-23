@@ -3,6 +3,8 @@ package nz.ac.canterbury.team1000.gardenersgrove.cucumber;
 import io.cucumber.junit.platform.engine.Constants;
 import io.cucumber.spring.CucumberContextConfiguration;
 import nz.ac.canterbury.team1000.gardenersgrove.GardenersGroveApplication;
+import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
+import nz.ac.canterbury.team1000.gardenersgrove.service.VerificationTokenService;
 import org.junit.platform.suite.api.*;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +26,9 @@ import org.springframework.test.context.ContextConfiguration;
 })
 @ContextConfiguration(classes = GardenersGroveApplication.class)
 @MockBean(JavaMailSender.class)
+@MockBean(VerificationTokenService.class)
+@MockBean(UserService.class)
+
 @CucumberContextConfiguration
 @SpringBootTest
 @ActiveProfiles("cucumber")

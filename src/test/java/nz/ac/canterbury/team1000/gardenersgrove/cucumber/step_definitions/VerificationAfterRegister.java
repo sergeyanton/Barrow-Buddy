@@ -8,10 +8,14 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import java.time.LocalDate;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
+import nz.ac.canterbury.team1000.gardenersgrove.entity.VerificationToken;
 import nz.ac.canterbury.team1000.gardenersgrove.form.LoginForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.RegistrationForm;
+import nz.ac.canterbury.team1000.gardenersgrove.form.VerificationTokenForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.EmailService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
+import nz.ac.canterbury.team1000.gardenersgrove.service.VerificationTokenService;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -25,23 +29,15 @@ public class VerificationAfterRegister {
 
   @Autowired
   private MockMvc mockMvc;
-
-
-  // public VerificationAfterRegister(CucumberSpringConfiguration cucumberSpringConfiguration) {
-  // this.mockMvc = cucumberSpringConfiguration.getMockMvc();
-  // Assertions.assertNotNull(this.mockMvc);
-  // }
-
   @Autowired
   private UserService userService;
-
-//  @Autowired
-//  @MockBean
-//  private EmailService emailService = Mockito.mock(EmailService.class);
-
   @Autowired
   private JavaMailSender emailSender;
-
+  @Autowired
+  private VerificationTokenService verificationTokenService;
+  @Mock
+  private VerificationToken verificationTokenMock;
+  private VerificationTokenForm verificationTokenForm = new VerificationTokenForm();
   private User testUser;
 
   @Given("I have registered with the first name {string} and last name {string}, email {string} and password {string}")
@@ -65,7 +61,7 @@ public class VerificationAfterRegister {
         .andExpect(MockMvcResultMatchers.redirectedUrl("/register/verification"));
   }
 
-   @When("I access log in")
+   @When("I log in")
    public void iAccessLoginPage() throws Exception {
      LoginForm loginForm = new LoginForm();
      loginForm.setEmail(testUser.getEmail());
@@ -73,11 +69,9 @@ public class VerificationAfterRegister {
 
      mockMvc.perform(MockMvcRequestBuilders.post("/login").with(csrf())
              .flashAttr("loginForm", loginForm))
-         .andExpect(MockMvcResultMatchers.status().is3xxRedirection());
-     
-//     mockMvc.perform(MockMvcRequestBuilders.get("/login"))
-//         .andExpect(MockMvcResultMatchers.status().isOk())
-//         .andExpect(MockMvcResultMatchers.view().name("pages/loginPage"));
+         .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+         .andExpect(MockMvcResultMatchers.redirectedUrl("/home"));
+
   }
 
   @When("I don't verify my account")
@@ -86,6 +80,25 @@ public class VerificationAfterRegister {
         .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
         .andExpect(MockMvcResultMatchers.view().name("pages/landingPage"));
   }
+
+  @When("I verify my account")
+  public void iVerifyMyAccount() throws Exception {
+    verificationTokenMock = Mockito.mock(VerificationToken.class);
+    Mockito.when(verificationTokenMock.getUserId()).thenReturn(1L);
+    Mockito.when(verificationTokenMock.getToken()).thenReturn("token");
+
+    verificationTokenForm.setVerificationToken("123456");
+    verificationTokenMock.setVerified(true);
+    Mockito.when(verificationTokenService.getVerificationTokenByToken(Mockito.any()))
+        .thenReturn(verificationTokenMock);
+    Mockito.when(userService.findById(verificationTokenMock.getUserId())).thenReturn(testUser);
+    Mockito.doNothing().when(verificationTokenService).updateVerifiedByUserId(Mockito.anyLong());
+    mockMvc.perform(MockMvcRequestBuilders.post("/register/verification").with(csrf())
+            .flashAttr("verificationTokenForm", verificationTokenForm))
+        .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+        .andExpect(MockMvcResultMatchers.redirectedUrl("/login"));
+  }
+
    @Then("I am redirected to the page with URL {string}")
    public void iAmRedirectedToThePageWithURL(String pageURL) throws Exception {
       LoginForm loginForm = new LoginForm();
@@ -97,6 +110,7 @@ public class VerificationAfterRegister {
           .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
           .andExpect(MockMvcResultMatchers.redirectedUrl(pageURL));
    }
+
 
 
 }
