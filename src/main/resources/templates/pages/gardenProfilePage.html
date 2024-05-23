@@ -40,8 +40,9 @@
                 <div style="align-content: center; display: inline">
                   <h3 th:text="'Today is ' + ${weather[0].dayOfTheWeek}"></h3>
                 </div>
+                <br>
                 <h2>My Location</h2>
-                <p th:text="${garden.getCity()} + ', ' + ${garden.getCountry()}"></p>
+                <h3 style="font-weight: normal;" th:text="${garden.getCity()} + ', ' + ${garden.getCountry()}"></h3>
                 <img th:src="@{${weather[1].type.getPicturePath()}}" alt="Weather Image" width="150" height="150">
                 <h2 th:text="${weather[0].temperature} + '°C'"></h2>
                 <h3 th:text="${weather[0].type.getText()}"></h3>
