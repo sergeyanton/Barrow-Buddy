@@ -11,93 +11,98 @@
     <!--            We use a model attribute sent from the controller, in this example it is called 'weather'-->
     <!--            TODO: display nicely -->
 
-<!--            <tr th:each="w : ${weather}">-->
-<!--                <div th:text="${w.type.getText()}"></div>-->
-<!--                <div th:text="${w.temperature}"></div>-->
-<!--            </tr>-->
-            <h1 th:text="${garden.name}"></h1>
+    <!--            <tr th:each="w : ${weather}">-->
+    <!--                <div th:text="${w.type.getText()}"></div>-->
+    <!--                <div th:text="${w.temperature}"></div>-->
+    <!--            </tr>-->
+    <h1 th:text="${garden.name}"></h1>
 
-            <p th:if="${garden.description != null}">
-              <b th:text="${garden.description}"></b>
-            </p>
+    <p th:if="${garden.description != null}">
+      <b th:text="${garden.description}"></b>
+    </p>
 
-            <br>
-            <p th:if="${garden.owner.id == loggedInUserId}" th:text="${garden.getLocationString}" style="font-size: 18px;"></p>
-            <p th:if="${(garden.owner.id == loggedInUserId) && garden.latitude == null and garden.longitude == null}" th:text="'Location not found, please update your location to see the weather.'"></p>
-            <br>
-            <p th:if="${garden.size != null}" th:text="${garden.size} + ' m&sup2;'" style="font-size: 18px;"></p>
-            <br>
-            <p id="gardenVisibilityText" th:if="${garden.owner.id == loggedInUserId}" th:text="'Garden Visibility: ' + (${garden.getIsPublic} ? 'Public' : 'Private')"></p>
+    <br>
+    <p th:if="${garden.owner.id == loggedInUserId}" th:text="${garden.getLocationString}" style="font-size: 18px;"></p>
+    <p th:if="${(garden.owner.id == loggedInUserId) && garden.latitude == null and garden.longitude == null}" th:text="'Location not found, please update your location to see the weather.'"></p>
+    <br>
+    <p th:if="${garden.size != null}" th:text="${garden.size} + ' m&sup2;'" style="font-size: 18px;"></p>
+    <br>
+    <p id="gardenVisibilityText" th:if="${garden.owner.id == loggedInUserId}" th:text="'Garden Visibility: ' + (${garden.getIsPublic} ? 'Public' : 'Private')"></p>
 
-            <br>
-          <div th:if="${garden.owner.id == loggedInUserId}" class="form-element">
-            <div style="display: flex; align-items: center;">
-              <label for="publicCheckbox" style="margin-right: 10px; font-size: 18px;"><b>Make My Garden Public</b></label>
-              <input type="checkbox" class="form-control" id="publicCheckbox" th:checked=${garden.getIsPublic} th:attr="onclick='toggleInput(this, ' + ${garden.id} + ')'">
+    <br>
+    <div th:if="${garden.owner.id == loggedInUserId}" class="form-element">
+      <div style="display: flex; align-items: center;">
+        <label for="publicCheckbox" style="margin-right: 10px; font-size: 18px;"><b>Make My Garden Public</b></label>
+        <input type="checkbox" class="form-control" id="publicCheckbox" th:checked=${garden.getIsPublic} th:attr="onclick='toggleInput(this, ' + ${garden.id} + ')'">
+      </div>
+    </div>
+
+    <br th:if="${garden.size != null}">
+    <div th:if="${garden.owner.id == loggedInUserId}" class="form-element">
+      <a class="submit" th:href="@{'/gardens/' + ${garden.id} + '/edit'}">Edit Garden Details</a>
+      <a th:href="@{'/gardens/' + ${garden.id} + '/plants/create'}">
+        <button>Add a plant</button>
+      </a>
+    </div>
+    <br>
+    <span id="clientSideErrorMessage" class="error"></span>
+    <br>
+    <div class="scroll-plants-container">
+      <table>
+        <thead>
+        <tr>
+          <th></th>
+          <th>Name</th>
+          <th>Number of Plants</th>
+          <th>Description</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${plants.empty}">
+          <td colspan="5">No plants yet</td>
+        </tr>
+        <tr th:each="plant : ${plants}">
+          <td>
+            <div class="plant-picture-upload-wrapper">
+              <div class="plant-picture-wrapper">
+                <img class="plant-picture" th:id="'plantImage' + ${plant.id}"
+                     th:src="@{${plant.picturePath}}"
+                     alt="Plant Picture">
+                <label th:if="${garden.owner.id == loggedInUserId}" th:id="'pictureFileLabel' + ${plant.id}" class="file-upload-plus-button" th:for="'pictureFile' + ${plant.id}">+</label>
+
+              </div>
+
+              <form th:if="${garden.owner.id == loggedInUserId}" th:id="'pictureForm' + ${plant.id}" th:action="@{'/gardens/' + ${garden.id} + '/plants/' + ${plant.id}}" th:object="${plantPictureForm}" method="post" enctype="multipart/form-data">
+                <input type="file" th:field="*{pictureFile}" th:id="'pictureFile' + ${plant.id}" th:attr="onchange='validateImage(this, ' + ${plant.id} + ')'" accept="image/png, image/jpeg, image/svg+xml">
+              </form>
             </div>
-          </div>
-
-            <br th:if="${garden.size != null}">
-            <div th:if="${garden.owner.id == loggedInUserId}" class="form-element">
-                  <a class="submit" th:href="@{'/gardens/' + ${garden.id} + '/edit'}">Edit Garden Details</a>
-              <a th:href="@{'/gardens/' + ${garden.id} + '/plants/create'}">
-                <button>Add a plant</button>
-              </a>
-            </div>
-            <br>
-            <span id="clientSideErrorMessage" class="error"></span>
-            <br>
-            <div class="scroll-plants-container">
-                <table>
-                    <thead>
-                    <tr>
-                        <th></th>
-                        <th>Name</th>
-                        <th>Number of Plants</th>
-                        <th>Description</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:if="${plants.empty}">
-                        <td colspan="5">No plants yet</td>
-                    </tr>
-                    <tr th:each="plant : ${plants}">
-                        <td>
-                            <div class="plant-picture-upload-wrapper">
-                                <div class="plant-picture-wrapper">
-                                    <img class="plant-picture" th:id="'plantImage' + ${plant.id}"
-                                         th:src="${plant.picturePath}"
-                                         alt="Plant Picture">
-                                      <label th:if="${garden.owner.id == loggedInUserId}" th:id="'pictureFileLabel' + ${plant.id}" class="file-upload-plus-button" th:for="'pictureFile' + ${plant.id}">+</label>
-
-                                </div>
-
-                                <form th:if="${garden.owner.id == loggedInUserId}" th:id="'pictureForm' + ${plant.id}" th:action="@{'/gardens/' + ${garden.id} + '/plants/' + ${plant.id}}" th:object="${plantPictureForm}" method="post" enctype="multipart/form-data">
-                                    <input type="file" th:field="*{pictureFile}" th:id="'pictureFile' + ${plant.id}" th:attr="onchange='validateImage(this, ' + ${plant.id} + ')'" accept="image/png, image/jpeg, image/svg+xml">
-                                </form>
-                            </div>
-                        </td>
-                        <td><span th:text="${plant.name}"></span></td>
-                        <td><span th:text="${plant.plantCount}"></span></td>
-                        <td><span th:text="${plant.description}"></span></td>
-                        <td><a th:if="${garden.owner.id == loggedInUserId}" th:href="@{'/gardens/' + ${garden.id} + '/plants/' + ${plant.id} + '/edit'}">Edit Plant</a></td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-            <br>
-            <a th:if="${garden.owner.id == loggedInUserId}" th:href="@{/gardens}">
-                <button>Back to My Gardens</button>
-            </a>
-            <a th:unless="${garden.owner.id == loggedInUserId}" th:href="@{/browseGardens}">
-              <button>Back to Browse Gardens</button>
-            </a>
-        </div>
-    </main>
-    <!--    TODO THIS WOULD BE VERY GOOD TO FIGURE OUT SO WE DON'T HAVE JS IN HTML FILES -->
+          </td>
+          <td><span th:text="${plant.name}"></span></td>
+          <td><span th:text="${plant.plantCount}"></span></td>
+          <td><span th:text="${plant.description}"></span></td>
+          <td><a th:if="${garden.owner.id == loggedInUserId}" th:href="@{'/gardens/' + ${garden.id} + '/plants/' + ${plant.id} + '/edit'}">Edit Plant</a></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <br>
+    <a th:if="${garden.owner.id == loggedInUserId}" th:href="@{/gardens}">
+      <button>Back to My Gardens</button>
+    </a>
+    <a th:unless="${garden.owner.id == loggedInUserId}" th:href="@{/browseGardens}">
+      <button>Back to Browse Gardens</button>
+    </a>
+  </div>
+</main>
+<!--    TODO THIS WOULD BE VERY GOOD TO FIGURE OUT SO WE DON'T HAVE JS IN HTML FILES -->
 <!--    <script th:src="@{/js/plantsTableScrollAfter10Plants.js}" type="text/javascript"></script>-->
-<script>
+<script th:inline="javascript">
+  /*<![CDATA[*/
+  const BASE_URL = /*[[@{/}]]*/ '';
+  /*]]>*/
+
+
   // limits viewable plants in the table to 10
   window.onload = function () {
     const container = document.querySelector(".scroll-plants-container");
@@ -175,7 +180,7 @@
       gardenVisibilityText.textContent = "Garden Visibility: Private";
     }
 
-    fetch(`/updateGardenPublicity?gardenId=${gardenId}&gardenPublicity=${box.checked}`)
+    fetch(`${BASE_URL}updateGardenPublicity?gardenId=${gardenId}&gardenPublicity=${box.checked}`)
     .then(response => {
       if (response.ok) {
         console.log("Successfully updated garden publicity");
