@@ -158,7 +158,7 @@ public class WeatherService {
             String latitude = garden.getLatitude().toString();
             String longitude = garden.getLongitude().toString();
 
-            String url = URL + "&latitude=" + latitude + "&longitude=" + longitude + "&timezone=auto";
+            String url = URL + "&latitude=" + latitude + "&longitude=" + longitude + "&timezone=Pacific/Auckland";
             String jsonResponse = restTemplate.getForObject(url, String.class);
             Map<String, Object> weather = objectMapper.readValue(jsonResponse, Map.class);
             List<Integer> weatherCodes = (ArrayList) ((Map<String, Object>) weather.get("hourly")).get("weather_code");
