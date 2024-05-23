@@ -85,16 +85,20 @@ public class WeatherService {
             LocalDateTime timeRightNow = LocalDateTime.now();
 
             if (weatherDateTime.isBefore(timeRightNow.plusMinutes(1)) && nextWeatherHour.isAfter(timeRightNow)) {
-                int prev = i - 1;
-                while (weathers.get(prev).getType() == WeatherType.SAME && prev < weathers.size()) {
-                    weathers.get(prev).setType(weathers.get(i).getType());
-                    prev--;
-                }
-                if (weathers.get(prev).getType() != WeatherType.SAME) {
-                    beforeAndAfterWeather.add(weathers.get(prev));
-                }
-                if (weathers.get(i+1).getType() == WeatherType.SAME) {
-                    weathers.get(i+1).setType(weathers.get(prev).getType());
+                if (i == 0) {
+                    beforeAndAfterWeather.add(weathers.get(i));
+                } else {
+                    int prev = i - 1;
+                    while (weathers.get(prev).getType() == WeatherType.SAME && prev < weathers.size()) {
+                        weathers.get(prev).setType(weathers.get(i).getType());
+                        prev--;
+                    }
+                    if (weathers.get(prev).getType() != WeatherType.SAME) {
+                        beforeAndAfterWeather.add(weathers.get(prev));
+                    }
+                    if (weathers.get(i+1).getType() == WeatherType.SAME) {
+                        weathers.get(i+1).setType(weathers.get(prev).getType());
+                    }
                 }
                 beforeAndAfterWeather.add(weathers.get(i+1));
 
