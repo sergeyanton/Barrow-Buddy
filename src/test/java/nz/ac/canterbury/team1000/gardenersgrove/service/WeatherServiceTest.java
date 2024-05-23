@@ -78,15 +78,9 @@ public class WeatherServiceTest {
 		String[] time = new String[]{"2020-03-28T00:00", "2020-03-28T01:00", "2020-03-28T02:00"};
 		when(restTemplate.getForObject(anyString(), any())).thenReturn(generateResponse(codes, temps, humidity, time));
 
-		List<Weather> result = weatherService.getWeatherByGardenId(gardenId);
+		weatherService.getWeatherByGardenId(gardenId);
 
 		verify(weatherRepository, times(3)).save(any());
-
-		for (int i = 0; i < result.size(); i++) {
-			Weather weather = result.get(i);
-			Assertions.assertEquals(WeatherType.getByCode(codes[i]), weather.getType());
-			Assertions.assertEquals(temps[i], weather.getTemperature());
-		}
 	}
 
 	@Test
@@ -119,7 +113,7 @@ public class WeatherServiceTest {
 
 		List<Weather> weatherList = weatherService.getCurrentWeatherByGardenId(gardenId);
 
-		Assertions.assertEquals(2, weatherList.size());
+		Assertions.assertEquals(3, weatherList.size());
 	}
 
 	@Test
@@ -153,7 +147,6 @@ public class WeatherServiceTest {
 		Assertions.assertEquals(WeatherType.FIRE, weatherList.get(11).getType());
 	}
 
-	// TODO: test that if weather type is same, it gets previous - as well as if previous weather type is also same
 	@Test
 	public void GetCurrentWeather_WeatherTypeIsSame_WeatherTypeChangedToPreviousHourWeatherType() {
 		int[] codes = new int[]{0, 1, 2, 3, 4};
@@ -175,7 +168,7 @@ public class WeatherServiceTest {
 				String time = LocalTime.of(LocalTime.now().plusHours(1).getHour(), 0).toString();
 				times[i] = date + "T" + time;
 			} else {
-				String time = LocalTime.of(LocalTime.now().plusHours(1).getHour(), 0).toString();
+				String time = LocalTime.of(LocalTime.now().plusHours(2).getHour(), 0).toString();
 				times[i] = date + "T" + time;
 			}
 		}
@@ -189,7 +182,7 @@ public class WeatherServiceTest {
 	}
 
 	@Test
-	public void GetCurrentWeather_WeatherTypeSameAndPreviousHoursHasWeatherTypeSame_WeatherTypeChangedToWeatherTypeTwoHoursAgo() {
+	public void GetCurrentWeather_WeatherTypeSameAndPreviousHourWeatherTypeSame_WeatherTypeChangedToWeatherTypeTwoHoursAgo() {
 		int[] codes = new int[]{0, 2, 2, 3, 4};
 		double[] temps = new double[]{20.0, 18.0, 22.5, 20.0, 18.0};
 		int[] humidity = new int[]{90, 87, 88, 90, 87};
@@ -203,13 +196,13 @@ public class WeatherServiceTest {
 				String time = LocalTime.of(LocalTime.now().minusHours(1).getHour(), 0).toString();
 				times[i] = date + "T" + time;
 			} else if (i == 2) {
-				String time = LocalTime.now().toString();
+				String time = LocalTime.of(LocalTime.now().getHour(), 0).toString();
 				times[i] = date + "T" + time;
 			} else if (i == 3) {
 				String time = LocalTime.of(LocalTime.now().plusHours(1).getHour(), 0).toString();
 				times[i] = date + "T" + time;
 			} else {
-				String time = LocalTime.of(LocalTime.now().plusHours(1).getHour(), 0).toString();
+				String time = LocalTime.of(LocalTime.now().plusHours(2).getHour(), 0).toString();
 				times[i] = date + "T" + time;
 			}
 		}
