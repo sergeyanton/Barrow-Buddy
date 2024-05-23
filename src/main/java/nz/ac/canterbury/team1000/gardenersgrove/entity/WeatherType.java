@@ -20,8 +20,7 @@ public enum WeatherType {
 	CLEAR(new int[]{ 0 }, "Clear", "/images/weather/sunny.png"),
 	HAIL(new int[]{ 27, 87, 88, 89, 90 }, "Hail", "/images/weather/hail.png"),
 	RAIN_SHOWER(new int[]{ 14, 15, 16, 18, 21, 23, 24, 25, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 80, 81, 82, 83, 84, 85, 86, 91, 92}, "Rain", "/images/weather/shower.png"),
-	// 2: State of sky on the whole unchanged
-	// On the getCurrentWeatherByGardenId, the weather type will be set to the previous hour's weather
+	// 2: State of sky on the whole unchanged - On the getCurrentWeatherByGardenId, the weather type will be set to the previous hour's weather
 	SAME(new int[]{ 2 }, "Same Weather", ""),
 	// 4: Visibility reduced by smoke, e.g. veldt or forest fires, industrial smoke or volcanic ashes
 	FIRE(new int[]{ 4 }, "Smoke", "/images/weather/smoke.png");
