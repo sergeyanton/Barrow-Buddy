@@ -122,6 +122,103 @@ public class WeatherServiceTest {
 		Assertions.assertEquals(2, weatherList.size());
 	}
 
-	// TODO: test for each weather type
+	@Test
+	public void GetWeather_WeatherCodesUniqueForWeatherType_WeatherTypesCorrect() {
+		int[] codes = new int[]{20, 22, 13, 30, 10, 1, 5, 0, 27, 14, 2, 4};
+		double[] temps = new double[]{20.0, 18.0, 22.5, 20.0, 18.0, 20.0, 18.0, 22.5, 20.0, 18.0, 17.0, 15.0};
+		int[] humidity = new int[]{90, 87, 88, 90, 87, 90, 87, 88, 90, 87, 80, 91};
+		String[] times = new String[12];
+		String date = LocalDate.now().toString();
+
+		for (int i = 0; i < 12; i++) {
+			String time = LocalTime.of(LocalTime.now().plusHours(i).getHour(), 0).toString();
+			times[i] = date + "T" + time;
+		}
+
+		when(restTemplate.getForObject(anyString(), any())).thenReturn(generateResponse(codes, temps, humidity, times));
+
+		List<Weather> weatherList = weatherService.getWeather(gardenId);
+
+		Assertions.assertEquals(WeatherType.DRIZZLE, weatherList.get(0).getType());
+		Assertions.assertEquals(WeatherType.SNOW, weatherList.get(1).getType());
+		Assertions.assertEquals(WeatherType.THUNDERSTORM, weatherList.get(2).getType());
+		Assertions.assertEquals(WeatherType.DUST_STORM, weatherList.get(3).getType());
+		Assertions.assertEquals(WeatherType.FOG, weatherList.get(4).getType());
+		Assertions.assertEquals(WeatherType.CLOUDY, weatherList.get(5).getType());
+		Assertions.assertEquals(WeatherType.HAZE, weatherList.get(6).getType());
+		Assertions.assertEquals(WeatherType.CLEAR, weatherList.get(7).getType());
+		Assertions.assertEquals(WeatherType.HAIL, weatherList.get(8).getType());
+		Assertions.assertEquals(WeatherType.RAIN_SHOWER, weatherList.get(9).getType());
+		Assertions.assertEquals(WeatherType.SAME, weatherList.get(10).getType());
+		Assertions.assertEquals(WeatherType.FIRE, weatherList.get(11).getType());
+	}
+
 	// TODO: test that if weather type is same, it gets previous - as well as if previous weather type is also same
+	@Test
+	public void GetCurrentWeather_WeatherTypeIsSame_WeatherTypeChangedToPreviousHourWeatherType() {
+		int[] codes = new int[]{0, 1, 2, 3, 4};
+		double[] temps = new double[]{20.0, 18.0, 22.5, 20.0, 18.0};
+		int[] humidity = new int[]{90, 87, 88, 90, 87};
+		String[] times = new String[5];
+		String date = LocalDate.now().toString();
+		for (int i = 0; i < 5; i++) {
+			if (i == 0) {
+				String time = LocalTime.of(LocalTime.now().minusHours(2).getHour(), 0).toString();
+				times[i] = date + "T" + time;
+			} else if (i == 1) {
+				String time = LocalTime.of(LocalTime.now().minusHours(1).getHour(), 0).toString();
+				times[i] = date + "T" + time;
+			} else if (i == 2) {
+				String time = LocalTime.of(LocalTime.now().getHour(), 0).toString();
+				times[i] = date + "T" + time;
+			} else if (i == 3) {
+				String time = LocalTime.of(LocalTime.now().plusHours(1).getHour(), 0).toString();
+				times[i] = date + "T" + time;
+			} else {
+				String time = LocalTime.of(LocalTime.now().plusHours(1).getHour(), 0).toString();
+				times[i] = date + "T" + time;
+			}
+		}
+
+		when(restTemplate.getForObject(anyString(), any())).thenReturn(generateResponse(codes, temps, humidity, times));
+
+		List<Weather> weatherList = weatherService.getCurrentWeatherByGardenId(gardenId);
+
+		Assertions.assertEquals(weatherList.get(0).getType(), weatherList.get(1).getType());
+		Assertions.assertEquals(WeatherType.CLOUDY, weatherList.get(1).getType());
+	}
+
+	@Test
+	public void GetCurrentWeather_WeatherTypeSameAndPreviousHoursHasWeatherTypeSame_WeatherTypeChangedToWeatherTypeTwoHoursAgo() {
+		int[] codes = new int[]{0, 2, 2, 3, 4};
+		double[] temps = new double[]{20.0, 18.0, 22.5, 20.0, 18.0};
+		int[] humidity = new int[]{90, 87, 88, 90, 87};
+		String[] times = new String[5];
+		String date = LocalDate.now().toString();
+		for (int i = 0; i < 5; i++) {
+			if (i == 0) {
+				String time = LocalTime.of(LocalTime.now().minusHours(2).getHour(), 0).toString();
+				times[i] = date + "T" + time;
+			} else if (i == 1) {
+				String time = LocalTime.of(LocalTime.now().minusHours(1).getHour(), 0).toString();
+				times[i] = date + "T" + time;
+			} else if (i == 2) {
+				String time = LocalTime.now().toString();
+				times[i] = date + "T" + time;
+			} else if (i == 3) {
+				String time = LocalTime.of(LocalTime.now().plusHours(1).getHour(), 0).toString();
+				times[i] = date + "T" + time;
+			} else {
+				String time = LocalTime.of(LocalTime.now().plusHours(1).getHour(), 0).toString();
+				times[i] = date + "T" + time;
+			}
+		}
+
+		when(restTemplate.getForObject(anyString(), any())).thenReturn(generateResponse(codes, temps, humidity, times));
+
+		List<Weather> weatherList = weatherService.getCurrentWeatherByGardenId(gardenId);
+
+		Assertions.assertEquals(weatherList.get(0).getType(), weatherList.get(1).getType());
+		Assertions.assertEquals(WeatherType.CLEAR, weatherList.get(1).getType());
+	}
 }

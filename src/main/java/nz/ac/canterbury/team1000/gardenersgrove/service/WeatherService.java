@@ -35,11 +35,10 @@ public class WeatherService {
     private final LocationSearchService locationSearchService;
     LocalDate dateTwoDaysAgo = LocalDate.now().minusDays(2);
     LocalDate dateFiveDaysLater = LocalDate.now().plusDays(5);
-    private final String URL = String.format(
-        "https://api.open-meteo.com/v1/forecast?hourly=temperature_2m,relative_humidity_2m,weather_code&start_date=%s&end_date=%s",
-        dateTwoDaysAgo,
-        dateFiveDaysLater
-    );
+    private final String URL =
+        "https://api.open-meteo.com/v1/forecast?hourly=temperature_2m,relative_humidity_2m,weather_code&start_date="
+            + dateTwoDaysAgo + "&end_date=" + dateFiveDaysLater;
+
     @Autowired
     public WeatherService(WeatherRepository weatherRepository, RestTemplate restTemplate,
         ObjectMapper objectMapper, GardenService gardenService, LocationSearchService locationSearchService) {
@@ -99,17 +98,21 @@ public class WeatherService {
                     beforeAndAfterWeather.add(weathers.get(i));
                 } else {
                     int prev = i - 1;
-                    while (weathers.get(prev).getType() == WeatherType.SAME && prev < weathers.size()) {
-                        weathers.get(prev).setType(weathers.get(i).getType());
+                    while (weathers.get(prev).getType() == WeatherType.SAME) {
+                        weathers.get(prev).setType(weathers.get(prev-1).getType());
                         prev--;
                     }
-                    if (weathers.get(prev).getType() != WeatherType.SAME) {
-                        beforeAndAfterWeather.add(weathers.get(prev));
+                    if (weathers.get(i-1).getType() != WeatherType.SAME) {
+                        beforeAndAfterWeather.add(weathers.get(i-1));
+                    }
+                    if (weathers.get(i).getType() == WeatherType.SAME) {
+                        weathers.get(i).setType(weathers.get(i-1).getType());
                     }
                     if (weathers.get(i+1).getType() == WeatherType.SAME) {
-                        weathers.get(i+1).setType(weathers.get(prev).getType());
+                        weathers.get(i+1).setType(weathers.get(i).getType());
                     }
                 }
+                beforeAndAfterWeather.add(weathers.get(i));
                 beforeAndAfterWeather.add(weathers.get(i+1));
 
                 break;
@@ -155,7 +158,7 @@ public class WeatherService {
             String latitude = garden.getLatitude().toString();
             String longitude = garden.getLongitude().toString();
 
-            String url = URL + "&latitude=" + latitude + "&longitude=" + longitude;
+            String url = URL + "&latitude=" + latitude + "&longitude=" + longitude + "&timezone=auto";
             String jsonResponse = restTemplate.getForObject(url, String.class);
             Map<String, Object> weather = objectMapper.readValue(jsonResponse, Map.class);
             List<Integer> weatherCodes = (ArrayList) ((Map<String, Object>) weather.get("hourly")).get("weather_code");
