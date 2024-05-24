@@ -14,22 +14,36 @@
 <!--            </tr>-->
 
             <h1 th:text="${garden.name}"></h1>
+
+            <p th:if="${garden.description != null}">
+              <b th:text="${garden.description}"></b>
+            </p>
+
             <p th:text="${garden.getLocationString}"></p>
             <br>
-            <p th:if="${garden.size != null}" th:text="'Size: ' + ${garden.size} + ' m&sup2;'"></p>
+            <p th:if="${(garden.owner.id == loggedInUserId) && garden.latitude == null and garden.longitude == null}" th:text="'Location not found, please update your location to see the weather.'"></p>
             <br>
-            <p id="gardenVisibilityText" th:text="'Garden Visibility: ' + (${garden.getIsPublic} ? 'Public' : 'Private')"></p>
+            <p th:if="${garden.size != null}" th:text="${garden.size} + ' m&sup2;'" style="font-size: 18px;"></p>
             <br>
-            <div class="form-element">
-                <label for="publicCheckbox"><b>Make My Garden Public</b></label>
+            <p id="gardenVisibilityText" th:if="${garden.owner.id == loggedInUserId}" th:text="'Garden Visibility: ' + (${garden.getIsPublic} ? 'Public' : 'Private')"></p>
+
+            <br>
+            <div th:if="${garden.owner.id == loggedInUserId}" class="form-element">
+              <div style="display: flex; align-items: center;">
+                <label for="publicCheckbox" style="margin-right: 10px; font-size: 18px;"><b>Make My Garden Public</b></label>
                 <input type="checkbox" class="form-control" id="publicCheckbox" th:checked=${garden.getIsPublic} th:attr="onclick='toggleInput(this, ' + ${garden.id} + ')'">
+              </div>
             </div>
+
+
             <br th:if="${garden.size != null}">
-            <a th:href="@{'/gardens/' + ${garden.id} + '/plants/create'}">
-              <button>Add a plant</button>
-            </a>
-            <a class="cancel" th:href="@{'/gardens/' + ${garden.id} + '/edit'}">Edit Garden Details</a>
-          <br>
+            <div th:if="${garden.owner.id == loggedInUserId}" class="form-element">
+              <a class="submit" th:href="@{'/gardens/' + ${garden.id} + '/edit'}">Edit Garden Details</a>
+              <a th:href="@{'/gardens/' + ${garden.id} + '/plants/create'}">
+                <button>Add a plant</button>
+              </a>
+            </div>
+            <br>
 
           <div id="weather-container" class="weather-box">
             <div class="weather-info">
