@@ -9,11 +9,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import nz.ac.canterbury.team1000.gardenersgrove.util.Status;
 
 @Entity
-@Table(name = "friend_relationship")
 public class FriendRelationship {
 
 	@Id
@@ -22,12 +20,10 @@ public class FriendRelationship {
 
 	@ManyToOne
 	@JoinColumn(name = "sender_id", nullable = false)
-	@Column(nullable = false)
 	private User sender;
 
 	@ManyToOne
 	@JoinColumn(name = "receiver_id", nullable = false)
-	@Column(nullable = false)
 	private User receiver;
 
 	@Enumerated(EnumType.STRING)

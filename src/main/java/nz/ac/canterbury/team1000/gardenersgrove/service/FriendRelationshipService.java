@@ -1,5 +1,6 @@
 package nz.ac.canterbury.team1000.gardenersgrove.service;
 
+import jakarta.transaction.Transactional;
 import java.util.Optional;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.FriendRelationship;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Garden;
@@ -32,12 +33,13 @@ public class FriendRelationshipService {
 		return friendRelationshipRepository.save(friendRelationship);
 	}
 
+	@Transactional
 	public void updateFriendRelationship(Long senderId, Long receiverId, Status status) {
 		Optional<FriendRelationship> currentRelationship = friendRelationshipRepository.findBySenderIdAndReceiverId(senderId, receiverId);
-		currentRelationship.ifPresent(
-			friendRelationship -> friendRelationshipRepository.updateStatusById(
-				friendRelationship.getId(), status));
+		currentRelationship.ifPresent(friendRelationship -> {
+			friendRelationship.setStatus(status);
+			friendRelationshipRepository.save(friendRelationship);
+		});
 	}
-
 
 }
