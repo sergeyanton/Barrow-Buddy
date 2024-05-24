@@ -13,7 +13,7 @@
                     <div class="profile-picture-wrapper">
                         <input th:field="*{picturePath}" type= "hidden"/>
                         <img class="profile-picture" id="profileImage"
-                             th:src="${createPlantForm.picturePath}"
+                             th:src="@{${createPlantForm.picturePath}}"
                              alt="Plant Picture">
                         <label id="pictureFileLabel" class="file-upload-plus-button" for="pictureFile">+</label>
                         <input type="file" th:field="*{pictureFile}" id="pictureFile" th:attr="onchange='validateImage(this, \'' + ${createPlantForm.picturePath} + '\')'" accept="image/png, image/jpeg, image/svg+xml">

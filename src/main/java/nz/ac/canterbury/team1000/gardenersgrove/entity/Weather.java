@@ -87,6 +87,11 @@ public class Weather {
       return humidity;
     }
 
+    /**
+     * Returns the day of the week with the first letter capitalized and the rest in lowercase.
+     *
+     * @return a string representing the day of the week with proper capitalization
+     */
     public String getDayOfTheWeek() {
         return dayOfTheWeek.substring(0, 1).toUpperCase() + dayOfTheWeek.substring(1).toLowerCase();
     }
