@@ -37,6 +37,16 @@ public class GlobalModelAttributeProvider {
         return request.getRequestURI() + "?" + request.getQueryString();
     }
 
+    /**
+     * Provide the currentUrl without the page number to every model/controller
+     * @param request the current request
+     * @return the current url without the page number
+     */
+    @ModelAttribute("currentUrlNoPage")
+    private String getCurrentPathNoPage(HttpServletRequest request) {
+        return this.getCurrentPath(request).replaceAll("(&|\\?)page=\\d+", "");
+    }
+
 
     /**
      * Necessary for being able to display each garden in the nav bar

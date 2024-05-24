@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -564,8 +565,10 @@ public class GardensController {
      * @return thymeleaf pages/browseGardensPage
      */
     @GetMapping("/browseGardens")
-    public String browseGardens(@RequestParam(name = "query", required = false, defaultValue = "") String query, @PageableDefault(size = 10) Pageable pageable, Model model) {
+    public String browseGardens(@RequestParam(name = "query", required = false, defaultValue = "") String query, @RequestParam(name = "page", defaultValue = "1") int page, Model model) {
         logger.info("GET /browseGardens");
+        int pageSize = 10;
+        Pageable pageable = PageRequest.of(page - 1, pageSize);
         Page<Garden> gardens;
         // if query search results
         if (!query.isBlank()) {
