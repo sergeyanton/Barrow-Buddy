@@ -11,8 +11,6 @@ import org.springframework.stereotype.Service;
 public class ModerationService {
 
 	final Logger logger = LoggerFactory.getLogger(ModerationService.class);
-	private final String URL = "https://api.openai.com/v1/moderations";
-	private final String API_KEY = System.getenv("OPENAI_API_KEY");
 	private final OpenAiService service;
 
 	public ModerationService() {
@@ -21,7 +19,6 @@ public class ModerationService {
 	}
 
 	public boolean isAllowed(String text) {
-		logger.info(text);
 		ModerationRequest moderationRequest = ModerationRequest.builder().input(text).build();
 		boolean isFlagged = service.createModeration(moderationRequest).getResults().getFirst()
 			.isFlagged();
