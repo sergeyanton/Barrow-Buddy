@@ -33,7 +33,10 @@ public class FriendRelationshipService {
 	}
 
 	public void updateFriendRelationship(Long senderId, Long receiverId, Status status) {
-		// TODO implement this
+		Optional<FriendRelationship> currentRelationship = friendRelationshipRepository.findBySenderIdAndReceiverId(senderId, receiverId);
+		currentRelationship.ifPresent(
+			friendRelationship -> friendRelationshipRepository.updateStatusById(
+				friendRelationship.getId(), status));
 	}
 
 

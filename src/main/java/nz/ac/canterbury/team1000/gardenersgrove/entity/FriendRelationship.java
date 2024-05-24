@@ -39,6 +39,12 @@ public class FriendRelationship {
 	 */
 	protected FriendRelationship() {}
 
+	public FriendRelationship(User sender, User receiver, Status status) {
+		this.sender = sender;
+		this.receiver = receiver;
+		this.status = status;
+	}
+
 	public Long getId() {
 		return id;
 	}
