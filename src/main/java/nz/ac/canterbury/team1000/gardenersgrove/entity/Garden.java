@@ -61,7 +61,9 @@ public class Garden {
      * @param size     size of garden
      * @param owner    owner of garden
      */
-    public Garden(String name, String address, String suburb, String city, String postcode, String country, Double latitude, Double longitude, Double size,String description, User owner, boolean isPublic) {
+
+    public Garden(String name, String address, String suburb, String city, String postcode, String country, Double latitude, Double longitude, Double size, String description, User owner, boolean isPublic) {
+
         this.name = name;
         this.address = address;
         this.suburb = suburb;
@@ -95,7 +97,9 @@ public class Garden {
      * @param size     size of garden
      * @param owner    owner of garden
      */
-    public Garden(String name, String address, String suburb, String city, String postcode, String country, Double latitude, Double longitude, String description, String size, User owner, boolean isPublic) {
+
+    public Garden(String name, String address, String suburb, String city, String postcode, String country, Double latitude, Double longitude, String size, String description, User owner, boolean isPublic) {
+
         this.name = name;
         this.address = address;
         this.suburb = suburb;

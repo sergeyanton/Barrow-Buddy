@@ -43,6 +43,7 @@ public class WeatherServiceTest {
 		when(weatherRepository.findByGardenId(gardenId)).thenReturn(weatherList);
 		when(weatherRepository.save(any())).thenReturn(null);
 		when(gardenService.getGardenById(gardenId)).thenReturn(new Garden("Name", "Address", "Suburb", "City", "Postcode", "Country", 0.0, 0.0, 1.0, "", null, true));
+
 	}
 
 	/**

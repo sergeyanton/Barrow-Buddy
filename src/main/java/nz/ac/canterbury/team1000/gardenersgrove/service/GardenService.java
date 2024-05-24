@@ -41,6 +41,15 @@ public class GardenService {
     }
 
     /**
+     * Gets all public gardens from persistence.
+     *
+     * @return List of gardens with isPublic attribute set to true
+     */
+    public List<Garden> getPublicGardens() {
+        return gardenRepository.findAllByIsPublicTrue();
+    }
+
+    /**
      * Adds a Garden to persistence
      * 
      * @param garden object to persist
@@ -60,5 +69,15 @@ public class GardenService {
     public Garden updateGardenById(long gardenId, Garden garden) {
         gardenRepository.updateGardenById(gardenId, garden);
         return getGardenById(gardenId);
+    }
+
+    /**
+     * Queries the repository to find the gardens whose names or plant names match the given query string
+     *
+     * @param query String to be searched
+     * @return List of garden objects that match the query
+     */
+    public List<Garden> searchGardens(String query) {
+        return gardenRepository.searchPublicGardensByKeyword(query);
     }
 }

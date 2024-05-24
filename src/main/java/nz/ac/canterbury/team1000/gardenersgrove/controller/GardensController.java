@@ -47,9 +47,9 @@ public class GardensController {
     //TODO make a controller dedicated to uploading files.
     private final static String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/uploads";
 
-    
+
     public GardensController(GardenService gardenService, PlantService plantService,
-                                 UserService userService, WeatherService weatherService) {
+        UserService userService, WeatherService weatherService) {
         this.gardenService = gardenService;
         this.plantService = plantService;
         this.userService = userService;
@@ -60,6 +60,8 @@ public class GardensController {
     /**
      * Gets the garden with the given id, if the garden can be accessed.
      * Otherwise, throws an HTTP response exception like 403 or 404
+     * Users cannot view private gardens that don't belong to them.
+     *
      * @param gardenId The id of the garden to access
      * @return The garden object accessed
      * @throws ResponseStatusException An exception that has occurred when trying to access the garden
@@ -76,13 +78,14 @@ public class GardensController {
             );
         }
 
-        User loggedInUser = userService.getLoggedInUser();
-        // check that the garden belongs to the logged in user
-        if (!Objects.equals(garden.getOwner().getId(), loggedInUser.getId())) {
-            // respond with 403 Forbidden
+        // Garden must be public for any user to view it
+        // If private, user must own the garden to view it
+        boolean gardenIsPrivate = !garden.getIsPublic();
+        boolean userOwnsGarden = doesUserOwnGarden(garden);
+        if (gardenIsPrivate && !userOwnsGarden) {
             throw new ResponseStatusException(
                 HttpStatus.FORBIDDEN,
-                "You don't own this garden"
+                "This garden is private. Only the owner can view it."
             );
         }
 
@@ -90,13 +93,47 @@ public class GardensController {
     }
 
     /**
+     * Gets the garden with the given id, if the garden can be accessed and edited.
+     * Otherwise, throws an HTTP response exception like 403 or 404
+     * User must be own the garden to edit it.
+     *
+     * @param gardenId The id of the garden to be edited.
+     * @return The garden object accessed.
+     * @throws ResponseStatusException An exception that has occurred when trying to access the garden
+     */
+    private Garden tryToEditGarden(Long gardenId) throws ResponseStatusException {
+        Garden garden = null;
+        // Make sure the garden exists
+        try {
+            garden = gardenService.getGardenById(gardenId);
+        } catch (IllegalArgumentException exception) {
+            throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Garden not found"
+            );
+        }
+
+        // User must own the garden to edit it
+        boolean userOwnsGarden = doesUserOwnGarden(garden);
+        if (!userOwnsGarden) {
+            throw new ResponseStatusException(
+                HttpStatus.FORBIDDEN,
+                "This garden does not belong to you. Only the owner can edit their garden."
+            );
+        }
+        return garden;
+    }
+
+    /**
      * Gets the plant with the given id, if the plant can be accessed.
      * Otherwise, throws an HTTP response exception like 403 or 404
+     * User must own the garden to edit any of its plants.
+     *
      * @param plantId The id of the plant to access
      * @return The plant object accessed
      * @throws ResponseStatusException An exception that has occurred when trying to access the plant
      */
-    private Plant tryToAccessPlant(Long plantId) throws ResponseStatusException {
+    private Plant tryToEditPlant(Long plantId, Long gardenId) throws ResponseStatusException {
         Plant plant = null;
         // Make sure the plant exists
         try {
@@ -108,9 +145,27 @@ public class GardensController {
             );
         }
 
+        // User must own the garden in order to edit the plant
+        boolean userOwnsGarden = doesUserOwnGarden(gardenService.getGardenById(gardenId));
+        if (!userOwnsGarden) {
+            throw new ResponseStatusException(
+                HttpStatus.FORBIDDEN,
+                "This plant does not belong to you. Only the owner of the garden can edit the plants."
+            );
+        }
+
         return plant;
     }
 
+    /**
+     * Helper method to check if the logged-in user owns the given garden.
+     *
+     * @param garden Garden object that is trying to be accessed.
+     * @return boolean if the user currently logged-in owns the garden or not.
+     */
+    public boolean doesUserOwnGarden(Garden garden) {
+        return Objects.equals(garden.getOwner().getId(), userService.getLoggedInUser().getId());
+    }
 
     /**
      * Handles GET requests from the /gardens/create endpoint. Displays results of previous form
@@ -138,8 +193,8 @@ public class GardensController {
      */
     @PostMapping("/gardens/create")
     public String gardenCreatePost(HttpServletRequest request,
-            @ModelAttribute("createGardenForm") GardenForm createGardenForm,
-            BindingResult bindingResult) {
+        @ModelAttribute("createGardenForm") GardenForm createGardenForm,
+        BindingResult bindingResult) {
         logger.info("POST /gardens/create");
 
         GardenForm.validate(createGardenForm, bindingResult);
@@ -182,11 +237,12 @@ public class GardensController {
      */
     @GetMapping("/gardens/{gardenId}")
     public String viewGarden(@PathVariable("gardenId") Long gardenId,
-                             @ModelAttribute("plantPictureForm") PictureForm plantPictureForm,
-                             Model model) {
+        @ModelAttribute("plantPictureForm") PictureForm plantPictureForm,
+        Model model) {
         logger.info("GET /gardens/" + gardenId);
         Garden garden = tryToAccessGarden(gardenId);
-
+        long loggedInUserId = userService.getLoggedInUser().getId();
+        model.addAttribute("loggedInUserId", loggedInUserId);
         // This is when the weather info is actual retrieved
         // TODO: improve getWeatherByGardenId to make it actually search the location of the garden
         // TODO: also for the purpose of the spike, the parsing was somewhat rushed, i didn't actually parse the humidity
@@ -217,11 +273,11 @@ public class GardensController {
      */
     @PostMapping("/gardens/{gardenId}/plants/{plantId}")
     public String changePlantPictureFromGardenPage(HttpServletRequest request,
-                                                   @PathVariable("gardenId") Long gardenId,
-                                                   @PathVariable("plantId") Long plantId,
-                                                   @ModelAttribute("plantPictureForm") PictureForm plantPictureForm,
-                                                   BindingResult bindingResult,
-                                                   Model model) throws IOException {
+        @PathVariable("gardenId") Long gardenId,
+        @PathVariable("plantId") Long plantId,
+        @ModelAttribute("plantPictureForm") PictureForm plantPictureForm,
+        BindingResult bindingResult,
+        Model model) throws IOException {
         logger.info("POST /gardens/" + gardenId);
         Plant plant = plantService.getPlantById(plantId);
 
@@ -266,10 +322,10 @@ public class GardensController {
      */
     @GetMapping("/gardens/{gardenId}/edit")
     public String gardenEditGet(@PathVariable("gardenId") Long gardenId,
-            @ModelAttribute("editGardenForm") GardenForm editGardenForm) {
+        @ModelAttribute("editGardenForm") GardenForm editGardenForm) {
         logger.info("GET /gardens/" + gardenId + "/edit");
 
-        Garden garden = tryToAccessGarden(gardenId);
+        Garden garden = tryToEditGarden(gardenId);
 
         editGardenForm.setName(garden.getName());
 
@@ -298,12 +354,12 @@ public class GardensController {
      */
     @PostMapping("/gardens/{gardenId}/edit")
     public String gardenEditPost(HttpServletRequest request,
-            @ModelAttribute("editGardenForm") GardenForm editGardenForm,
-            BindingResult bindingResult,
-            @PathVariable("gardenId") Long gardenId) {
+        @ModelAttribute("editGardenForm") GardenForm editGardenForm,
+        BindingResult bindingResult,
+        @PathVariable("gardenId") Long gardenId) {
         logger.info("POST /gardens/" + gardenId + "/edit");
 
-        Garden garden = tryToAccessGarden(gardenId);
+        Garden garden = tryToEditGarden(gardenId);
         GardenForm.validate(editGardenForm, bindingResult);
         if (bindingResult.hasErrors()) {
             return "pages/editGardenPage";
@@ -329,10 +385,9 @@ public class GardensController {
      */
     @GetMapping("/gardens/{gardenId}/plants/create")
     public String gardenCreatePlantGet(@PathVariable("gardenId") Long gardenId,
-            @ModelAttribute("createPlantForm") PlantForm createPlantForm, Model model) {
+        @ModelAttribute("createPlantForm") PlantForm createPlantForm, Model model) {
         logger.info("GET /gardens/" + gardenId + "/plants/create");
-
-        Garden existingGarden = tryToAccessGarden(gardenId);
+        Garden existingGarden = tryToEditGarden(gardenId);
         createPlantForm.setPicturePath("/images/defaultPlantPic.png");
         model.addAttribute("garden", existingGarden);
         return "pages/createPlantPage";
@@ -352,12 +407,12 @@ public class GardensController {
      */
     @PostMapping("/gardens/{gardenId}/plants/create")
     public String gardenCreatePlantPost(HttpServletRequest request,
-            @ModelAttribute("createPlantForm") PlantForm createPlantForm,
-            BindingResult bindingResult,
-            @PathVariable("gardenId") Long gardenId, Model model) throws IOException{
+        @ModelAttribute("createPlantForm") PlantForm createPlantForm,
+        BindingResult bindingResult,
+        @PathVariable("gardenId") Long gardenId, Model model) throws IOException{
         logger.info("POST /gardens/" + gardenId + "/plants/create");
 
-        Garden existingGarden = tryToAccessGarden(gardenId);
+        Garden existingGarden = tryToEditGarden(gardenId);
         model.addAttribute("garden", existingGarden);
 
         PlantForm.validate(createPlantForm, bindingResult);
@@ -408,12 +463,12 @@ public class GardensController {
      */
     @GetMapping("/gardens/{gardenId}/plants/{plantId}/edit")
     public String gardenEditPlant(@PathVariable("gardenId") Long gardenId,
-            @PathVariable("plantId") Long plantId,
-            @ModelAttribute("editPlantForm") PlantForm editPlantForm,
-            Model model){
+        @PathVariable("plantId") Long plantId,
+        @ModelAttribute("editPlantForm") PlantForm editPlantForm,
+        Model model){
         logger.info("GET /gardens/" + gardenId + "/plants/" + plantId + "/edit");
-        Garden existingGarden = tryToAccessGarden(gardenId);
-        Plant existingPlant = tryToAccessPlant(plantId);
+        Garden existingGarden = tryToEditGarden(gardenId);
+        Plant existingPlant = tryToEditPlant(plantId, gardenId);
         String plantPicturePath = plantService.getPlantById(plantId).getPicturePath();
         editPlantForm.setPicturePath(plantPicturePath);
 
@@ -438,15 +493,15 @@ public class GardensController {
      */
     @PostMapping("/gardens/{gardenId}/plants/{plantId}/edit")
     public String gardenEditPlantPost(HttpServletRequest request,
-            @PathVariable("gardenId") Long gardenId,
-            @PathVariable("plantId") Long plantId,
-            @ModelAttribute("editPlantForm") PlantForm editPlantForm,
-            BindingResult bindingResult, Model model) throws IOException{
+        @PathVariable("gardenId") Long gardenId,
+        @PathVariable("plantId") Long plantId,
+        @ModelAttribute("editPlantForm") PlantForm editPlantForm,
+        BindingResult bindingResult, Model model) throws IOException{
 
         logger.info("POST /gardens/" + gardenId + "/plants/" + plantId + "/edit");
 
-        Garden existingGarden = tryToAccessGarden(gardenId);
-        Plant existingPlant = tryToAccessPlant(plantId);
+        Garden existingGarden = tryToEditGarden(gardenId);
+        Plant existingPlant = tryToEditPlant(plantId, existingGarden.getId());
         model.addAttribute("garden", existingGarden);
         model.addAttribute("plant", existingPlant);
         PlantForm.validate(editPlantForm, bindingResult);
@@ -488,9 +543,35 @@ public class GardensController {
         Garden garden = tryToAccessGarden(gardenId);
         garden.setIsPublic(isPublic);
 
+        // TODO make sure they own the garden
+
         gardenService.updateGardenById(garden.getId(), garden);
         logger.info("Garden " + gardenId + "'s publicity has been updated to " + (isPublic ? "Public" : "Private"));
 
         return "redirect:/gardens/" + gardenId;
     }
+
+    /**
+     * Handles GET requests for the /browseGardens endpoint.
+     * Displays the 10 most recently made public gardens and a garden search bar.
+     * If a query is present, searches and displays for gardens with matching string.
+     *
+     * @param model (map-like) representation of results to be used by thymeleaf
+     * @return thymeleaf pages/browseGardensPage
+     */
+    @GetMapping("/browseGardens")
+    public String browseGardens(@RequestParam(name="query", required = false, defaultValue = "") String query, Model model) {
+        logger.info("GET /browseGardens");
+        List<Garden> gardens;
+        // if query search results
+        if (!query.isBlank()) {
+            gardens = gardenService.searchGardens(query);
+        } else {
+            gardens = gardenService.getPublicGardens();
+        }
+        model.addAttribute("query", query);
+        model.addAttribute("gardens", gardens);
+        return "pages/browseGardensPage";
+    }
+
 }

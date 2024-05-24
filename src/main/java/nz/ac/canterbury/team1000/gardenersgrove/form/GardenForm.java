@@ -63,6 +63,14 @@ public class GardenForm {
         return longitude;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
 
     public void setAddress(String address) {
         this.address = address;
@@ -106,13 +114,6 @@ public class GardenForm {
         this.size = size;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
     /**
      * Generates a Garden object with the values from the form.

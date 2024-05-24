@@ -11,13 +11,14 @@ public class GardenEntityTest {
 
     @Test
     void Constructor_WithValidSizeString_ReturnsGardenObjectParsedSize() {
-        Garden garden = new Garden("name", "location", "location", "location", "location", "location", null, null, "", "10.5", user, false);
+
+        Garden garden = new Garden("name", "location", "location", "location", "location", "location", null, null, "10.5", "", user, false);
         assertEquals(10.5, garden.getSize());
     }
 
     @Test
     void Constructor_WithInvalidSizeString_ThrowsIllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class, () -> new Garden("name", "location", "location", "location", "location", "location", null, null, "", "abc", user, false));
+        assertThrows(IllegalArgumentException.class, () -> new Garden("name", "location", "location", "location", "location", "location", null, null, "abc", "", user, false));
     }
 
     @Test
@@ -57,7 +58,7 @@ public class GardenEntityTest {
 
     @Test
     void Constructor_WithNegativeSizeString_ThrowsIllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class, () -> new Garden("name", "location", "location", "location", "location", "location", null, null, "", "-10.5", user, false));
+        assertThrows(IllegalArgumentException.class, () -> new Garden("name", "location", "location", "location", "location", "location", null, null, "-10.5", "", user, false));
     }
 
     @Test

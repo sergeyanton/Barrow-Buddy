@@ -10,7 +10,7 @@
         <div class="basic">
             <h1>My Profile</h1>
             <div class="profile-picture-wrapper">
-                <img class="profile-picture" id="profileImage" th:src="${picturePath}" alt="Profile Picture">
+                <img class="profile-picture" id="profileImage" th:src="@{${picturePath}}" alt="Profile Picture">
             </div>
 
             <form th:action="@{/profile}" th:object="${profilePictureForm}" method="post" enctype="multipart/form-data">
