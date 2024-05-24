@@ -369,6 +369,11 @@ public class GardensController {
         User loggedInUser = userService.getLoggedInUser();
         Garden updatedGarden = editGardenForm.getGarden(loggedInUser);
 
+        if (updatedGarden.getLocationString().equals(garden.getLocationString())) {
+            updatedGarden.setLatitude(garden.getLatitude());
+            updatedGarden.setLongitude(garden.getLongitude());
+        }
+
         gardenService.updateGardenById(garden.getId(), updatedGarden);
 
         logger.info("Garden edited: " + garden);
@@ -534,7 +539,6 @@ public class GardensController {
 
     /**
      * Handles GET requests from the /updateGardenPublicity endpoint.
-     *
      * This changes the publicity of the garden depending on the state of the checkbox
      * @param gardenId The id of the garden
      * @param isPublic The state of the checkbox - checked means garden is public, unchecked means garden is private
