@@ -119,6 +119,11 @@ h1 {
     overflow-wrap: break-word;
 }
 
+p {
+    max-width: 100%;
+    overflow-wrap: break-word;
+}
+
 th, td {
     padding: 10px;
     text-align: left;
@@ -128,6 +133,12 @@ td {
     max-width: 200px;
     white-space: initial;
     word-wrap: break-word;
+}
+
+p {
+    max-width: 100%;
+    overflow-wrap: break-word;
+    text-align: center;
 }
 
 .scroll-plants-container {

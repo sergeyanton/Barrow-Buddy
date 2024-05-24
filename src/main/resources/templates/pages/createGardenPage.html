@@ -4,41 +4,52 @@
 <head th:replace="~{fragments/head :: head(title='Gardener\'s Grove - Create Garden')}"></head>
 
 <body>
-    <div th:replace="~{fragments/header :: header}"></div>
-    <main>
-        <div class="basic">
-            <h1>Create a garden</h1>
-            <form th:action="@{/gardens/create}" method="post" th:object="${createGardenForm}" autocomplete="off">
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='name', label='Garden Name: ', placeholder='The Hamilton Gardens')}" />
-                <br />
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='size', label='Size in m&sup2; (optional): ', placeholder='1000.0')}" />
+<div th:replace="~{fragments/header :: header}"></div>
+<main>
+    <div class="basic">
+        <h1>Create a garden</h1>
+        <form th:action="@{/gardens/create}" method="post" th:object="${createGardenForm}" autocomplete="off">
+            <input th:replace="~{fragments/formElement :: formElementField(fieldName='name', label='Garden Name *', placeholder='The Hamilton Gardens')}" />
+            <br />
+            <input th:replace="~{fragments/formElement :: formElementField(fieldName='size', label='Size in m&sup2; ', placeholder='1000.0')}" />
+            <br />
+            <div class="description-container">
+                <input id="description" th:replace="~{fragments/formElement :: formElementField(fieldName='description', label='Description ', placeholder='Cool garden')}" />
+                <div id="descriptionCharacterCount" style="display: inline-block; margin-left: 10px;">0/512</div>
+            </div>
+            <br />
 
-                <h2>Garden Location</h2>
-                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='address', label='Address: (optional)', placeholder='13 Hungerford Crescent')}" />
-                <br />
-                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='suburb', label='Suburb: (optional)', placeholder='Ilam')}" />
-                <br />
-                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='city', label='City: ', placeholder='Christchurch')}" />
-                <br />
-                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='postcode', label='Postcode: (optional)', placeholder='8041')}" />
-                <br />
-                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='country', label='Country: ', placeholder='New Zealand')}" />
-                <br />
-                <p>Search by <a href="https://locationiq.com">LocationIQ.com</a></p>
-                <div class="cancel-submit-wrapper">
-                    <a class="cancel button" th:href="@{/gardens}">Cancel</a> <!--TODO cancel back to the previous page-->
-                    <button class="next" type="submit">Create</button>
-                </div>
-            </form>
-        </div>
-    </main>
-    <script>
-        // ChatGPT assisted, particularly with fetch, timeouts, and the creation of html via js
-        const LOCATION_FIELD_IDS = ['address', 'suburb', 'city', 'postcode', 'country'];
-        const MIN_LENGTH_TO_AUTOCOMPLETE = 3;
+            <h2>Garden Location</h2>
+            <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='address', label='Address ', placeholder='13 Hungerford Crescent')}" />
+            <br />
+            <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='suburb', label='Suburb ', placeholder='Ilam')}" />
+            <br />
+            <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='city', label='City * ', placeholder='Christchurch')}" />
+            <br />
+            <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='postcode', label='Postcode ', placeholder='8041')}" />
+            <br />
+            <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='country', label='Country * ', placeholder='New Zealand')}" />
+            <br />
+            <!-- Hidden field that stores the value of the latitude and longitude of the location - null if it is invalid -->
+            <input type="hidden" th:field="*{latitude}" id="latitude" />
+            <input type="hidden" th:field="*{longitude}" id="longitude" />
 
-        let locationFields = [];
-        for (const id of LOCATION_FIELD_IDS) {
+            <p>Search by <a href="https://locationiq.com">LocationIQ.com</a></p>
+            <div class="cancel-submit-wrapper">
+                <a class="cancel button" th:href="@{/gardens}">Cancel</a> <!--TODO cancel back to the previous page-->
+                <button class="next" type="submit">Create</button>
+            </div>
+        </form>
+    </div>
+</main>
+<script>
+    // ChatGPT assisted, particularly with fetch, timeouts, and the creation of html via js
+    const LOCATION_FIELD_IDS = ['address', 'suburb', 'city', 'postcode', 'country', 'latitude', 'longitude'];
+    const MIN_LENGTH_TO_AUTOCOMPLETE = 3;
+
+    let locationFields = [];
+    for (const id of LOCATION_FIELD_IDS) {
+        if (id !== 'latitude' && id !== 'longitude') {
             locationFields.push(document.getElementById(id))
             locationFields[locationFields.length-1].addEventListener('input', () => {
                 debounce(() => getLocationSuggestions(id), 500);
@@ -47,94 +58,114 @@
                 document.getElementById(`${id}DropdownMenu`).style.display = 'none';
             });
         }
+    }
 
-        let timeoutId;
-        /**
-         * Debounces the call to a given JS function.
-         * Useful for making API calls, as we don't want to exceed the given limit.
-         *
-         * @param func the function to debounce
-         * @param delay the delay in ms
-         */
-        function debounce(func, delay) {
-            clearTimeout(timeoutId);
-            timeoutId = setTimeout(func, delay);
-        }
+    let timeoutId;
+    /**
+     * Debounces the call to a given JS function.
+     * Useful for making API calls, as we don't want to exceed the given limit.
+     *
+     * @param func the function to debounce
+     * @param delay the delay in ms
+     */
+    function debounce(func, delay) {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(func, delay);
+    }
 
-        /**
-         * Gets a list of locations suggested by LocationIQ based on the current value of the
-         * given address field (either address, suburb, city, postcode, or country)
-         *
-         * @param addressField the name/id of the particular address field being used for autocomplete
-         */
-        function getLocationSuggestions(addressField) {
-            let fullAddress = [];
-            const query = document.getElementById(addressField).value;
-            if (query.trim().length < MIN_LENGTH_TO_AUTOCOMPLETE) {
-                return;
-            } else {
-                if (addressField === "address") {
-                    fullAddress.push(query);
-                    if (document.getElementById("suburb").value.length > 0) {
-                        fullAddress.push(document.getElementById("suburb").value);
-                    } else {
-                        fullAddress.push("");
-                    }
-                    if (document.getElementById("city").value.length > 0) {
-                        fullAddress.push(document.getElementById("city").value);
-                    } else {
-                        fullAddress.push("");
-                    }
-                    if (document.getElementById("postcode").value.length > 0) {
-                        fullAddress.push(document.getElementById("postcode").value);
-                    } else {
-                        fullAddress.push("");
-                    }
-                    if (document.getElementById("country").value.length > 0) {
-                        fullAddress.push(document.getElementById("country").value);
-                    } else {
-                        fullAddress.push("");
-                    }
+    /**
+     * Gets a list of locations suggested by LocationIQ based on the current value of the
+     * given address field (either address, suburb, city, postcode, or country)
+     *
+     * @param addressField the name/id of the particular address field being used for autocomplete
+     */
+    function getLocationSuggestions(addressField) {
+        let fullAddress = [];
+        const query = document.getElementById(addressField).value;
+        if (query.trim().length < MIN_LENGTH_TO_AUTOCOMPLETE) {
+            return;
+        } else {
+            if (addressField === "address") {
+                fullAddress.push(query);
+                if (document.getElementById("suburb").value.length > 0) {
+                    fullAddress.push(document.getElementById("suburb").value);
+                } else {
+                    fullAddress.push("");
+                }
+                if (document.getElementById("city").value.length > 0) {
+                    fullAddress.push(document.getElementById("city").value);
+                } else {
+                    fullAddress.push("");
+                }
+                if (document.getElementById("postcode").value.length > 0) {
+                    fullAddress.push(document.getElementById("postcode").value);
+                } else {
+                    fullAddress.push("");
+                }
+                if (document.getElementById("country").value.length > 0) {
+                    fullAddress.push(document.getElementById("country").value);
+                } else {
+                    fullAddress.push("");
                 }
             }
+        }
 
-            fetch(`/locationSearch?query=${query}&fullAddress=${fullAddress}&addressField=${addressField}`)
-                .then(response => response.json())
-                .then(locations => {
-                    const dropdownMenu = document.getElementById(`${addressField}DropdownMenu`);
-                    dropdownMenu.innerHTML = '';
+        fetch(`/locationSearch?query=${query}&fullAddress=${fullAddress}&addressField=${addressField}`)
+        .then(response => response.json())
+        .then(locations => {
+            const dropdownMenu = document.getElementById(`${addressField}DropdownMenu`);
+            dropdownMenu.innerHTML = '';
 
-                    dropdownMenu.style.display = 'block';
-                    if (locations.length === 0) {
-                        const noLocations = document.createElement('li');
-                        noLocations.innerHTML = '<p>No matching location found, location-based services may not work</p>';
-                        noLocations.classList.add('dropdown-item');
-                        dropdownMenu.appendChild(noLocations);
-                    } else {
-                        locations.forEach(location => {
-                            const option = document.createElement('li');
-                            option.classList.add('dropdown-item');
-                            option.innerHTML = `<b>${location.displayPlace}</b>`;
-                            if (location.displayAddress !== location.displayPlace) {
-                                option.innerHTML += `<p>${location.displayAddress}</p>`;
-                            }
-                            option.addEventListener('mousedown', function() {
-                                handleDropdownItemClick(location);
-                            });
-                            dropdownMenu.appendChild(option);
-                        });
+            dropdownMenu.style.display = 'block';
+            if (locations.length === 0) {
+                const noLocations = document.createElement('li');
+                noLocations.innerHTML = '<p>No matching location found, location-based services may not work</p>';
+                noLocations.classList.add('dropdown-item');
+                dropdownMenu.appendChild(noLocations);
+            } else {
+                locations.forEach(location => {
+                    const option = document.createElement('li');
+                    option.classList.add('dropdown-item');
+                    option.innerHTML = `<b>${location.displayPlace}</b>`;
+                    if (location.displayAddress !== location.displayPlace) {
+                        option.innerHTML += `<p>${location.displayAddress}</p>`;
                     }
-                })
-                .catch(error => {
-                    console.error('Error fetching locations:', error);
+                    option.addEventListener('mousedown', function() {
+                        handleDropdownItemClick(location);
+                    });
+                    dropdownMenu.appendChild(option);
                 });
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching locations:', error);
+        });
+    }
+
+    function handleDropdownItemClick(location) {
+        for (const id of LOCATION_FIELD_IDS) {
+            document.getElementById(id).value = location[id];
+        }
+    }
+
+    /**
+     * Updates the character count for the description field to show the user how many characters they have left.
+     */
+    function updateCharacterCount() {
+        const descriptionField = document.getElementById("description");
+        const characterCountDisplay = document.getElementById("descriptionCharacterCount");
+        const characterCount = descriptionField.value.length;
+
+        // ChatGPT used for this statement
+        if (characterCount > 512) {
+            descriptionField.value = descriptionField.value.substring(0, 512);
         }
 
-        function handleDropdownItemClick(location) {
-            for (const id of LOCATION_FIELD_IDS) {
-                document.getElementById(id).value = location[id];
-            }
-        }
-    </script>
+        characterCountDisplay.textContent = `${descriptionField.value.length}/512`;
+    }
+
+    document.getElementById("description").addEventListener("input", updateCharacterCount);
+    updateCharacterCount();
+</script>
 </body>
 </html>

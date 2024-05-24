@@ -20,7 +20,7 @@ import java.util.Map;
 @Service
 public class LocationSearchService {
     private final String API_KEY = System.getenv("API_KEY");
-    private final String URL = "https://api.locationiq.com/v1/autocomplete";
+    private final String URL = "https://api.locationiq.com/v1/";
 
     private RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -58,6 +58,7 @@ public class LocationSearchService {
         this.restTemplate = restTemplate;
     }
 
+
     /**
      * Using user input and specifying the address field, a request is sent to the LocationIQ API to find a location
      * that matches or contains query with a given tag that corresponds to the address field where user input occurred
@@ -81,16 +82,16 @@ public class LocationSearchService {
 
             switch (addressField) {
                 case "country":
-                    url = URL + "?q=" + query + "&key=" + API_KEY + "&tag=place:country";
+                    url = URL + "autocomplete?q=" + query + "&key=" + API_KEY + "&tag=place:country";
                     break;
                 case "city":
-                    url = URL + "?q=" + query + "&key=" + API_KEY + "&tag=place&normalizecity=1";
+                    url = URL + "autocomplete?q=" + query + "&key=" + API_KEY + "&tag=place&normalizecity=1";
                     break;
                 case "postcode":
-                    url = URL + "?q=" + query + "&key=" + API_KEY + "&tag=place:postcode&normalizecity=1";
+                    url = URL + "autocomplete?q=" + query + "&key=" + API_KEY + "&tag=place:postcode&normalizecity=1";
                     break;
                 case "suburb":
-                    url = URL + "?q=" + query + "&key=" + API_KEY + "&tag=place:suburb&normalizecity=1";
+                    url = URL + "autocomplete?q=" + query + "&key=" + API_KEY + "&tag=place:suburb&normalizecity=1";
                     break;
                 default:
                     fullQuery += query;
@@ -106,7 +107,7 @@ public class LocationSearchService {
                     if (!fullAddress[4].isEmpty()) {
                         fullQuery += ", " + fullAddress[4];
                     }
-                    url = URL + "?q=" + fullQuery + "&key=" + API_KEY + "&normalizecity=1";
+                    url = URL + "autocomplete?q=" + fullQuery + "&key=" + API_KEY + "&normalizecity=1";
             }
 
             // Sending a request to the LocationIQ API endpoint and returns a JSON response in string form
@@ -138,6 +139,8 @@ public class LocationSearchService {
 
         // Obtain the type of the location, the display format of the location, and the address map of the location
         for (Map<String, Object> location : locations) {
+            Double latitude = Double.parseDouble(location.get("lat").toString());
+            Double longitude = Double.parseDouble(location.get("lon").toString());
             String locationType = (String) location.get("type");
             String displayPlace = (String) location.get("display_place");
             Map<String, Object> addressMap = (Map<String, Object>) location.get("address");
@@ -157,7 +160,7 @@ public class LocationSearchService {
             if (addressField.equals("country") && locationType.equals("country")) {
                 country = addressMap.get("name").toString();
 
-                locationAddresses.add(new Location(address, suburb, city, postcode, country, displayPlace));
+                locationAddresses.add(new Location(address, suburb, city, postcode, country, latitude, longitude, displayPlace));
             }
             // IF INPUT IS DONE IN THE POSTCODE FIELD
             else if (addressField.equals("postcode") && locationType.equals("postcode")) {
@@ -166,7 +169,7 @@ public class LocationSearchService {
                 if (addressMap.containsKey("country")) country = addressMap.get("country").toString();
 
                 if (!city.isEmpty() && !country.isEmpty()) {
-                    locationAddresses.add(new Location(address, suburb, city, postcode, country, displayPlace));
+                    locationAddresses.add(new Location(address, suburb, city, postcode, country, latitude, longitude, displayPlace));
                 }
             }
             // IF INPUT IS DONE IN THE CITY FIELD
@@ -175,7 +178,7 @@ public class LocationSearchService {
                 if (addressMap.containsKey("country")) country = addressMap.get("country").toString();
 
                 if (!city.isEmpty() && !country.isEmpty()) {
-                    locationAddresses.add(new Location(address, suburb, city, postcode, country, displayPlace));
+                    locationAddresses.add(new Location(address, suburb, city, postcode, country, latitude, longitude, displayPlace));
                 }
             }
             // IF INPUT IS DONE IN THE SUBURB FIELD
@@ -185,7 +188,7 @@ public class LocationSearchService {
                 if (addressMap.containsKey("country")) country = addressMap.get("country").toString();
 
                 if (!city.isEmpty() && !country.isEmpty()) {
-                    locationAddresses.add(new Location(address, suburb, city, postcode, country, displayPlace));
+                    locationAddresses.add(new Location(address, suburb, city, postcode, country, latitude, longitude, displayPlace));
                 }
             }
             // IF INPUT IS DONE IN THE ADDRESS FIELD
@@ -240,7 +243,7 @@ public class LocationSearchService {
                 }
 
                 if (!address.isEmpty() && !city.isEmpty() && !country.isEmpty() && address.startsWith(query) && validLocation) {
-                    locationAddresses.add(new Location(address, suburb, city, postcode, country, displayPlace));
+                    locationAddresses.add(new Location(address, suburb, city, postcode, country, latitude, longitude, displayPlace));
                 }
             }
         }
