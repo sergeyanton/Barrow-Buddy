@@ -314,4 +314,15 @@ public class ProfileController {
 
         return "pages/searchByEmailPage";
     }
+
+    @PostMapping("/addFriend")
+    public String postFriendRequest(@RequestParam("receiver") String receiver) {
+        logger.info("POST /addFriend");
+        // TODO implement this function
+        // and we want to return the page instead of redirect
+
+        return "redirect:/searchByEmail";
+    }
+
+
 }
