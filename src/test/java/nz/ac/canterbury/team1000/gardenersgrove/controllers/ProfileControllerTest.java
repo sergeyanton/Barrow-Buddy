@@ -660,7 +660,7 @@ public class ProfileControllerTest {
 
 		mockMvc.perform(MockMvcRequestBuilders.get("/searchFriend").param("email", searchQuery).with(csrf()))
 			.andExpect(MockMvcResultMatchers.status().isOk())
-			.andExpect(MockMvcResultMatchers.view().name("pages/searchFriend"))
+			.andExpect(MockMvcResultMatchers.view().name("pages/searchFriendPage"))
 			.andExpect(MockMvcResultMatchers.model().attribute("userResult", Matchers.nullValue()));
 	}
 
@@ -671,7 +671,7 @@ public class ProfileControllerTest {
 
 		mockMvc.perform(MockMvcRequestBuilders.get("/searchFriend").param("email", searchQuery).with(csrf()))
 			.andExpect(MockMvcResultMatchers.status().isOk())
-			.andExpect(MockMvcResultMatchers.view().name("pages/searchFriend"))
+			.andExpect(MockMvcResultMatchers.view().name("pages/searchFriendPage"))
 			.andExpect(MockMvcResultMatchers.model().attribute("userResult", Matchers.nullValue()))
 			.andExpect(
 				MockMvcResultMatchers.model().attributeHasFieldErrors("searchForm", "email"));;
