@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<head th:replace="~{fragments/head :: head(title='Gardener\'s Grove - Search By Email')}"></head>
+
+
+<body>
+  <div th:replace="~{fragments/header :: header}"></div>
+    <main clas="centred">
+      <div class="basic">
+        <h1>Search Friend</h1>
+        <div th:if="${errorMessage}" class="error-message">
+          <p th:text="${errorMessage}"></p>
+        </div>
+        <form th:action="@{/searchFriend}" method="get" th:object="${searchForm}">
+          <div class="search-bar">
+            <input th:replace="~{fragments/formElement :: formElementField(fieldName='email', label='', placeholder='jane@doe.nz')}" />
+            <button type="submit">Search</button>
+          </div>
+        </form>
+
+        <br />
+          <div th:if="${userResult != null}">
+
+            <table>
+              <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+              </tr>
+              </thead>
+              <tbody>
+                <td th:text="${userResult.fname} + (${userResult.lname} ? ' ' + ${userResult.lname} : '')"></td>
+                <td th:text="${userResult.email}"></td>
+              </tbody>
+            </table>
+
+          </div>
+
+
+          <a class="cancel" th:href="@{friends}">Back</a>
+      </div>
+    </main>
+</body>
+</html>
