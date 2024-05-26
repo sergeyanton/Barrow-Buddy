@@ -40,14 +40,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class ProfileController {
     private final UserService userService;
     private final EmailService emailService;
-    private final FriendRelationshipService friendRelationshipService;
-
 
     @Autowired
-    public ProfileController(UserService userService, EmailService emailService, FriendRelationshipService friendRelationshipService) {
+    public ProfileController(UserService userService, EmailService emailService) {
         this.userService = userService;
         this.emailService = emailService;
-        this.friendRelationshipService = friendRelationshipService;
     }
 
     @Autowired
@@ -320,33 +317,5 @@ public class ProfileController {
 
         return "pages/searchByEmailPage";
     }
-
-    /**
-     * Handles POST requests to the /addFriend endpoint.
-     * This adds a new 'pending' relationship to the database between the logged-in user and search result user.
-     *
-     * @param receiver      Email address of the searched user to be sent a friend request
-     * @param searchForm    The search form input to be persisted
-     * @param model         Used to pass through attributes to the view
-     * @return              The same search by email page with the attributes persisted
-     */
-    @PostMapping("/addFriend")
-    public String postFriendRequest(@RequestParam("receiver") String receiver,
-                                    @ModelAttribute("searchForm") SearchForm searchForm,
-                                    Model model) {
-        logger.info("POST /addFriend " + receiver);
-
-        User receiverUser = userService.findEmail(receiver);
-
-        FriendRelationship request = new FriendRelationship(userService.getLoggedInUser(), receiverUser, Status.PENDING);
-        friendRelationshipService.addFriendRelationship(request);
-
-        model.addAttribute("emailSearch", searchForm.getEmailSearch());
-        model.addAttribute("userResult", receiverUser);
-        model.addAttribute("searchForm", searchForm);
-
-        return "pages/searchByEmailPage";
-    }
-
 
 }
