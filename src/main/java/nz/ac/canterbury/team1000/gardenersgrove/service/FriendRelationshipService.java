@@ -71,4 +71,14 @@ public class FriendRelationshipService {
 		});
 	}
 
+	/**
+	 * Retrieves the relationship, if any, of a given sender and receiver.
+	 * @param senderId id of the user who initiated the relationship.
+	 * @param receiverId id of the user who received the relationship request.
+	 * @return the two user's associated FriendRelationship object if present, or else null.
+	 */
+	public FriendRelationship getFriendRelationship(Long senderId, Long receiverId) {
+		return friendRelationshipRepository.findBySenderIdAndReceiverId(senderId, receiverId).orElse(null);
+	}
+
 }

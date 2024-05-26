@@ -48,8 +48,9 @@ public class FriendsController {
 	 */
 	@PostMapping("/addFriend")
 	public String postFriendRequest(@RequestParam("receiver") String receiver,
-		@ModelAttribute("searchForm") SearchForm searchForm,
-		Model model) {
+									@RequestParam("emailSearch") String emailSearch,
+									@ModelAttribute("searchForm") SearchForm searchForm,
+									Model model) {
 		logger.info("POST /addFriend " + receiver);
 
 		User receiverUser = userService.findEmail(receiver);
@@ -57,9 +58,12 @@ public class FriendsController {
 		FriendRelationship request = new FriendRelationship(userService.getLoggedInUser(), receiverUser, Status.PENDING);
 		friendRelationshipService.addFriendRelationship(request);
 
+		FriendRelationship relationship = friendRelationshipService.getFriendRelationship(userService.getLoggedInUser().getId(), receiverUser.getId());
+
 		model.addAttribute("emailSearch", searchForm.getEmailSearch());
 		model.addAttribute("userResult", receiverUser);
 		model.addAttribute("searchForm", searchForm);
+		model.addAttribute("relationship", relationship);
 
 		return "pages/searchByEmailPage";
 	}

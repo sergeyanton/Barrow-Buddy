@@ -41,10 +41,13 @@ public class ProfileController {
     private final UserService userService;
     private final EmailService emailService;
 
+    private final FriendRelationshipService friendRelationshipService;
+
     @Autowired
-    public ProfileController(UserService userService, EmailService emailService) {
+    public ProfileController(UserService userService, EmailService emailService, FriendRelationshipService friendRelationshipService) {
         this.userService = userService;
         this.emailService = emailService;
+        this.friendRelationshipService = friendRelationshipService;
     }
 
     @Autowired
@@ -294,15 +297,22 @@ public class ProfileController {
         logger.info("GET /searchByEmail");
         User userResult;
         User currentUser = userService.getLoggedInUser();
+        FriendRelationship relationship = null;
+
         if (!emailSearch.isBlank()) {
             SearchForm.validate(searchForm, bindingResult);
             userResult =  userService.findEmail(emailSearch);
 
             if (!bindingResult.hasErrors()) {
                 if (userResult == null) {
+                    // No user found
                     bindingResult.addError(new FieldError("searchForm", "emailSearch", searchForm.getEmailSearch(), false, null, null, "There is nobody with that email in Gardener’s Grove"));
                 } else if (Objects.equals(currentUser.getEmail(), emailSearch)) {
+                    // User searched for themselves
                     bindingResult.addError(new FieldError("searchForm", "emailSearch", searchForm.getEmailSearch(), false, null, null, "You've searched for your own email. Now, let's find some friends!"));
+                } else {
+                    // User searched for a valid user
+                    relationship = friendRelationshipService.getFriendRelationship(currentUser.getId(), userResult.getId());
                 }
             }
 
@@ -310,10 +320,12 @@ public class ProfileController {
                 return "pages/searchByEmailPage";
             }
         } else {
-            userResult = null;
-        }
+              userResult = null;
+          }
         model.addAttribute("emailSearch", emailSearch);
+        model.addAttribute("searchForm", searchForm);
         model.addAttribute("userResult", userResult);
+        model.addAttribute("relationship", relationship);
 
         return "pages/searchByEmailPage";
     }
