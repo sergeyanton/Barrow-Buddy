@@ -3,15 +3,18 @@ package nz.ac.canterbury.team1000.gardenersgrove.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.util.Objects;
+import nz.ac.canterbury.team1000.gardenersgrove.entity.FriendRelationship;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.EditUserForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PictureForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.SearchForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.UpdatePasswordForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.EmailService;
+import nz.ac.canterbury.team1000.gardenersgrove.service.FriendRelationshipService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
 
 import nz.ac.canterbury.team1000.gardenersgrove.service.VerificationTokenService;
+import nz.ac.canterbury.team1000.gardenersgrove.util.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,11 +40,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class ProfileController {
     private final UserService userService;
     private final EmailService emailService;
+    private final FriendRelationshipService friendRelationshipService;
+
 
     @Autowired
-    public ProfileController(UserService userService, EmailService emailService) {
+    public ProfileController(UserService userService, EmailService emailService, FriendRelationshipService friendRelationshipService) {
         this.userService = userService;
         this.emailService = emailService;
+        this.friendRelationshipService = friendRelationshipService;
     }
 
     @Autowired
@@ -279,27 +285,27 @@ public class ProfileController {
      * Handles GET requests for searching users by email.
      *
      * @param searchForm    the SearchForm object containing the search parameters
-     * @param email         the email address to search for, which is optional and defaults to an empty string if not provided
+     * @param emailSearch   the email address to search for, which is optional and defaults to an empty string if not provided
      * @param bindingResult the BindingResult object for validation errors
      * @param model         the Model object to add attributes to be accessed in the view
      * @return the name of the view template to render
      */
     @GetMapping("/searchByEmail")
     public String getSearchByEmail( @ModelAttribute("searchForm") SearchForm searchForm,
-                                    @RequestParam(required = false, defaultValue = "") String email,
+                                    @RequestParam(required = false, defaultValue = "") String emailSearch,
                                     BindingResult bindingResult,Model model) {
         logger.info("GET /searchByEmail");
         User userResult;
         User currentUser = userService.getLoggedInUser();
-        if (!email.isBlank()) {
+        if (!emailSearch.isBlank()) {
             SearchForm.validate(searchForm, bindingResult);
-            userResult =  userService.findEmail(email);
+            userResult =  userService.findEmail(emailSearch);
 
             if (!bindingResult.hasErrors()) {
                 if (userResult == null) {
-                    bindingResult.addError(new FieldError("searchForm", "email", searchForm.getEmail(), false, null, null, "There is nobody with that email in Gardener’s Grove"));
-                } else if (Objects.equals(currentUser.getEmail(), email)) {
-                    bindingResult.addError(new FieldError("searchForm", "email", searchForm.getEmail(), false, null, null, "You've searched for your own email. Now, let's find some friends!"));
+                    bindingResult.addError(new FieldError("searchForm", "emailSearch", searchForm.getEmailSearch(), false, null, null, "There is nobody with that email in Gardener’s Grove"));
+                } else if (Objects.equals(currentUser.getEmail(), emailSearch)) {
+                    bindingResult.addError(new FieldError("searchForm", "emailSearch", searchForm.getEmailSearch(), false, null, null, "You've searched for your own email. Now, let's find some friends!"));
                 }
             }
 
@@ -309,29 +315,38 @@ public class ProfileController {
         } else {
             userResult = null;
         }
-        model.addAttribute("email", email);
+        model.addAttribute("emailSearch", emailSearch);
         model.addAttribute("userResult", userResult);
 
         return "pages/searchByEmailPage";
     }
 
+    /**
+     * Handles POST requests to the /addFriend endpoint.
+     * This adds a new 'pending' relationship to the database between the logged-in user and search result user.
+     *
+     * @param receiver      Email address of the searched user to be sent a friend request
+     * @param searchForm    The search form input to be persisted
+     * @param model         Used to pass through attributes to the view
+     * @return              The same search by email page with the attributes persisted
+     */
     @PostMapping("/addFriend")
     public String postFriendRequest(@RequestParam("receiver") String receiver,
                                     @ModelAttribute("searchForm") SearchForm searchForm,
                                     Model model) {
         logger.info("POST /addFriend " + receiver);
-        // TODO implement this function
-        // and we want to return the page instead of redirect
+
         User receiverUser = userService.findEmail(receiver);
 
-        model.addAttribute("email", searchForm.getEmail());
+        FriendRelationship request = new FriendRelationship(userService.getLoggedInUser(), receiverUser, Status.PENDING);
+        friendRelationshipService.addFriendRelationship(request);
+
+        model.addAttribute("emailSearch", searchForm.getEmailSearch());
         model.addAttribute("userResult", receiverUser);
         model.addAttribute("searchForm", searchForm);
 
-//        return "redirect:/searchByEmail";
         return "pages/searchByEmailPage";
     }
-
 
 
 }

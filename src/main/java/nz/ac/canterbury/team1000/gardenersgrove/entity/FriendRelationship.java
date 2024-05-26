@@ -11,6 +11,10 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import nz.ac.canterbury.team1000.gardenersgrove.util.Status;
 
+/**
+ * Entity class reflecting a relationship between two users.
+ * Holds values for the sender, receiver, and status of the relationship.
+ */
 @Entity
 public class FriendRelationship {
 
