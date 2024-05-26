@@ -31,7 +31,7 @@
               <td th:text="${userResult.email}"></td>
               <td><a>
                 <form th:action="@{/addFriend}" method="post">
-                  <input type="hidden" th:name="receiver" th:value="${userResult}" />
+                  <input type="hidden" th:name="receiver" th:value="${userResult.email}" />
                   <button type="submit">+</button>
                 </form>
               </a></td>

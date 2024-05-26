@@ -316,13 +316,22 @@ public class ProfileController {
     }
 
     @PostMapping("/addFriend")
-    public String postFriendRequest(@RequestParam("receiver") String receiver) {
-        logger.info("POST /addFriend");
+    public String postFriendRequest(@RequestParam("receiver") String receiver,
+                                    @ModelAttribute("searchForm") SearchForm searchForm,
+                                    Model model) {
+        logger.info("POST /addFriend " + receiver);
         // TODO implement this function
         // and we want to return the page instead of redirect
+        User receiverUser = userService.findEmail(receiver);
 
-        return "redirect:/searchByEmail";
+        model.addAttribute("email", searchForm.getEmail());
+        model.addAttribute("userResult", receiverUser);
+        model.addAttribute("searchForm", searchForm);
+
+//        return "redirect:/searchByEmail";
+        return "pages/searchByEmailPage";
     }
+
 
 
 }
