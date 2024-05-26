@@ -1,5 +1,6 @@
 package nz.ac.canterbury.team1000.gardenersgrove.api;
 
+import java.util.ArrayList;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Location;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
