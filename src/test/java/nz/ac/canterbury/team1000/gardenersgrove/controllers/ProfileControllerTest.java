@@ -68,6 +68,7 @@ public class ProfileControllerTest {
 	@BeforeEach
 	public void BeforeEach() {
 		userMock = Mockito.mock(User.class);
+		Mockito.when(userMock.getId()).thenReturn(1L);
 		Mockito.when(userMock.getFname()).thenReturn("John");
 		Mockito.when(userMock.getLname()).thenReturn("Smith");
 		Mockito.when(userMock.getFullName()).thenReturn("John Smith");
@@ -667,7 +668,7 @@ public class ProfileControllerTest {
 	}
 
 	@Test
-	public void SearchFriendsFormGet_OwnEmail_HasErrors() throws Exception {
+	public void SearchFriendsFormGet_OwnEmail_HasCorrectErrors() throws Exception {
 		String searchQuery = userMock.getEmail();
 		Mockito.when(userService.findEmail(searchQuery)).thenReturn(userMock);
 
@@ -683,7 +684,7 @@ public class ProfileControllerTest {
 
 
 	@Test
-	public void SearchFriendsFormGet_EmailDoesNotExist_HasErrors() throws Exception {
+	public void SearchFriendsFormGet_EmailDoesNotExist_HasCorrectErrors() throws Exception {
 		String searchQuery = "asd@ad.com";
 		Mockito.when(userService.findEmail(searchQuery)).thenReturn(null);
 
@@ -694,19 +695,20 @@ public class ProfileControllerTest {
 			.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("searchFriendsForm", "name", "search"))
 			.andExpect(MockMvcResultMatchers.model().attributeErrorCount("searchFriendsForm", 2));
 
-
 		Mockito.verify(userService).findEmail(searchQuery);
 	}
 
 	@Test
-	public void SearchFriendsFormGet_EmailExist_HasNoErrors() throws Exception {
+	public void SearchFriendsFormGet_EmailExist_HasCorrectErrors() throws Exception {
 		String searchQuery = "asd@ad.com";
-		Mockito.when(userService.findEmail(searchQuery)).thenReturn(userMock);
+		User otherUserMock = Mockito.mock(User.class);
+		Mockito.when(otherUserMock.getEmail()).thenReturn(searchQuery);
+		Mockito.when(userService.findEmail(searchQuery)).thenReturn(otherUserMock);
 
 		mockMvc.perform(MockMvcRequestBuilders.get("/searchFriend").param("search", searchQuery).with(csrf()))
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andExpect(MockMvcResultMatchers.view().name("pages/searchFriendPage"))
-			.andExpect(MockMvcResultMatchers.model().attribute("users", List.of(userMock)))
+			.andExpect(MockMvcResultMatchers.model().attribute("users", List.of(otherUserMock)))
 			.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("searchFriendsForm", "name"))
 			.andExpect(MockMvcResultMatchers.model().attributeErrorCount("searchFriendsForm", 1));
 
@@ -714,7 +716,7 @@ public class ProfileControllerTest {
 	}
 
 	@Test
-	public void SearchFriendsFormGet_EmailInvalidForm_HasErrors() throws Exception {
+	public void SearchFriendsFormGet_EmailInvalidForm_HasCorrectErrors() throws Exception {
 		String searchQuery = "@ad.com";
 
 		mockMvc.perform(MockMvcRequestBuilders.get("/searchFriend").param("search", searchQuery).with(csrf()))
@@ -726,7 +728,7 @@ public class ProfileControllerTest {
 	}
 
 	@Test
-	public void SearchFriendsFormGet_OwnUniqueName_HasErrors() throws Exception {
+	public void SearchFriendsFormGet_OwnUniqueName_HasCorrectErrors() throws Exception {
 		String searchQuery = userMock.getFullName();
 		Mockito.when(userService.getUsersByFullName(searchQuery)).thenReturn(List.of(userMock));
 
@@ -741,17 +743,16 @@ public class ProfileControllerTest {
 	}
 
 	@Test
-	public void SearchFriendsFormGet_OwnNotUniqueName_HasErrors() throws Exception {
+	public void SearchFriendsFormGet_OwnNotUniqueName_HasCorrectErrors() throws Exception {
 		String searchQuery = userMock.getFullName();
-//		User otherUserMock = userMock;
-//		Mockito.when(otherUserMock.getFname()).thenReturn("Name");
-//		Mockito.when(otherUserMock.getLname()).thenReturn("ThatExists");
-		Mockito.when(userService.getUsersByFullName(searchQuery)).thenReturn(List.of(userMock, userMock));
+		User otherUserMock = Mockito.mock(User.class);
+		Mockito.when(otherUserMock.getId()).thenReturn(2L);
+		Mockito.when(userService.getUsersByFullName(searchQuery)).thenReturn(List.of(userMock, otherUserMock));
 
 		mockMvc.perform(MockMvcRequestBuilders.get("/searchFriend").param("search", searchQuery).with(csrf()))
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andExpect(MockMvcResultMatchers.view().name("pages/searchFriendPage"))
-			.andExpect(MockMvcResultMatchers.model().attribute("users", List.of(userMock)))
+			.andExpect(MockMvcResultMatchers.model().attribute("users", List.of(otherUserMock)))
 			.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("searchFriendsForm", "email"))
 			.andExpect(MockMvcResultMatchers.model().attributeErrorCount("searchFriendsForm", 1));
 
@@ -761,7 +762,7 @@ public class ProfileControllerTest {
 
 	@Test
 	public void SearchFriendsFormGet_NameDoesNotExist_HasErrors() throws Exception {
-		String searchQuery = "Name ThatDoesntExist";
+		String searchQuery = "Name That Doesnt Exist";
 		Mockito.when(userService.getUsersByFullName(searchQuery)).thenReturn(new ArrayList<>());
 
 		mockMvc.perform(MockMvcRequestBuilders.get("/searchFriend").param("search", searchQuery).with(csrf()))
@@ -775,10 +776,9 @@ public class ProfileControllerTest {
 
 	@Test
 	public void SearchFriendsFormGet_NameExist_HasNoErrors() throws Exception {
-		String searchQuery = "Name ThatExists";
+		String searchQuery = "Name That Exists";
 		User otherUserMock = Mockito.mock(User.class);
-		Mockito.when(otherUserMock.getFname()).thenReturn("Name");
-		Mockito.when(otherUserMock.getLname()).thenReturn("ThatExists");
+		Mockito.when(otherUserMock.getId()).thenReturn(2L);
 		Mockito.when(userService.getUsersByFullName(searchQuery)).thenReturn(List.of(otherUserMock));
 
 		mockMvc.perform(MockMvcRequestBuilders.get("/searchFriend").param("search", searchQuery).with(csrf()))

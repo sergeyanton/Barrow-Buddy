@@ -307,6 +307,7 @@ public class ProfileController {
             } else if (!bindingResult.hasFieldErrors("email")) {
                 User userByEmail = userService.findEmail(search);
                 if (userByEmail == null) {
+                    System.out.println("why am i printed");
                     bindingResult.addError(new FieldError("searchFriendsForm", "search", searchFriendsForm.getSearch(), false, null, null, "There is nobody with that email in Gardener’s Grove"));
                 } else if (Objects.equals(currentUser.getEmail(), userByEmail.getEmail())) {
                     bindingResult.addError(new FieldError("searchFriendsForm", "search", searchFriendsForm.getSearch(), false, null, null, "You've searched for your own email. Now, let's find some friends!"));
