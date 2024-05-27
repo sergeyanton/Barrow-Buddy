@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithSecurityContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -28,6 +29,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+
 public class U8_RedirectAfterCancel {
 
 	@Autowired
@@ -84,19 +86,6 @@ public class U8_RedirectAfterCancel {
 			.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
 			.andExpect(MockMvcResultMatchers.view().name("pages/createGardenPage"));
 		;
-	}
-
-	@And("I press the Cancel button")
-	public void i_press_the_cancel_button() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.get("/garden/create").param("cancel", ""))
-			.andExpect(MockMvcResultMatchers.status().is3xxRedirection());
-	}
-
-	@Then("I should see the {string} page")
-	public void i_should_see_the_page(String expectedUrl) throws Exception {
-		mockMvc.perform(get("/garden/create").param("cancel", ""))
-			.andExpect(status().is3xxRedirection())
-			.andExpect(redirectedUrl(expectedUrl));
 	}
 
 
