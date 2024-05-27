@@ -50,9 +50,13 @@ public class FriendsController {
 	public String postFriendRequest(@RequestParam("receiver") String receiver,
 									@RequestParam("emailSearch") String emailSearch,
 									@ModelAttribute("searchForm") SearchForm searchForm,
+									@ModelAttribute("friendRelationship") FriendRelationship friendRelationship,
 									@RequestParam("relationshipStatus") String relationshipStatus,
 									Model model) {
 		logger.info("POST /addFriend " + receiver);
+
+		logger.info("relationship: " + friendRelationship);
+		logger.info("relationship status: " + friendRelationship.getStatus());
 
 		// User email taken from the successful search
 		User receiverUser = userService.findEmail(receiver);
@@ -67,6 +71,7 @@ public class FriendsController {
 		model.addAttribute("userResult", receiverUser);
 		model.addAttribute("searchForm", searchForm);
 		model.addAttribute("relationshipStatus", existingRelationship.getStatus().name());
+		model.addAttribute("friendRelationship", existingRelationship);
 
 		return "pages/searchByEmailPage";
 	}
@@ -88,6 +93,7 @@ public class FriendsController {
 		User userResult;
 		User currentUser = userService.getLoggedInUser();
 		String relationshipStatus = null;
+		FriendRelationship relationship = null;
 
 		if (!emailSearch.isBlank()) {
 			SearchForm.validate(searchForm, bindingResult);
@@ -101,11 +107,24 @@ public class FriendsController {
 					// User searched for themselves
 					bindingResult.addError(new FieldError("searchForm", "emailSearch", searchForm.getEmailSearch(), false, null, null, "You've searched for your own email. Now, let's find some friends!"));
 				} else {
-					// User searched for a valid user
-					FriendRelationship relationship = friendRelationshipService.getFriendRelationship(currentUser.getId(), userResult.getId());
-					if (relationship != null) {
-						relationshipStatus = relationship.getStatus().name();
+					// User search is valid
+					// First check if they have received a relationship
+					FriendRelationship receivedRelationship = friendRelationshipService.getFriendRelationship(userResult.getId(), currentUser.getId());
+					if (receivedRelationship != null) {
+						// If they already have a relationship
+						relationshipStatus = receivedRelationship.getStatus().name();
+						// TODO would be good to pass in the Relationship object
+						relationship = receivedRelationship;
+					} else {
+						// If not, check if they have initiated a relationship
+						FriendRelationship sentRelationship = friendRelationshipService.getFriendRelationship(currentUser.getId(), userResult.getId());
+						if (sentRelationship != null) {
+							// If they already have a relationship
+							relationshipStatus = sentRelationship.getStatus().name();
+							relationship = sentRelationship;
+						}
 					}
+
 				}
 			}
 
@@ -119,6 +138,7 @@ public class FriendsController {
 		model.addAttribute("searchForm", searchForm);
 		model.addAttribute("userResult", userResult);
 		model.addAttribute("relationshipStatus", relationshipStatus);
+		model.addAttribute("friendRelationship", relationship);
 
 
 		return "pages/searchByEmailPage";

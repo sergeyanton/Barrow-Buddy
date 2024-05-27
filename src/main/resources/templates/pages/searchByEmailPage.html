@@ -31,7 +31,7 @@
               <td th:text="${userResult.email}"></td>
               <td class="button-cell">
                 <span th:if="${relationshipStatus == null}">
-                  <form th:action="@{/addFriend}" method="post">
+                  <form th:action="@{/addFriend}" method="post" th:object="${friendRelationship}">
                     <input type="hidden" th:name="receiver" th:value="${userResult.email}" />
                     <input type="hidden" th:name="emailSearch" th:value="${emailSearch}" />
                     <input type="hidden" th:name="relationshipStatus" th:value="${relationshipStatus}" />
