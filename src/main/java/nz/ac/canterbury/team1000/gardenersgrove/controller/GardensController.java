@@ -248,7 +248,8 @@ public class GardensController {
         // TODO: also for the purpose of the spike, the parsing was somewhat rushed, i didn't actually parse the humidity
         // This function is for getting the current and future weather
         // Stephen has a plan for the previous day's weather so pls talk to him abt that if u are doing that task
-        List<Weather> weather = weatherService.getWeatherByGardenId(gardenId);
+//        List<Weather> weather = weatherService.getWeatherByGardenId(gardenId);
+        List<Weather> weather = weatherService.getCurrentWeatherByGardenId(gardenId);
         model.addAttribute("weather", weather);
 
         model.addAttribute("garden", garden);
@@ -367,6 +368,11 @@ public class GardensController {
 
         User loggedInUser = userService.getLoggedInUser();
         Garden updatedGarden = editGardenForm.getGarden(loggedInUser);
+
+        if (updatedGarden.getLocationString().equals(garden.getLocationString())) {
+            updatedGarden.setLatitude(garden.getLatitude());
+            updatedGarden.setLongitude(garden.getLongitude());
+        }
 
         gardenService.updateGardenById(garden.getId(), updatedGarden);
 
@@ -533,7 +539,6 @@ public class GardensController {
 
     /**
      * Handles GET requests from the /updateGardenPublicity endpoint.
-     *
      * This changes the publicity of the garden depending on the state of the checkbox
      * @param gardenId The id of the garden
      * @param isPublic The state of the checkbox - checked means garden is public, unchecked means garden is private
