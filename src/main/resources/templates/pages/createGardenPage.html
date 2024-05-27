@@ -36,7 +36,7 @@
 
             <p>Search by <a href="https://locationiq.com">LocationIQ.com</a></p>
             <div class="cancel-submit-wrapper">
-                <a class="cancel button" th:href="@{/gardens}">Cancel</a> <!--TODO cancel back to the previous page-->
+                <a class="cancel button" onclick="goBack()" th:href="@{/gardens}">Cancel</a>
                 <button class="next" type="submit">Create</button>
             </div>
         </form>
@@ -166,6 +166,13 @@
 
     document.getElementById("description").addEventListener("input", updateCharacterCount);
     updateCharacterCount();
+
+    // Function for redirection to the previous page from which the "create garden" page was accessed
+    function goBack() {
+        window.history.back();
+    }
+
+
 </script>
 </body>
 </html>

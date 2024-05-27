@@ -69,7 +69,7 @@ public class WeatherService {
             }
             return persistWeather(persistedWeatherList);
         }
-		return persistedWeatherList;
+        return persistedWeatherList;
     }
 
     /**
@@ -126,14 +126,11 @@ public class WeatherService {
     private List<Weather> persistWeather(List<Weather> weatherList) {
         logger.info("...Persisting...");
 
-	/**
-	 * Persists a list of Weather entities into the database
-	 *
-	 * @param weatherList The list of weather entities to persist
-	 * @return The list of weather entities that are being persisted
-	 */
-	private List<Weather> persistWeather(List<Weather> weatherList) {
-		logger.info("...Persisting...");
+        for (Weather weather : weatherList) {
+            weatherRepository.save(weather);
+        }
+        return weatherList;
+    }
 
     /**
      * Retrieves the weather data for a specified garden by its ID, including weather codes, temperatures,
@@ -151,21 +148,11 @@ public class WeatherService {
         // average it but I mean, based on the AC, we have a lot of creative
         // freedom as to how the data is presented.
 
-	/**
-	 * Calls the API and parses the response into a list of Weather entities
-	 *
-	 * @param gardenId ID of the garden that this weather information is relevant for
-	 * @return A list of Weather entities with data on the current and future weather.
-	 */
-	public List<Weather> getWeather(Long gardenId) {
-		// TODO add humidity & temperature properly.
-		// NOTE: temperature has daily values for the min and max temp, but not the average temperature.
-		// temperature has hourly numerical temperature values that perhaps could be more usefully manipulated than the daily min and max
-		// humidity has NO DAILY VALUE, must do something smart with the hourly variable. Perhaps just
-		// average it but I mean, based on the AC, we have a lot of creative
-		// freedom as to how the data is presented.
+        Garden garden = gardenService.getGardenById(gardenId);
 
-		Garden garden = gardenService.getGardenById(gardenId);
+        try {
+            String latitude = garden.getLatitude().toString();
+            String longitude = garden.getLongitude().toString();
 
             String url = URL + "&latitude=" + latitude + "&longitude=" + longitude + "&timezone=Pacific/Auckland";
             String jsonResponse = restTemplate.getForObject(url, String.class);
@@ -176,13 +163,13 @@ public class WeatherService {
             List<String> hourlyTime = (ArrayList) ((Map<String, Object>) weather.get("hourly")).get("time");
             List<LocalDateTime> hourlyTimeParsed = new ArrayList<>();
 
-			for (String s : hourlyTime) {
-				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
-				LocalDateTime localDateTime = LocalDateTime.parse(s, formatter);
-				hourlyTimeParsed.add(localDateTime);
-			}
+            for (String s : hourlyTime) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+                LocalDateTime localDateTime = LocalDateTime.parse(s, formatter);
+                hourlyTimeParsed.add(localDateTime);
+            }
 
-			List<Double> dailyTemps = new ArrayList<>(hourlyTemps);
+            List<Double> dailyTemps = new ArrayList<>(hourlyTemps);
             List<Integer> dailyHumidity = new ArrayList<>(hourlyHumidity);
 
             List<Weather> weatherList = new ArrayList<>();
