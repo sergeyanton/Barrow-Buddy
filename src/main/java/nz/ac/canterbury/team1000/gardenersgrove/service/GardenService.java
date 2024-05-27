@@ -16,7 +16,6 @@ import java.util.List;
 public class GardenService {
     private final GardenRepository gardenRepository;
 
-    @Autowired
     public GardenService(GardenRepository gardenRepository) {
         this.gardenRepository = gardenRepository;
     }
