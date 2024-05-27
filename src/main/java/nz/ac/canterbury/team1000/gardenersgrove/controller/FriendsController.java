@@ -57,9 +57,6 @@ public class FriendsController {
 									Model model) {
 		logger.info("POST /addFriend " + receiver);
 
-//		logger.info("relationship: " + friendRelationship);
-//		logger.info("relationship status: " + friendRelationship.getStatus());
-
 		// User email taken from the successful search
 		User receiverUser = userService.findEmail(receiver);
 
@@ -73,7 +70,6 @@ public class FriendsController {
 		model.addAttribute("userResult", receiverUser);
 		model.addAttribute("searchForm", searchForm);
 		model.addAttribute("relationshipStatus", existingRelationship.getStatus().name());
-//		model.addAttribute("friendRelationship", existingRelationship);
 		model.addAttribute("receiverSentPendingRequest", receiverSentPendingRequest);
 
 		return "pages/searchByEmailPage";
@@ -96,7 +92,6 @@ public class FriendsController {
 		User userResult;
 		User currentUser = userService.getLoggedInUser();
 		String relationshipStatus = null;
-//		FriendRelationship relationship = null;
 		String receiverSentPendingRequest = "false";
 
 		if (!emailSearch.isBlank()) {
@@ -120,15 +115,12 @@ public class FriendsController {
 						if (relationshipStatus.equals("PENDING")) {
 							receiverSentPendingRequest = "true";
 						}
-//						relationship = receivedRelationship;
 					} else {
 						// If not, check if they have initiated a relationship
 						FriendRelationship sentRelationship = friendRelationshipService.getFriendRelationship(currentUser.getId(), userResult.getId());
 						if (sentRelationship != null) {
 							// If they already have a relationship
 							relationshipStatus = sentRelationship.getStatus().name();
-
-//							relationship = sentRelationship;
 						}
 					}
 
