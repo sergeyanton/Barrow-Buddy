@@ -38,13 +38,16 @@ public class GlobalModelAttributeProvider {
     }
 
     /**
-     * Provide the currentUrl without the page number to every model/controller
+     * Provide the paginationPath, this is the current url without the page number or base url,
+     * So /test and /prod get stripped from /test?page=1 and /prod?page=2
      * @param request the current request
-     * @return the current url without the page number
+     * @return the current url without the page number or base url
      */
-    @ModelAttribute("currentUrlNoPage")
+    @ModelAttribute("paginationPath")
     private String getCurrentPathNoPage(HttpServletRequest request) {
-        return this.getCurrentPath(request).replaceAll("(&|\\?)page=\\d+", "");
+        // make sure to strip the base url off the start
+        String path = request.getServletPath();
+        return this.getCurrentPath(request).replaceAll("(&|\\?)page=\\d+", "").replaceFirst(path, "");
     }
 
 

@@ -1,5 +1,9 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
+<a th:fragment="paginationPage(label, page)" th:with="allowActive=${allowActive} ? ${allowActive} : ${false}" th:href="@{${paginationPath}(page=${page})}" th:classappend="${page == pageNumber && allowActive} ? 'active'">
+    [[${label}]]
+</a>
+
 <div th:fragment="pagination(items)" class="pagination"
      th:with="
         pageNumber=${items.number + 1},
@@ -7,20 +11,19 @@
         startPage=${(pageNumber - 2 > 0) ? ((pageNumber + 2 <= totalPages) ? pageNumber - 2 : (totalPages - 4 > 0 ? totalPages - 4 : 1)) : 1},
         endPage=${(startPage + 4 <= totalPages) ? startPage + 4 : totalPages}">
 
-    <!-- First page link -->
-    <a th:href="@{${currentUrlNoPage}(page=${1})}" title="First">&laquo;&laquo;</a>
-    <!-- Previous page link -->
-    <a th:href="@{${currentUrlNoPage}(page=${pageNumber > 1 ? pageNumber - 1 : 1})}" title="Previous">&laquo;</a>
+        <!-- Fist page link -->
+        <a th:replace=" :: paginationPage(label='&laquo;&laquo;', page=1)"></a>
+        <!-- Prev page -->
+        <a th:replace=" :: paginationPage(label='&laquo;', page=${pageNumber > 1 ? pageNumber - 1 : 1})"></a>
 
-    <!-- Page number links -->
-    <a th:each="page : ${#numbers.sequence(startPage, endPage)}" th:href="@{${currentUrlNoPage}(page=${page})}"
-        th:text="${page}"
-        th:classappend="${page == pageNumber} ? 'active'"></a>
+        <!-- Page number links -->
+        <th:block th:each="page : ${#numbers.sequence(startPage, endPage)}">
+            <a th:replace=" :: paginationPage(label=${page}, page=${page}, allowActive=${true})"></a>
+        </th:block>
 
-    <!-- Next page link -->
-    <a th:href="@{${currentUrlNoPage}(page=${pageNumber < totalPages ? pageNumber + 1 : totalPages})}" title="Next">&raquo;</a>
-    <!-- Last page link -->
-    <a th:href="@{${currentUrlNoPage}(page=${totalPages})}" title="Last">&raquo;&raquo;</a>
+        <!-- Next page link -->
+        <a th:replace=" :: paginationPage(label='&raquo;', page=${pageNumber < totalPages ? pageNumber + 1 : totalPages})"></a>
+        <!-- Last page link -->
+        <a th:replace=" :: paginationPage(label='&raquo;&raquo;', page=${totalPages})"></a>  
 </div>
-
 </html>
