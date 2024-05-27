@@ -227,32 +227,31 @@ public class GardensController {
         return "pages/gardensPage";
     }
 
-	/**
-	 * Handles GET requests from the /gardens/{gardenId} endpoint. Displays details of the garden
-	 * with the given id
-	 *
-	 * @param gardenId         the id of the garden that is being viewed
-	 * @param plantPictureForm the PictureForm object representing a form with the uploaded image
-	 *                         file
-	 * @param model            (map-like) representation of results to be used by thymeleaf
-	 * @return thymeleaf pages/gardenProfilePage
-	 */
-	@GetMapping("/gardens/{gardenId}")
-	public String viewGarden(@PathVariable("gardenId") Long gardenId,
-		@ModelAttribute("plantPictureForm") PictureForm plantPictureForm,
-		Model model) {
-		logger.info("GET /gardens/" + gardenId);
-		Garden garden = tryToAccessGarden(gardenId);
-		long loggedInUserId = userService.getLoggedInUser().getId();
-		model.addAttribute("loggedInUserId", loggedInUserId);
-
-		// This is when the weather info is actual retrieved
-		// TODO: improve getWeatherByGardenId to make it actually search the location of the garden
-		// TODO: also for the purpose of the spike, the parsing was somewhat rushed, i didn't actually parse the humidity
-		// This function is for getting the current and future weather
-		// Stephen has a plan for the previous day's weather so pls talk to him abt that if u are doing that task
-		List<Weather> weather = weatherService.getWeatherByGardenId(gardenId);
-		model.addAttribute("weather", weather);
+    /**
+     * Handles GET requests from the /gardens/{gardenId} endpoint.
+     * Displays details of the garden with the given id
+     *
+     * @param gardenId the id of the garden that is being viewed
+     * @param plantPictureForm the PictureForm object representing a form with the uploaded image file
+     * @param model (map-like) representation of results to be used by thymeleaf
+     * @return thymeleaf pages/gardenProfilePage
+     */
+    @GetMapping("/gardens/{gardenId}")
+    public String viewGarden(@PathVariable("gardenId") Long gardenId,
+        @ModelAttribute("plantPictureForm") PictureForm plantPictureForm,
+        Model model) {
+        logger.info("GET /gardens/" + gardenId);
+        Garden garden = tryToAccessGarden(gardenId);
+        long loggedInUserId = userService.getLoggedInUser().getId();
+        model.addAttribute("loggedInUserId", loggedInUserId);
+        // This is when the weather info is actual retrieved
+        // TODO: improve getWeatherByGardenId to make it actually search the location of the garden
+        // TODO: also for the purpose of the spike, the parsing was somewhat rushed, i didn't actually parse the humidity
+        // This function is for getting the current and future weather
+        // Stephen has a plan for the previous day's weather so pls talk to him abt that if u are doing that task
+//        List<Weather> weather = weatherService.getWeatherByGardenId(gardenId);
+        List<Weather> weather = weatherService.getCurrentWeatherByGardenId(gardenId);
+        model.addAttribute("weather", weather);
 
         model.addAttribute("garden", garden);
         model.addAttribute("plants", plantService.getPlantsByGardenId(garden.getId()));
@@ -372,12 +371,12 @@ public class GardensController {
 		User loggedInUser = userService.getLoggedInUser();
 		Garden updatedGarden = editGardenForm.getGarden(loggedInUser);
 
-		if (updatedGarden.getLocationString().equals(garden.getLocationString())) {
-			updatedGarden.setLatitude(garden.getLatitude());
-			updatedGarden.setLongitude(garden.getLongitude());
-		}
+        if (updatedGarden.getLocationString().equals(garden.getLocationString())) {
+            updatedGarden.setLatitude(garden.getLatitude());
+            updatedGarden.setLongitude(garden.getLongitude());
+        }
 
-		gardenService.updateGardenById(garden.getId(), updatedGarden);
+        gardenService.updateGardenById(garden.getId(), updatedGarden);
 
 		logger.info("Garden edited: " + garden);
 		return "redirect:/gardens/" + garden.getId();
@@ -486,8 +485,8 @@ public class GardensController {
 		model.addAttribute("plant", existingPlant);
 		model.addAttribute("editPlantForm", PlantForm.fromPlant(existingPlant));
 
-		return "pages/editPlantPage";
-	}
+        return "pages/editPlantPage";
+    }
 
     /**
      * Handles POST requests from the /gardens/{gardenId}/plants/{plantId}/edit endpoint.
