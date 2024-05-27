@@ -663,7 +663,7 @@ public class ProfileControllerTest {
 		String searchQuery = "";
 		Mockito.when(userService.findEmail(searchQuery)).thenReturn(null);
 
-		mockMvc.perform(MockMvcRequestBuilders.get("/searchByEmail").param("email", searchQuery).with(csrf()))
+		mockMvc.perform(MockMvcRequestBuilders.get("/searchByEmail").param("emailSearch", searchQuery).with(csrf()))
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andExpect(MockMvcResultMatchers.view().name("pages/searchByEmailPage"))
 			.andExpect(MockMvcResultMatchers.model().attribute("userResult", Matchers.nullValue()));
@@ -674,12 +674,12 @@ public class ProfileControllerTest {
 		String searchQuery = userMock.getEmail();
 		Mockito.when(userService.findEmail(searchQuery)).thenReturn(userMock);
 
-		mockMvc.perform(MockMvcRequestBuilders.get("/searchByEmail").param("email", searchQuery).with(csrf()))
+		mockMvc.perform(MockMvcRequestBuilders.get("/searchByEmail").param("emailSearch", searchQuery).with(csrf()))
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andExpect(MockMvcResultMatchers.view().name("pages/searchByEmailPage"))
 			.andExpect(MockMvcResultMatchers.model().attribute("userResult", Matchers.nullValue()))
 			.andExpect(
-				MockMvcResultMatchers.model().attributeHasFieldErrors("searchForm", "email"));;
+				MockMvcResultMatchers.model().attributeHasFieldErrors("searchForm", "emailSearch"));;
 		Mockito.verify(userService).findEmail(searchQuery);
 	}
 
@@ -688,12 +688,12 @@ public class ProfileControllerTest {
 		String searchQuery = "asd@ad.com";
 		Mockito.when(userService.findEmail(searchQuery)).thenReturn(null);
 
-		mockMvc.perform(MockMvcRequestBuilders.get("/searchByEmail").param("email", searchQuery).with(csrf()))
+		mockMvc.perform(MockMvcRequestBuilders.get("/searchByEmail").param("emailSearch", searchQuery).with(csrf()))
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andExpect(MockMvcResultMatchers.view().name("pages/searchByEmailPage"))
 			.andExpect(MockMvcResultMatchers.model().attribute("userResult", Matchers.nullValue()))
 			.andExpect(
-				MockMvcResultMatchers.model().attributeHasFieldErrors("searchForm", "email"));;
+				MockMvcResultMatchers.model().attributeHasFieldErrors("searchForm", "emailSearch"));;
 		Mockito.verify(userService).findEmail(searchQuery);
 	}
 
@@ -702,7 +702,7 @@ public class ProfileControllerTest {
 		String searchQuery = "asd@ad.com";
 		Mockito.when(userService.findEmail(searchQuery)).thenReturn(userMock);
 
-		mockMvc.perform(MockMvcRequestBuilders.get("/searchByEmail").param("email", searchQuery).with(csrf()))
+		mockMvc.perform(MockMvcRequestBuilders.get("/searchByEmail").param("emailSearch", searchQuery).with(csrf()))
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andExpect(MockMvcResultMatchers.view().name("pages/searchByEmailPage"))
 			.andExpect(MockMvcResultMatchers.model().attribute("userResult", userMock))
@@ -716,12 +716,12 @@ public class ProfileControllerTest {
 		String searchQuery = "@ad.com";
 		Mockito.when(userService.findEmail(searchQuery)).thenReturn(null);
 
-		mockMvc.perform(MockMvcRequestBuilders.get("/searchByEmail").param("email", searchQuery).with(csrf()))
+		mockMvc.perform(MockMvcRequestBuilders.get("/searchByEmail").param("emailSearch", searchQuery).with(csrf()))
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andExpect(MockMvcResultMatchers.view().name("pages/searchByEmailPage"))
 			.andExpect(MockMvcResultMatchers.model().attribute("userResult", Matchers.nullValue()))
 			.andExpect(
-				MockMvcResultMatchers.model().attributeHasFieldErrors("searchForm","email"));;
+				MockMvcResultMatchers.model().attributeHasFieldErrors("searchForm","emailSearch"));;
 		Mockito.verify(userService).findEmail(searchQuery);
 	}
 }
