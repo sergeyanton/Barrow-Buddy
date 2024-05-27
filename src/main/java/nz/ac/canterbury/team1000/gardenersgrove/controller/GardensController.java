@@ -71,7 +71,7 @@ public class GardensController {
 	 *                                 garden
 	 */
 	private Garden tryToAccessGarden(Long gardenId) throws ResponseStatusException {
-		Garden garden = null;
+		Garden garden;
 		// Make sure the garden exists
 		try {
 			garden = gardenService.getGardenById(gardenId);
@@ -106,7 +106,7 @@ public class GardensController {
      * @throws ResponseStatusException An exception that has occurred when trying to access the garden
      */
     private Garden tryToEditGarden(Long gardenId) throws ResponseStatusException {
-        Garden garden = null;
+        Garden garden;
         // Make sure the garden exists
         try {
             garden = gardenService.getGardenById(gardenId);
@@ -138,7 +138,7 @@ public class GardensController {
      * @throws ResponseStatusException An exception that has occurred when trying to access the plant
      */
     private Plant tryToEditPlant(Long plantId, Long gardenId) throws ResponseStatusException {
-        Plant plant = null;
+        Plant plant;
         // Make sure the plant exists
         try {
             plant = plantService.getPlantById(plantId);
@@ -156,7 +156,6 @@ public class GardensController {
                 "This plant does not belong to you. Only the owner of the garden can edit the plants."
             );
         }
-
         return plant;
     }
 
@@ -244,6 +243,8 @@ public class GardensController {
 		Model model) {
 		logger.info("GET /gardens/" + gardenId);
 		Garden garden = tryToAccessGarden(gardenId);
+		long loggedInUserId = userService.getLoggedInUser().getId();
+		model.addAttribute("loggedInUserId", loggedInUserId);
 
 		// This is when the weather info is actual retrieved
 		// TODO: improve getWeatherByGardenId to make it actually search the location of the garden
@@ -276,18 +277,16 @@ public class GardensController {
 	 */
 	@PostMapping("/gardens/{gardenId}/plants/{plantId}")
 	public String changePlantPictureFromGardenPage(HttpServletRequest request,
-		@PathVariable("gardenId") Long gardenId,
-		@PathVariable("plantId") Long plantId,
-		@ModelAttribute("plantPictureForm") PictureForm plantPictureForm,
-		BindingResult bindingResult,
-		Model model) throws IOException {
+													@PathVariable("gardenId") Long gardenId,
+													@PathVariable("plantId") Long plantId,
+													@ModelAttribute("plantPictureForm") PictureForm plantPictureForm,
+													BindingResult bindingResult, Model model) throws IOException {
 		logger.info("POST /gardens/" + gardenId);
 		Plant plant = plantService.getPlantById(plantId);
 
         PictureForm.validate(plantPictureForm, bindingResult, null); // TODO is there a reason that .validate has a User parameter?
 
-		if (!plantPictureForm.getPictureFile().isEmpty() && !bindingResult.hasFieldErrors(
-			"pictureFile")) {
+		if (!plantPictureForm.getPictureFile().isEmpty() && !bindingResult.hasFieldErrors("pictureFile")) {
 			Path uploadDirectoryPath = Paths.get(UPLOAD_DIRECTORY);
 
             if (!Files.exists(uploadDirectoryPath)) {
@@ -370,16 +369,22 @@ public class GardensController {
             return "pages/editGardenPage";
         }
 
-        User loggedInUser = userService.getLoggedInUser();
-        Garden updatedGarden = editGardenForm.getGarden(loggedInUser);
+		User loggedInUser = userService.getLoggedInUser();
+		Garden updatedGarden = editGardenForm.getGarden(loggedInUser);
 
-        gardenService.updateGardenById(garden.getId(), updatedGarden);
+		if (updatedGarden.getLocationString().equals(garden.getLocationString())) {
+			updatedGarden.setLatitude(garden.getLatitude());
+			updatedGarden.setLongitude(garden.getLongitude());
+		}
 
-        logger.info("Garden edited: " + garden);
-        return "redirect:/gardens/" + garden.getId();
-    }
+		gardenService.updateGardenById(garden.getId(), updatedGarden);
 
-    /**
+		logger.info("Garden edited: " + garden);
+		return "redirect:/gardens/" + garden.getId();
+	}
+
+
+	/**
      * Handles GET requests from the /gardens/{gardenId}/edit endpoint.
      * Displays the 'Edit Garden' form.
      *
@@ -388,16 +393,16 @@ public class GardensController {
      *        seeing erroneous inputs of a failed POST request
      * @return thymeleaf pages/createPlantPage
      */
-    @GetMapping("/gardens/{gardenId}/plants/create")
-    public String gardenCreatePlantGet(@PathVariable("gardenId") Long gardenId,
-        @ModelAttribute("createPlantForm") PlantForm createPlantForm, Model model) {
-        logger.info("GET /gardens/" + gardenId + "/plants/create");
-
+	@GetMapping("/gardens/{gardenId}/plants/create")
+	public String gardenCreatePlantGet(@PathVariable("gardenId") Long gardenId,
+		@ModelAttribute("createPlantForm") PlantForm createPlantForm, Model model) {
+		logger.info("GET /gardens/" + gardenId + "/plants/create");
 		Garden existingGarden = tryToEditGarden(gardenId);
-        createPlantForm.setPicturePath("/images/defaultPlantPic.png");
-        model.addAttribute("garden", existingGarden);
-        return "pages/createPlantPage";
-    }
+		createPlantForm.setPicturePath("/images/defaultPlantPic.png");
+		model.addAttribute("garden", existingGarden);
+		return "pages/createPlantPage";
+	}
+
 
     /**
      * Handles POST requests from the /gardens/{gardenId}/plants/create endpoint.
@@ -432,20 +437,16 @@ public class GardensController {
 					throw new IOException("Failed to create upload directory", e);
 				}
 			}
-			Path filePath = uploadDirectoryPath.resolve(
-				createPlantForm.getPictureFile().getOriginalFilename());
+			Path filePath = uploadDirectoryPath.resolve(createPlantForm.getPictureFile().getOriginalFilename());
 			Files.write(filePath, createPlantForm.getPictureFile().getBytes());
-			createPlantForm.setPicturePath(
-				"/uploads/" + createPlantForm.getPictureFile().getOriginalFilename());
+			createPlantForm.setPicturePath("/uploads/" + createPlantForm.getPictureFile().getOriginalFilename());
 		}
-
 		if (bindingResult.hasErrors()) {
 			if (bindingResult.hasFieldErrors("pictureFile")) {
 				createPlantForm.setPicturePath("/images/defaultPlantPic.png");
 			}
 			return "pages/createPlantPage";
 		}
-
 		// this line is actually not strictly needed as spring MVC does this implicitly, but I have
 		// left it for the sake
 		// of understanding how the plant 'knows' what garden it belongs to. It appears to be magic
@@ -472,9 +473,9 @@ public class GardensController {
      */
     @GetMapping("/gardens/{gardenId}/plants/{plantId}/edit")
     public String gardenEditPlant(@PathVariable("gardenId") Long gardenId,
-        @PathVariable("plantId") Long plantId,
-        @ModelAttribute("editPlantForm") PlantForm editPlantForm,
-        Model model){
+									@PathVariable("plantId") Long plantId,
+									@ModelAttribute("editPlantForm") PlantForm editPlantForm,
+									Model model){
         logger.info("GET /gardens/" + gardenId + "/plants/" + plantId + "/edit");
         Garden existingGarden = tryToEditGarden(gardenId);
         Plant existingPlant = tryToEditPlant(plantId, gardenId);
@@ -502,11 +503,10 @@ public class GardensController {
      */
     @PostMapping("/gardens/{gardenId}/plants/{plantId}/edit")
     public String gardenEditPlantPost(HttpServletRequest request,
-        @PathVariable("gardenId") Long gardenId,
-        @PathVariable("plantId") Long plantId,
-        @ModelAttribute("editPlantForm") PlantForm editPlantForm,
-        BindingResult bindingResult, Model model) throws IOException{
-
+										@PathVariable("gardenId") Long gardenId,
+										@PathVariable("plantId") Long plantId,
+										@ModelAttribute("editPlantForm") PlantForm editPlantForm,
+										BindingResult bindingResult, Model model) throws IOException{
 		logger.info("POST /gardens/" + gardenId + "/plants/" + plantId + "/edit");
 
         Garden existingGarden = tryToEditGarden(gardenId);
@@ -525,11 +525,9 @@ public class GardensController {
 					throw new IOException("Failed to create upload directory", e);
 				}
 			}
-			Path filePath = uploadDirectoryPath.resolve(
-				editPlantForm.getPictureFile().getOriginalFilename());
+			Path filePath = uploadDirectoryPath.resolve(editPlantForm.getPictureFile().getOriginalFilename());
 			Files.write(filePath, editPlantForm.getPictureFile().getBytes());
-			editPlantForm.setPicturePath(
-				"/uploads/" + editPlantForm.getPictureFile().getOriginalFilename());
+			editPlantForm.setPicturePath("/uploads/" + editPlantForm.getPictureFile().getOriginalFilename());
 		}
 
 		if (bindingResult.hasErrors()) {
@@ -547,7 +545,6 @@ public class GardensController {
 
 	/**
 	 * Handles GET requests from the /updateGardenPublicity endpoint.
-	 *
 	 * This changes the publicity of the garden depending on the state of the checkbox
 	 *
 	 * @param gardenId The id of the garden
@@ -556,7 +553,7 @@ public class GardensController {
 	 */
 	@GetMapping("/updateGardenPublicity")
 	public String updateGardenPublicity(@RequestParam(name = "gardenId") Long gardenId,
-		@RequestParam(name = "gardenPublicity") boolean isPublic) {
+										@RequestParam(name = "gardenPublicity") boolean isPublic) {
 		Garden garden = tryToAccessGarden(gardenId);
 		garden.setIsPublic(isPublic);
 
