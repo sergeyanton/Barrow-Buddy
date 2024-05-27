@@ -49,6 +49,11 @@ public class U2_StepDefinitions {
 		Assertions.assertFalse(bindingResult.hasErrors());
 	}
 
+	@Then("Getting user by email and password returns null")
+	public void getting_user_by_email_and_password_returns_null() {
+		Assertions.assertNull(userService.getUserByEmailAndPassword(loginForm.getEmail(), loginForm.getPassword()));
+	}
+
 	@Then("I am shown the error message {string} and I am not logged in")
 	public void i_am_shown_the_error_message_and_i_am_not_logged_in(String errorMessage) {
 		Mockito.verify(bindingResult).addError(fieldErrorCaptor.capture());
