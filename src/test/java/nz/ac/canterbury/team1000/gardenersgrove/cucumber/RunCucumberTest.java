@@ -1,8 +1,10 @@
 package nz.ac.canterbury.team1000.gardenersgrove.cucumber;
 
+import com.theokanning.openai.service.OpenAiService;
 import io.cucumber.junit.platform.engine.Constants;
 import io.cucumber.spring.CucumberContextConfiguration;
 import nz.ac.canterbury.team1000.gardenersgrove.GardenersGroveApplication;
+import nz.ac.canterbury.team1000.gardenersgrove.service.ModerationService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.VerificationTokenService;
 import org.junit.platform.suite.api.*;
@@ -27,6 +29,8 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(classes = GardenersGroveApplication.class)
 //Mocking external beans which are used in the cucumber tests
 @MockBean(JavaMailSender.class)
+@MockBean(ModerationService.class)
+
 
 @CucumberContextConfiguration
 @SpringBootTest
