@@ -7,6 +7,9 @@ import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.checkOverM
 
 import org.springframework.validation.BindingResult;
 
+/**
+ * Entity used to parse and store the data sent through a search friend GET request
+ */
 public class SearchForm {
 	protected String emailSearch;
 	public String getEmailSearch() {
@@ -16,6 +19,12 @@ public class SearchForm {
 		this.emailSearch = emailSearch;
 	}
 
+	/**
+	 * Validates the 'Email' data and adds validation error to the BindingResult.
+	 *
+	 * @param searchForm    the SearchForm object representing the email that user is searching for
+	 * @param bindingResult the BindingResult object for validation errors
+	 */
 	public static void validate(SearchForm searchForm, BindingResult bindingResult) {
 		ErrorAdder errors = new ErrorAdder(bindingResult, "searchForm");
 
