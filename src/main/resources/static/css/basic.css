@@ -70,10 +70,19 @@ h2 {
 }
 
 .pagination > a {
-  padding: 5px 10px;
+  width: 35px;
+  height: 26px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border-radius: 5px;
   background-color: #023020;
   color: white;
   text-decoration: none;
-  line-height: 1;
+  line-height: normal;
+}
+
+.pagination > a.active {
+  background-color: #b2e0af;
+  color: #023020;
 }
