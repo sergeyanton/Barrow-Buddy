@@ -8,35 +8,34 @@
     <main clas="centred">
       <div class="basic">
         <h1>Search Friend</h1>
-        <div th:if="${errorMessage}" class="error-message">
-          <p th:text="${errorMessage}"></p>
-        </div>
-        <form th:action="@{/searchFriend}" method="get" th:object="${searchByEmailForm}">
+<!--        <div th:if="${errorMessage}" class="error-message">-->
+<!--          <p th:text="${errorMessage}"></p>-->
+<!--        </div>-->
+        <form th:action="@{/searchFriend}" method="get" th:object="${searchFriendsForm}">
           <div class="search-bar">
-            <input th:replace="~{fragments/formElement :: formElementField(fieldName='email', label='', placeholder='jane@doe.nz')}" />
+            <input th:replace="~{fragments/formElement :: formElementField(fieldName='search', label='', placeholder='jane@doe.nz')}" />
             <button type="submit">Search</button>
           </div>
         </form>
 
         <br />
-          <div th:if="${userResult != null}">
+          <table>
+            <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${users}">
+              <td th:text="${user.fname} + (${user.lname} ? ' ' + ${user.lname} : '')"></td>
+              <td th:text="${user.email}"></td>
+            </tr>
+            </tbody>
+            <tbody>
 
-            <table>
-              <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-              </tr>
-              </thead>
-              <tbody>
-                <td th:text="${userResult.fname} + (${userResult.lname} ? ' ' + ${userResult.lname} : '')"></td>
-                <td th:text="${userResult.email}"></td>
-              </tbody>
-            </table>
-
-          </div>
-
-
+            </tbody>
+          </table>
           <a class="cancel" th:href="@{friends}">Back</a>
       </div>
     </main>

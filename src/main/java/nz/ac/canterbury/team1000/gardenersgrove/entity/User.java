@@ -91,6 +91,19 @@ public class User {
         return authorities;
     }
 
+    /**
+     * Gets the user's full name, with a space between the first name and last name.
+     * If the user has no last name, it returns the first name.
+     *
+     * @return the user's full name
+     */
+    public String getFullName() {
+        if (lname == null) {
+            return fname;
+        }
+        return fname + " " + lname;
+    }
+
     public Long getId() {
         return id;
     }

@@ -1,11 +1,12 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Objects;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.EditUserForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PictureForm;
-import nz.ac.canterbury.team1000.gardenersgrove.form.SearchByEmailForm;
+import nz.ac.canterbury.team1000.gardenersgrove.form.SearchFriendsForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.UpdatePasswordForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.EmailService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
@@ -275,40 +276,46 @@ public class ProfileController {
     /**
      * Handles GET requests for searching users by email.
      *
-     * @param searchByEmailForm    the SearchByEmailForm object containing the search parameters
-     * @param email         the email address to search for, which is optional and defaults to an empty string if not provided
+     * @param searchFriendsForm    the SearchFriendsForm object containing the search parameters
+     * @param search        the user input that they are searching for, which is optional and defaults to an empty string if not provided
      * @param bindingResult the BindingResult object for validation errors
      * @param model         the Model object to add attributes to be accessed in the view
      * @return the name of the view template to render
      */
     @GetMapping("/searchFriend")
-    public String searchFriend( @ModelAttribute("searchByEmailForm") SearchByEmailForm searchByEmailForm,
-                                    @RequestParam(required = false, defaultValue = "") String email,
-                                    BindingResult bindingResult,Model model) {
+    public String searchFriend( @ModelAttribute("searchFriendsForm") SearchFriendsForm searchFriendsForm,
+                                    @RequestParam(required = false, defaultValue = "") String search,
+                                    BindingResult bindingResult, Model model) {
         logger.info("GET /searchFriend");
-        User userResult;
         User currentUser = userService.getLoggedInUser();
-        if (!email.isBlank()) {
-            SearchByEmailForm.validate(searchByEmailForm, bindingResult);
-            userResult =  userService.findEmail(email);
+        if (!search.isBlank()) {
+//            search = search.trim();
+            SearchFriendsForm.validate(searchFriendsForm, bindingResult);
 
-            if (!bindingResult.hasErrors()) {
-                if (userResult == null) {
-                    bindingResult.addError(new FieldError("searchByEmailForm", "email", searchByEmailForm.getEmail(), false, null, null, "There is nobody with that email in Gardener’s Grove"));
-                } else if (Objects.equals(currentUser.getEmail(), email)) {
-                    bindingResult.addError(new FieldError("searchByEmailForm", "email", searchByEmailForm.getEmail(), false, null, null, "You've searched for your own email. Now, let's find some friends!"));
+            if (bindingResult.hasFieldErrors("name") && bindingResult.hasFieldErrors("email")) {
+                bindingResult.addError(new FieldError("searchFriendsForm", "search", searchFriendsForm.getSearch(), false, null, null, "Please enter a valid name or email"));
+            } else if (!bindingResult.hasFieldErrors("name")) {
+                List<User> usersByName = userService.getUsersByFullName(search);
+                if (usersByName.isEmpty()) {
+                    bindingResult.addError(new FieldError("searchFriendsForm", "search", searchFriendsForm.getSearch(), false, null, null, "There is nobody with that name in Gardener’s Grove"));
+                } else if (usersByName.size() == 1 && currentUser.getFullName().equalsIgnoreCase(search)) {
+                    bindingResult.addError(new FieldError("searchFriendsForm", "search", searchFriendsForm.getSearch(), false, null, null, "There is nobody else with that name in Gardener’s Grove"));
+                } else {
+                    model.addAttribute("users", usersByName);
+                }
+            } else if (!bindingResult.hasFieldErrors("email")) {
+                User userByEmail = userService.findEmail(search);
+                if (userByEmail == null) {
+                    bindingResult.addError(new FieldError("searchFriendsForm", "search", searchFriendsForm.getSearch(), false, null, null, "There is nobody with that email in Gardener’s Grove"));
+                } else if (Objects.equals(currentUser.getEmail(), search)) {
+                    bindingResult.addError(new FieldError("searchFriendsForm", "search", searchFriendsForm.getSearch(), false, null, null, "You've searched for your own email. Now, let's find some friends!"));
+                } else {
+                    model.addAttribute("users", List.of(userByEmail));
                 }
             }
 
-            if (bindingResult.hasErrors()) {
-                return "pages/searchFriendPage";
-            }
-        } else {
-            userResult = null;
+            model.addAttribute("search", search);
         }
-        model.addAttribute("email", email);
-        model.addAttribute("userResult", userResult);
-
         return "pages/searchFriendPage";
     }
 }

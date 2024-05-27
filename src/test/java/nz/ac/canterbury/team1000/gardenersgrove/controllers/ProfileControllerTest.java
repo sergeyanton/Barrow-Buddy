@@ -7,7 +7,7 @@ import nz.ac.canterbury.team1000.gardenersgrove.controller.ProfileController;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.EditUserForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PictureForm;
-import nz.ac.canterbury.team1000.gardenersgrove.form.SearchByEmailForm;
+import nz.ac.canterbury.team1000.gardenersgrove.form.SearchFriendsForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.UpdatePasswordForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.EmailService;
 import org.hamcrest.Matchers;
@@ -60,7 +60,7 @@ public class ProfileControllerTest {
 	private PictureForm profilePictureForm;
 
 	private EditUserForm editUserForm;
-	private SearchByEmailForm searchByEmailForm;
+	private SearchFriendsForm searchFriendsForm;
 	private UpdatePasswordForm updatePasswordForm;
 
 	@BeforeEach
@@ -92,8 +92,8 @@ public class ProfileControllerTest {
 		updatePasswordForm.setNewPassword("Pass123$");
 		updatePasswordForm.setRetypeNewPassword("Pass123$");
 
-		searchByEmailForm = new SearchByEmailForm();
-		searchByEmailForm.setEmail(userMock.getEmail());
+		searchFriendsForm = new SearchFriendsForm();
+		searchFriendsForm.setSearch(userMock.getEmail());
 
 		Mockito.when(userService.getLoggedInUser()).thenReturn(userMock);
 		Mockito.when(userService.checkEmail(Mockito.any())).thenReturn(true);
@@ -673,7 +673,7 @@ public class ProfileControllerTest {
 			.andExpect(MockMvcResultMatchers.view().name("pages/searchFriendPage"))
 			.andExpect(MockMvcResultMatchers.model().attribute("userResult", Matchers.nullValue()))
 			.andExpect(
-				MockMvcResultMatchers.model().attributeHasFieldErrors("searchByEmailForm", "email"));;
+				MockMvcResultMatchers.model().attributeHasFieldErrors("searchFriendsForm", "email"));;
 		Mockito.verify(userService).findEmail(searchQuery);
 	}
 
@@ -687,7 +687,7 @@ public class ProfileControllerTest {
 			.andExpect(MockMvcResultMatchers.view().name("pages/searchFriendPage"))
 			.andExpect(MockMvcResultMatchers.model().attribute("userResult", Matchers.nullValue()))
 			.andExpect(
-				MockMvcResultMatchers.model().attributeHasFieldErrors("searchByEmailForm", "email"));;
+				MockMvcResultMatchers.model().attributeHasFieldErrors("searchFriendsForm", "email"));;
 		Mockito.verify(userService).findEmail(searchQuery);
 	}
 
@@ -701,7 +701,7 @@ public class ProfileControllerTest {
 			.andExpect(MockMvcResultMatchers.view().name("pages/searchFriendPage"))
 			.andExpect(MockMvcResultMatchers.model().attribute("userResult", userMock))
 			.andExpect(
-				MockMvcResultMatchers.model().attributeHasNoErrors("searchByEmailForm"));;
+				MockMvcResultMatchers.model().attributeHasNoErrors("searchFriendsForm"));;
 		Mockito.verify(userService).findEmail(searchQuery);
 	}
 
@@ -715,7 +715,7 @@ public class ProfileControllerTest {
 			.andExpect(MockMvcResultMatchers.view().name("pages/searchFriendPage"))
 			.andExpect(MockMvcResultMatchers.model().attribute("userResult", Matchers.nullValue()))
 			.andExpect(
-				MockMvcResultMatchers.model().attributeHasFieldErrors("searchByEmailForm","email"));;
+				MockMvcResultMatchers.model().attributeHasFieldErrors("searchFriendsForm","email"));;
 		Mockito.verify(userService).findEmail(searchQuery);
 	}
 }
