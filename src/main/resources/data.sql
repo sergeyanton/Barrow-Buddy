@@ -9,7 +9,7 @@ INSERT INTO tab_user(date_of_birth, email, fName, lName, password, picture_path)
 
 
 -- Create a garden the Hamilton Garden (id = 1)
-INSERT INTO garden (name, address, suburb, city, postcode, country, latitude, longitude, size, description, owner_id, is_public) VALUES ('The Hamilton Gardens', '21 Hungerford Crescent', 'Hamilton East', 'Hamilton', '3216', 'New Zealand', 37.8057, 175.3049, 540000, 'Very cool garden', 1, true);
+INSERT INTO garden (name, address, suburb, city, postcode, country, latitude, longitude, size, description, owner_id, is_public) VALUES ('The Hamilton Gardens', '21 Hungerford Crescent', 'Hamilton East', 'Hamilton', '3216', 'New Zealand', 37.8057, 175.3049, 72000, 'Very cool garden', 1, true);
 -- add some plants to the Hamilton Garden
 INSERT INTO plant (name, plant_count, description, planted_on_date, picture_path, garden_id) VALUES ('Rose Bush', 200, 'Fragrant, colorful garden flower.', null, '/images/defaultPlantPic.png', 1),
                                                                                                     ('Lavender', 50, 'Aromatic purple herb.', null, '/images/defaultPlantPic.png', 1),
@@ -24,7 +24,7 @@ INSERT INTO plant (name, plant_count, description, planted_on_date, picture_path
 
 
 -- Create a garden called the Christchurch Botanic Gardens (id = 2)
-INSERT INTO garden (name, address, suburb, city, postcode, country, latitude, longitude, size, description, owner_id, is_public) VALUES ('The Christchurch Botanic Gardens', 'Rolleston Avenue', 'Christchurch Central', 'Christchurch', '8013', 'New Zealand', 43.5307, 172.6232, 210000, '', 1, false);
+INSERT INTO garden (name, address, suburb, city, postcode, country, latitude, longitude, size, description, owner_id, is_public) VALUES ('The Christchurch Botanic Gardens', 'Rolleston Avenue', 'Christchurch Central', 'Christchurch', '8013', 'New Zealand', 43.5307, 172.6232, 7000, '', 1, false);
 -- add some plants to the Christchurch Botanic Gardens (all the plants in this garden ar very stinky! They are also terribly disorganized and have no plant counts)
 INSERT INTO plant (name, description, picture_path, garden_id) VALUES ('Corpse Flower', 'The worlds smelliest flower.', '/images/defaultPlantPic.png', 2),
                                                                       ('Durian', 'The worlds smelliest fruit.', '/images/defaultPlantPic.png', 2),
