@@ -298,16 +298,21 @@ public class ProfileController {
                 List<User> usersByName = userService.getUsersByFullName(search);
                 if (usersByName.isEmpty()) {
                     bindingResult.addError(new FieldError("searchFriendsForm", "search", searchFriendsForm.getSearch(), false, null, null, "There is nobody with that name in Gardener’s Grove"));
-                } else if (usersByName.size() == 1 && currentUser.getFullName().equalsIgnoreCase(search)) {
+                } else if (usersByName.size() == 1 && usersByName.contains(currentUser)) {
                     bindingResult.addError(new FieldError("searchFriendsForm", "search", searchFriendsForm.getSearch(), false, null, null, "There is nobody else with that name in Gardener’s Grove"));
                 } else {
+                    if (usersByName.contains(currentUser)) {
+                        for (User u : usersByName) {
+                            System.out.println(u == cur);
+                        }
+                    }
                     model.addAttribute("users", usersByName);
                 }
             } else if (!bindingResult.hasFieldErrors("email")) {
                 User userByEmail = userService.findEmail(search);
                 if (userByEmail == null) {
                     bindingResult.addError(new FieldError("searchFriendsForm", "search", searchFriendsForm.getSearch(), false, null, null, "There is nobody with that email in Gardener’s Grove"));
-                } else if (Objects.equals(currentUser.getEmail(), search)) {
+                } else if (Objects.equals(currentUser.getEmail(), userByEmail.getEmail())) {
                     bindingResult.addError(new FieldError("searchFriendsForm", "search", searchFriendsForm.getSearch(), false, null, null, "You've searched for your own email. Now, let's find some friends!"));
                 } else {
                     model.addAttribute("users", List.of(userByEmail));
