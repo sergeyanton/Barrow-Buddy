@@ -161,7 +161,7 @@ public class FormUtils {
      * @return true if the string contains only valid characters, false otherwise
      */
     public static boolean checkOnlyHasLettersMacronsSpacesHyphensApostrophes(String string) {
-        return !checkNotMatchesRegex(string, "^[\\p{L}]+(?:[-']?[\\p{L}])*'?$");
+        return !checkNotMatchesRegex(string, "^[\\p{L}]+(?:[-']?[\\p{L}])+(\\s[\\p{L}]+(?:[-']?[\\p{L}])+)*'?$");
     }
 
     /**
