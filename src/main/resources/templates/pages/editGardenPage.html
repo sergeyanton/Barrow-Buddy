@@ -9,19 +9,25 @@
         <div class="basic">
             <h1>Edit Garden Details</h1>
             <form th:action="@{'/gardens/' + ${gardenId} + '/edit'}" method="post" th:object="${editGardenForm}" autocomplete="off">
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='name', label='Garden Name: ', placeholder='The Hamilton Gardens')}" />
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='size', label='Size in m&sup2; (optional): ', placeholder='540000.0')}" />
 
-                <h2>Edit Garden Location</h2>
-                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='address', label='Address: ', placeholder='13 Hungerford Crescent')}" />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='name', label='Garden Name * ', placeholder='The Hamilton Gardens')}" />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='size', label='Size in m&sup2; ', placeholder='540000.0')}" />
+
+              <div class="description-container">
+                <input id="description" th:replace="~{fragments/formElement :: formElementField(fieldName='description', label='Description ', placeholder='Cool garden')}" />
+                <div id="descriptionCharacterCount" style="display: inline-block; margin-left: 10px;">0/512</div>
+              </div>
+
+              <h2>Edit Garden Location</h2>
+                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='address', label='Address ', placeholder='13 Hungerford Crescent')}" />
                 <br />
-                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='suburb', label='Suburb: ', placeholder='Ilam')}" />
+                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='suburb', label='Suburb ', placeholder='Ilam')}" />
                 <br />
-                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='city', label='City: ', placeholder='Christchurch')}" />
+                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='city', label='City * ', placeholder='Christchurch')}" />
                 <br />
-                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='postcode', label='Postcode: ', placeholder='3216')}" />
+                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='postcode', label='Postcode ', placeholder='3216')}" />
                 <br />
-                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='country', label='Country: ', placeholder='New Zealand')}" />
+                <input th:replace="~{fragments/formElement :: autocompleteDropdown(fieldName='country', label='Country * ', placeholder='New Zealand')}" />
                 <br />
                 <!-- Hidden field that stores the value of the latitude and longitude of the location - null if it is invalid -->
                 <input type="hidden" th:field="*{latitude}" id="latitude" />
@@ -29,7 +35,7 @@
                 <p>Search by <a href="https://locationiq.com">LocationIQ.com</a></p>
                 <div class="cancel-submit-wrapper">
                     <a class="cancel button" th:href="@{'/gardens/' + ${gardenId}}">Cancel</a>
-                    <button class="next" type="submit">Edit</button>
+                    <button class="next" type="submit">Save</button>
                 </div>
             </form>
         </div>
@@ -139,6 +145,25 @@
                 document.getElementById(id).value = location[id];
             }
         }
+
+        /**
+         * Updates the word count for the description field to show the user how many words they have used.
+         */
+        function updateCharacterCount() {
+          const descriptionField = document.getElementById("description");
+          const characterCountDisplay = document.getElementById("descriptionCharacterCount");
+          const characterCount = descriptionField.value.length;
+
+          // ChatGPT used for this statement
+          if (characterCount > 512) {
+            descriptionField.value = descriptionField.value.substring(0, 512);
+          }
+
+          characterCountDisplay.textContent = `${descriptionField.value.length}/512`;
+        }
+
+        document.getElementById("description").addEventListener("input", updateCharacterCount);
+        updateCharacterCount();
     </script>
 </body>
 </html>

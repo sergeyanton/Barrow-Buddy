@@ -7,36 +7,87 @@
     <div th:replace="~{fragments/header :: header}"></div>
     <main>
         <div class="basic">
-<!--            Here is an extremely basic way to display the retrieved weather info-->
-<!--            We use a model attribute sent from the controller, in this example it is called 'weather'-->
-<!--            TODO: display nicely -->
-
 <!--            <tr th:each="w : ${weather}">-->
+<!--              <div th:text="${w}"></div>-->
+
 <!--                <div th:text="${w.type.getText()}"></div>-->
-<!--                <div th:text="${w.temperature}"></div>-->
 <!--            </tr>-->
+
             <h1 th:text="${garden.name}"></h1>
-            <p th:if="${garden.latitude == null and garden.longitude == null}" th:text="'Location not found, please update your location to see the weather.'"></p>
-            <a th:href="@{'/gardens/' + ${garden.id} + '/plants/create'}">
-                <button>Add a plant</button>
-            </a>
+
+            <p th:if="${garden.description != null}">
+              <b th:text="${garden.description}"></b>
+            </p>
+
+            <p th:text="${garden.getLocationString}"></p>
             <br>
-            <p th:text="'Location: ' + ${garden.getLocationString}"></p>
+            <p th:if="${(garden.owner.id == loggedInUserId) && garden.latitude == null and garden.longitude == null}" th:text="'Location not found, please update your location to see the weather.'"></p>
             <br>
-            <p th:if="${garden.size != null}" th:text="'Size: ' + ${garden.size} + ' m&sup2;'"></p>
+            <p th:if="${garden.size != null}" th:text="${garden.size} + ' m&sup2;'" style="font-size: 18px;"></p>
             <br>
-            <p id="gardenVisibilityText" th:text="'Garden Visibility: ' + (${garden.getIsPublic} ? 'Public' : 'Private')"></p>
+            <p id="gardenVisibilityText" th:if="${garden.owner.id == loggedInUserId}" th:text="'Garden Visibility: ' + (${garden.getIsPublic} ? 'Public' : 'Private')"></p>
 
             <br>
-            <div class="form-element">
-                <label for="publicCheckbox"><b>Make My Garden Public</b></label>
+            <div th:if="${garden.owner.id == loggedInUserId}" class="form-element">
+              <div style="display: flex; align-items: center;">
+                <label for="publicCheckbox" style="margin-right: 10px; font-size: 18px;"><b>Make My Garden Public</b></label>
                 <input type="checkbox" class="form-control" id="publicCheckbox" th:checked=${garden.getIsPublic} th:attr="onclick='toggleInput(this, ' + ${garden.id} + ')'">
+              </div>
             </div>
+
+
             <br th:if="${garden.size != null}">
-            <a th:href="@{'/gardens/' + ${garden.id} + '/edit'}">Edit Garden Details</a>
+            <div th:if="${garden.owner.id == loggedInUserId}" class="form-element">
+              <a class="submit" th:href="@{'/gardens/' + ${garden.id} + '/edit'}">Edit Garden Details</a>
+              <a th:href="@{'/gardens/' + ${garden.id} + '/plants/create'}">
+                <button>Add a plant</button>
+              </a>
+            </div>
             <br>
+
+          <div id="weather-container" class="weather-box">
+            <div class="weather-info">
+
+              <h5 th:if="${weather == null || weather.size() == 0}" th:text="'Location not found, please update your location to see the weather.'"></h5>
+
+              <div th:if="${weather != null && weather.size() > 0}">
+                <div style="align-content: center; display: inline">
+                  <h3 th:text="'Today is ' + ${weather[0].dayOfTheWeek} + ', ' + ${weather[0].dateTime.toLocalDate}"></h3>
+                </div>
+                <br>
+                <h3>My Location</h3>
+                <h3 style="font-weight: normal;" th:text="${garden.getCity()} + ', ' + ${garden.getCountry()}"></h3>
+                <img th:src="@{${weather[0].type.getPicturePath()}}" alt="Weather Image" width="150" height="150">
+                <h3 th:text="${weather[0].temperature} + '°C'"></h3>
+                <h3 th:text="${weather[0].type.getText()}"></h3>
+                <h3 th:text="'Humidity ' + ${weather[0].humidity} + '%'" style="color: dimgrey"></h3>
+                <br>
+                <div>
+                  <h3>Next Hour's Weather</h3>
+                  <h4 style="font-weight: normal;">
+                    <span th:text="${weather[1].temperature} + '°C'"></span>
+                  </h4>
+                  <h4 style="font-weight: normal;">
+                    <span th:text="${weather[1].type.getText()}"></span>
+                  </h4>
+                  <h4>
+                    <span th:text="'Humidity ' + ${weather[1].humidity} + '%'" style="color: dimgrey"></span>
+                  </h4>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <p>Search by <a href="https://open-meteo.com/">open-meteo.com</a></p>
+          <p>Weather Icon provided by <a href="https://www.flaticon.com">flaticon.com</a></p>
+
+          <br>
+
+          <br>
             <span id="clientSideErrorMessage" class="error"></span>
             <br>
+
             <div class="scroll-plants-container">
                 <table>
                     <thead>
@@ -158,14 +209,6 @@
                 console.error("Error updating garden publicity:", error);
             })
         }
-
-        // function cancelSelection() {
-        //     document.getElementById('pictureFile').value = '';
-        //     document.getElementById('profileImage').src = initialProfilePictureUrl;
-        //     document.getElementById('pictureFileLabel').style.display = 'inline-block';
-        //     document.getElementById('cancelButton').style.display = 'none';
-        //     document.getElementById('submitButton').style.display = 'none';
-        // }
     </script>
 </body>
 </html>

@@ -176,6 +176,16 @@ public class FormUtils {
     }
 
     /**
+     * Checks if the given string must have at least one letter.
+     *
+     * @param string the string to check
+     * @return true if the string contains at least one letter, false otherwise
+     */
+    public static boolean checkValidGardenDescription(String string) {
+        return !checkNotMatchesRegex(string, "(?=.*?[A-Za-z]).+");
+    }
+
+    /**
      * Checks if the given string is only made up of alphanumeric characters, commas, dots, hyphens,
      * and apostrophes.
      *

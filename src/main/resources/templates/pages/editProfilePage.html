@@ -12,7 +12,7 @@
                 <div class="profile-picture-wrapper">
                 <input th:field="*{picturePath}" type="hidden"/>
                 <img class="profile-picture" id="profileImage"
-                     th:src="${editUserForm.picturePath}"
+                     th:src="@{${editUserForm.picturePath}}"
                      alt="Profile Picture">
                 </div>
 
@@ -22,17 +22,21 @@
                     <span id="clientSideErrorMessage" class="error"></span>
                 </div>
 
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='firstName', label='First Name: ', placeholder='Fabian')}" />
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='lastName', label='Last Name: ', placeholder='Gilson')}" />
-
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='firstName', label='First Name * ', placeholder='Fabian')}" />
+                <br />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='lastName', label='Last Name ', placeholder='Gilson')}" />
+                <br />
                 <div class="form-element">
-                    <label for="noSurnameCheckBox"> I have no surname </label>
-                    <input type="checkbox" class="form-control" id="noSurnameCheckBox" th:field="*{noSurnameCheckBox}" onclick="toggleInput()">
+                    <div style="display: flex; align-items: center;">
+                        <label for="noSurnameCheckBox">I have no last name</label>
+                        <input type="checkbox" class="form-control" id="noSurnameCheckBox" th:field="*{noSurnameCheckBox}" onclick="toggleInput()">
+                    </div>
                 </div>
-
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='email', label='Email: ', placeholder='jane@doe.nz')}" />
-                <input th:replace="~{fragments/formElement :: formElementField(fieldName='dob', label='Date of Birth: ', placeholder='DD/MM/YYYY')}" />
-
+                <br />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='email', label='Email * ', placeholder='jane@doe.nz')}" />
+                <br />
+                <input th:replace="~{fragments/formElement :: formElementField(fieldName='dob', label='Date of Birth ', placeholder='DD/MM/YYYY')}" />
+                <br />
                 <a th:href="@{editProfile/updatePassword}">Update Password</a>
                 <div class="cancel-submit-wrapper">
                     <a class="cancel button" th:href="@{profile}">Cancel</a>
