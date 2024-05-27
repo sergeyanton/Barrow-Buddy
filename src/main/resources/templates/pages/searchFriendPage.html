@@ -5,12 +5,9 @@
 
 <body>
   <div th:replace="~{fragments/header :: header}"></div>
-    <main clas="centred">
+    <main class="centred">
       <div class="basic">
         <h1>Search Friend</h1>
-<!--        <div th:if="${errorMessage}" class="error-message">-->
-<!--          <p th:text="${errorMessage}"></p>-->
-<!--        </div>-->
         <form th:action="@{/searchFriend}" method="get" th:object="${searchFriendsForm}">
           <div class="search-bar">
             <input th:replace="~{fragments/formElement :: formElementField(fieldName='search', label='', placeholder='jane@doe.nz')}" />
