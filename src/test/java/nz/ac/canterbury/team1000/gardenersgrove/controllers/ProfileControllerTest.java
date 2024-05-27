@@ -10,6 +10,7 @@ import nz.ac.canterbury.team1000.gardenersgrove.form.PictureForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.SearchForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.UpdatePasswordForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.EmailService;
+import nz.ac.canterbury.team1000.gardenersgrove.service.FriendRelationshipService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.VerificationTokenService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,6 +54,10 @@ public class ProfileControllerTest {
 	private GardenService gardenService;
 
 	@MockBean
+	private FriendRelationshipService friendRelationshipService;
+
+
+	@MockBean
 	private PasswordEncoder passwordEncoder;
 
 	@Mock
@@ -93,7 +98,7 @@ public class ProfileControllerTest {
 		updatePasswordForm.setRetypeNewPassword("Pass123$");
 
 		searchForm = new SearchForm();
-		searchForm.setEmail(userMock.getEmail());
+		searchForm.setEmailSearch(userMock.getEmail());
 
 		Mockito.when(userService.getLoggedInUser()).thenReturn(userMock);
 		Mockito.when(userService.checkEmail(Mockito.any())).thenReturn(true);
