@@ -10,7 +10,6 @@ import nz.ac.canterbury.team1000.gardenersgrove.util.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -28,9 +27,6 @@ public class FriendsController {
 
 	private final UserService userService;
 	private final FriendRelationshipService friendRelationshipService;
-
-//	@Autowired
-//	private AuthenticationManager authenticationManager;
 
 	final Logger logger = LoggerFactory.getLogger(ProfileController.class);
 
@@ -58,6 +54,7 @@ public class FriendsController {
 									Model model) {
 		logger.info("POST /addFriend " + receiver);
 
+		// User email taken from the successful search
 		User receiverUser = userService.findEmail(receiver);
 
 		FriendRelationship request = new FriendRelationship(userService.getLoggedInUser(), receiverUser, Status.PENDING);

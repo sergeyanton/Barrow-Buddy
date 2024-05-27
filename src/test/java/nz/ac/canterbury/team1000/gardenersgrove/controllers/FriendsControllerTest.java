@@ -63,13 +63,11 @@ public class FriendsControllerTest {
 		userMock = Mockito.mock(User.class);
 		Mockito.when(userMock.getEmail()).thenReturn("johnsmith@gmail.com");
 
-
 		searchForm = new SearchForm();
 		searchForm.setEmailSearch(userMock.getEmail());
 
 		Mockito.when(userService.getLoggedInUser()).thenReturn(userMock);
 		Mockito.when(userService.checkEmail(Mockito.any())).thenReturn(true);
-
 	}
 
 	@Test
@@ -139,5 +137,28 @@ public class FriendsControllerTest {
 				MockMvcResultMatchers.model().attributeHasFieldErrors("searchForm","emailSearch"));;
 		Mockito.verify(userService).findEmail(searchQuery);
 	}
+
+
+	@Test
+	public void SearchFormGet_NoRequestSent_DisplaysNoRelationship() throws Exception {
+
+	}
+	@Test
+	public void SearchFormGet_FriendRequestAlreadySent_DisplaysRelationshipPending() throws Exception {
+
+	}
+
+	@Test
+	public void SearchFormGet_AlreadyFriendsUserSent_DisplaysRelationshipFriends() throws Exception {
+
+	}
+
+	@Test
+	public void SearchFormGet_AlreadyFriendsUserReceived_DisplaysRelationshipFriends() throws Exception {
+
+	}
+
+
+
 
 }
