@@ -1,9 +1,12 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import java.util.Objects;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.EditUserForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PictureForm;
+import nz.ac.canterbury.team1000.gardenersgrove.form.SearchForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.UpdatePasswordForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.EmailService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
@@ -28,6 +31,7 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class ProfileController {
@@ -269,5 +273,45 @@ public class ProfileController {
         }
 
         return ResponseEntity.ok().body(resource);
+    }
+
+    /**
+     * Handles GET requests for searching users by email.
+     *
+     * @param searchForm    the SearchForm object containing the search parameters
+     * @param email         the email address to search for, which is optional and defaults to an empty string if not provided
+     * @param bindingResult the BindingResult object for validation errors
+     * @param model         the Model object to add attributes to be accessed in the view
+     * @return the name of the view template to render
+     */
+    @GetMapping("/searchByEmail")
+    public String getSearchByEmail( @ModelAttribute("searchForm") SearchForm searchForm,
+                                    @RequestParam(required = false, defaultValue = "") String email,
+                                    BindingResult bindingResult,Model model) {
+        logger.info("GET /searchByEmail");
+        User userResult;
+        User currentUser = userService.getLoggedInUser();
+        if (!email.isBlank()) {
+            SearchForm.validate(searchForm, bindingResult);
+            userResult =  userService.findEmail(email);
+
+            if (!bindingResult.hasErrors()) {
+                if (userResult == null) {
+                    bindingResult.addError(new FieldError("searchForm", "email", searchForm.getEmail(), false, null, null, "There is nobody with that email in Gardener’s Grove"));
+                } else if (Objects.equals(currentUser.getEmail(), email)) {
+                    bindingResult.addError(new FieldError("searchForm", "email", searchForm.getEmail(), false, null, null, "You've searched for your own email. Now, let's find some friends!"));
+                }
+            }
+
+            if (bindingResult.hasErrors()) {
+                return "pages/searchByEmailPage";
+            }
+        } else {
+            userResult = null;
+        }
+        model.addAttribute("email", email);
+        model.addAttribute("userResult", userResult);
+
+        return "pages/searchByEmailPage";
     }
 }
