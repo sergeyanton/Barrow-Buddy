@@ -13,6 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,8 +29,8 @@ public class FriendsController {
 	private final UserService userService;
 	private final FriendRelationshipService friendRelationshipService;
 
-	@Autowired
-	private AuthenticationManager authenticationManager;
+//	@Autowired
+//	private AuthenticationManager authenticationManager;
 
 	final Logger logger = LoggerFactory.getLogger(ProfileController.class);
 
@@ -67,6 +70,59 @@ public class FriendsController {
 		model.addAttribute("userResult", receiverUser);
 		model.addAttribute("searchForm", searchForm);
 		model.addAttribute("relationshipStatus", existingRelationship.getStatus().name());
+
+		return "pages/searchByEmailPage";
+	}
+
+	/**
+	 * Handles GET requests for searching users by email.
+	 *
+	 * @param searchForm    the SearchForm object containing the search parameters
+	 * @param emailSearch   the email address to search for, which is optional and defaults to an empty string if not provided
+	 * @param bindingResult the BindingResult object for validation errors
+	 * @param model         the Model object to add attributes to be accessed in the view
+	 * @return the name of the view template to render
+	 */
+	@GetMapping("/searchByEmail")
+	public String getSearchByEmail( @ModelAttribute("searchForm") SearchForm searchForm,
+		@RequestParam(required = false, defaultValue = "") String emailSearch,
+		BindingResult bindingResult,Model model) {
+		logger.info("GET /searchByEmail");
+		User userResult;
+		User currentUser = userService.getLoggedInUser();
+		String relationshipStatus = null;
+
+		if (!emailSearch.isBlank()) {
+			SearchForm.validate(searchForm, bindingResult);
+			userResult =  userService.findEmail(emailSearch);
+
+			if (!bindingResult.hasErrors()) {
+				if (userResult == null) {
+					// No user found
+					bindingResult.addError(new FieldError("searchForm", "emailSearch", searchForm.getEmailSearch(), false, null, null, "There is nobody with that email in Gardener’s Grove"));
+				} else if (Objects.equals(currentUser.getEmail(), emailSearch)) {
+					// User searched for themselves
+					bindingResult.addError(new FieldError("searchForm", "emailSearch", searchForm.getEmailSearch(), false, null, null, "You've searched for your own email. Now, let's find some friends!"));
+				} else {
+					// User searched for a valid user
+					FriendRelationship relationship = friendRelationshipService.getFriendRelationship(currentUser.getId(), userResult.getId());
+					if (relationship != null) {
+						relationshipStatus = relationship.getStatus().name();
+					}
+				}
+			}
+
+			if (bindingResult.hasErrors()) {
+				return "pages/searchByEmailPage";
+			}
+		} else {
+			userResult = null;
+		}
+		model.addAttribute("emailSearch", emailSearch);
+		model.addAttribute("searchForm", searchForm);
+		model.addAttribute("userResult", userResult);
+		model.addAttribute("relationshipStatus", relationshipStatus);
+
 
 		return "pages/searchByEmailPage";
 	}
