@@ -20,7 +20,7 @@ import java.util.Map;
 @Service
 public class LocationSearchService {
     private final String API_KEY = System.getenv("API_KEY");
-    private final String URL = "https://api.locationiq.com/v1/autocomplete";
+    private final String URL = "https://api.locationiq.com/v1/";
 
     private RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -58,6 +58,7 @@ public class LocationSearchService {
         this.restTemplate = restTemplate;
     }
 
+
     /**
      * Using user input and specifying the address field, a request is sent to the LocationIQ API to find a location
      * that matches or contains query with a given tag that corresponds to the address field where user input occurred
@@ -66,7 +67,7 @@ public class LocationSearchService {
      * @param addressField the field where user input occurred
      * @return List containing Location entities that match the query and address field
      */
-    public List<Location> searchLocations(String query, String addressField) {
+    public List<Location> searchLocations(String query, String[] fullAddress, String addressField) {
         // If the number of requests exceed the rate limit (2 requests per second, 60 requests per minute, or 5000 requests per day),
         // then it will not continue with sending the request and instead return an empty array list.
         if (!TWO_REQUESTS_PER_SECOND_RATE_LIMITER.consumeToken() || !SIXTY_REQUESTS_PER_MINUTE_RATE_LIMITER.consumeToken() || !FIVE_THOUSAND_REQUESTS_PER_DAY_RATE_LIMITER.consumeToken()) {
@@ -75,30 +76,45 @@ public class LocationSearchService {
 
         try {
             // Construct URL for sending requests to the LocationIQ API
-            String url;
+            String url = "";
+            String fullQuery = "";
+            // address = 0, suburb = 1, city = 2, postcode = 3, country = 4
 
             switch (addressField) {
                 case "country":
-                    url = URL + "?q=" + query + "&limit=5&key=" + API_KEY + "&tag=place:country";
+                    url = URL + "autocomplete?q=" + query + "&key=" + API_KEY + "&tag=place:country";
                     break;
                 case "city":
-                    url = URL + "?q=" + query + "&limit=5&key=" + API_KEY + "&tag=place:city";
+                    url = URL + "autocomplete?q=" + query + "&key=" + API_KEY + "&tag=place&normalizecity=1";
                     break;
                 case "postcode":
-                    url = URL + "?q=" + query + "&limit=5&key=" + API_KEY + "&tag=place:postcode";
+                    url = URL + "autocomplete?q=" + query + "&key=" + API_KEY + "&tag=place:postcode&normalizecity=1";
                     break;
                 case "suburb":
-                    url = URL + "?q=" + query + "&limit=5&key=" + API_KEY + "&tag=place:suburb";
+                    url = URL + "autocomplete?q=" + query + "&key=" + API_KEY + "&tag=place:suburb&normalizecity=1";
                     break;
                 default:
-                    url = URL + "?q=" + query + "&limit=5&key=" + API_KEY;
+                    fullQuery += query;
+                    if (!fullAddress[1].isEmpty()) {
+                        fullQuery += ", " + fullAddress[1];
+                    }
+                    if (!fullAddress[2].isEmpty()) {
+                        fullQuery += ", " + fullAddress[2];
+                    }
+                    if (!fullAddress[3].isEmpty()) {
+                        fullQuery += ", " + fullAddress[3];
+                    }
+                    if (!fullAddress[4].isEmpty()) {
+                        fullQuery += ", " + fullAddress[4];
+                    }
+                    url = URL + "autocomplete?q=" + fullQuery + "&key=" + API_KEY + "&normalizecity=1";
             }
 
             // Sending a request to the LocationIQ API endpoint and returns a JSON response in string form
             String jsonResponse = restTemplate.getForObject(url, String.class);
 
             // Calls locationsIntoList() method given the JSON response in String format, the query and the address field
-            return locationsIntoList(jsonResponse, query, addressField);
+            return locationsIntoList(jsonResponse, query, fullAddress, addressField);
         } catch (Exception e) {
             // Return an array list if any exception has occurred
             return new ArrayList<>();
@@ -116,13 +132,15 @@ public class LocationSearchService {
      * @return
      * @throws JsonProcessingException if a JSON process exception has occurred, it makes sure to throw an JsonProcessingException
      */
-    public List<Location> locationsIntoList(String jsonResponse, String query, String addressField) throws JsonProcessingException {
+    public List<Location> locationsIntoList(String jsonResponse, String query, String[] fullAddress, String addressField) throws JsonProcessingException {
         List<Location> locationAddresses = new ArrayList<>();
 
         List<Map<String, Object>> locations = objectMapper.readValue(jsonResponse, List.class);
 
         // Obtain the type of the location, the display format of the location, and the address map of the location
         for (Map<String, Object> location : locations) {
+            Double latitude = Double.parseDouble(location.get("lat").toString());
+            Double longitude = Double.parseDouble(location.get("lon").toString());
             String locationType = (String) location.get("type");
             String displayPlace = (String) location.get("display_place");
             Map<String, Object> addressMap = (Map<String, Object>) location.get("address");
@@ -137,50 +155,95 @@ public class LocationSearchService {
             // to the location list that gets returned at the end of the method
             // Besides the country address field, it makes sure that the location must have a city and country in its
             // address map to deal with the requirement of the form submission containing a non-empty city and country
+
+            // IF INPUT IS DONE IN THE COUNTRY FIELD
             if (addressField.equals("country") && locationType.equals("country")) {
                 country = addressMap.get("name").toString();
 
-                locationAddresses.add(new Location(address, suburb, city, postcode, country, displayPlace));
-            } else if (addressField.equals("postcode") && locationType.equals("postcode")) {
+                locationAddresses.add(new Location(address, suburb, city, postcode, country, latitude, longitude, displayPlace));
+            }
+            // IF INPUT IS DONE IN THE POSTCODE FIELD
+            else if (addressField.equals("postcode") && locationType.equals("postcode")) {
                 postcode = addressMap.get("name").toString();
                 if (addressMap.containsKey("city")) city = addressMap.get("city").toString();
                 if (addressMap.containsKey("country")) country = addressMap.get("country").toString();
 
                 if (!city.isEmpty() && !country.isEmpty()) {
-                    locationAddresses.add(new Location(address, suburb, city, postcode, country, displayPlace));
+                    locationAddresses.add(new Location(address, suburb, city, postcode, country, latitude, longitude, displayPlace));
                 }
             }
-            if (addressField.equals("city") && locationType.equals("city")) {
+            // IF INPUT IS DONE IN THE CITY FIELD
+            else if (addressField.equals("city") && locationType.equals("city")) {
                 city = addressMap.get("name").toString();
                 if (addressMap.containsKey("country")) country = addressMap.get("country").toString();
 
                 if (!city.isEmpty() && !country.isEmpty()) {
-                    locationAddresses.add(new Location(address, suburb, city, postcode, country, displayPlace));
+                    locationAddresses.add(new Location(address, suburb, city, postcode, country, latitude, longitude, displayPlace));
                 }
-            } else if (addressField.equals("suburb") && locationType.equals("suburb")) {
+            }
+            // IF INPUT IS DONE IN THE SUBURB FIELD
+            else if (addressField.equals("suburb") && locationType.equals("suburb")) {
                 suburb = addressMap.get("name").toString();
                 if (addressMap.containsKey("city")) city = addressMap.get("city").toString();
                 if (addressMap.containsKey("country")) country = addressMap.get("country").toString();
 
                 if (!city.isEmpty() && !country.isEmpty()) {
-                    locationAddresses.add(new Location(address, suburb, city, postcode, country, displayPlace));
+                    locationAddresses.add(new Location(address, suburb, city, postcode, country, latitude, longitude, displayPlace));
                 }
-            } else if (addressField.equals("address")) {
+            }
+            // IF INPUT IS DONE IN THE ADDRESS FIELD
+            else if (addressField.equals("address")) {
+                boolean validLocation = true;
+
+                // CHECK IF THE LOCATION IS A HOUSE ADDRESS
                 if (addressMap.containsKey("house_number")) {
                     String addressCombined = addressMap.get("house_number").toString() + " " + addressMap.get("road").toString();
                     if (addressCombined.startsWith(query)) {
+                        displayPlace = addressCombined;
                         address = addressMap.get("house_number").toString() + " " + addressMap.get("road").toString();
                     }
-                } else {
+                } else { // OTHERWISE IT WOULD BE A STREET
                     address = addressMap.get("name").toString();
                 }
-                if (addressMap.containsKey("suburb")) suburb = addressMap.get("suburb").toString();
-                if (addressMap.containsKey("city")) city = addressMap.get("city").toString();
-                if (addressMap.containsKey("postcode")) postcode = addressMap.get("postcode").toString();
-                if (addressMap.containsKey("country")) country = addressMap.get("country").toString();
 
-                if (!address.isEmpty() && !city.isEmpty() && !country.isEmpty()) {
-                    locationAddresses.add(new Location(address, suburb, city, postcode, country, displayPlace));
+                if (addressMap.containsKey("suburb")) {
+                    if (!fullAddress[1].isEmpty()) {
+                        if (!addressMap.get("suburb").toString().equals(fullAddress[1])) {
+                            validLocation = false;
+                        }
+                    }
+                    suburb = addressMap.get("suburb").toString();
+                }
+
+                if (addressMap.containsKey("city")) {
+                    if (!fullAddress[2].isEmpty()) {
+                        if (!addressMap.get("city").toString().equals(fullAddress[2])) {
+                            validLocation = false;
+                        }
+                    }
+                    city = addressMap.get("city").toString();
+                }
+
+                if (addressMap.containsKey("postcode")) {
+                    if (!fullAddress[3].isEmpty()) {
+                        if (!addressMap.get("postcode").toString().equals(fullAddress[3])) {
+                            validLocation = false;
+                        }
+                    }
+                    postcode = addressMap.get("postcode").toString();
+                }
+
+                if (addressMap.containsKey("country")) {
+                    if (!fullAddress[4].isEmpty()) {
+                        if (!addressMap.get("country").toString().equals(fullAddress[4])) {
+                            validLocation = false;
+                        }
+                    }
+                    country = addressMap.get("country").toString();
+                }
+
+                if (!address.isEmpty() && !city.isEmpty() && !country.isEmpty() && address.startsWith(query) && validLocation) {
+                    locationAddresses.add(new Location(address, suburb, city, postcode, country, latitude, longitude, displayPlace));
                 }
             }
         }

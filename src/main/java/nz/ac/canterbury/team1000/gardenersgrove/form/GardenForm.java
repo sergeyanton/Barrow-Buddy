@@ -1,8 +1,11 @@
 package nz.ac.canterbury.team1000.gardenersgrove.form;
 
+import nz.ac.canterbury.team1000.gardenersgrove.api.LocationSearchService;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import org.springframework.validation.BindingResult;
+import java.util.Arrays;
+import java.util.List;
 
 import static nz.ac.canterbury.team1000.gardenersgrove.form.FormUtils.*;
 
@@ -13,7 +16,11 @@ public class GardenForm {
     protected String city;
     protected String postcode;
     protected String country;
+    protected Double latitude;
+    protected Double longitude;
     protected String size;
+    protected String description;
+    protected boolean isPublic;
 
     public String getName() {
         return name;
@@ -21,6 +28,14 @@ public class GardenForm {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean getPublicity() {
+        return this.isPublic;
+    }
+
+    public void setPublicity(boolean publicity) {
+        this.isPublic = publicity;
     }
 
     public String getAddress() {
@@ -40,6 +55,23 @@ public class GardenForm {
         return country;
     }
 
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+
     public void setAddress(String address) {
         this.address = address;
     }
@@ -57,6 +89,15 @@ public class GardenForm {
         this.country = country;
     }
 
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+
     public String getSize() {
         return size;
     }
@@ -73,6 +114,7 @@ public class GardenForm {
         this.size = size;
     }
 
+
     /**
      * Generates a Garden object with the values from the form.
      *
@@ -87,8 +129,12 @@ public class GardenForm {
                 this.city,
                 this.postcode,
                 this.country,
+                this.latitude,
+                this.longitude,
                 getSizeDouble(), //TODO could get rid of some constructor redundancy in either Garden or User
-                owner
+                this.description,
+                owner,
+                this.isPublic
         );
     }
 
@@ -109,6 +155,18 @@ public class GardenForm {
             errors.add("name", "Garden name must only include letters, numbers, spaces, dots, hyphens or apostrophes", createGardenForm.getName());
         } else if (checkOverMaxLength(createGardenForm.getName(), MAX_DB_STR_LEN)) {
             errors.add("name", "Name must be 255 characters or less", createGardenForm.getName());
+        }
+
+        /*
+         * TODO: profanity check on garden description =)
+         */
+        // Validate garden description
+        if (createGardenForm.getDescription() != null && !createGardenForm.getDescription().isBlank()) {
+            if (!checkValidGardenDescription(createGardenForm.getDescription())) {
+                errors.add("description", "Description must contain some text", createGardenForm.getDescription());
+            } else if (checkOverMaxLength(createGardenForm.getDescription(), 512)) {
+                errors.add("description", "Description must be 512 characters or less", createGardenForm.getDescription());
+            }
         }
 
         // Validate garden location - Address
@@ -158,9 +216,12 @@ public class GardenForm {
 
         // Validate garden size (if there is one)
         if (!checkBlank(createGardenForm.getSize())) {
+            // Handle european decimal format
+            createGardenForm.setSize(createGardenForm.getSize().replace(',', '.'));
+
             if (checkDoubleTooBig(createGardenForm.getSize())) {
-                errors.add("size", "Garden size must be at most " + Integer.MAX_VALUE + " m²", createGardenForm.getSize());
-            } else if (checkDoubleIsInvalid(createGardenForm.getSize()) || checkDoubleOutsideRange(createGardenForm.getSize(), 0.1, null)) {
+                errors.add("size", "Garden size must be at most 72,000m²", createGardenForm.getSize());
+            } else if (checkDoubleIsInvalid(createGardenForm.getSize()) || checkDoubleNotPositive(createGardenForm.getSize()) || checkDoubleExceedMaxValue(createGardenForm.getSize(), null)) {
                 errors.add("size", "Garden size must be a positive number", createGardenForm.getSize());
             }
         }

@@ -47,4 +47,4 @@ out/
 !*.example.env
 
 ### Cucumber reports
-/target/cucumber-report/
+/target/cucumber-report/*

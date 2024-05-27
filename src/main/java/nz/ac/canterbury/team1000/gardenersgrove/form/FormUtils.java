@@ -26,9 +26,9 @@ class ErrorAdder {
      * Constructs an ErrorAdder with the specified BindingResult and object name.
      *
      * @param bindingResult the BindingResult object to which errors will be added
-     * @param objectName    the name of the object associated with the errors
+     * @param objectName the name of the object associated with the errors
      */
-    ErrorAdder (BindingResult bindingResult, String objectName) {
+    ErrorAdder(BindingResult bindingResult, String objectName) {
         this.bindingResult = bindingResult;
         this.objectName = objectName;
     }
@@ -37,12 +37,14 @@ class ErrorAdder {
      * Adds a validation error to the BindingResult.
      *
      * @param fieldName the name of the field for which the error occurred
-     * @param message   the error message to be added
+     * @param message the error message to be added
      */
     public void add(String fieldName, String message, String rejectedValue) {
-        this.bindingResult.addError(new FieldError(this.objectName, fieldName, rejectedValue, false, null, null, message));
+        this.bindingResult.addError(new FieldError(this.objectName, fieldName, rejectedValue, false,
+                null, null, message));
     }
 }
+
 
 /**
  * Utility class for validating form data.
@@ -50,28 +52,36 @@ class ErrorAdder {
 public class FormUtils {
 
     /**
-     * A date formatter used to parse strings of the form "DD/MM/YYYY" into LocalDate objects.
-     * Using 'y' here doesn't work well with the STRICT resolver style unlike 'u'.
-     * We have to use a STRICT resolver style to reject invalid month lengths.
-     * By default, dates such as the 30th of February would be incorrectly accepted.
+     * A date formatter used to parse strings of the form "DD/MM/YYYY" into LocalDate objects. Using
+     * 'y' here doesn't work well with the STRICT resolver style unlike 'u'. We have to use a STRICT
+     * resolver style to reject invalid month lengths. By default, dates such as the 30th of
+     * February would be incorrectly accepted.
      */
-    public static final DateTimeFormatter VALID_DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/uuuu").withResolverStyle(ResolverStyle.STRICT);
+    public static final DateTimeFormatter VALID_DATE_FORMAT =
+            DateTimeFormatter.ofPattern("dd/MM/uuuu").withResolverStyle(ResolverStyle.STRICT);
 
     /**
-     * The default maximum length of strings in the database.
-     * Some data might have a lower maximum (first/last name) or a higher maximum (garden description).
+     * The default maximum length of strings in the database. Some data might have a lower maximum
+     * (first/last name) or a higher maximum (garden description).
      */
     public static final int MAX_DB_STR_LEN = 255;
+
+    public static final int MAX_PLANT_COUNT = 268000;
+    /**
+     * The default maximum garden size.
+     */
+    public static final int MAX_GARDEN_SIZE = 72000;
 
     /**
      * The allowed MIME types for uploaded images.
      */
-    public static final List<String> ALLOWED_IMAGE_TYPES = Arrays.asList("image/jpeg", "image/png", "image/svg+xml");
+    public static final List<String> ALLOWED_IMAGE_TYPES =
+            Arrays.asList("image/jpeg", "image/png", "image/svg+xml");
 
     /**
      * The maximum size allowed for an image that the user can upload.
      */
-    public static final int MAX_IMAGE_SIZE_BYTES  = 10 * 1024 * 1024;
+    public static final int MAX_IMAGE_SIZE_BYTES = 10 * 1024 * 1024;
 
     /**
      * Checks if the given string is blank.
@@ -86,7 +96,7 @@ public class FormUtils {
     /**
      * Checks if the given string exceeds the maximum length.
      *
-     * @param string    the string to check
+     * @param string the string to check
      * @param maxLength the maximum length allowed
      * @return true if the string exceeds the maximum length, false otherwise
      */
@@ -97,7 +107,7 @@ public class FormUtils {
     /**
      * Checks if the given string is less than the under length.
      *
-     * @param string    the string to check
+     * @param string the string to check
      * @param underLength the maximum length allowed
      * @return true if the string is less than the under length, false otherwise
      */
@@ -108,109 +118,121 @@ public class FormUtils {
 
     /**
      * Checks if the given string represents a double bigger than the maximum integer value in java.
-     * NOTE: Returns false if the string doesn't represent a valid double. Only call this method with
-     * valid strings.
+     * NOTE: Returns false if the string doesn't represent a valid double. Only call this method
+     * with valid strings.
      *
      * @param string the string representation of the double to check
-     * @return  true if the represented double is greater than the maximum java Integer value,
-     *          false if the represented double is not too big, or if the string doesn't represent a valid double
+     * @return true if the represented double is greater than the maximum java Integer value, false
+     *         if the represented double is not too big, or if the string doesn't represent a valid
+     *         double
      */
-    public static boolean checkDoubleTooBig (String string) {
+    public static boolean checkDoubleTooBig(String string) {
         try {
-            return new BigDecimal(string.replace(",", ".")).compareTo(BigDecimal.valueOf(Integer.MAX_VALUE)) > 0;
+            return new BigDecimal(string.replace(",", "."))
+                    .compareTo(BigDecimal.valueOf(MAX_GARDEN_SIZE)) > 0;
         } catch (NumberFormatException e) {
             return false;
         }
     }
 
     /**
-     * Checks if the given string represents an integer bigger than the maximum integer value in java.
-     * NOTE: Returns false if the string doesn't represent a valid integer. Only call this method with
-     * valid strings.
+     * Checks if the given string represents an integer bigger than the maximum integer that is
+     * provided NOTE: Returns false if the string doesn't represent a valid integer. Only call this
+     * method with valid strings.
      *
-     * @param string the string representation of the double to check
-     * @return  true if the represented integer is greater than the maximum java Integer value,
-     *          false if the represented integer is not too big, or if the string doesn't represent a valid integer
+     * @param providedValue the string representation of the number to check
+     * @param maxValue the max value that is provided to compare with
+     * @return true if the provided value is greater than the maximum value, false if the provided
+     *         value is not too big, or if the string doesn't represent a valid integer
      */
-    public static boolean checkIntegerTooBig (String string) {
+    public static boolean checkNumberTooBig(String providedValue, long maxValue) {
         try {
-            return new BigDecimal(string).compareTo(BigDecimal.valueOf(Integer.MAX_VALUE)) > 0;
+            return new BigDecimal(providedValue).compareTo(BigDecimal.valueOf(maxValue)) > 0;
         } catch (NumberFormatException e) {
             return false;
         }
     }
 
     /**
-     * Checks if the given string contains only letters, accented characters, macrons,
-     * spaces, hyphens, or apostrophes.
+     * Checks if the given string contains only letters, accented characters, macrons, spaces,
+     * hyphens, or apostrophes.
      *
      * @param string the string to check
      * @return true if the string contains only valid characters, false otherwise
      */
-    public static boolean checkOnlyHasLettersMacronsSpacesHyphensApostrophes (String string) {
+    public static boolean checkOnlyHasLettersMacronsSpacesHyphensApostrophes(String string) {
         return !checkNotMatchesRegex(string, "^[\\p{L}’'-]+(?:\\s[\\p{L}’'-]+)*$");
     }
 
     /**
-     * Checks if the given string is only made up of alphanumeric characters, commas,
-     * dots, hyphens, and apostrophes.
+     * Checks if the given string is only made up of alphanumeric characters, commas, dots, hyphens,
+     * and apostrophes.
      *
      * @param string the string to check
      * @return true if the string contains only valid characters, false otherwise
      */
-    public static boolean checkValidGardenName (String string) {
+    public static boolean checkValidGardenName(String string) {
         return !checkNotMatchesRegex(string, "^[\\p{L}0-9\\s,.'-]+$");
     }
 
     /**
-     * Checks if the given string is only made up of alphanumeric characters, commas,
-     * dots, hyphens, and apostrophes.
+     * Checks if the given string must have at least one letter.
+     *
+     * @param string the string to check
+     * @return true if the string contains at least one letter, false otherwise
+     */
+    public static boolean checkValidGardenDescription(String string) {
+        return !checkNotMatchesRegex(string, "(?=.*?[A-Za-z]).+");
+    }
+
+    /**
+     * Checks if the given string is only made up of alphanumeric characters, commas, dots, hyphens,
+     * and apostrophes.
      *
      * @param string the string to check
      * @return true if the string contains only valid characters, false otherwise
      */
-    public static boolean checkValidLocationName (String string) {
+    public static boolean checkValidLocationName(String string) {
         return checkValidGardenName(string); // may have different definition later
     }
 
     /**
-     * Checks if the given string is only made up of alphanumeric characters, commas,
-     * dots, hyphens, and apostrophes.
+     * Checks if the given string is only made up of alphanumeric characters, commas, dots, hyphens,
+     * and apostrophes.
      *
      * @param string the string to check
      * @return true if the string contains only valid characters, false otherwise
      */
-    public static boolean checkValidPlantName (String string) {
+    public static boolean checkValidPlantName(String string) {
         return checkValidGardenName(string); // may have different definition later
     }
 
     /**
-     * Checks if the given string doesn't represent a valid non-negative Double, where the decimal point can also be a comma.
-     * NOTE: Does NOT check upper bound for the number.
-     * NOTE: Returns true for blank strings.
+     * Checks if the given string doesn't represent a valid non-negative Double, where the decimal
+     * point can also be a comma. NOTE: Does NOT check upper bound for the number. NOTE: Returns
+     * true for blank strings.
      *
      * @param string the string to check
      * @return true if the string does not represent a valid double, including blank strings
      */
-    public static boolean checkDoubleIsInvalid (String string) {
-        return checkNotMatchesRegex(string,"^\\d*[,.]?\\d+$");
+    public static boolean checkDoubleIsInvalid(String string) {
+        return checkNotMatchesRegex(string, "^\\d*[,.]?\\d+$");
     }
 
     /**
-     * Checks if the given string doesn't represent a valid non-negative Integer
-     * NOTE: Does NOT check upper bound for the number.
-     * NOTE: Returns true for blank strings.
+     * Checks if the given string doesn't represent a valid non-negative Integer NOTE: Does NOT
+     * check upper bound for the number. NOTE: Returns true for blank strings.
      *
      * @param string the string to check
      * @return true if the string does not represent a valid integer, including blank strings
      */
-    public static boolean checkIntegerIsInvalid (String string) {
-        return checkNotMatchesRegex(string,"^[0-9]+$");
+    public static boolean checkNotPositiveInteger(String string) {
+        return checkNotMatchesRegex(string, "^[1-9]\\d*$");
     }
 
     /**
-     * Checks if an integer fits within the specified range.
-     * NOTE: Returns true for blank or invalid strings. Should not be used to check for invalid integers.
+     * Checks if an integer fits within the specified range. NOTE: Returns true for blank or invalid
+     * strings. Should not be used to check for invalid integers.
      *
      * @param string the string to check
      * @param min the minimum value allowed, or null if there is no minimum
@@ -220,8 +242,10 @@ public class FormUtils {
     public static boolean checkIntegerOutsideRange(String string, Integer min, Integer max) {
         try {
             int value = Integer.parseInt(string);
-            if (min != null && value < min) return true;
-            if (max != null && value > max) return true;
+            if (min != null && value < min)
+                return true;
+            if (max != null && value > max)
+                return true;
             return false;
         } catch (NumberFormatException e) {
             // make sure we fail if the string is not a valid integer
@@ -230,19 +254,37 @@ public class FormUtils {
     }
 
     /**
-     * Checks if a double fits within the specified range.
-     * NOTE: Returns true for blank or invalid strings. Should not be used to check for invalid doubles.
+     * Checks if a double doesn't go over the max value. NOTE: Returns true for blank or invalid
+     * strings. Should not be used to check for invalid doubles.
      *
      * @param string the string to check
-     * @param min the minimum value allowed, or null if there is no minimum
      * @param max the maximum value allowed, or null if there is no maximum
-     * @return true if the double is outside the specified range, false otherwise
+     * @return true if the double is too big of what is provided as max value, false otherwise
      */
-    public static boolean checkDoubleOutsideRange(String string, Double min, Double max) {
+    public static boolean checkDoubleExceedMaxValue(String string, Double max) {
         try {
             double value = Double.parseDouble(string.replace(",", "."));
-            if (min != null && value < min) return true;
-            if (max != null && value > max) return true;
+            if (max != null && value > max)
+                return true;
+            return false;
+        } catch (NumberFormatException e) {
+            // make sure we fail if the string is not a valid double
+            return true;
+        }
+    }
+
+    /**
+     * Checks if a string (gets converted to double) is positive NOTE: Returns true for invalid
+     * strings. Should not be used to check for invalid doubles.
+     *
+     * @param string the string to check
+     * @return true if the double is outside the specified range, false otherwise
+     */
+    public static boolean checkDoubleNotPositive(String string) {
+        try {
+            double value = Double.parseDouble(string.replace(",", "."));
+            if (value <= 0)
+                return true;
             return false;
         } catch (NumberFormatException e) {
             // make sure we fail if the string is not a valid double
@@ -256,7 +298,7 @@ public class FormUtils {
      * @param string the email address to check
      * @return true if the email address is invalid, false otherwise
      */
-    public static boolean checkEmailIsInvalid (String string) {
+    public static boolean checkEmailIsInvalid(String string) {
         return checkNotMatchesRegex(string, "^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$");
     }
 
@@ -266,18 +308,19 @@ public class FormUtils {
      * @param string the password to check
      * @return true if the password is invalid, false otherwise
      */
-    public static boolean checkPasswordIsInvalid (String string) {
-        return checkNotMatchesRegex(string, "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^a-zA-Z\\d]).{8,}$");
+    public static boolean checkPasswordIsInvalid(String string) {
+        return checkNotMatchesRegex(string,
+                "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^a-zA-Z\\d]).{8,}$");
     }
 
     /**
      * Checks if the given string does not match the specified regular expression pattern.
      *
-     * @param string  the string to check
+     * @param string the string to check
      * @param pattern the regular expression pattern to match against
      * @return true if the string does not match the pattern, false otherwise
      */
-    public static boolean checkNotMatchesRegex (String string, String pattern) {
+    public static boolean checkNotMatchesRegex(String string, String pattern) {
         return !string.matches(pattern);
     }
 
@@ -302,7 +345,7 @@ public class FormUtils {
      * Checks if the given date string is before the specified date.
      *
      * @param dateString the date string to check
-     * @param before     the date to compare against
+     * @param before the date to compare against
      * @return true if the date string is before the specified date, false otherwise
      */
     public static boolean checkDateBefore(String dateString, LocalDate before) {
@@ -338,10 +381,28 @@ public class FormUtils {
      * Converts LocalDate to a string in the format "DD/MM/YYYY".
      *
      * @param date the date to convert
-     * @return the string representation of the date in the format "DD/MM/YYYY" or an empty string if the date is null.
+     * @return the string representation of the date in the format "DD/MM/YYYY" or an empty string
+     *         if the date is null.
      */
     public static String dateToString(LocalDate date) {
-        if (date == null) return "";
+        if (date == null)
+            return "";
         return date.format(VALID_DATE_FORMAT);
+    }
+
+    /**
+     * Checks if one field includes any of the other fields
+     * 
+     * @param field the field to check
+     * @param otherFields the other fields to check against
+     * @return true if the field includes any of the other fields, false otherwise
+     */
+    public static boolean checkFieldIncludesOtherFields(String field, String... otherFields) {
+        for (String otherField : otherFields) {
+            if (field.toLowerCase().contains(otherField.toLowerCase())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

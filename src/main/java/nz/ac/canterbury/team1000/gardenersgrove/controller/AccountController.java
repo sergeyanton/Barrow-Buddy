@@ -155,7 +155,9 @@ public class AccountController {
             bindingResult.addError(new FieldError("verificationTokenForm", "verificationToken", verificationTokenForm.getVerificationToken(), false, null, null, "Account expired, please register again"));
             return "pages/verificationPage";
         }
-        verificationTokenService.updateVerifiedByUserId(user.getId());
+//        verificationTokenService.updateVerifiedByUserId(user.getId());
+
+        verificationTokenService.deleteVerificationTokenByUserId(user.getId());
         redirectAttributes.addFlashAttribute("errorMessage", "Your account has been activated, please log in");
         return "redirect:/login";
     }
@@ -216,7 +218,7 @@ public class AccountController {
         if (!bindingResult.hasFieldErrors()) {
             User user = userService.findEmail(loginForm.getEmail());
             // check if account is verified
-            if (user != null && verificationTokenService.getVerificationTokenByUserId(user.getId()).isVerified() == false){
+            if (user != null && verificationTokenService.getVerificationTokenByUserId(user.getId()) != null){
                 return "redirect:/register/verification";
             }
             String invalidUserError = "The email address is unknown, or the password is invalid";
@@ -398,5 +400,13 @@ public class AccountController {
         return "redirect:/login";
     }
 
-
+    /**
+     * Gets the thymeleaf page representing the /friends page.
+     * @return thymeleaf viewFriendsPage
+     */
+    @GetMapping("/friends")
+    public String getFriendsPage() {
+        logger.info("GET /friends");
+        return "pages/viewFriendsPage";
+    }
 }

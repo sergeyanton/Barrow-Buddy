@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head(title='My Friends')}"></head><tr th:each="result : ${searchResults}">
+        <td th:text="${result.name}"></td>
+        <td th:text="${result.email}"></td>
+    </tr>
+
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+<main>
+  <div class="basic">
+    <h1>My Friends</h1>
+    <a th:href="@{searchByEmail}">Search by email</a>
+
+    <table>
+      <thead>
+      <tr>
+        <th>Name</th>
+        <th>Gardens</th>
+      </tr>
+      </thead>
+        <tbody>
+          <tr >
+            <td colspan="2"> You don't have any friends yet</td>
+          </tr>
+        </tbody>
+    </table>
+  </div>
+
+
+</main>
+</body>
+</html>
