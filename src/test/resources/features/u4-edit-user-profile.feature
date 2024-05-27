@@ -2,20 +2,15 @@ Feature: U4 - As Sarah, I want to edit my user profile so that I can keep my det
 
 #TODO AC1, AC2, AC8, AC12
 
-  Scenario Outline: AC1 - Going to the edit profile form and seeing my prefilled details
-    Given I am on the edit user profile form and enter first name <firstName> and last name <lastName>
-    And I enter email <email> on the edit user profile form
-    And I do not tick the checkbox for no last name on the edit user profile form
-    And I enter date of birth <dob> on the edit user profile form
-    When I click the edit profile button
-    Then My new details are saved
-    Examples:
-      | firstName           | lastName | email               | dob          |
-      | "John"              | "Doe"    | "johndoe@gmail.com" | "12/12/2000" |
-      | "John"              | "Doe"    | "johndoe@gmail.com" | ""           |
-      | "John McGe'e-Smith" | "Doe"    | "johndoe@gmail.com" | "12/12/2000" |
-      | "John McGe'e-Smith" | "Doe"    | "johndoe@gmail.com" | "12/12/2000" |
-      | "Léo"               | "Dęõn"   | "leodeon@gmail.com" | "12/12/2000" |
+  Scenario: AC1 - Going to the edit profile form and seeing my prefilled details
+    Given I am currently logged in
+    And My current first name in the system is "Steve"
+    And My current last name in the system is "Smith"
+    And My current email in the system is "steve.smith@gmail.com"
+    And My current date of birth in the system is "12/12/2000"
+    When I click the Edit button on my user profile page
+    Then I see my details prefilled on the Edit Profile form, "Steve", "Smith", "steve.smith@gmail.com", & "12/12/2000"
+
 
 
   Scenario Outline: AC3 - Editing my profile with valid details
