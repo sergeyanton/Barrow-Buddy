@@ -1,27 +1,11 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <div th:fragment="pagination(items)" class="pagination">
-    <a th:href="@{${currentUrlNoPage}(page=${1})}">First</a>
-    <a th:href="@{${currentUrlNoPage}(page=${(items.number > 1) ? (items.number - 1) : 1})}">Previous</a>
-    <a th:href="@{${currentUrlNoPage}(page=${(items.number < items.totalPages) ? (items.number + 1) : (items.totalPages)})}">Next</a>
-    <a th:href="@{${currentUrlNoPage}(page=${items.totalPages})}">Last</a>
-    [[${items.totalElements}]]
-    [[${items.totalPages}]]
-    [[${items.number}]]
-    [[${currentUrlNoPage}]]
-    
-    <!-- <ul class="pagination justify-content-center">
-        <li class="page-item">
-            <a class="page-link" th:href="@{?page=0}" aria-label="First">
-                <span aria-hidden="true">&laquo;&laquo;</span>
-            </a>
-        </li>
-        <li class="page-item" th:classappend="${pageable.pageNumber == 0} ? 'disabled'">
-            <a class="page-link" th:href="${pageable.pageNumber == 0} ? @{?page=__${pageable.pageNumber - 1}__}" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-            </a>
-        </li>
+    <a th:href="@{${currentUrlNoPage}(page=${1})}" title="First">&laquo&laquo</a>
+    <a th:href="@{${currentUrlNoPage}(page=${(items.number > 1) ? items.number : 1})}" title="Previous">&laquo</a>
 
-    </ul> -->
+    <a th:href="@{${currentUrlNoPage}(page=${((items.number + 1) < items.totalPages) ? (items.number + 2) : (items.totalPages)})}">&raquo</a>
+    <a th:href="@{${currentUrlNoPage}(page=${items.totalPages})}">&raquo&raquo</a>
 </div>
+
 </html>
