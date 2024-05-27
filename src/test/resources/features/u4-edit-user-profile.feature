@@ -2,6 +2,22 @@ Feature: U4 - As Sarah, I want to edit my user profile so that I can keep my det
 
 #TODO AC1, AC2, AC8, AC12
 
+  Scenario Outline: AC1 - Going to the edit profile form and seeing my prefilled details
+    Given I am on the edit user profile form and enter first name <firstName> and last name <lastName>
+    And I enter email <email> on the edit user profile form
+    And I do not tick the checkbox for no last name on the edit user profile form
+    And I enter date of birth <dob> on the edit user profile form
+    When I click the edit profile button
+    Then My new details are saved
+    Examples:
+      | firstName           | lastName | email               | dob          |
+      | "John"              | "Doe"    | "johndoe@gmail.com" | "12/12/2000" |
+      | "John"              | "Doe"    | "johndoe@gmail.com" | ""           |
+      | "John McGe'e-Smith" | "Doe"    | "johndoe@gmail.com" | "12/12/2000" |
+      | "John McGe'e-Smith" | "Doe"    | "johndoe@gmail.com" | "12/12/2000" |
+      | "Léo"               | "Dęõn"   | "leodeon@gmail.com" | "12/12/2000" |
+
+
   Scenario Outline: AC3 - Editing my profile with valid details
     Given I am on the edit user profile form and enter first name <firstName> and last name <lastName>
     And I enter email <email> on the edit user profile form
@@ -37,7 +53,7 @@ Feature: U4 - As Sarah, I want to edit my user profile so that I can keep my det
       | ""          | "Doe"      | "First name cannot be empty"                                           |
       | "    "      | "Doe"      | "First name cannot be empty"                                           |
       | "John2"     | "Doe"      | "First name must only include letters, spaces, hyphens or apostrophes" |
-      | "John$"     | "Doe"     | "First name must only include letters, spaces, hyphens or apostrophes" |
+      | "John$"     | "Doe"      | "First name must only include letters, spaces, hyphens or apostrophes" |
       | "John"      | ""         | "Last name cannot be empty"                                            |
       | "John"      | "   "      | "Last name cannot be empty"                                            |
       | "John"      | "Doe3"     | "Last name must only include letters, spaces, hyphens or apostrophes"  |
