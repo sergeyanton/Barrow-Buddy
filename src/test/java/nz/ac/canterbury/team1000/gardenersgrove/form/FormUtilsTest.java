@@ -45,6 +45,47 @@ public class FormUtilsTest {
     }
 
     @Test
+    void checkOnlyHasLettersSpacesHyphensApostrophes_WithOnlyLetters_ReturnsTrue() {
+        Assertions.assertTrue(
+            FormUtils.checkOnlyHasLettersMacronsSpacesHyphensApostrophes("John"));
+    }
+
+    @Test
+    void checkOnlyHasLettersSpacesHyphensApostrophes_WithOneLetter_ReturnsTrue() {
+        Assertions.assertTrue(
+            FormUtils.checkOnlyHasLettersMacronsSpacesHyphensApostrophes("J"));
+    }
+    @Test
+    void checkOnlyHasLettersSpacesHyphensApostrophes_WithOneLetterWithMacron_ReturnsTrue() {
+        Assertions.assertTrue(
+            FormUtils.checkOnlyHasLettersMacronsSpacesHyphensApostrophes("Ō"));
+    }
+
+    @Test
+    void checkOnlyHasLettersSpacesHyphensApostrophes_WithOneLetterAndAnotherLetterWithMacron_ReturnsTrue() {
+        Assertions.assertTrue(
+            FormUtils.checkOnlyHasLettersMacronsSpacesHyphensApostrophes("Ōtautahi"));
+    }
+
+    @Test
+    void checkOnlyHasLettersSpacesHyphensApostrophes_EndsWithApostrophe_ReturnsTrue() {
+        Assertions.assertTrue(
+            FormUtils.checkOnlyHasLettersMacronsSpacesHyphensApostrophes("John'"));
+    }
+
+    @Test
+    void checkOnlyHasLettersSpacesHyphensApostrophes_HasOneWhitespace_ReturnsTrue() {
+        Assertions.assertTrue(
+            FormUtils.checkOnlyHasLettersMacronsSpacesHyphensApostrophes("John Doe"));
+    }
+
+    @Test
+    void checkOnlyHasLettersSpacesHyphensApostrophes_OneHyphenInBetween_ReturnsTrue() {
+        Assertions.assertTrue(
+            FormUtils.checkOnlyHasLettersMacronsSpacesHyphensApostrophes("John-Doe"));
+    }
+
+    @Test
     void checkOnlyHasLettersSpacesHyphensApostrophes_WithNumbers_ReturnsFalse() {
         Assertions.assertFalse(FormUtils.checkOnlyHasLettersMacronsSpacesHyphensApostrophes("123"));
     }
@@ -53,6 +94,42 @@ public class FormUtilsTest {
     void checkOnlyHasLettersSpacesHyphensApostrophes_WithSpecialCharacters_ReturnsFalse() {
         Assertions.assertFalse(FormUtils.checkOnlyHasLettersMacronsSpacesHyphensApostrophes("!@#"));
     }
+
+    @Test
+    void checkOnlyHasLettersSpacesHyphensApostrophes_WithOnlyHyphen_ReturnsFalse() {
+        Assertions.assertFalse(FormUtils.checkOnlyHasLettersMacronsSpacesHyphensApostrophes("-"));
+    }
+
+    @Test
+    void checkOnlyHasLettersSpacesHyphensApostrophes_WithOnlyApostrophe_ReturnsFalse() {
+        Assertions.assertFalse(FormUtils.checkOnlyHasLettersMacronsSpacesHyphensApostrophes("'"));
+    }
+
+    @Test
+    void checkOnlyHasLettersSpacesHyphensApostrophes_EndsWithHyphen_ReturnsFalse() {
+        Assertions.assertFalse(FormUtils.checkOnlyHasLettersMacronsSpacesHyphensApostrophes("John-"));
+    }
+
+    @Test
+    void checkOnlyHasLettersSpacesHyphensApostrophes_WithDoubleHyphen_ReturnsFalse() {
+        Assertions.assertFalse(FormUtils.checkOnlyHasLettersMacronsSpacesHyphensApostrophes("John--Doe"));
+    }
+
+    @Test
+    void checkOnlyHasLettersSpacesHyphensApostrophes_WithDoubleApostrophe_ReturnsFalse() {
+        Assertions.assertFalse(FormUtils.checkOnlyHasLettersMacronsSpacesHyphensApostrophes("John''Doe"));
+    }
+
+    @Test
+    void checkOnlyHasLettersSpacesHyphensApostrophes_StartsWithHyphen_ReturnsFalse() {
+        Assertions.assertFalse(FormUtils.checkOnlyHasLettersMacronsSpacesHyphensApostrophes("-John"));
+    }
+
+    @Test
+    void checkOnlyHasLettersSpacesHyphensApostrophes_StartsWithApostrophe_ReturnsFalse() {
+        Assertions.assertFalse(FormUtils.checkOnlyHasLettersMacronsSpacesHyphensApostrophes("'John"));
+    }
+
 
     @Test
     void checkEmailIsInvalid_WithInvalidEmailNoAtOrSuffix_ReturnsTrue() {
