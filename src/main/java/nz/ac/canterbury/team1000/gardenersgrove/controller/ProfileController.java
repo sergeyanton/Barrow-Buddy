@@ -5,7 +5,7 @@ import java.util.Objects;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.EditUserForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PictureForm;
-import nz.ac.canterbury.team1000.gardenersgrove.form.SearchForm;
+import nz.ac.canterbury.team1000.gardenersgrove.form.SearchByEmailForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.UpdatePasswordForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.EmailService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
@@ -275,28 +275,28 @@ public class ProfileController {
     /**
      * Handles GET requests for searching users by email.
      *
-     * @param searchForm    the SearchForm object containing the search parameters
+     * @param searchByEmailForm    the SearchByEmailForm object containing the search parameters
      * @param email         the email address to search for, which is optional and defaults to an empty string if not provided
      * @param bindingResult the BindingResult object for validation errors
      * @param model         the Model object to add attributes to be accessed in the view
      * @return the name of the view template to render
      */
     @GetMapping("/searchFriend")
-    public String searchFriend( @ModelAttribute("searchForm") SearchForm searchForm,
+    public String searchFriend( @ModelAttribute("searchByEmailForm") SearchByEmailForm searchByEmailForm,
                                     @RequestParam(required = false, defaultValue = "") String email,
                                     BindingResult bindingResult,Model model) {
         logger.info("GET /searchFriend");
         User userResult;
         User currentUser = userService.getLoggedInUser();
         if (!email.isBlank()) {
-            SearchForm.validate(searchForm, bindingResult);
+            SearchByEmailForm.validate(searchByEmailForm, bindingResult);
             userResult =  userService.findEmail(email);
 
             if (!bindingResult.hasErrors()) {
                 if (userResult == null) {
-                    bindingResult.addError(new FieldError("searchForm", "email", searchForm.getEmail(), false, null, null, "There is nobody with that email in Gardener’s Grove"));
+                    bindingResult.addError(new FieldError("searchByEmailForm", "email", searchByEmailForm.getEmail(), false, null, null, "There is nobody with that email in Gardener’s Grove"));
                 } else if (Objects.equals(currentUser.getEmail(), email)) {
-                    bindingResult.addError(new FieldError("searchForm", "email", searchForm.getEmail(), false, null, null, "You've searched for your own email. Now, let's find some friends!"));
+                    bindingResult.addError(new FieldError("searchByEmailForm", "email", searchByEmailForm.getEmail(), false, null, null, "You've searched for your own email. Now, let's find some friends!"));
                 }
             }
 

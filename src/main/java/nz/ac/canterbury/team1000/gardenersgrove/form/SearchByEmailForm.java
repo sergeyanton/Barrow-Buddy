@@ -10,7 +10,7 @@ import org.springframework.validation.BindingResult;
 /**
  * Entity used to parse and store the data sent through a search friend GET request
  */
-public class SearchForm {
+public class SearchByEmailForm {
 	protected String email;
 	public String getEmail() {
 		return email;
@@ -22,20 +22,20 @@ public class SearchForm {
 	/**
 	 * Validates the 'Email' data and adds validation error to the BindingResult.
 	 *
-	 * @param searchForm    the SearchForm object representing the email that user is searching for
+	 * @param searchByEmailForm    the SearchByEmailForm object representing the email that user is searching for
 	 * @param bindingResult the BindingResult object for validation errors
 	 */
-	public static void validate(SearchForm searchForm, BindingResult bindingResult) {
-		ErrorAdder errors = new ErrorAdder(bindingResult, "searchForm");
+	public static void validate(SearchByEmailForm searchByEmailForm, BindingResult bindingResult) {
+		ErrorAdder errors = new ErrorAdder(bindingResult, "searchByEmailForm");
 
 		// validate email
-		if (checkBlank(searchForm.getEmail()) || checkEmailIsInvalid(searchForm.getEmail())) {
+		if (checkBlank(searchByEmailForm.getEmail()) || checkEmailIsInvalid(searchByEmailForm.getEmail())) {
 			errors.add("email", "Email address must be in the form ‘jane@doe.nz’",
-				searchForm.getEmail());
-		} else if (checkOverMaxLength(searchForm.getEmail(), MAX_DB_STR_LEN)) {
+				searchByEmailForm.getEmail());
+		} else if (checkOverMaxLength(searchByEmailForm.getEmail(), MAX_DB_STR_LEN)) {
 			errors.add("email",
 				"Email address must be " + MAX_DB_STR_LEN + " characters long or less",
-				searchForm.getEmail());
+				searchByEmailForm.getEmail());
 		}
 	}
 }

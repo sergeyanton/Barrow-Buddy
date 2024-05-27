@@ -7,10 +7,9 @@ import nz.ac.canterbury.team1000.gardenersgrove.controller.ProfileController;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.EditUserForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PictureForm;
-import nz.ac.canterbury.team1000.gardenersgrove.form.SearchForm;
+import nz.ac.canterbury.team1000.gardenersgrove.form.SearchByEmailForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.UpdatePasswordForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.EmailService;
-import nz.ac.canterbury.team1000.gardenersgrove.service.VerificationTokenService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,7 +60,7 @@ public class ProfileControllerTest {
 	private PictureForm profilePictureForm;
 
 	private EditUserForm editUserForm;
-	private SearchForm searchForm;
+	private SearchByEmailForm searchByEmailForm;
 	private UpdatePasswordForm updatePasswordForm;
 
 	@BeforeEach
@@ -93,8 +92,8 @@ public class ProfileControllerTest {
 		updatePasswordForm.setNewPassword("Pass123$");
 		updatePasswordForm.setRetypeNewPassword("Pass123$");
 
-		searchForm = new SearchForm();
-		searchForm.setEmail(userMock.getEmail());
+		searchByEmailForm = new SearchByEmailForm();
+		searchByEmailForm.setEmail(userMock.getEmail());
 
 		Mockito.when(userService.getLoggedInUser()).thenReturn(userMock);
 		Mockito.when(userService.checkEmail(Mockito.any())).thenReturn(true);
@@ -654,7 +653,7 @@ public class ProfileControllerTest {
 	}
 
 	@Test
-	public void SearchFormGet_InvalidEmailEmpty_HasFieldErrors() throws Exception {
+	public void SearchByEmailFormGet_InvalidEmailEmpty_HasFieldErrors() throws Exception {
 		String searchQuery = "";
 		Mockito.when(userService.findEmail(searchQuery)).thenReturn(null);
 
@@ -665,7 +664,7 @@ public class ProfileControllerTest {
 	}
 
 	@Test
-	public void SearchFormGet_OwnEmail_HasErrors() throws Exception {
+	public void SearchByEmailFormGet_OwnEmail_HasErrors() throws Exception {
 		String searchQuery = userMock.getEmail();
 		Mockito.when(userService.findEmail(searchQuery)).thenReturn(userMock);
 
@@ -674,12 +673,12 @@ public class ProfileControllerTest {
 			.andExpect(MockMvcResultMatchers.view().name("pages/searchFriendPage"))
 			.andExpect(MockMvcResultMatchers.model().attribute("userResult", Matchers.nullValue()))
 			.andExpect(
-				MockMvcResultMatchers.model().attributeHasFieldErrors("searchForm", "email"));;
+				MockMvcResultMatchers.model().attributeHasFieldErrors("searchByEmailForm", "email"));;
 		Mockito.verify(userService).findEmail(searchQuery);
 	}
 
 	@Test
-	public void SearchFormGet_EmailDoesNotExist_HasErrors() throws Exception {
+	public void SearchByEmailFormGet_EmailDoesNotExist_HasErrors() throws Exception {
 		String searchQuery = "asd@ad.com";
 		Mockito.when(userService.findEmail(searchQuery)).thenReturn(null);
 
@@ -688,12 +687,12 @@ public class ProfileControllerTest {
 			.andExpect(MockMvcResultMatchers.view().name("pages/searchFriendPage"))
 			.andExpect(MockMvcResultMatchers.model().attribute("userResult", Matchers.nullValue()))
 			.andExpect(
-				MockMvcResultMatchers.model().attributeHasFieldErrors("searchForm", "email"));;
+				MockMvcResultMatchers.model().attributeHasFieldErrors("searchByEmailForm", "email"));;
 		Mockito.verify(userService).findEmail(searchQuery);
 	}
 
 	@Test
-	public void SearchFormGet_EmailExist_HasNoErrors() throws Exception {
+	public void SearchByEmailFormGet_EmailExist_HasNoErrors() throws Exception {
 		String searchQuery = "asd@ad.com";
 		Mockito.when(userService.findEmail(searchQuery)).thenReturn(userMock);
 
@@ -702,12 +701,12 @@ public class ProfileControllerTest {
 			.andExpect(MockMvcResultMatchers.view().name("pages/searchFriendPage"))
 			.andExpect(MockMvcResultMatchers.model().attribute("userResult", userMock))
 			.andExpect(
-				MockMvcResultMatchers.model().attributeHasNoErrors("searchForm"));;
+				MockMvcResultMatchers.model().attributeHasNoErrors("searchByEmailForm"));;
 		Mockito.verify(userService).findEmail(searchQuery);
 	}
 
 	@Test
-	public void SearchFormGet_EmailInvalidForm_HasErrors() throws Exception {
+	public void SearchByEmailFormGet_EmailInvalidForm_HasErrors() throws Exception {
 		String searchQuery = "@ad.com";
 		Mockito.when(userService.findEmail(searchQuery)).thenReturn(null);
 
@@ -716,7 +715,7 @@ public class ProfileControllerTest {
 			.andExpect(MockMvcResultMatchers.view().name("pages/searchFriendPage"))
 			.andExpect(MockMvcResultMatchers.model().attribute("userResult", Matchers.nullValue()))
 			.andExpect(
-				MockMvcResultMatchers.model().attributeHasFieldErrors("searchForm","email"));;
+				MockMvcResultMatchers.model().attributeHasFieldErrors("searchByEmailForm","email"));;
 		Mockito.verify(userService).findEmail(searchQuery);
 	}
 }

@@ -11,7 +11,7 @@
         <div th:if="${errorMessage}" class="error-message">
           <p th:text="${errorMessage}"></p>
         </div>
-        <form th:action="@{/searchFriend}" method="get" th:object="${searchForm}">
+        <form th:action="@{/searchFriend}" method="get" th:object="${searchByEmailForm}">
           <div class="search-bar">
             <input th:replace="~{fragments/formElement :: formElementField(fieldName='email', label='', placeholder='jane@doe.nz')}" />
             <button type="submit">Search</button>
