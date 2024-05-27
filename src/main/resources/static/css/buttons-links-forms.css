@@ -17,6 +17,10 @@ form {
     flex-wrap: wrap;
 }
 
+.form-element label {
+    padding: 12px;
+}
+
 .form-element .dropdown {
     display: flex;
     flex-direction: column;
@@ -28,7 +32,13 @@ form {
 
 .form-element input[type="text"],
 .form-element input[type="password"]{
-    margin-left: 40px;
+    width: 320px;
+    height: 35px;
+    padding: 12px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    box-sizing: border-box;
 }
 
 .form-element.no-label input {
@@ -37,10 +47,10 @@ form {
 
 /* Buttons/Links */
 
-button, .cancel {
+button, .cancel, .submit {
     padding: 8px 18px;
     margin-top: 8px;
-    font-size: 16px;
+    font-size: 18px;
     border-radius: 10px;
     color: #FAF9F6;
     background-color: #023020;
@@ -49,7 +59,7 @@ button, .cancel {
     text-decoration: none;
 }
 
-button:hover {
+button:hover, .submit:hover {
     background-color: rgba(4, 65, 42, 0.71);
 }
 
@@ -79,4 +89,14 @@ button:hover {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
+}
+
+.search-bar input[type="text"] {
+    width: 320px;
+    height: 38px;
+    padding: 12px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 18px;
+    box-sizing: border-box;
 }

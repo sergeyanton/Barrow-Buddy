@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head(title='Gardener\'s Grove - Browse Gardens')}"></head>
+
+<body>
+    <div th:replace="~{fragments/header :: header}"></div>
+    <main>
+<!--        search bar -->
+
+        <div class="basic">
+            <h1>Browse Gardens</h1>
+            <form th:action="@{/browseGardens}" method="get" id="searchForm">
+                <div class="search-bar">
+                    <input type="text" id="gardenSearchInput" name="query" placeholder="Search gardens..." th:value="${query}">
+                    <button type="submit">Search</button>
+                </div>
+            </form>
+            <h2 th:if="${query.empty}"> Showing Recent Gardens</h2>
+            <h2 th:unless="${query.empty}"> Showing Search Results</h2>
+            <br>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Size (m&sup2;)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${gardens.empty}">
+                        <td colspan="3" th:text="${query.empty} ? ' No public gardens to browse' : ' No gardens match your search'"></td>
+
+                    </tr>
+                    <tr th:each="garden : ${gardens}">
+                        <td><a th:href="@{/gardens/{id}(id=${garden.id})}" th:text="${garden.name}"> Name </a></td>
+                        <td><span th:text="${garden.size}"> Size </span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+<script>
+    // Submits the search when enter key is pressed
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            const target = event.target;
+            if (target.id === 'gardenSearchInput') {
+                document.getElementById('searchForm').submit();
+            }
+        }
+    });
+</script>
+</body>
+</html>
