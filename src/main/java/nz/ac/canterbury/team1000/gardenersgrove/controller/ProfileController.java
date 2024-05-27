@@ -301,11 +301,7 @@ public class ProfileController {
                 } else if (usersByName.size() == 1 && usersByName.contains(currentUser)) {
                     bindingResult.addError(new FieldError("searchFriendsForm", "search", searchFriendsForm.getSearch(), false, null, null, "There is nobody else with that name in Gardener’s Grove"));
                 } else {
-                    if (usersByName.contains(currentUser)) {
-                        for (User u : usersByName) {
-                            System.out.println(u == cur);
-                        }
-                    }
+                    usersByName = usersByName.stream().filter(entry -> entry.getId() != currentUser.getId()).toList();
                     model.addAttribute("users", usersByName);
                 }
             } else if (!bindingResult.hasFieldErrors("email")) {

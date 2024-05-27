@@ -16,8 +16,6 @@ public class SearchFriendsForm {
 		this.search = search;
 	}
 
-
-
 	/**
 	 * Validates the 'Search' field and adds validation error to the BindingResult.
 	 *
@@ -26,20 +24,17 @@ public class SearchFriendsForm {
 	 */
 	public static void validate(SearchFriendsForm searchFriendsForm, BindingResult bindingResult) {
 		ErrorAdder errors = new ErrorAdder(bindingResult, "searchFriendsForm");
+		String search = searchFriendsForm.getSearch().trim();
 
 		// check if it is a valid name
-		if (!checkOnlyHasLettersMacronsSpacesHyphensApostrophes(searchFriendsForm.getSearch()) || (checkOverMaxLength(
-			searchFriendsForm.getSearch(), MAX_USER_NAME_LEN))) {
+		if (!checkOnlyHasLettersMacronsSpacesHyphensApostrophes(search) || (checkOverMaxLength(search, MAX_USER_NAME_LEN))) {
 			// this error will not display, but it will let the controller know
-			errors.add("name", null,
-				searchFriendsForm.getSearch());
+			errors.add("name", null, search);
 		}
 
 		// check if it is a valid email
-		if (checkEmailIsInvalid(searchFriendsForm.getSearch()) || checkOverMaxLength(
-			searchFriendsForm.getSearch(), MAX_DB_STR_LEN)) {
-			errors.add("email", null,
-				searchFriendsForm.getSearch());
+		if (checkEmailIsInvalid(search) || checkOverMaxLength(search, MAX_DB_STR_LEN)) {
+			errors.add("email", null, search);
 		}
 	}
 }
