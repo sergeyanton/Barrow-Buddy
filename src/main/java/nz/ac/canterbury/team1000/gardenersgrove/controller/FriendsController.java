@@ -1,5 +1,7 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
+import static nz.ac.canterbury.team1000.gardenersgrove.util.Status.PENDING;
+
 import java.util.Objects;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.FriendRelationship;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
@@ -50,18 +52,18 @@ public class FriendsController {
 	public String postFriendRequest(@RequestParam("receiver") String receiver,
 									@RequestParam("emailSearch") String emailSearch,
 									@ModelAttribute("searchForm") SearchForm searchForm,
-									@ModelAttribute("friendRelationship") FriendRelationship friendRelationship,
 									@RequestParam("relationshipStatus") String relationshipStatus,
+									@RequestParam("receiverSentPendingRequest") String receiverSentPendingRequest,
 									Model model) {
 		logger.info("POST /addFriend " + receiver);
 
-		logger.info("relationship: " + friendRelationship);
-		logger.info("relationship status: " + friendRelationship.getStatus());
+//		logger.info("relationship: " + friendRelationship);
+//		logger.info("relationship status: " + friendRelationship.getStatus());
 
 		// User email taken from the successful search
 		User receiverUser = userService.findEmail(receiver);
 
-		FriendRelationship request = new FriendRelationship(userService.getLoggedInUser(), receiverUser, Status.PENDING);
+		FriendRelationship request = new FriendRelationship(userService.getLoggedInUser(), receiverUser, PENDING);
 		friendRelationshipService.addFriendRelationship(request);
 
 		// Get the current state of their relationship and pass it back
@@ -71,7 +73,8 @@ public class FriendsController {
 		model.addAttribute("userResult", receiverUser);
 		model.addAttribute("searchForm", searchForm);
 		model.addAttribute("relationshipStatus", existingRelationship.getStatus().name());
-		model.addAttribute("friendRelationship", existingRelationship);
+//		model.addAttribute("friendRelationship", existingRelationship);
+		model.addAttribute("receiverSentPendingRequest", receiverSentPendingRequest);
 
 		return "pages/searchByEmailPage";
 	}
@@ -93,7 +96,8 @@ public class FriendsController {
 		User userResult;
 		User currentUser = userService.getLoggedInUser();
 		String relationshipStatus = null;
-		FriendRelationship relationship = null;
+//		FriendRelationship relationship = null;
+		String receiverSentPendingRequest = "false";
 
 		if (!emailSearch.isBlank()) {
 			SearchForm.validate(searchForm, bindingResult);
@@ -113,15 +117,18 @@ public class FriendsController {
 					if (receivedRelationship != null) {
 						// If they already have a relationship
 						relationshipStatus = receivedRelationship.getStatus().name();
-						// TODO would be good to pass in the Relationship object
-						relationship = receivedRelationship;
+						if (relationshipStatus.equals("PENDING")) {
+							receiverSentPendingRequest = "true";
+						}
+//						relationship = receivedRelationship;
 					} else {
 						// If not, check if they have initiated a relationship
 						FriendRelationship sentRelationship = friendRelationshipService.getFriendRelationship(currentUser.getId(), userResult.getId());
 						if (sentRelationship != null) {
 							// If they already have a relationship
 							relationshipStatus = sentRelationship.getStatus().name();
-							relationship = sentRelationship;
+
+//							relationship = sentRelationship;
 						}
 					}
 
@@ -138,8 +145,7 @@ public class FriendsController {
 		model.addAttribute("searchForm", searchForm);
 		model.addAttribute("userResult", userResult);
 		model.addAttribute("relationshipStatus", relationshipStatus);
-		model.addAttribute("friendRelationship", relationship);
-
+		model.addAttribute("receiverSentPendingRequest", receiverSentPendingRequest);
 
 		return "pages/searchByEmailPage";
 	}
