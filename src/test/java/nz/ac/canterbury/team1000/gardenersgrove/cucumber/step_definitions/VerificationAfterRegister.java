@@ -1,6 +1,7 @@
 package nz.ac.canterbury.team1000.gardenersgrove.cucumber.step_definitions;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -20,10 +21,13 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.validation.BindingResult;
 
 public class VerificationAfterRegister {
 
@@ -35,10 +39,11 @@ public class VerificationAfterRegister {
   private JavaMailSender emailSender;
   @Autowired
   private VerificationTokenService verificationTokenService;
-  @Mock
-  private VerificationToken verificationTokenMock;
-  private VerificationTokenForm verificationTokenForm = new VerificationTokenForm();
+  @Autowired
+  private PasswordEncoder passwordEncoder;
   private User testUser;
+  private String plainToken;
+  private String password;
 
   @Given("I have registered with the first name {string} and last name {string}, email {string} and password {string}")
   public void iHaveRegisteredWithValidCredentials(String firstName, String lastName, String email,
@@ -46,7 +51,6 @@ public class VerificationAfterRegister {
 
     RegistrationForm registrationForm = new RegistrationForm();
 
-    testUser = new User(firstName, lastName, email, password, LocalDate.now(), " ");
     registrationForm.setFirstName(firstName);
     registrationForm.setLastName(lastName);
     registrationForm.setEmail(email);
@@ -55,24 +59,16 @@ public class VerificationAfterRegister {
     registrationForm.setDob("01/01/2000");
     registrationForm.setNoSurnameCheckBox(false);
 
-    mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
-        .flashAttr("registrationForm", registrationForm))
-        .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-        .andExpect(MockMvcResultMatchers.redirectedUrl("/register/verification"));
+    this.password = password;
+
+    testUser = registrationForm.getUser(passwordEncoder);
+    testUser.grantAuthority("ROLE_USER");
+    userService.registerUser(testUser);
+    VerificationToken verificationTokenTest = new VerificationToken(testUser.getId());
+    plainToken = verificationTokenTest.getPlainToken();
+    verificationTokenService.addVerificationToken(verificationTokenTest);
   }
 
-   @When("I log in")
-   public void iAccessLoginPage() throws Exception {
-     LoginForm loginForm = new LoginForm();
-     loginForm.setEmail(testUser.getEmail());
-     loginForm.setPassword(testUser.getPassword());
-
-     mockMvc.perform(MockMvcRequestBuilders.post("/login").with(csrf())
-             .flashAttr("loginForm", loginForm))
-         .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-         .andExpect(MockMvcResultMatchers.redirectedUrl("/home"));
-
-  }
 
   @When("I don't verify my account")
   public void iDonTVerifyMyAccount() throws Exception {
@@ -83,34 +79,28 @@ public class VerificationAfterRegister {
 
   @When("I verify my account")
   public void iVerifyMyAccount() throws Exception {
-    verificationTokenMock = Mockito.mock(VerificationToken.class);
-    Mockito.when(verificationTokenMock.getUserId()).thenReturn(1L);
-    Mockito.when(verificationTokenMock.getToken()).thenReturn("token");
+    VerificationTokenForm verificationTokenForm = new VerificationTokenForm();
+    verificationTokenForm.setVerificationToken(plainToken);
 
-    verificationTokenForm.setVerificationToken("123456");
-    verificationTokenMock.setVerified(true);
-    Mockito.when(verificationTokenService.getVerificationTokenByToken(Mockito.any()))
-        .thenReturn(verificationTokenMock);
-    Mockito.when(userService.findById(verificationTokenMock.getUserId())).thenReturn(testUser);
-    Mockito.doNothing().when(verificationTokenService).updateVerifiedByUserId(Mockito.anyLong());
     mockMvc.perform(MockMvcRequestBuilders.post("/register/verification").with(csrf())
-            .flashAttr("verificationTokenForm", verificationTokenForm))
+        .flashAttr("verificationTokenForm", verificationTokenForm))
         .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
         .andExpect(MockMvcResultMatchers.redirectedUrl("/login"));
+
   }
 
-   @Then("I am redirected to the page with URL {string}")
+
+  @Then("I try to log in am redirected to the page with URL {string}")
    public void iAmRedirectedToThePageWithURL(String pageURL) throws Exception {
       LoginForm loginForm = new LoginForm();
       loginForm.setEmail(testUser.getEmail());
-      loginForm.setPassword(testUser.getPassword());
+      loginForm.setPassword(password);
 
       mockMvc.perform(MockMvcRequestBuilders.post("/login").with(csrf())
           .flashAttr("loginForm", loginForm))
           .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
           .andExpect(MockMvcResultMatchers.redirectedUrl(pageURL));
    }
-
 
 
 }

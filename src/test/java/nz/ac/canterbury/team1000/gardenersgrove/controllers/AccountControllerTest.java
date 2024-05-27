@@ -1,18 +1,11 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controllers;
 
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
-
-import java.time.LocalDateTime;
+import jakarta.servlet.http.HttpSession;
 import nz.ac.canterbury.team1000.gardenersgrove.controller.AccountController;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.ResetToken;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.VerificationToken;
-import nz.ac.canterbury.team1000.gardenersgrove.form.ForgotPasswordForm;
-import nz.ac.canterbury.team1000.gardenersgrove.form.LoginForm;
-import nz.ac.canterbury.team1000.gardenersgrove.form.RegistrationForm;
-import nz.ac.canterbury.team1000.gardenersgrove.form.ResetPasswordForm;
-import nz.ac.canterbury.team1000.gardenersgrove.form.VerificationTokenForm;
+import nz.ac.canterbury.team1000.gardenersgrove.form.*;
 import nz.ac.canterbury.team1000.gardenersgrove.service.EmailService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.ResetTokenService;
@@ -31,8 +24,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import java.time.LocalDateTime;
+
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 
 @WebMvcTest(AccountController.class)
 @AutoConfigureMockMvc
@@ -76,7 +75,6 @@ class AccountControllerTest {
   private VerificationTokenForm verificationTokenForm;
   private ForgotPasswordForm forgotPasswordForm;
   private ResetPasswordForm resetPasswordForm;
-
   @BeforeEach
   public void beforeEach() {
     userMock = Mockito.mock(User.class);
@@ -90,6 +88,7 @@ class AccountControllerTest {
     Mockito.when(verificationTokenMock.getUserId()).thenReturn(1L);
     Mockito.when(verificationTokenMock.getToken()).thenReturn("token");
 
+
     registrationForm = new RegistrationForm();
     registrationForm.setFirstName(userMock.getFname());
     registrationForm.setLastName(userMock.getLname());
@@ -97,8 +96,7 @@ class AccountControllerTest {
     registrationForm.setDob(userMock.getDateOfBirthString());
     registrationForm.setPassword("Pass123$");
     registrationForm.setRetypePassword("Pass123$");
-    registrationForm.setNoSurnameCheckBox(
-        userMock.getLname() == null || userMock.getLname().isEmpty());
+    registrationForm.setNoSurnameCheckBox(userMock.getLname() == null || userMock.getLname().isEmpty());
 
     loginForm = new LoginForm();
     loginForm.setEmail(userMock.getEmail());
@@ -131,8 +129,7 @@ class AccountControllerTest {
   }
 
   @Test
-  public void RegisterPostRequest_ValidDetailsEmptyDate_UserRegisteredAndAuthenticated()
-      throws Exception {
+  public void RegisterPostRequest_ValidDetailsEmptyDate_UserRegisteredAndAuthenticated() throws Exception {
     registrationForm.setDob("");
 
     mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
@@ -142,10 +139,8 @@ class AccountControllerTest {
 
     Mockito.verify(userService).registerUser(Mockito.any());
   }
-
   @Test
-  public void RegisterPostRequest_ValidDetailsNoLastName_UserRegisteredAndAuthenticated()
-      throws Exception {
+  public void RegisterPostRequest_ValidDetailsNoLastName_UserRegisteredAndAuthenticated() throws Exception {
     registrationForm.setLastName("");
     registrationForm.setNoSurnameCheckBox(true);
 
@@ -165,12 +160,10 @@ class AccountControllerTest {
             .flashAttr("registrationForm", registrationForm))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.view().name("pages/registrationPage"))
-        .andExpect(
-            MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "firstName"));
+        .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "firstName"));
 
     Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
-    Mockito.verify(userService, Mockito.never())
-        .authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
   }
 
   @Test
@@ -181,12 +174,10 @@ class AccountControllerTest {
             .flashAttr("registrationForm", registrationForm))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.view().name("pages/registrationPage"))
-        .andExpect(
-            MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "firstName"));
+        .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "firstName"));
 
     Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
-    Mockito.verify(userService, Mockito.never())
-        .authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
   }
 
   @Test
@@ -197,12 +188,10 @@ class AccountControllerTest {
             .flashAttr("registrationForm", registrationForm))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.view().name("pages/registrationPage"))
-        .andExpect(
-            MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "firstName"));
+        .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "firstName"));
 
     Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
-    Mockito.verify(userService, Mockito.never())
-        .authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
   }
 
   @Test
@@ -213,12 +202,10 @@ class AccountControllerTest {
             .flashAttr("registrationForm", registrationForm))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.view().name("pages/registrationPage"))
-        .andExpect(
-            MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "lastName"));
+        .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "lastName"));
 
     Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
-    Mockito.verify(userService, Mockito.never())
-        .authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
   }
 
   @Test
@@ -229,12 +216,10 @@ class AccountControllerTest {
             .flashAttr("registrationForm", registrationForm))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.view().name("pages/registrationPage"))
-        .andExpect(
-            MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "lastName"));
+        .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "lastName"));
 
     Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
-    Mockito.verify(userService, Mockito.never())
-        .authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
   }
 
   @Test
@@ -245,12 +230,10 @@ class AccountControllerTest {
             .flashAttr("registrationForm", registrationForm))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.view().name("pages/registrationPage"))
-        .andExpect(
-            MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "email"));
+        .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "email"));
 
     Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
-    Mockito.verify(userService, Mockito.never())
-        .authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
   }
 
   @Test
@@ -261,12 +244,10 @@ class AccountControllerTest {
             .flashAttr("registrationForm", registrationForm))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.view().name("pages/registrationPage"))
-        .andExpect(
-            MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "email"));
+        .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "email"));
 
     Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
-    Mockito.verify(userService, Mockito.never())
-        .authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
   }
 
   @Test
@@ -277,12 +258,10 @@ class AccountControllerTest {
             .flashAttr("registrationForm", registrationForm))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.view().name("pages/registrationPage"))
-        .andExpect(
-            MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "email"));
+        .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "email"));
 
     Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
-    Mockito.verify(userService, Mockito.never())
-        .authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
   }
 
   @Test
@@ -293,12 +272,10 @@ class AccountControllerTest {
             .flashAttr("registrationForm", registrationForm))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.view().name("pages/registrationPage"))
-        .andExpect(
-            MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "email"));
+        .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "email"));
 
     Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
-    Mockito.verify(userService, Mockito.never())
-        .authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
   }
 
   @Test
@@ -309,12 +286,10 @@ class AccountControllerTest {
             .flashAttr("registrationForm", registrationForm))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.view().name("pages/registrationPage"))
-        .andExpect(
-            MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "dob"));
+        .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "dob"));
 
     Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
-    Mockito.verify(userService, Mockito.never())
-        .authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
   }
 
   @Test
@@ -325,12 +300,10 @@ class AccountControllerTest {
             .flashAttr("registrationForm", registrationForm))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.view().name("pages/registrationPage"))
-        .andExpect(
-            MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "dob"));
+        .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "dob"));
 
     Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
-    Mockito.verify(userService, Mockito.never())
-        .authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
   }
 
   @Test
@@ -342,12 +315,10 @@ class AccountControllerTest {
             .flashAttr("registrationForm", registrationForm))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.view().name("pages/registrationPage"))
-        .andExpect(
-            MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "password"));
+        .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "password"));
 
     Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
-    Mockito.verify(userService, Mockito.never())
-        .authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
   }
 
   @Test
@@ -359,12 +330,10 @@ class AccountControllerTest {
             .flashAttr("registrationForm", registrationForm))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.view().name("pages/registrationPage"))
-        .andExpect(
-            MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "password"));
+        .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "password"));
 
     Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
-    Mockito.verify(userService, Mockito.never())
-        .authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
   }
 
   @Test
@@ -376,12 +345,10 @@ class AccountControllerTest {
             .flashAttr("registrationForm", registrationForm))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.view().name("pages/registrationPage"))
-        .andExpect(MockMvcResultMatchers.model()
-            .attributeHasFieldErrors("registrationForm", "retypePassword"));
+        .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "retypePassword"));
 
     Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
-    Mockito.verify(userService, Mockito.never())
-        .authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
   }
 
   @Test
@@ -393,12 +360,10 @@ class AccountControllerTest {
             .flashAttr("forgotPasswordForm", forgotPasswordForm))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.view().name("pages/forgotPasswordPage"))
-        .andExpect(
-            MockMvcResultMatchers.model().attributeHasFieldErrors("forgotPasswordForm", "email"));
+        .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("forgotPasswordForm", "email"));
 
     Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
-    Mockito.verify(userService, Mockito.never())
-        .authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
   }
 
   @Test
@@ -410,12 +375,10 @@ class AccountControllerTest {
             .flashAttr("forgotPasswordForm", forgotPasswordForm))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.view().name("pages/forgotPasswordPage"))
-        .andExpect(
-            MockMvcResultMatchers.model().attributeHasFieldErrors("forgotPasswordForm", "email"));
+        .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("forgotPasswordForm", "email"));
 
     Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
-    Mockito.verify(userService, Mockito.never())
-        .authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
   }
 
   @Test
@@ -438,13 +401,11 @@ class AccountControllerTest {
             .flashAttr("resetPasswordForm", resetPasswordForm))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.view().name("pages/resetPasswordPage"))
-        .andExpect(MockMvcResultMatchers.model()
-            .attributeHasFieldErrors("resetPasswordForm", "newPassword"))
+        .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("resetPasswordForm", "newPassword"))
         .andExpect(redirectedUrl(null));
 
     Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
-    Mockito.verify(userService, Mockito.never())
-        .authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
   }
 
   @Test
@@ -468,13 +429,11 @@ class AccountControllerTest {
             .flashAttr("resetPasswordForm", resetPasswordForm))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.view().name("pages/resetPasswordPage"))
-        .andExpect(MockMvcResultMatchers.model()
-            .attributeHasFieldErrors("resetPasswordForm", "retypePassword"))
+        .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("resetPasswordForm", "retypePassword"))
         .andExpect(redirectedUrl(null));
 
     Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
-    Mockito.verify(userService, Mockito.never())
-        .authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
   }
 
   @Test
@@ -490,8 +449,7 @@ class AccountControllerTest {
         .andExpect(redirectedUrl("/login"));
 
     Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
-    Mockito.verify(userService, Mockito.never())
-        .authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
   }
 
   @Test
@@ -513,74 +471,66 @@ class AccountControllerTest {
         .andExpect(redirectedUrl("/login"));
 
     Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
-    Mockito.verify(userService, Mockito.never())
-        .authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+    Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
   }
 
   @Test
   public void VerificationGetRequest_ValidToken_Successful() throws Exception {
-    Mockito.when(verificationTokenService.getVerificationTokenByUserId(Mockito.any()))
-        .thenReturn(verificationTokenMock);
+    Mockito.when(verificationTokenService.getVerificationTokenByUserId(Mockito.any())).thenReturn(verificationTokenMock);
 
-    @Test
-    public void VerificationPostRequest_Valid_Redirection() throws Exception {
-        verificationTokenForm.setVerificationToken("123456");
-        Mockito.when(verificationTokenService.getVerificationTokenByToken(Mockito.any())).thenReturn(verificationTokenMock);
-        Mockito.when(userService.findById(verificationTokenMock.getUserId())).thenReturn(userMock);
-        mockMvc.perform(MockMvcRequestBuilders.post("/register/verification").with(csrf())
-                        .flashAttr("verificationTokenForm", verificationTokenForm))
-                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/login"));
-    }
+    mockMvc.perform(MockMvcRequestBuilders.get("/register/verification").with(csrf())
+            .flashAttr("verificationTokenForm", verificationTokenForm))
+        .andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
+  }
 
-    @Test
-    public void VerificationPostRequest_InvalidTokenTooShort_HasFieldErrors() throws Exception {
-        Mockito.when(userService.getLoggedInUser()).thenReturn(userMock);
-        Mockito.when(verificationTokenService.getVerificationTokenByUserId(Mockito.any())).thenReturn(verificationTokenMock);
-        verificationTokenForm.setVerificationToken("12345");
+  @Test
+  public void VerificationPostRequest_Valid_Redirection() throws Exception {
+    verificationTokenForm.setVerificationToken("123456");
+    Mockito.when(verificationTokenService.getVerificationTokenByToken(Mockito.any())).thenReturn(verificationTokenMock);
+    Mockito.when(userService.findById(verificationTokenMock.getUserId())).thenReturn(userMock);
+    mockMvc.perform(MockMvcRequestBuilders.post("/register/verification").with(csrf())
+            .flashAttr("verificationTokenForm", verificationTokenForm))
+        .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+        .andExpect(MockMvcResultMatchers.redirectedUrl("/login"));
+  }
 
   @Test
   public void VerificationPostRequest_InvalidTokenTooShort_HasFieldErrors() throws Exception {
-    verificationTokenMock.setVerified(false);
     Mockito.when(userService.getLoggedInUser()).thenReturn(userMock);
-    Mockito.when(verificationTokenService.getVerificationTokenByUserId(Mockito.any()))
-        .thenReturn(verificationTokenMock);
+    Mockito.when(verificationTokenService.getVerificationTokenByUserId(Mockito.any())).thenReturn(verificationTokenMock);
     verificationTokenForm.setVerificationToken("12345");
 
-    @Test
-    public void VerificationPostRequest_InvalidTokenTooLong_HasFieldErrors() throws Exception {
-        Mockito.when(userService.getLoggedInUser()).thenReturn(userMock);
-        Mockito.when(verificationTokenService.getVerificationTokenByUserId(Mockito.any())).thenReturn(verificationTokenMock);
-        verificationTokenForm.setVerificationToken("1234567");
+    mockMvc.perform(MockMvcRequestBuilders.post("/register/verification").with(csrf())
+            .flashAttr("verificationTokenForm", verificationTokenForm))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.view().name("pages/verificationPage"))
+        .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("verificationTokenForm", "verificationToken"));
+  }
 
   @Test
   public void VerificationPostRequest_InvalidTokenTooLong_HasFieldErrors() throws Exception {
-    verificationTokenMock.setVerified(false);
     Mockito.when(userService.getLoggedInUser()).thenReturn(userMock);
-    Mockito.when(verificationTokenService.getVerificationTokenByUserId(Mockito.any()))
-        .thenReturn(verificationTokenMock);
+    Mockito.when(verificationTokenService.getVerificationTokenByUserId(Mockito.any())).thenReturn(verificationTokenMock);
     verificationTokenForm.setVerificationToken("1234567");
 
-    @Test
-    public void VerificationPostRequest_InvalidTokenEmpty_HasFieldErrors() throws Exception {
-        Mockito.when(userService.getLoggedInUser()).thenReturn(userMock);
-        Mockito.when(verificationTokenService.getVerificationTokenByUserId(Mockito.any())).thenReturn(verificationTokenMock);
-        verificationTokenForm.setVerificationToken("");
+    mockMvc.perform(MockMvcRequestBuilders.post("/register/verification").with(csrf())
+            .flashAttr("verificationTokenForm", verificationTokenForm))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.view().name("pages/verificationPage"))
+        .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("verificationTokenForm", "verificationToken"));
+  }
 
   @Test
   public void VerificationPostRequest_InvalidTokenEmpty_HasFieldErrors() throws Exception {
-    verificationTokenMock.setVerified(false);
     Mockito.when(userService.getLoggedInUser()).thenReturn(userMock);
-    Mockito.when(verificationTokenService.getVerificationTokenByUserId(Mockito.any()))
-        .thenReturn(verificationTokenMock);
+    Mockito.when(verificationTokenService.getVerificationTokenByUserId(Mockito.any())).thenReturn(verificationTokenMock);
     verificationTokenForm.setVerificationToken("");
 
     mockMvc.perform(MockMvcRequestBuilders.post("/register/verification").with(csrf())
             .flashAttr("verificationTokenForm", verificationTokenForm))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.view().name("pages/verificationPage"))
-        .andExpect(MockMvcResultMatchers.model()
-            .attributeHasFieldErrors("verificationTokenForm", "verificationToken"));
+        .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("verificationTokenForm", "verificationToken"));
   }
 
   @Test
@@ -590,8 +540,7 @@ class AccountControllerTest {
             .flashAttr("verificationTokenForm", verificationTokenForm))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.view().name("pages/verificationPage"))
-        .andExpect(MockMvcResultMatchers.model()
-            .attributeHasFieldErrors("verificationTokenForm", "verificationToken"));
+        .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("verificationTokenForm", "verificationToken"));
   }
 
 //    TODO I cannot for the life of me figure out how to get these tests passing, they look perfect to me, i'm assuming its some weird authentication thing

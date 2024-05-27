@@ -25,9 +25,8 @@ import org.springframework.test.context.ContextConfiguration;
     @ConfigurationParameter(key = Constants.PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, value = "true")
 })
 @ContextConfiguration(classes = GardenersGroveApplication.class)
+//Mocking external beans which are used in the cucumber tests
 @MockBean(JavaMailSender.class)
-@MockBean(VerificationTokenService.class)
-@MockBean(UserService.class)
 
 @CucumberContextConfiguration
 @SpringBootTest
