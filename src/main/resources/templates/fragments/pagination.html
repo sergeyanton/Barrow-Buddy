@@ -1,0 +1,26 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div th:fragment="pagination(items)" class="pagination"
+     th:with="
+        pageNumber=${items.number + 1},
+        totalPages=${items.totalPages},
+        startPage=${(pageNumber - 2 > 0) ? ((pageNumber + 2 <= totalPages) ? pageNumber - 2 : (totalPages - 4 > 0 ? totalPages - 4 : 1)) : 1},
+        endPage=${(startPage + 4 <= totalPages) ? startPage + 4 : totalPages}">
+
+    <!-- First page link -->
+    <a th:href="@{${currentUrlNoPage}(page=${1})}" title="First">&laquo;&laquo;</a>
+    <!-- Previous page link -->
+    <a th:href="@{${currentUrlNoPage}(page=${pageNumber > 1 ? pageNumber - 1 : 1})}" title="Previous">&laquo;</a>
+
+    <!-- Page number links -->
+    <a th:each="page : ${#numbers.sequence(startPage, endPage)}" th:href="@{${currentUrlNoPage}(page=${page})}"
+        th:text="${page}"
+        th:classappend="${page == pageNumber} ? 'active'"></a>
+
+    <!-- Next page link -->
+    <a th:href="@{${currentUrlNoPage}(page=${pageNumber < totalPages ? pageNumber + 1 : totalPages})}" title="Next">&raquo;</a>
+    <!-- Last page link -->
+    <a th:href="@{${currentUrlNoPage}(page=${totalPages})}" title="Last">&raquo;&raquo;</a>
+</div>
+
+</html>
