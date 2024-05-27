@@ -61,7 +61,7 @@ public class WeatherService {
             return persistWeather(getWeather(gardenId));
         }
         logger.info("Weather for garden " + gardenId + " has been persisted before");
-        if (persistedWeatherList.getFirst().getExpiry().isBefore(LocalDateTime.now())) {
+        if (persistedWeatherList.get(0).getExpiry().isBefore(LocalDateTime.now())) {
             logger.info("But it has since expired");
             List<Weather> newWeatherList = getWeather(gardenId);
             for (int i = 0; i < persistedWeatherList.size(); i++) {
