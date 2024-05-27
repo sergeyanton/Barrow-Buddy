@@ -30,10 +30,10 @@ public class SearchForm {
 
 		// validate email
 		if (checkBlank(searchForm.getEmailSearch()) || checkEmailIsInvalid(searchForm.getEmailSearch())) {
-			errors.add("email", "Email address must be in the form ‘jane@doe.nz’",
+			errors.add("emailSearch", "Email address must be in the form ‘jane@doe.nz’",
 				searchForm.getEmailSearch());
 		} else if (checkOverMaxLength(searchForm.getEmailSearch(), MAX_DB_STR_LEN)) {
-			errors.add("email",
+			errors.add("emailSearch",
 				"Email address must be " + MAX_DB_STR_LEN + " characters long or less",
 				searchForm.getEmailSearch());
 		}
