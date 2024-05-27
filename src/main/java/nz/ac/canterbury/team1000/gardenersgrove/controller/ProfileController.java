@@ -297,7 +297,7 @@ public class ProfileController {
         logger.info("GET /searchByEmail");
         User userResult;
         User currentUser = userService.getLoggedInUser();
-        FriendRelationship relationship = null;
+        String relationshipStatus = null;
 
         if (!emailSearch.isBlank()) {
             SearchForm.validate(searchForm, bindingResult);
@@ -312,7 +312,10 @@ public class ProfileController {
                     bindingResult.addError(new FieldError("searchForm", "emailSearch", searchForm.getEmailSearch(), false, null, null, "You've searched for your own email. Now, let's find some friends!"));
                 } else {
                     // User searched for a valid user
-                    relationship = friendRelationshipService.getFriendRelationship(currentUser.getId(), userResult.getId());
+                    FriendRelationship relationship = friendRelationshipService.getFriendRelationship(currentUser.getId(), userResult.getId());
+                    if (relationship != null) {
+                        relationshipStatus = relationship.getStatus().name();
+                    }
                 }
             }
 
@@ -325,7 +328,8 @@ public class ProfileController {
         model.addAttribute("emailSearch", emailSearch);
         model.addAttribute("searchForm", searchForm);
         model.addAttribute("userResult", userResult);
-        model.addAttribute("relationship", relationship);
+        model.addAttribute("relationshipStatus", relationshipStatus);
+
 
         return "pages/searchByEmailPage";
     }

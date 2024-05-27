@@ -1,5 +1,6 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
+import java.util.Objects;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.FriendRelationship;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.SearchForm;
@@ -50,6 +51,7 @@ public class FriendsController {
 	public String postFriendRequest(@RequestParam("receiver") String receiver,
 									@RequestParam("emailSearch") String emailSearch,
 									@ModelAttribute("searchForm") SearchForm searchForm,
+									@RequestParam("relationshipStatus") String relationshipStatus,
 									Model model) {
 		logger.info("POST /addFriend " + receiver);
 
@@ -58,12 +60,13 @@ public class FriendsController {
 		FriendRelationship request = new FriendRelationship(userService.getLoggedInUser(), receiverUser, Status.PENDING);
 		friendRelationshipService.addFriendRelationship(request);
 
-		FriendRelationship relationship = friendRelationshipService.getFriendRelationship(userService.getLoggedInUser().getId(), receiverUser.getId());
+		// Get the current state of their relationship and pass it back
+		FriendRelationship existingRelationship = friendRelationshipService.getFriendRelationship(userService.getLoggedInUser().getId(), receiverUser.getId());
 
 		model.addAttribute("emailSearch", searchForm.getEmailSearch());
 		model.addAttribute("userResult", receiverUser);
 		model.addAttribute("searchForm", searchForm);
-		model.addAttribute("relationship", relationship);
+		model.addAttribute("relationshipStatus", existingRelationship.getStatus().name());
 
 		return "pages/searchByEmailPage";
 	}
