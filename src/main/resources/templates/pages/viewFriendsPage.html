@@ -16,7 +16,8 @@
     <table>
       <thead>
       <tr>
-        <th>Name</th>
+        <th>User</th>
+        <th></th>
         <th>Gardens</th>
       </tr>
       </thead>
@@ -25,7 +26,10 @@
             <td colspan="2"> You don't have any friends yet</td>
           </tr>
         <tr th:each="friend : ${friends}">
-          <td><a th:href="@{/user/{id}/profile(id=${friend.id})}" th:text="${friend.fname + ' ' + (friend.lname != null ? friend.lname : '')}"> Name </a></td>
+          <td><div class="profile-picture-list-wrapper">
+            <img class="profile-picture-list" id="profileImage" th:src="@{${friend.picturePath}}" alt="Profile Picture">
+          </div></td>
+          <td><a th:href="@{/user/{id}/profile(id=${friend.id})}" th:text="${friend.fname + ' ' + (friend.lname != null ? friend.lname : '')}"> User </a></td>
           <td><a th:href="@{/user/{id}/gardens(id=${friend.id})}" th:text="'View Gardens'"> Gardens </a></td>
 
         </tr>
