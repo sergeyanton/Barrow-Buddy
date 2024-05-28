@@ -17,8 +17,9 @@
                 <br />
                 <div>
                     <p>Not registered? <a th:href="@{register}">Create an account!</a></p>
+                    <button type="button" id="forgotPasswordBtn">Forgot password?</button>
+
                 </div>
-                <a th:href="@{forgotPassword}">Forgot password?</a>
                 <div class="cancel-submit-wrapper">
                     <a class="cancel" th:href="@{/}">Cancel</a>
                     <button type="submit">Sign In</button>
@@ -32,6 +33,10 @@
             if (event.keyCode === 13) {
                 event.preventDefault();
             }
+        });
+
+        document.getElementById('forgotPasswordBtn').addEventListener('click', function() {
+            window.location.href = '/forgotPassword';
         });
     </script>
 </body>
