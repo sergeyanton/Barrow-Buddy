@@ -1,0 +1,9 @@
+{
+    "properties": [
+      {
+        "name": "gardeners-grove.openai.token",
+        "type": "java.lang.String",
+        "description": "The OpenAI API token."
+      }
+    ]
+  }

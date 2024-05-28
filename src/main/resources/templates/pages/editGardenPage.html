@@ -108,7 +108,7 @@
                 }
             }
 
-            fetch(`/locationSearch?query=${query}&fullAddress=${fullAddress}&addressField=${addressField}`)
+            fetch(`${baseURL}/locationSearch?query=${query}&fullAddress=${fullAddress}&addressField=${addressField}`)
                 .then(response => response.json())
                 .then(locations => {
                     const dropdownMenu = document.getElementById(`${addressField}DropdownMenu`);

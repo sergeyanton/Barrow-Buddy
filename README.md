@@ -14,13 +14,8 @@ Current version of the product uses h2 database.
 Works on production and test, but does not use the persistent database.
 
 ### Configuration variables for email:
-> EMAIL_PASSWORD=ngwj lqqa fngw gjsl
-> 
-> EMAIL_PORT=587
-> 
-> EMAIL_USERNAME=gardensgroveteam1000@gmail.com
-> 
-> API_KEY=pk.dc3a28922b1f87600c4896d50b3aac8c
+
+[Moved to the Wiki](https://eng-git.canterbury.ac.nz/seng302-2024/team-1000/-/wikis/home#env) This was moved so secrets are not in the codebase
 
 ## Test User Information:
 | USERNAME | PASSWORD |

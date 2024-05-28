@@ -233,7 +233,7 @@
                 gardenVisibilityText.textContent = "Garden Visibility: Private";
             }
 
-            fetch(`/updateGardenPublicity?gardenId=${gardenId}&gardenPublicity=${box.checked}`)
+            fetch(`${baseURL}/updateGardenPublicity?gardenId=${gardenId}&gardenPublicity=${box.checked}`)
             .then(response => {
                 if (response.ok) {
                     console.log("Successfully updated garden publicity");
