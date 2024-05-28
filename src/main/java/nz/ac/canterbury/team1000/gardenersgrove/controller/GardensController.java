@@ -258,7 +258,7 @@ public class GardensController {
 		List<Weather> futureWeather = weatherService.getFutureWeatherByGardenId(gardenId);
 
 		Weather currentWeather = weather.get(0);
-		Weather nextWeather = futureWeather.get(1);
+		Weather nextWeather = futureWeather.get(0);
 		LocalTime currentHour = LocalTime.now();
 
 		String sunSetTime = nextWeather.sunSet.split("T")[1];
@@ -282,6 +282,7 @@ public class GardensController {
 		model.addAttribute("currentWeatherIconPath", currentWeatherIconPath);
         model.addAttribute("garden", garden);
         model.addAttribute("plants", plantService.getPlantsByGardenId(garden.getId()));
+
         return "pages/gardenProfilePage";
     }
 
