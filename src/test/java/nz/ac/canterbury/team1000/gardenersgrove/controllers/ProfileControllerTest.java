@@ -10,6 +10,7 @@ import nz.ac.canterbury.team1000.gardenersgrove.form.PictureForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.SearchForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.UpdatePasswordForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.EmailService;
+import nz.ac.canterbury.team1000.gardenersgrove.service.FriendRelationshipService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.VerificationTokenService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
@@ -54,6 +55,10 @@ public class ProfileControllerTest {
 	private GardenService gardenService;
 
 	@MockBean
+	private FriendRelationshipService friendRelationshipService;
+
+
+	@MockBean
 	private PasswordEncoder passwordEncoder;
 
 	@Mock
@@ -94,7 +99,7 @@ public class ProfileControllerTest {
 		updatePasswordForm.setRetypeNewPassword("Pass123$");
 
 		searchForm = new SearchForm();
-		searchForm.setEmail(userMock.getEmail());
+		searchForm.setEmailSearch(userMock.getEmail());
 
 		Mockito.when(userService.getLoggedInUser()).thenReturn(userMock);
 		Mockito.when(userService.checkEmail(Mockito.any())).thenReturn(true);
@@ -653,70 +658,4 @@ public class ProfileControllerTest {
 			.updateUserByEmail(Mockito.any(), Mockito.any());
 	}
 
-	@Test
-	public void SearchFormGet_InvalidEmailEmpty_HasFieldErrors() throws Exception {
-		String searchQuery = "";
-		Mockito.when(userService.findEmail(searchQuery)).thenReturn(null);
-
-		mockMvc.perform(MockMvcRequestBuilders.get("/searchByEmail").param("email", searchQuery).with(csrf()))
-			.andExpect(MockMvcResultMatchers.status().isOk())
-			.andExpect(MockMvcResultMatchers.view().name("pages/searchByEmailPage"))
-			.andExpect(MockMvcResultMatchers.model().attribute("userResult", Matchers.nullValue()));
-	}
-
-	@Test
-	public void SearchFormGet_OwnEmail_HasErrors() throws Exception {
-		String searchQuery = userMock.getEmail();
-		Mockito.when(userService.findEmail(searchQuery)).thenReturn(userMock);
-
-		mockMvc.perform(MockMvcRequestBuilders.get("/searchByEmail").param("email", searchQuery).with(csrf()))
-			.andExpect(MockMvcResultMatchers.status().isOk())
-			.andExpect(MockMvcResultMatchers.view().name("pages/searchByEmailPage"))
-			.andExpect(MockMvcResultMatchers.model().attribute("userResult", Matchers.nullValue()))
-			.andExpect(
-				MockMvcResultMatchers.model().attributeHasFieldErrors("searchForm", "email"));;
-		Mockito.verify(userService).findEmail(searchQuery);
-	}
-
-	@Test
-	public void SearchFormGet_EmailDoesNotExist_HasErrors() throws Exception {
-		String searchQuery = "asd@ad.com";
-		Mockito.when(userService.findEmail(searchQuery)).thenReturn(null);
-
-		mockMvc.perform(MockMvcRequestBuilders.get("/searchByEmail").param("email", searchQuery).with(csrf()))
-			.andExpect(MockMvcResultMatchers.status().isOk())
-			.andExpect(MockMvcResultMatchers.view().name("pages/searchByEmailPage"))
-			.andExpect(MockMvcResultMatchers.model().attribute("userResult", Matchers.nullValue()))
-			.andExpect(
-				MockMvcResultMatchers.model().attributeHasFieldErrors("searchForm", "email"));;
-		Mockito.verify(userService).findEmail(searchQuery);
-	}
-
-	@Test
-	public void SearchFormGet_EmailExist_HasNoErrors() throws Exception {
-		String searchQuery = "asd@ad.com";
-		Mockito.when(userService.findEmail(searchQuery)).thenReturn(userMock);
-
-		mockMvc.perform(MockMvcRequestBuilders.get("/searchByEmail").param("email", searchQuery).with(csrf()))
-			.andExpect(MockMvcResultMatchers.status().isOk())
-			.andExpect(MockMvcResultMatchers.view().name("pages/searchByEmailPage"))
-			.andExpect(MockMvcResultMatchers.model().attribute("userResult", userMock))
-			.andExpect(
-				MockMvcResultMatchers.model().attributeHasNoErrors("searchForm"));;
-		Mockito.verify(userService).findEmail(searchQuery);
-	}
-
-	@Test
-	public void SearchFormGet_EmailInvalidForm_HasErrors() throws Exception {
-		String searchQuery = "@ad.com";
-		Mockito.when(userService.findEmail(searchQuery)).thenReturn(null);
-
-		mockMvc.perform(MockMvcRequestBuilders.get("/searchByEmail").param("email", searchQuery).with(csrf()))
-			.andExpect(MockMvcResultMatchers.status().isOk())
-			.andExpect(MockMvcResultMatchers.view().name("pages/searchByEmailPage"))
-			.andExpect(MockMvcResultMatchers.model().attribute("userResult", Matchers.nullValue()))
-			.andExpect(
-				MockMvcResultMatchers.model().attributeHasFieldErrors("searchForm","email"));;
-		Mockito.verify(userService).findEmail(searchQuery);
-	}
 }
