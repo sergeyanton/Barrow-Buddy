@@ -68,12 +68,29 @@ public class FriendRelationshipService {
 		return friendRelationshipRepository.findBySenderIdAndStatus(senderId, status).orElse(null);
 	}
 
-	public List<FriendRelationship> getFriendsByUserId(Long userId) {
-		List<FriendRelationship> receivedFriends = friendRelationshipRepository.findByReceiverIdAndStatus(userId, Status.APPROVED).orElse(new ArrayList<>());
-		List<FriendRelationship> sentFriends = friendRelationshipRepository.findBySenderIdAndStatus(userId, Status.APPROVED).orElse(new ArrayList<>());
-		receivedFriends.addAll(sentFriends);
-		return receivedFriends;
-	}
+//	/**
+//	 *
+//	 * @param userId
+//	 * @return
+//	 */
+//	public List<FriendRelationship> getFriendsByUserId(Long userId) {
+//		List<FriendRelationship> receivedFriends = friendRelationshipRepository.findByReceiverIdAndStatus(userId, Status.APPROVED).orElse(new ArrayList<>());
+//		List<FriendRelationship> sentFriends = friendRelationshipRepository.findBySenderIdAndStatus(userId, Status.APPROVED).orElse(new ArrayList<>());
+//		receivedFriends.addAll(sentFriends);
+//		return receivedFriends;
+//	}
+
+//	/**
+//	 *
+//	 * @param userId
+//	 * @return
+//	 */
+//	public List<FriendRelationship> getPendingAndDeclinedBySenderId(Long userId) {
+//		List<FriendRelationship> sentPending = friendRelationshipRepository.findBySenderIdAndStatus(userId, Status.APPROVED).orElse(new ArrayList<>());
+//		List<FriendRelationship> sentFriends = friendRelationshipRepository.findBySenderIdAndStatus(userId, Status.APPROVED).orElse(new ArrayList<>());
+//		receivedFriends.addAll(sentFriends);
+//		return receivedFriends;
+//	}
 
 	/**
 	 * Adds a new FriendRelationship to persistence

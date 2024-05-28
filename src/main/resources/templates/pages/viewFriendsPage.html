@@ -29,19 +29,20 @@
         </tr>
         </tbody>
     </table>
+
     <br>
-    <h2>Pending Requests</h2>
+    <h2>Requests</h2>
 
     <table>
       <thead>
       <tr>
-        <th>Name</th>
-        <th>Accept/Decline</th>
+        <th>Incoming Requests</th>
+        <th>Actions</th>
       </tr>
       </thead>
       <tbody>
       <tr th:if="${requestingUsers.empty}">
-        <td> You don't have any friend requests yet</td>
+        <td colspan="2"> You don't have any friend requests yet</td>
       </tr>
       <tr th:each="user : ${requestingUsers}">
         <td><a th:text="${user.fname + ' ' + (user.lname != null ? user.lname : '')}"> Name </a></td>
@@ -58,6 +59,30 @@
       </tr>
       </tbody>
     </table>
+
+    <table>
+      <thead>
+      <tr>
+        <th>Outgoing Requests</th>
+        <th>Status</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:if="${pendingRequests.empty && declinedRequests.empty}">
+        <td colspan="2"> You haven't sent any friend requests yet</td>
+      </tr>
+      <tr th:each="pending : ${pendingRequests}">
+        <td><a th:text="${pending.fname + ' ' + (pending.lname != null ? pending.lname : '')}"> Name </a></td>
+        <td>Pending</td>
+      </tr>
+      <tr th:each="declined : ${declinedRequests}">
+        <td><a th:text="${declined.fname + ' ' + (declined.lname != null ? declined.lname : '')}"> Name </a></td>
+        <td>Declined</td>
+
+      </tr>
+      </tbody>
+    </table>
+
   </div>
 
 

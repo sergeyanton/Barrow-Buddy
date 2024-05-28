@@ -1,6 +1,7 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
 import static nz.ac.canterbury.team1000.gardenersgrove.util.Status.APPROVED;
+import static nz.ac.canterbury.team1000.gardenersgrove.util.Status.DECLINED;
 import static nz.ac.canterbury.team1000.gardenersgrove.util.Status.PENDING;
 
 import java.util.ArrayList;
@@ -48,19 +49,16 @@ public class FriendsController {
 	 */
 	@GetMapping("/friends")
 	public String getFriendsPage(Model model) {
-		// query the database for pending requests
-
-		// add the list of requests to the model
 		User loggedInUser = userService.getLoggedInUser();
-		List<FriendRelationship> requests = friendRelationshipService.getRelationshipsByReceiverIdAndStatus(loggedInUser.getId(), PENDING);
+		// Getting incoming requests
+		List<FriendRelationship> incomingRequests = friendRelationshipService.getRelationshipsByReceiverIdAndStatus(loggedInUser.getId(), PENDING);
 		List<User> requestingUsers = new ArrayList<>();
 
-		for (FriendRelationship request : requests) {
+		for (FriendRelationship request : incomingRequests) {
 			requestingUsers.add(userService.getUserById(request.getSender().getId()));
 		}
 
-//		List<FriendRelationship> friends = friendRelationshipService.getRelationshipsByReceiverIdAndStatus(loggedInUser.getId(), APPROVED);
-
+		// Getting current friends
 		List<FriendRelationship> receivedFriends = friendRelationshipService.getRelationshipsByReceiverIdAndStatus(loggedInUser.getId(), Status.APPROVED);
 		List<FriendRelationship> sentFriends = friendRelationshipService.getRelationshipsBySenderIdAndStatus(loggedInUser.getId(), Status.APPROVED);
 
@@ -72,6 +70,22 @@ public class FriendsController {
 			newFriends.add(userService.getUserById(sentRequest.getReceiver().getId()));
 		}
 
+		// Getting outgoing requests
+		List<FriendRelationship> outgoingPendingRequests = friendRelationshipService.getRelationshipsBySenderIdAndStatus(loggedInUser.getId(), PENDING);
+		List<FriendRelationship> outgoingDeclinedRequests = friendRelationshipService.getRelationshipsBySenderIdAndStatus(loggedInUser.getId(), DECLINED);
+
+		List<User> pendingRequests = new ArrayList<>();
+		for (FriendRelationship request : outgoingPendingRequests) {
+			pendingRequests.add(userService.getUserById(request.getSender().getId()));
+		}
+
+		List<User> declinedRequests = new ArrayList<>();
+		for (FriendRelationship request : outgoingDeclinedRequests) {
+			declinedRequests.add(userService.getUserById(request.getSender().getId()));
+		}
+
+		model.addAttribute("declinedRequests", declinedRequests);
+		model.addAttribute("pendingRequests", pendingRequests);
 		model.addAttribute("friends", newFriends);
 		model.addAttribute("requestingUsers", requestingUsers);
 		logger.info("GET /friends");
@@ -115,7 +129,7 @@ public class FriendsController {
 	}
 
 	@PostMapping("/declineFriend")
-	public String postDeclineFriend(@RequestParam("senderUser") Long senderUserId,
+	public String postDeclineFriend(@RequestParam("senderUserId") Long senderUserId,
 		Model model) {
 		logger.info("POST /declineFriend " + senderUserId);
 
@@ -141,10 +155,26 @@ public class FriendsController {
 			newFriends.add(userService.getUserById(sentRequest.getReceiver().getId()));
 		}
 
+		// Getting outgoing requests
+		List<FriendRelationship> outgoingPendingRequests = friendRelationshipService.getRelationshipsBySenderIdAndStatus(loggedInUser.getId(), PENDING);
+		List<FriendRelationship> outgoingDeclinedRequests = friendRelationshipService.getRelationshipsBySenderIdAndStatus(loggedInUser.getId(), DECLINED);
+
+		List<User> pendingRequests = new ArrayList<>();
+		for (FriendRelationship request : outgoingPendingRequests) {
+			pendingRequests.add(userService.getUserById(request.getSender().getId()));
+		}
+
+		List<User> declinedRequests = new ArrayList<>();
+		for (FriendRelationship request : outgoingDeclinedRequests) {
+			declinedRequests.add(userService.getUserById(request.getSender().getId()));
+		}
+
+		model.addAttribute("declinedRequests", declinedRequests);
+		model.addAttribute("pendingRequests", pendingRequests);
 		model.addAttribute("friends", newFriends);
 		model.addAttribute("requestingUsers", requestingUsers);
 		logger.info("GET /friends");
-		return "pages/viewFriendsPage";
+		return "redirect:/friends";
 	}
 
 	@PostMapping("/acceptFriend")
@@ -174,12 +204,30 @@ public class FriendsController {
 		}
 		for (FriendRelationship sentRequest : sentFriends) {
 			newFriends.add(userService.getUserById(sentRequest.getReceiver().getId()));
+
+
 		}
 
+		// Getting outgoing requests
+		List<FriendRelationship> outgoingPendingRequests = friendRelationshipService.getRelationshipsBySenderIdAndStatus(loggedInUser.getId(), PENDING);
+		List<FriendRelationship> outgoingDeclinedRequests = friendRelationshipService.getRelationshipsBySenderIdAndStatus(loggedInUser.getId(), DECLINED);
+
+		List<User> pendingRequests = new ArrayList<>();
+		for (FriendRelationship request : outgoingPendingRequests) {
+			pendingRequests.add(userService.getUserById(request.getReceiver().getId()));
+		}
+
+		List<User> declinedRequests = new ArrayList<>();
+		for (FriendRelationship request : outgoingDeclinedRequests) {
+			declinedRequests.add(userService.getUserById(request.getReceiver().getId()));
+		}
+
+		model.addAttribute("declinedRequests", declinedRequests);
+		model.addAttribute("pendingRequests", pendingRequests);
 		model.addAttribute("friends", newFriends);
 		model.addAttribute("requestingUsers", requestingUsers);
 		logger.info("GET /friends");
-		return "pages/viewFriendsPage";
+		return "redirect:/friends";
 	}
 
 	/**
