@@ -187,7 +187,6 @@ public class GardensController {
 			Status.APPROVED));
 		boolean receivedFriends = (receivedRelationship != null && receivedRelationship.getStatus().equals(
 			Status.APPROVED));
-		System.out.println("Received friends: " + receivedFriends + " sent friends: " + sentFriends);
 		return sentFriends || receivedFriends;
 	}
 
@@ -287,7 +286,7 @@ public class GardensController {
 	 * @param model  (map-like) representation of results to be used by Thymeleaf
 	 * @return thymeleaf pages/gardensPage
 	 */
-	@GetMapping("/{userId}/gardens")
+	@GetMapping("/user/{userId}/gardens")
 	public String viewUserGardens(@PathVariable Long userId, Model model) {
 		logger.info("GET /gardens/{}", userId);
 
