@@ -114,6 +114,49 @@ public class FriendRelationshipServiceTest {
 		Assertions.assertNull(friendRelationship);
 	}
 
+	@Test
+	public void testGetRelationshipsByReceiverIdAndStatus_ReturnsCorrectRelationships() {
+		FriendRelationship pendingFriendship = new FriendRelationship(testOtherUser, testUser, Status.PENDING);
+		FriendRelationship approvedFriendship = new FriendRelationship(testOtherUser, testUser, Status.APPROVED);
+		friendRelationshipService.addFriendRelationship(pendingFriendship);
+		friendRelationshipService.addFriendRelationship(approvedFriendship);
+
+		List<FriendRelationship> pendingRelationships = friendRelationshipService.getRelationshipsByReceiverIdAndStatus(testUser.getId(), Status.PENDING);
+		List<FriendRelationship> approvedRelationships = friendRelationshipService.getRelationshipsByReceiverIdAndStatus(testUser.getId(), Status.APPROVED);
+
+		Assertions.assertTrue(pendingRelationships.contains(pendingFriendship));
+		Assertions.assertFalse(pendingRelationships.contains(approvedFriendship));
+		Assertions.assertTrue(approvedRelationships.contains(approvedFriendship));
+		Assertions.assertFalse(approvedRelationships.contains(pendingFriendship));
+	}
+
+	@Test
+	public void testGetRelationshipsBySenderIdAndStatus_ReturnsCorrectRelationships() {
+		FriendRelationship pendingFriendship = new FriendRelationship(testUser, testOtherUser, Status.PENDING);
+		FriendRelationship approvedFriendship = new FriendRelationship(testUser, testOtherUser, Status.APPROVED);
+		friendRelationshipService.addFriendRelationship(pendingFriendship);
+		friendRelationshipService.addFriendRelationship(approvedFriendship);
+		List<FriendRelationship> pendingRelationships = friendRelationshipService.getRelationshipsBySenderIdAndStatus(testUser.getId(), Status.PENDING);
+		List<FriendRelationship> approvedRelationships = friendRelationshipService.getRelationshipsBySenderIdAndStatus(testUser.getId(), Status.APPROVED);
+
+		Assertions.assertTrue(pendingRelationships.contains(pendingFriendship));
+		Assertions.assertFalse(pendingRelationships.contains(approvedFriendship));
+		Assertions.assertTrue(approvedRelationships.contains(approvedFriendship));
+		Assertions.assertFalse(approvedRelationships.contains(pendingFriendship));
+	}
+
+	@Test
+	public void testGetRelationshipsByReceiverIdAndStatus_NoRelationships_ReturnsEmptyList() {
+		List<FriendRelationship> relationships = friendRelationshipService.getRelationshipsByReceiverIdAndStatus(10L, Status.APPROVED);
+		Assertions.assertTrue(relationships.isEmpty());
+	}
+
+	@Test
+	public void testGetRelationshipsBySenderIdAndStatus_NoRelationships_ReturnsEmptyList() {
+		List<FriendRelationship> relationships = friendRelationshipService.getRelationshipsBySenderIdAndStatus(10L, Status.APPROVED);
+		Assertions.assertTrue(relationships.isEmpty());
+	}
+
 
 	@TestConfiguration
 	static class TestConfig {
