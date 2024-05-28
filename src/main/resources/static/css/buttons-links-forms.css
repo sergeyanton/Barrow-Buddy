@@ -100,3 +100,8 @@ button:hover, .submit:hover {
     font-size: 18px;
     box-sizing: border-box;
 }
+
+#forgotPasswordBtn {
+    max-width: 200px;
+    margin-top: 10px;
+}
