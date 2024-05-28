@@ -1,5 +1,7 @@
 package nz.ac.canterbury.team1000.gardenersgrove.cucumber.step_definitions;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+
 import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -8,84 +10,119 @@ import io.cucumber.java.en.When;
 import io.cucumber.spring.CucumberContextConfiguration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.RegistrationForm;
+import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
 import org.junit.jupiter.api.Assertions;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
 public class U1_StepDefinitions {
+  @Autowired
+  UserService userService;
+  @Autowired
+  private MockMvc mockMvc;
+  @Autowired
+  PasswordEncoder passwordEncoder;
+  private MvcResult mvcResult;
   RegistrationForm registrationForm = new RegistrationForm();
-  BindingResult bindingResult;
-  ArgumentCaptor<FieldError> fieldErrorCaptor = ArgumentCaptor.forClass(FieldError.class);
-
-  @Given("I am on the registration form and enter first name {string} and last name {string}")
-  public void iAmOnTheRegistrationFormAndEnterFirstNameAndLastName(String firstName, String lastName) {
-    registrationForm.setFirstName(firstName);
-    registrationForm.setLastName(lastName);
-    registrationForm.setNoSurnameCheckBox(lastName.isBlank());
+  @Given("I am on the registration form")
+  public void iAmOnTheRegistrationForm() throws Exception {
+    mockMvc.perform(MockMvcRequestBuilders.get("/register").with(csrf()))
+        .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+        .andExpect(MockMvcResultMatchers.view().name("pages/registrationPage"));
   }
 
-  @Given("I am on the registration form and enter a first name {int} characters long and a last name {int} characters long")
-  public void iAmOnTheRegistrationFormAndEnterAFirstNameFirstNameLengthCharactersLongAndALastNameLastNameLengthCharactersLong(int firstNameLength, int lastNameLength) {
+  @Given("A user exists with email {string} on the register form")
+  public void userExists(String email) {
+    if (!userService.checkEmail(email)) {
+      User userWithGivenEmail = new User("FirstName", "LastName", email, passwordEncoder.encode("password"),
+          LocalDate.of(2000, 1, 1), "/images/default_pic.jpg");
+      userWithGivenEmail.grantAuthority("ROLE_USER");
+      userService.registerUser(userWithGivenEmail);
+    }
+  }
+//  @Given("A user exists with email {string}")
+//  public void emailIsTaken(String email) {
+//    if (!userService.checkEmail(email)) {
+//      User userWithGivenEmail = new User("FirstName", "LastName", email, passwordEncoder.encode(PASSWORD),
+//          LocalDate.of(2000, 1, 1), "/images/default_pic.jpg");
+//      userWithGivenEmail.grantAuthority("ROLE_USER");
+//      userService.registerUser(userWithGivenEmail);
+//    }
+//  }
+
+  @And("I enter details {string}, {string}, a unique email {string}, and {string} on the register form")
+  public void iEnterDetailsOnTheRegisterForm(String fName, String lName, String email, String dob) {
+    registrationForm.setFirstName(fName);
+    registrationForm.setLastName(lName);
+    registrationForm.setEmail(email);
+    registrationForm.setDob(dob);
+  }
+
+  @And("I do not tick the checkbox for no last name on the register form")
+  public void iDoNotTickTheCheckboxForNoLastNameOnTheRegisterForm() {
+    registrationForm.setNoSurnameCheckBox(false);
+  }
+
+  @And("I tick the checkbox for no last name on the register form")
+  public void iTickTheCheckboxForNoLastNameOnTheRegisterForm() {
+    registrationForm.setNoSurnameCheckBox(true);
+  }
+
+  @And("I enter password {string} and retype password {string} on the register form")
+  public void iEnterPasswordAndPasswordOnTheRegisterForm(String password, String retypePassword) {
+    registrationForm.setPassword(password);
+    registrationForm.setRetypePassword(retypePassword);
+  }
+
+  @And("I enter a date of birth that means I turn {int} years old in {int} days on the register form")
+  public void iEnterADateOfBirthThatMeansITurnYearsOldInDaysOnTheRegisterForm(int age, int numDays) {
+    registrationForm.setDob(LocalDate.now().minusYears(age).plusDays(numDays).format(DateTimeFormatter.ofPattern("dd/MM/uuuu")));
+  }
+
+  @And("I enter a first name {int} characters long and a last name {int} characters long on the register form")
+  public void iEnterAFirstNameCharactersLongAndALastNameCharactersLongOnTheRegisterForm(int firstNameLength,
+      int lastNameLength) {
     registrationForm.setFirstName("F".repeat(firstNameLength));
     registrationForm.setLastName("L".repeat(lastNameLength));
     registrationForm.setNoSurnameCheckBox(lastNameLength == 0);
   }
 
-  @And("I tick the checkbox for no last name")
-  public void iTickTheCheckboxForNoLastName() {
-    registrationForm.setNoSurnameCheckBox(true);
-  }
-
-  @And("I do not tick the checkbox for no last name")
-  public void iDoNotTickTheCheckboxForNoLastName() {
-    registrationForm.setNoSurnameCheckBox(false);
-  }
-
-  @And("I enter email {string}")
-  public void iEnterEmail(String email) {
-    registrationForm.setEmail(email);
-  }
-
-  @And("I enter password {string} and retype password {string}")
-  public void iEnterPasswordAndRetypePassword(String password, String retypePassword) {
-    registrationForm.setPassword(password);
-    registrationForm.setRetypePassword(retypePassword);
-  }
-
-  @And("I enter date of birth {string}")
-  public void iEnterDateOfBirth(String dob) {
-    registrationForm.setDob(dob);
-  }
-
-  @And("I enter a date of birth that means I turn {int} years old in {int} days")
-  public void iEnterADateOfBirthThatMeansITurnYearsOldInDays(int age, int numDays) {
-    registrationForm.setDob(LocalDate.now().minusYears(age).plusDays(numDays).format(DateTimeFormatter.ofPattern("dd/MM/uuuu")));
-  }
-
   @When("I click the sign-up button")
-  public void iClickTheSignUpButton() {
-    bindingResult = Mockito.mock(BindingResult.class);
-    RegistrationForm.validate(registrationForm, bindingResult);
+  public void iClickTheSignUpButton() throws Exception {
+    mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
+        .flashAttr("registrationForm", registrationForm)).andReturn();
   }
 
   @Then("I am successfully registered")
-  public void iAmSuccessfullyRegistered() {
-    Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
-    Assertions.assertFalse(bindingResult.hasErrors());
+  public void iAmSuccessfullyRegistered() throws Exception{
+    MockMvcResultMatchers.status().is3xxRedirection().match(mvcResult);
+    MockMvcResultMatchers.redirectedUrl("/register/verification").match(mvcResult);
   }
 
-  @Then("I am shown the error message {string}")
-  public void iAmShownTheErrorMessage(String errorMessage) {
-    Mockito.verify(bindingResult).addError(fieldErrorCaptor.capture());
-    FieldError fieldError = fieldErrorCaptor.getValue();
-    Assertions.assertEquals(errorMessage, fieldError.getDefaultMessage());
-  }
+  @Then("I am shown the error message {string} on the register form")
+  public void iAmShownTheErrorMessageErrorMessageOnTheRegisterForm(String errorMessage) throws Exception {
+    MockMvcResultMatchers.status().isOk().match(mvcResult);
+    MockMvcResultMatchers.view().name("pages/registrationPage").match(mvcResult);
 
-  @After
-  public void cleanUp() {
-    bindingResult = null;
+    BindingResult bindingResult = (BindingResult) mvcResult.getModelAndView().getModel().get(BindingResult.MODEL_KEY_PREFIX + "registrationForm");
+
+    boolean errorMessageShown = false;
+    for (FieldError fieldError : bindingResult.getFieldErrors()) {
+      if (errorMessage.equals(fieldError.getDefaultMessage())) {
+        errorMessageShown = true;
+      }
+    }
+
+    Assertions.assertTrue(errorMessageShown);
   }
 }
