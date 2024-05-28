@@ -135,10 +135,10 @@ td {
     word-wrap: break-word;
 }
 
-td.button-cell {
-    white-space: nowrap;
-    width: 10%;
-}
+/*td.button-cell {*/
+/*    white-space: nowrap;*/
+/*    width: 10%;*/
+/*}*/
 
 p {
     max-width: 100%;
@@ -159,4 +159,20 @@ p {
 .error-debug-table {
     width: 80%;
     margin: 0 auto;
+}
+
+.requests-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 20px;
+}
+
+.requests-container table {
+    width: 100%;
+}
+
+.incoming-requests, .outgoing-requests {
+    border: 1px solid #ddd;
+    margin-bottom: 20px;
 }

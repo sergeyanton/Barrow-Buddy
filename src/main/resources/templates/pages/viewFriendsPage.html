@@ -23,7 +23,7 @@
       </thead>
         <tbody>
           <tr  th:if="${friends.empty}">
-            <td colspan="2"> You don't have any friends yet</td>
+            <td colspan="3"> You don't have any friends yet</td>
           </tr>
         <tr th:each="friend : ${friends}">
           <td><div class="profile-picture-list-wrapper">
@@ -39,55 +39,58 @@
     <br>
     <h2>Requests</h2>
 
-    <table>
-      <thead>
-      <tr>
-        <th>Incoming Requests</th>
-        <th>Actions</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr th:if="${requestingUsers.empty}">
-        <td colspan="2"> You don't have any friend requests yet</td>
-      </tr>
-      <tr th:each="user : ${requestingUsers}">
-        <td><a th:text="${user.fname + ' ' + (user.lname != null ? user.lname : '')}"> Name </a></td>
-        <td class="button-cell">
-          <form th:action="@{/acceptFriend}" method="post">
-            <input type="hidden" th:name="senderUserId" th:value="${user.id}" />
-            <button class="invite-button" type="submit">Accept</button>
-          </form>
-          <form th:action="@{/declineFriend}" method="post">
-            <input type="hidden" th:name="senderUserId" th:value="${user.id}" />
-            <button class="invite-button" type="submit">Decline</button>
-          </form>
-        </td>
-      </tr>
-      </tbody>
-    </table>
+    <div class="requests-container">
+      <table class="incoming-requests">
+        <thead>
+        <tr>
+          <th>Incoming Requests</th>
+          <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${requestingUsers.empty}">
+          <td colspan="2"> You don't have any friend requests yet</td>
+        </tr>
+        <tr th:each="user : ${requestingUsers}">
+          <td><a th:text="${user.fname + ' ' + (user.lname != null ? user.lname : '')}"> Name </a></td>
+          <td class="button-cell">
+            <form th:action="@{/acceptFriend}" method="post">
+              <input type="hidden" th:name="senderUserId" th:value="${user.id}" />
+              <button class="invite-button" type="submit">Accept</button>
+            </form>
+            <form th:action="@{/declineFriend}" method="post">
+              <input type="hidden" th:name="senderUserId" th:value="${user.id}" />
+              <button class="decline-button" type="submit">Decline</button>
+            </form>
+          </td>
+        </tr>
+        </tbody>
+      </table>
 
-    <table>
-      <thead>
-      <tr>
-        <th>Outgoing Requests</th>
-        <th>Status</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr th:if="${pendingRequests.empty && declinedRequests.empty}">
-        <td colspan="2"> You haven't sent any friend requests yet</td>
-      </tr>
-      <tr th:each="pending : ${pendingRequests}">
-        <td><a th:text="${pending.fname + ' ' + (pending.lname != null ? pending.lname : '')}"> Name </a></td>
-        <td>Pending</td>
-      </tr>
-      <tr th:each="declined : ${declinedRequests}">
-        <td><a th:text="${declined.fname + ' ' + (declined.lname != null ? declined.lname : '')}"> Name </a></td>
-        <td>Declined</td>
+      <table class="outgoing-requests">
+        <thead>
+        <tr>
+          <th>Outgoing Requests</th>
+          <th>Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${pendingRequests.empty && declinedRequests.empty}">
+          <td colspan="2"> You haven't sent any friend requests yet</td>
+        </tr>
+        <tr th:each="pending : ${pendingRequests}">
+          <td><a th:text="${pending.fname + ' ' + (pending.lname != null ? pending.lname : '')}"> Name </a></td>
+          <td>Pending</td>
+        </tr>
+        <tr th:each="declined : ${declinedRequests}">
+          <td><a th:text="${declined.fname + ' ' + (declined.lname != null ? declined.lname : '')}"> Name </a></td>
+          <td>Declined</td>
 
-      </tr>
-      </tbody>
-    </table>
+        </tr>
+        </tbody>
+      </table>
+
+    </div>
 
   </div>
 
