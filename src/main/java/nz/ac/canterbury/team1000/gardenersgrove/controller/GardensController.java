@@ -14,6 +14,10 @@ import nz.ac.canterbury.team1000.gardenersgrove.form.PictureForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PlantForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -248,7 +252,8 @@ public class GardensController {
         // TODO: also for the purpose of the spike, the parsing was somewhat rushed, i didn't actually parse the humidity
         // This function is for getting the current and future weather
         // Stephen has a plan for the previous day's weather so pls talk to him abt that if u are doing that task
-        List<Weather> weather = weatherService.getWeatherByGardenId(gardenId);
+//        List<Weather> weather = weatherService.getWeatherByGardenId(gardenId);
+        List<Weather> weather = weatherService.getCurrentWeatherByGardenId(gardenId);
         model.addAttribute("weather", weather);
 
         model.addAttribute("garden", garden);
@@ -367,6 +372,11 @@ public class GardensController {
 
         User loggedInUser = userService.getLoggedInUser();
         Garden updatedGarden = editGardenForm.getGarden(loggedInUser);
+
+        if (updatedGarden.getLocationString().equals(garden.getLocationString())) {
+            updatedGarden.setLatitude(garden.getLatitude());
+            updatedGarden.setLongitude(garden.getLongitude());
+        }
 
         gardenService.updateGardenById(garden.getId(), updatedGarden);
 
@@ -533,7 +543,6 @@ public class GardensController {
 
     /**
      * Handles GET requests from the /updateGardenPublicity endpoint.
-     *
      * This changes the publicity of the garden depending on the state of the checkbox
      * @param gardenId The id of the garden
      * @param isPublic The state of the checkbox - checked means garden is public, unchecked means garden is private
@@ -557,17 +566,20 @@ public class GardensController {
      * If a query is present, searches and displays for gardens with matching string.
      *
      * @param model (map-like) representation of results to be used by thymeleaf
+     * @param query the search query to search for gardens
      * @return thymeleaf pages/browseGardensPage
      */
     @GetMapping("/browseGardens")
-    public String browseGardens(@RequestParam(name="query", required = false, defaultValue = "") String query, Model model) {
+    public String browseGardens(@RequestParam(name = "query", required = false, defaultValue = "") String query, @RequestParam(name = "page", defaultValue = "1") int page, Model model) {
         logger.info("GET /browseGardens");
-        List<Garden> gardens;
+        int pageSize = 10;
+        Pageable pageable = PageRequest.of(page - 1, pageSize, Sort.by("createdAt").descending());
+        Page<Garden> gardens;
         // if query search results
         if (!query.isBlank()) {
-            gardens = gardenService.searchGardens(query);
+            gardens = gardenService.searchGardens(query, pageable);
         } else {
-            gardens = gardenService.getPublicGardens();
+            gardens = gardenService.getPublicGardens(pageable);
         }
         model.addAttribute("query", query);
         model.addAttribute("gardens", gardens);

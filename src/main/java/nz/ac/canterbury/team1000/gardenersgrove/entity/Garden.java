@@ -1,8 +1,9 @@
 package nz.ac.canterbury.team1000.gardenersgrove.entity;
 
 import jakarta.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SourceType;
 
 /**
  * Entity class reflecting an entry of name, location, and size of a garden Note the @link{Entity}
@@ -34,6 +35,10 @@ public class Garden {
     private Double size;
     @Column(length = 512)
     private String description;
+
+    @Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @CreationTimestamp(source = SourceType.DB)
+    private LocalDateTime  createdAt;
 
     @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)

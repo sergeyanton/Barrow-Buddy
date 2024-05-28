@@ -71,6 +71,20 @@ button:hover, .submit:hover {
     background-color: rgba(139, 0, 0, 0.55);
 }
 
+.invite-button {
+    padding: 10px 10px;
+    font-size: 16px;
+    border-radius: 10px;
+    background-color: #023020;
+    color: #FAF9F6;
+    border: none;
+    cursor: pointer;
+}
+
+.invite-button:hover {
+    background-color: rgba(4, 65, 42, 0.71);
+}
+
 #landing a {
     margin: 0 5px;
     padding: 10px 22px;

@@ -27,6 +27,20 @@ public class LoginFormTest {
     }
 
     @Test
+    void validate_ValidEmail_DoesNotAddError() {
+        loginForm.setEmail("jane+doe@doe.com");
+        LoginForm.validate(loginForm, bindingResult);
+        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
+
+    @Test
+    void validate_ValidEmail2_DoesNotAddError() {
+        loginForm.setEmail("jane!@doe.com");
+        LoginForm.validate(loginForm, bindingResult);
+        Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
+    }
+
+    @Test
     void validate_BlankEmail_AddsError() {
         loginForm.setEmail("");
         LoginForm.validate(loginForm, bindingResult);
@@ -63,7 +77,7 @@ public class LoginFormTest {
 
     @Test
     void validate_InvalidEmail5_AddsError() {
-        loginForm.setEmail("jane!@doe.com");
+        loginForm.setEmail(".@doe.com");
         LoginForm.validate(loginForm, bindingResult);
         Mockito.verify(bindingResult).addError(Mockito.any());
     }
