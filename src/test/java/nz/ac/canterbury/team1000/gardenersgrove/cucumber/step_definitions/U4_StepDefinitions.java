@@ -11,6 +11,7 @@ import io.cucumber.java.en.When;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import java.util.Objects;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.EditUserForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.LoginForm;
@@ -26,6 +27,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 public class U4_StepDefinitions {
@@ -40,6 +42,7 @@ public class U4_StepDefinitions {
 	BindingResult bindingResult;
 	ArgumentCaptor<FieldError> fieldErrorCaptor = ArgumentCaptor.forClass(FieldError.class);
 	private User testUser;
+	private Map<String, Object> modelTemplate;
 	private final String PASSWORD = "Password1234!";
 
 	@Given("I am logged in with the name {string} {string}, email {string}, and date of birth {string}")
@@ -47,11 +50,11 @@ public class U4_StepDefinitions {
 		String dob) throws Exception {
 		if (userService.checkEmail(email)) {
 			testUser = userService.findEmail(email);
-			return;
+		} else {
+			testUser = new User(fName, lName == "" ? null : lName, email, passwordEncoder.encode(PASSWORD), LocalDate.parse(dob, DateTimeFormatter.ofPattern("dd/MM/uuuu")), "/images/default_pic.jpg");
+			testUser.grantAuthority("ROLE_USER");
+			userService.registerUser(testUser);
 		}
-		testUser = new User(fName, lName, email, passwordEncoder.encode(PASSWORD), LocalDate.parse(dob, DateTimeFormatter.ofPattern("dd/MM/uuuu")), "/images/default_pic.jpg");
-		testUser.grantAuthority("ROLE_USER");
-		userService.registerUser(testUser);
 
 		loginForm.setEmail(testUser.getEmail());
 		loginForm.setPassword(PASSWORD);
@@ -60,6 +63,16 @@ public class U4_StepDefinitions {
 				.flashAttr("loginForm", loginForm))
 			.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
 			.andExpect(MockMvcResultMatchers.redirectedUrl("/home"));
+	}
+
+	@Given("A user exists with email {string}")
+	public void emailIsTaken(String email) {
+		if (!userService.checkEmail(email)) {
+			User u = new User("FirstName", "LastName", email, passwordEncoder.encode(PASSWORD),
+				LocalDate.of(2000, 1, 1), "/images/default_pic.jpg");
+			u.grantAuthority("ROLE_USER");
+			userService.registerUser(u);
+		}
 	}
 
 	@Given("I am on the user profile page")
@@ -85,6 +98,11 @@ public class U4_StepDefinitions {
 		assertEquals(lName, editUserForm.getLastName());
 		assertEquals(email, editUserForm.getEmail());
 		assertEquals(dob, editUserForm.getDob());
+	}
+
+	@Then("I see the checkbox for having no last name is checked")
+	public void iSeeTheCheckboxForHavingNoLastNameIsChecked() {
+		assertEquals(true, editUserForm.getNoSurnameCheckBox());
 	}
 
 	@Given("I am on the edit user profile form")
@@ -121,12 +139,14 @@ public class U4_StepDefinitions {
 		editUserForm.setDob(LocalDate.now().minusYears(age).plusDays(numDays).format(DateTimeFormatter.ofPattern("dd/MM/uuuu")));
 	}
 
-	// Do not have the current level of knowledge to test this exactly how we want.
+	// Do not have the current level of knowledge to test this exactly how we want with MockMVC
 	@When("I click the edit profile button")
 	public void iClickTheEditProfileButton(){
 		bindingResult = Mockito.mock(BindingResult.class);
+		if (userService.checkEmail(editUserForm.getEmail()) && !testUser.getEmail().equals(editUserForm.getEmail())) {
+			bindingResult.addError(new FieldError("editUserForm", "email", editUserForm.getEmail(), false, null, null, "Email already in use"));
+		}
 		EditUserForm.validate(editUserForm, bindingResult, null);
-
 	}
 
 	@Then("My new details are saved")
@@ -140,6 +160,24 @@ public class U4_StepDefinitions {
 		Mockito.verify(bindingResult).addError(fieldErrorCaptor.capture());
 		FieldError fieldError = fieldErrorCaptor.getValue();
 		Assertions.assertEquals(errorMessage, fieldError.getDefaultMessage());
+	}
+
+	@When("I click the Cancel button on my edit user profile form")
+	public void iClickTheCancelButtonOnMyEditUserProfileForm() throws Exception {
+		modelTemplate = mockMvc.perform(
+				MockMvcRequestBuilders.get("/profile").with(csrf()))
+			.andExpect(MockMvcResultMatchers.status().isOk())
+			.andReturn()
+			.getModelAndView().getModel();
+	}
+
+	@Then("I am taken back to my profile page and my details are still {string} {string}, {string}, and {string}")
+	public void iAmTakenBackToMyProfilePageAndMyDetailsAreStillAnd(String fName, String lName,
+		String email, String dob){
+		assertEquals(fName, modelTemplate.get("fName"));
+		assertEquals(lName, modelTemplate.get("lName"));
+		assertEquals(email, modelTemplate.get("email"));
+		assertEquals(dob, modelTemplate.get("dob"));
 	}
 
 	@After
