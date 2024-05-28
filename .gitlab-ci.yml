@@ -54,6 +54,7 @@ deploy-staging:
     - echo "export EMAIL_USERNAME=${EMAIL_USERNAME}" >> /home/gitlab-runner/staging/.env
     - echo "export EMAIL_PORT=${EMAIL_PORT}" >> /home/gitlab-runner/staging/.env
     - echo "export API_KEY=${API_KEY}" >> /home/gitlab-runner/staging/.env
+    - echo "export OPENAI_API_KEY=${OPENAI_API_KEY}" >> /home/gitlab-runner/staging/.env
     - sudo systemctl restart staging
 
   artifacts:
@@ -77,6 +78,7 @@ deploy-production:
     - echo "export EMAIL_USERNAME=${EMAIL_USERNAME}" >> /home/gitlab-runner/production/.env
     - echo "export EMAIL_PORT=${EMAIL_PORT}" >> /home/gitlab-runner/production/.env
     - echo "export API_KEY=${API_KEY}" >> /home/gitlab-runner/production/.env
+    - echo "export OPENAI_API_KEY=${OPENAI_API_KEY}" >> /home/gitlab-runner/staging/.env
     - sudo systemctl restart production
   artifacts:
     paths:
