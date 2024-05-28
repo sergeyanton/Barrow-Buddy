@@ -30,12 +30,10 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 @Controller
 public class FriendsController {
-
 	private final UserService userService;
 	private final FriendRelationshipService friendRelationshipService;
 
 	final Logger logger = LoggerFactory.getLogger(ProfileController.class);
-
 
 	@Autowired
 	public FriendsController(UserService userService, FriendRelationshipService friendRelationshipService) {
@@ -81,28 +79,30 @@ public class FriendsController {
 			userResults = userService.getUsersByFullName(search);
 		} else if (searchingByEmail) {
 			User userResult = userService.findEmail(search);
-
 			if (userResult != null) {
 				userResults = List.of(userResult);
+			} else {
+				userResults = new ArrayList<>();
 			}
 		}
 
-		Boolean noResults = userResults.isEmpty();
-		if (noResults && searchingByName) {
-			// there are no results and the search was for a name
-			bindingResult.addError(new FieldError("searchFriendsForm", "search", searchFriendsForm.getSearch(), false, null, null, "There is nobody with that name in Gardener’s Grove"));
-		} else if (noResults && searchingByEmail) {
-			bindingResult.addError(new FieldError("searchFriendsForm", "search", searchFriendsForm.getSearch(), false, null, null, "There is nobody with that email in Gardener’s Grove"));
+		if (userResults.isEmpty()) {
+			if (searchingByName) {
+				bindingResult.addError(new FieldError("searchFriendsForm", "search", searchFriendsForm.getSearch(), false, null, null, "There is nobody with that name in Gardener’s Grove"));
+			} else if (searchingByEmail) {
+				bindingResult.addError(new FieldError("searchFriendsForm", "search", searchFriendsForm.getSearch(), false, null, null, "There is nobody with that email in Gardener’s Grove"));
+			}
+			return templateString;
 		}
 
-		Boolean iAmOnlyResult = userResults.size() == 1 && userResults.contains(currentUser);
-		if (iAmOnlyResult && searchingByName) {
-			bindingResult.addError(new FieldError("searchFriendsForm", "search", searchFriendsForm.getSearch(), false, null, null, "There is nobody else with that name in Gardener’s Grove"));
-		} else if (iAmOnlyResult && searchingByEmail) {
-			bindingResult.addError(new FieldError("searchFriendsForm", "search", searchFriendsForm.getSearch(), false, null, null, "You've searched for your own email. Now, let's find some friends!"));
-		}
+		boolean iAmOnlyResult = userResults.size() == 1 && userResults.contains(currentUser);
 
 		if (iAmOnlyResult) {
+			if (searchingByName) {
+				bindingResult.addError(new FieldError("searchFriendsForm", "search", searchFriendsForm.getSearch(), false, null, null, "There is nobody else with that name in Gardener’s Grove"));
+			} else if (searchingByEmail) {
+				bindingResult.addError(new FieldError("searchFriendsForm", "search", searchFriendsForm.getSearch(), false, null, null, "You've searched for your own email. Now, let's find some friends!"));
+			}
 			return templateString;
 		}
 

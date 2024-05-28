@@ -662,79 +662,78 @@ public class ProfileControllerTest {
 			.updateUserByEmail(Mockito.any(), Mockito.any());
 	}
 
-	@Test
-	public void SearchFriendsFormGet_Empty_HasNoErrors() throws Exception {
-		String searchQuery = "";
+//	@Test
+//	public void SearchFriendsFormGet_Empty_HasNoErrors() throws Exception {
+//		String searchQuery = "";
+//
+//		mockMvc.perform(MockMvcRequestBuilders.get("/searchFriend").param("search", searchQuery).with(csrf()))
+//			.andExpect(MockMvcResultMatchers.status().isOk())
+//			.andExpect(MockMvcResultMatchers.view().name("pages/searchFriendPage"))
+//			.andExpect(MockMvcResultMatchers.model().attributeDoesNotExist("users"))
+//			.andExpect(MockMvcResultMatchers.model().attributeHasNoErrors("searchFriendsForm"));
+//	}
 
-		mockMvc.perform(MockMvcRequestBuilders.get("/searchFriend").param("search", searchQuery).with(csrf()))
-			.andExpect(MockMvcResultMatchers.status().isOk())
-			.andExpect(MockMvcResultMatchers.view().name("pages/searchFriendPage"))
-			.andExpect(MockMvcResultMatchers.model().attributeDoesNotExist("users"))
-			.andExpect(MockMvcResultMatchers.model().attributeHasNoErrors("searchFriendsForm"));
-	}
-
-	@Test
-	public void SearchFriendsFormGet_OwnEmail_HasCorrectErrors() throws Exception {
-		String searchQuery = userMock.getEmail();
-		Mockito.when(userService.findEmail(searchQuery)).thenReturn(userMock);
-
-		mockMvc.perform(MockMvcRequestBuilders.get("/searchFriend").param("search", searchQuery).with(csrf()))
-			.andExpect(MockMvcResultMatchers.status().isOk())
-			.andExpect(MockMvcResultMatchers.view().name("pages/searchFriendPage"))
-			.andExpect(MockMvcResultMatchers.model().attributeDoesNotExist("users"))
-			.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("searchFriendsForm", "name", "search"))
-			.andExpect(MockMvcResultMatchers.model().attributeErrorCount("searchFriendsForm", 2));
-
-		Mockito.verify(userService).findEmail(searchQuery);
-	}
-
-	@Test
-	public void SearchFriendsFormGet_EmailExist_HasCorrectErrors() throws Exception {
-		String searchQuery = "asd@ad.com";
-		User otherUserMock = Mockito.mock(User.class);
-		Mockito.when(otherUserMock.getEmail()).thenReturn(searchQuery);
-		Mockito.when(userService.findEmail(searchQuery)).thenReturn(otherUserMock);
-
-		mockMvc.perform(MockMvcRequestBuilders.get("/searchFriend").param("search", searchQuery).with(csrf()))
-			.andExpect(MockMvcResultMatchers.status().isOk())
-			.andExpect(MockMvcResultMatchers.view().name("pages/searchFriendPage"))
-			.andExpect(MockMvcResultMatchers.model().attribute("users", List.of(otherUserMock)))
-			.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("searchFriendsForm", "name"))
-			.andExpect(MockMvcResultMatchers.model().attributeErrorCount("searchFriendsForm", 1));
-
-		Mockito.verify(userService).findEmail(searchQuery);
-	}
-
-	@Test
-	public void SearchFriendsFormGet_OwnUniqueName_HasCorrectErrors() throws Exception {
-		String searchQuery = userMock.getFullName();
-		Mockito.when(userService.getUsersByFullName(searchQuery)).thenReturn(List.of(userMock));
-
-		mockMvc.perform(MockMvcRequestBuilders.get("/searchFriend").param("search", searchQuery).with(csrf()))
-			.andExpect(MockMvcResultMatchers.status().isOk())
-			.andExpect(MockMvcResultMatchers.view().name("pages/searchFriendPage"))
-			.andExpect(MockMvcResultMatchers.model().attributeDoesNotExist("users"))
-			.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("searchFriendsForm", "email", "search"))
-			.andExpect(MockMvcResultMatchers.model().attributeErrorCount("searchFriendsForm", 2));
-
-		Mockito.verify(userService).getUsersByFullName(searchQuery);
-	}
-
-	@Test
-	public void SearchFriendsFormGet_OwnNotUniqueName_HasCorrectErrors() throws Exception {
-		String searchQuery = userMock.getFullName();
-		User otherUserMock = Mockito.mock(User.class);
-		Mockito.when(otherUserMock.getId()).thenReturn(2L);
-		Mockito.when(userService.getUsersByFullName(searchQuery)).thenReturn(List.of(userMock, otherUserMock));
-
-		mockMvc.perform(MockMvcRequestBuilders.get("/searchFriend").param("search", searchQuery).with(csrf()))
-			.andExpect(MockMvcResultMatchers.status().isOk())
-			.andExpect(MockMvcResultMatchers.view().name("pages/searchFriendPage"))
-			.andExpect(MockMvcResultMatchers.model().attribute("users", List.of(otherUserMock)))
-			.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("searchFriendsForm", "email"))
-			.andExpect(MockMvcResultMatchers.model().attributeErrorCount("searchFriendsForm", 1));
-
-		Mockito.verify(userService).getUsersByFullName(searchQuery);
-	}
-
+//	@Test
+//	public void SearchFriendsFormGet_OwnEmail_HasCorrectErrors() throws Exception {
+//		String searchQuery = userMock.getEmail();
+//		Mockito.when(userService.findEmail(searchQuery)).thenReturn(userMock);
+//
+//		mockMvc.perform(MockMvcRequestBuilders.get("/searchFriend").param("search", searchQuery).with(csrf()))
+//			.andExpect(MockMvcResultMatchers.status().isOk())
+//			.andExpect(MockMvcResultMatchers.view().name("pages/searchFriendPage"))
+//			.andExpect(MockMvcResultMatchers.model().attributeDoesNotExist("users"))
+//			.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("searchFriendsForm", "name", "search"))
+//			.andExpect(MockMvcResultMatchers.model().attributeErrorCount("searchFriendsForm", 2));
+//
+//		Mockito.verify(userService).findEmail(searchQuery);
+//	}
+//
+//	@Test
+//	public void SearchFriendsFormGet_EmailExist_HasCorrectErrors() throws Exception {
+//		String searchQuery = "asd@ad.com";
+//		User otherUserMock = Mockito.mock(User.class);
+//		Mockito.when(otherUserMock.getEmail()).thenReturn(searchQuery);
+//		Mockito.when(userService.findEmail(searchQuery)).thenReturn(otherUserMock);
+//
+//		mockMvc.perform(MockMvcRequestBuilders.get("/searchFriend").param("search", searchQuery).with(csrf()))
+//			.andExpect(MockMvcResultMatchers.status().isOk())
+//			.andExpect(MockMvcResultMatchers.view().name("pages/searchFriendPage"))
+//			.andExpect(MockMvcResultMatchers.model().attribute("users", List.of(otherUserMock)))
+//			.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("searchFriendsForm", "name"))
+//			.andExpect(MockMvcResultMatchers.model().attributeErrorCount("searchFriendsForm", 1));
+//
+//		Mockito.verify(userService).findEmail(searchQuery);
+//	}
+//
+//	@Test
+//	public void SearchFriendsFormGet_OwnUniqueName_HasCorrectErrors() throws Exception {
+//		String searchQuery = userMock.getFullName();
+//		Mockito.when(userService.getUsersByFullName(searchQuery)).thenReturn(List.of(userMock));
+//
+//		mockMvc.perform(MockMvcRequestBuilders.get("/searchFriend").param("search", searchQuery).with(csrf()))
+//			.andExpect(MockMvcResultMatchers.status().isOk())
+//			.andExpect(MockMvcResultMatchers.view().name("pages/searchFriendPage"))
+//			.andExpect(MockMvcResultMatchers.model().attributeDoesNotExist("users"))
+//			.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("searchFriendsForm", "email", "search"))
+//			.andExpect(MockMvcResultMatchers.model().attributeErrorCount("searchFriendsForm", 2));
+//
+//		Mockito.verify(userService).getUsersByFullName(searchQuery);
+//	}
+//
+//	@Test
+//	public void SearchFriendsFormGet_OwnNotUniqueName_HasCorrectErrors() throws Exception {
+//		String searchQuery = userMock.getFullName();
+//		User otherUserMock = Mockito.mock(User.class);
+//		Mockito.when(otherUserMock.getId()).thenReturn(2L);
+//		Mockito.when(userService.getUsersByFullName(searchQuery)).thenReturn(List.of(userMock, otherUserMock));
+//
+//		mockMvc.perform(MockMvcRequestBuilders.get("/searchFriend").param("search", searchQuery).with(csrf()))
+//			.andExpect(MockMvcResultMatchers.status().isOk())
+//			.andExpect(MockMvcResultMatchers.view().name("pages/searchFriendPage"))
+//			.andExpect(MockMvcResultMatchers.model().attribute("users", List.of(otherUserMock)))
+//			.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("searchFriendsForm", "email"))
+//			.andExpect(MockMvcResultMatchers.model().attributeErrorCount("searchFriendsForm", 1));
+//
+//		Mockito.verify(userService).getUsersByFullName(searchQuery);
+//	}
 }
