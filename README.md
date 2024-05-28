@@ -13,7 +13,7 @@ This project requires Java version >= 21
 Current version of the product uses h2 database.
 Works on production and test, but does not use the persistent database.
 
-### Configuration variables for email:
+### Environment Variables:
 
 [Moved to the Wiki](https://eng-git.canterbury.ac.nz/seng302-2024/team-1000/-/wikis/home#env) This was moved so secrets are not in the codebase
 
