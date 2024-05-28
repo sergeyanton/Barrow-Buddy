@@ -62,17 +62,23 @@
                 <h3 th:text="${weather[0].type.getText()}"></h3>
                 <h3 th:text="'Humidity ' + ${weather[0].humidity} + '%'" style="color: dimgrey"></h3>
                 <br>
+                <hr>
+                <br>
                 <div>
-                  <h3>Next Hour's Weather</h3>
-                  <h4 style="font-weight: normal;">
-                    <span th:text="${weather[1].temperature} + '°C'"></span>
-                  </h4>
-                  <h4 style="font-weight: normal;">
-                    <span th:text="${weather[1].type.getText()}"></span>
-                  </h4>
-                  <h4>
-                    <span th:text="'Humidity ' + ${weather[1].humidity} + '%'" style="color: dimgrey"></span>
-                  </h4>
+                  <table>
+                    <tbody>
+                    </tbody>
+                  </table>
+<!--                  <h3>Next Hour's Weather</h3>-->
+<!--                  <h4 style="font-weight: normal;">-->
+<!--                    <span th:text="${weather[1].temperature} + '°C'"></span>-->
+<!--                  </h4>-->
+<!--                  <h4 style="font-weight: normal;">-->
+<!--                    <span th:text="${weather[1].type.getText()}"></span>-->
+<!--                  </h4>-->
+<!--                  <h4>-->
+<!--                    <span th:text="'Humidity ' + ${weather[1].humidity} + '%'" style="color: dimgrey"></span>-->
+<!--                  </h4>-->
                 </div>
               </div>
 

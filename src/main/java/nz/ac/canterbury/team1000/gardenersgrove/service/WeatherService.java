@@ -31,10 +31,14 @@ public class WeatherService {
     private final ObjectMapper objectMapper;
     private final GardenService gardenService;
     LocalDate dateTwoDaysAgo = LocalDate.now().minusDays(2);
-    LocalDate dateFiveDaysLater = LocalDate.now().plusDays(5);
-    private final String URL =
+    LocalDate dateTomorrow = LocalDate.now().plusDays(1);
+    LocalDate dateThreeDaysLater = LocalDate.now().plusDays(3);
+    private final String CURRENT_URL =
         "https://api.open-meteo.com/v1/forecast?hourly=temperature_2m,relative_humidity_2m,weather_code&start_date="
-            + dateTwoDaysAgo + "&end_date=" + dateFiveDaysLater;
+            + dateTwoDaysAgo + "&end_date=" + dateTomorrow;
+
+    private final String FUTURE_URL = "https://api.open-meteo.com/v1/forecast?daily=weather_code,temperature_2m_max,"
+        + "temperature_2m_min,precipitation_probability_max&start_date=" + dateTomorrow + "&end_date=" + dateThreeDaysLater;
 
     @Autowired
     public WeatherService(WeatherRepository weatherRepository, RestTemplate restTemplate,
@@ -54,23 +58,23 @@ public class WeatherService {
      * @param gardenId ID of the garden that this weather information is relevant for
      * @return A list Weather entities regarding the current day and future 5 days.
      */
-    public List<Weather> getWeatherByGardenId(long gardenId) {
-        List<Weather> persistedWeatherList = weatherRepository.findByGardenId(gardenId);
-        if (persistedWeatherList.isEmpty()) {
-            logger.info("Weather for garden " + gardenId + " has not been persisted yet");
-            return persistWeather(getWeather(gardenId));
-        }
-        logger.info("Weather for garden " + gardenId + " has been persisted before");
-        if (persistedWeatherList.get(0).getExpiry().isBefore(LocalDateTime.now())) {
-            logger.info("But it has since expired");
-            List<Weather> newWeatherList = getWeather(gardenId);
-            for (int i = 0; i < persistedWeatherList.size(); i++) {
-                persistedWeatherList.get(i).setTo(newWeatherList.get(i));
-            }
-            return persistWeather(persistedWeatherList);
-        }
-        return persistedWeatherList;
-    }
+//    public List<Weather> getWeatherByGardenId(long gardenId) {
+//        List<Weather> persistedWeatherList = weatherRepository.findByGardenId(gardenId);
+//        if (persistedWeatherList.isEmpty()) {
+//            logger.info("Weather for garden " + gardenId + " has not been persisted yet");
+//            return persistWeather(getWeather(gardenId));
+//        }
+//        logger.info("Weather for garden " + gardenId + " has been persisted before");
+//        if (persistedWeatherList.get(0).getExpiry().isBefore(LocalDateTime.now())) {
+//            logger.info("But it has since expired");
+//            List<Weather> newWeatherList = getWeather(gardenId);
+//            for (int i = 0; i < persistedWeatherList.size(); i++) {
+//                persistedWeatherList.get(i).setTo(newWeatherList.get(i));
+//            }
+//            return persistWeather(persistedWeatherList);
+//        }
+//        return persistedWeatherList;
+//    }
 
     /**
      * Retrieves the current weather and the weather immediately before or after the current time for a given garden.
@@ -82,7 +86,7 @@ public class WeatherService {
      */
     public List<Weather> getCurrentWeatherByGardenId(Long gardenId) {
         List<Weather> beforeAndAfterWeather = new ArrayList<>();
-        List<Weather> weathers = getWeather(gardenId);
+        List<Weather> weathers = getWeather(gardenId, CURRENT_URL);
         for (int i = 0; i < weathers.size(); i++) {
             LocalDateTime weatherDateTime = weathers.get(i).getDateTime();
             LocalDateTime nextWeatherHour = weatherDateTime.plusHours(1);
@@ -118,6 +122,10 @@ public class WeatherService {
         return beforeAndAfterWeather;
     }
 
+    public List<Weather> getFutureWeatherByGardenId(Long gardenId) {
+        return getWeather(gardenId, FUTURE_URL);
+    }
+
     /**
      * Persists a list of Weather entities into the database
      * @param weatherList The list of weather entities to persist
@@ -140,7 +148,7 @@ public class WeatherService {
      * @param gardenId the ID of the garden for which to retrieve the weather data
      * @return a list of Weather objects containing the weather data for the garden
      */
-    public List<Weather> getWeather(Long gardenId) {
+    public List<Weather> getWeather(Long gardenId, String url) {
         // TODO add humidity & temperature properly.
         // NOTE: temperature has daily values for the min and max temp, but not the average temperature.
         // temperature has hourly numerical temperature values that perhaps could be more usefully manipulated than the daily min and max
