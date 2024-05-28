@@ -38,39 +38,39 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WithMockUser
 class AccountControllerTest {
 
-  @Autowired
-  private MockMvc mockMvc;
+	@Autowired
+	private MockMvc mockMvc;
 
-  @MockBean
-  private UserService userService;
+	@MockBean
+	private UserService userService;
 
-  @MockBean
-  private EmailService emailService;
+	@MockBean
+	private EmailService emailService;
 
-  @MockBean
-  private VerificationTokenService verificationTokenService;
+	@MockBean
+	private VerificationTokenService verificationTokenService;
 
-  @MockBean
-  private ResetTokenService resetTokenService;
+	@MockBean
+	private ResetTokenService resetTokenService;
 
-  @MockBean
-  private GardenService gardenService;
+	@MockBean
+	private GardenService gardenService;
 
-  @MockBean
-  private AuthenticationManager authenticationManager;
+	@MockBean
+	private AuthenticationManager authenticationManager;
 
-  @MockBean
-  private PasswordEncoder passwordEncoder;
+	@MockBean
+	private PasswordEncoder passwordEncoder;
 
-  @Mock
-  private User userMock;
+	@Mock
+	private User userMock;
 
-  @Mock
-  private VerificationToken verificationTokenMock;
+	@Mock
+	private VerificationToken verificationTokenMock;
 
-  private RegistrationForm registrationForm;
+	private RegistrationForm registrationForm;
 
-  private LoginForm loginForm;
+	private LoginForm loginForm;
 
   private VerificationTokenForm verificationTokenForm;
   private ForgotPasswordForm forgotPasswordForm;
@@ -84,9 +84,9 @@ class AccountControllerTest {
     Mockito.when(userMock.getDateOfBirthString()).thenReturn("05/05/1999");
     Mockito.when(userMock.getPassword()).thenReturn("encoded_password");
 
-    verificationTokenMock = Mockito.mock(VerificationToken.class);
-    Mockito.when(verificationTokenMock.getUserId()).thenReturn(1L);
-    Mockito.when(verificationTokenMock.getToken()).thenReturn("token");
+		verificationTokenMock = Mockito.mock(VerificationToken.class);
+		Mockito.when(verificationTokenMock.getUserId()).thenReturn(1L);
+		Mockito.when(verificationTokenMock.getToken()).thenReturn("token");
 
 
     registrationForm = new RegistrationForm();
@@ -98,44 +98,44 @@ class AccountControllerTest {
     registrationForm.setRetypePassword("Pass123$");
     registrationForm.setNoSurnameCheckBox(userMock.getLname() == null || userMock.getLname().isEmpty());
 
-    loginForm = new LoginForm();
-    loginForm.setEmail(userMock.getEmail());
-    loginForm.setPassword("Pass123$");
+		loginForm = new LoginForm();
+		loginForm.setEmail(userMock.getEmail());
+		loginForm.setPassword("Pass123$");
 
-    verificationTokenForm = new VerificationTokenForm();
-    verificationTokenForm.setVerificationToken(verificationTokenMock.getToken());
+		verificationTokenForm = new VerificationTokenForm();
+		verificationTokenForm.setVerificationToken(verificationTokenMock.getToken());
 
-    forgotPasswordForm = new ForgotPasswordForm();
-    forgotPasswordForm.setEmail(userMock.getEmail());
+		forgotPasswordForm = new ForgotPasswordForm();
+		forgotPasswordForm.setEmail(userMock.getEmail());
 
-    resetPasswordForm = new ResetPasswordForm();
-    resetPasswordForm.setNewPassword("123Password!");
-    resetPasswordForm.setRetypePassword("123Password!");
+		resetPasswordForm = new ResetPasswordForm();
+		resetPasswordForm.setNewPassword("123Password!");
+		resetPasswordForm.setRetypePassword("123Password!");
 
-    Mockito.when(userService.checkEmail(Mockito.any())).thenReturn(false);
-    Mockito.when(userService.isSignedIn()).thenReturn(false);
-    Mockito.when(userService.findEmail(Mockito.any())).thenReturn(userMock);
-    Mockito.when(passwordEncoder.matches(Mockito.any(), Mockito.any())).thenReturn(true);
-  }
+		Mockito.when(userService.checkEmail(Mockito.any())).thenReturn(false);
+		Mockito.when(userService.isSignedIn()).thenReturn(false);
+		Mockito.when(userService.findEmail(Mockito.any())).thenReturn(userMock);
+		Mockito.when(passwordEncoder.matches(Mockito.any(), Mockito.any())).thenReturn(true);
+	}
 
-  @Test
-  public void RegisterPostRequest_ValidDetails_UserRegisteredAndAuthenticated() throws Exception {
-    mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
-            .flashAttr("registrationForm", registrationForm))
-        .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-        .andExpect(MockMvcResultMatchers.redirectedUrl("/register/verification"));
+	@Test
+	public void RegisterPostRequest_ValidDetails_UserRegisteredAndAuthenticated() throws Exception {
+		mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
+				.flashAttr("registrationForm", registrationForm))
+			.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+			.andExpect(MockMvcResultMatchers.redirectedUrl("/register/verification"));
 
-    Mockito.verify(userService).registerUser(Mockito.any());
-  }
+		Mockito.verify(userService).registerUser(Mockito.any());
+	}
 
   @Test
   public void RegisterPostRequest_ValidDetailsEmptyDate_UserRegisteredAndAuthenticated() throws Exception {
     registrationForm.setDob("");
 
-    mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
-            .flashAttr("registrationForm", registrationForm))
-        .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-        .andExpect(MockMvcResultMatchers.redirectedUrl("/register/verification"));
+		mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
+				.flashAttr("registrationForm", registrationForm))
+			.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+			.andExpect(MockMvcResultMatchers.redirectedUrl("/register/verification"));
 
     Mockito.verify(userService).registerUser(Mockito.any());
   }
@@ -144,31 +144,17 @@ class AccountControllerTest {
     registrationForm.setLastName("");
     registrationForm.setNoSurnameCheckBox(true);
 
-    mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
-            .flashAttr("registrationForm", registrationForm))
-        .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-        .andExpect(MockMvcResultMatchers.redirectedUrl("/register/verification"));
+		mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
+				.flashAttr("registrationForm", registrationForm))
+			.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+			.andExpect(MockMvcResultMatchers.redirectedUrl("/register/verification"));
 
-    Mockito.verify(userService).registerUser(Mockito.any());
-  }
+		Mockito.verify(userService).registerUser(Mockito.any());
+	}
 
-  @Test
-  public void RegisterPostRequest_InvalidFirstNameEmpty_HasFieldErrors() throws Exception {
-    registrationForm.setFirstName("");
-
-    mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
-            .flashAttr("registrationForm", registrationForm))
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.view().name("pages/registrationPage"))
-        .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "firstName"));
-
-    Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
-    Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
-  }
-
-  @Test
-  public void RegisterPostRequest_InvalidFirstName_HasFieldErrors() throws Exception {
-    registrationForm.setFirstName("Jeff3");
+	@Test
+	public void RegisterPostRequest_InvalidFirstNameEmpty_HasFieldErrors() throws Exception {
+		registrationForm.setFirstName("");
 
     mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
             .flashAttr("registrationForm", registrationForm))
@@ -180,9 +166,9 @@ class AccountControllerTest {
     Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
   }
 
-  @Test
-  public void RegisterPostRequest_InvalidFirstNameLong_HasFieldErrors() throws Exception {
-    registrationForm.setFirstName("J".repeat(65));
+	@Test
+	public void RegisterPostRequest_InvalidFirstName_HasFieldErrors() throws Exception {
+		registrationForm.setFirstName("Jeff3");
 
     mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
             .flashAttr("registrationForm", registrationForm))
@@ -194,9 +180,23 @@ class AccountControllerTest {
     Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
   }
 
-  @Test
-  public void RegisterPostRequest_InvalidLastName_HasFieldErrors() throws Exception {
-    registrationForm.setLastName("John6");
+	@Test
+	public void RegisterPostRequest_InvalidFirstNameLong_HasFieldErrors() throws Exception {
+		registrationForm.setFirstName("J".repeat(65));
+
+    mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
+            .flashAttr("registrationForm", registrationForm))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.view().name("pages/registrationPage"))
+        .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("registrationForm", "firstName"));
+
+    Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
+    Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
+  }
+
+	@Test
+	public void RegisterPostRequest_InvalidLastName_HasFieldErrors() throws Exception {
+		registrationForm.setLastName("John6");
 
     mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
             .flashAttr("registrationForm", registrationForm))
@@ -208,9 +208,9 @@ class AccountControllerTest {
     Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
   }
 
-  @Test
-  public void RegisterPostRequest_InvalidLastNameLong_HasFieldErrors() throws Exception {
-    registrationForm.setLastName("J".repeat(65));
+	@Test
+	public void RegisterPostRequest_InvalidLastNameLong_HasFieldErrors() throws Exception {
+		registrationForm.setLastName("J".repeat(65));
 
     mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
             .flashAttr("registrationForm", registrationForm))
@@ -222,9 +222,9 @@ class AccountControllerTest {
     Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
   }
 
-  @Test
-  public void RegisterPostRequest_InvalidEmailEmpty_HasFieldErrors() throws Exception {
-    registrationForm.setEmail("");
+	@Test
+	public void RegisterPostRequest_InvalidEmailEmpty_HasFieldErrors() throws Exception {
+		registrationForm.setEmail("");
 
     mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
             .flashAttr("registrationForm", registrationForm))
@@ -236,9 +236,9 @@ class AccountControllerTest {
     Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
   }
 
-  @Test
-  public void RegisterPostRequest_InvalidEmail_HasFieldErrors() throws Exception {
-    registrationForm.setEmail("BadEmail");
+	@Test
+	public void RegisterPostRequest_InvalidEmail_HasFieldErrors() throws Exception {
+		registrationForm.setEmail("BadEmail");
 
     mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
             .flashAttr("registrationForm", registrationForm))
@@ -250,9 +250,9 @@ class AccountControllerTest {
     Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
   }
 
-  @Test
-  public void RegisterPostRequest_InvalidEmailLong_HasFieldErrors() throws Exception {
-    registrationForm.setEmail("A".repeat(246) + "@gmail.com");
+	@Test
+	public void RegisterPostRequest_InvalidEmailLong_HasFieldErrors() throws Exception {
+		registrationForm.setEmail("A".repeat(246) + "@gmail.com");
 
     mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
             .flashAttr("registrationForm", registrationForm))
@@ -264,9 +264,9 @@ class AccountControllerTest {
     Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
   }
 
-  @Test
-  public void RegisterPostRequest_InvalidEmailTaken_HasFieldErrors() throws Exception {
-    Mockito.when(userService.checkEmail(Mockito.any())).thenReturn(true);
+	@Test
+	public void RegisterPostRequest_InvalidEmailTaken_HasFieldErrors() throws Exception {
+		Mockito.when(userService.checkEmail(Mockito.any())).thenReturn(true);
 
     mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
             .flashAttr("registrationForm", registrationForm))
@@ -278,9 +278,9 @@ class AccountControllerTest {
     Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
   }
 
-  @Test
-  public void RegisterPostRequest_InvalidDateLeapDay_HasFieldErrors() throws Exception {
-    registrationForm.setDob("29/02/2001");
+	@Test
+	public void RegisterPostRequest_InvalidDateLeapDay_HasFieldErrors() throws Exception {
+		registrationForm.setDob("29/02/2001");
 
     mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
             .flashAttr("registrationForm", registrationForm))
@@ -292,9 +292,9 @@ class AccountControllerTest {
     Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
   }
 
-  @Test
-  public void RegisterPostRequest_InvalidDate_HasFieldErrors() throws Exception {
-    registrationForm.setDob("invaliddate");
+	@Test
+	public void RegisterPostRequest_InvalidDate_HasFieldErrors() throws Exception {
+		registrationForm.setDob("invaliddate");
 
     mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
             .flashAttr("registrationForm", registrationForm))
@@ -306,10 +306,10 @@ class AccountControllerTest {
     Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
   }
 
-  @Test
-  public void RegisterPostRequest_InvalidPasswordEmpty_HasFieldErrors() throws Exception {
-    registrationForm.setPassword("");
-    registrationForm.setRetypePassword("");
+	@Test
+	public void RegisterPostRequest_InvalidPasswordEmpty_HasFieldErrors() throws Exception {
+		registrationForm.setPassword("");
+		registrationForm.setRetypePassword("");
 
     mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
             .flashAttr("registrationForm", registrationForm))
@@ -321,10 +321,10 @@ class AccountControllerTest {
     Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
   }
 
-  @Test
-  public void RegisterPostRequest_InvalidPassword_HasFieldErrors() throws Exception {
-    registrationForm.setPassword("weakpass123");
-    registrationForm.setRetypePassword("weakpass123");
+	@Test
+	public void RegisterPostRequest_InvalidPassword_HasFieldErrors() throws Exception {
+		registrationForm.setPassword("weakpass123");
+		registrationForm.setRetypePassword("weakpass123");
 
     mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
             .flashAttr("registrationForm", registrationForm))
@@ -336,10 +336,10 @@ class AccountControllerTest {
     Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
   }
 
-  @Test
-  public void RegisterPostRequest_InvalidPasswordNoMatch_HasFieldErrors() throws Exception {
-    registrationForm.setPassword("GoodPass123#");
-    registrationForm.setRetypePassword("DifferentGoodPass123#");
+	@Test
+	public void RegisterPostRequest_InvalidPasswordNoMatch_HasFieldErrors() throws Exception {
+		registrationForm.setPassword("GoodPass123#");
+		registrationForm.setRetypePassword("DifferentGoodPass123#");
 
     mockMvc.perform(MockMvcRequestBuilders.post("/register").with(csrf())
             .flashAttr("registrationForm", registrationForm))
@@ -351,9 +351,9 @@ class AccountControllerTest {
     Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
   }
 
-  @Test
-  public void ForgotPasswordPostRequest_InvalidEmail_Redirects() throws Exception {
-    forgotPasswordForm.setEmail("BadEmail");
+	@Test
+	public void ForgotPasswordPostRequest_InvalidEmail_Redirects() throws Exception {
+		forgotPasswordForm.setEmail("BadEmail");
 
     mockMvc.perform(MockMvcRequestBuilders.post("/forgotPassword")
             .with(csrf())
@@ -366,9 +366,9 @@ class AccountControllerTest {
     Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
   }
 
-  @Test
-  public void ForgotPasswordPostRequest_InvalidEmailEmpty_HasFieldErrors() throws Exception {
-    forgotPasswordForm.setEmail("");
+	@Test
+	public void ForgotPasswordPostRequest_InvalidEmailEmpty_HasFieldErrors() throws Exception {
+		forgotPasswordForm.setEmail("");
 
     mockMvc.perform(MockMvcRequestBuilders.post("/forgotPassword")
             .with(csrf())
@@ -381,18 +381,18 @@ class AccountControllerTest {
     Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
   }
 
-  @Test
-  public void ResetPasswordPostRequest_InvalidPasswordEmpty_HasFieldErrors() throws Exception {
-    resetPasswordForm.setNewPassword("");
-    String token = "my_token";
+	@Test
+	public void ResetPasswordPostRequest_InvalidPasswordEmpty_HasFieldErrors() throws Exception {
+		resetPasswordForm.setNewPassword("");
+		String token = "my_token";
 
-    MockHttpSession session = new MockHttpSession();
-    session.setAttribute("resetToken", token);
+		MockHttpSession session = new MockHttpSession();
+		session.setAttribute("resetToken", token);
 
-    ResetToken mockResetToken = new ResetToken();
-    mockResetToken.setToken(token);
-    mockResetToken.setExpiryDate(LocalDateTime.now().plusMinutes(10));
-    Mockito.when(resetTokenService.getResetToken(token)).thenReturn(mockResetToken);
+		ResetToken mockResetToken = new ResetToken();
+		mockResetToken.setToken(token);
+		mockResetToken.setExpiryDate(LocalDateTime.now().plusMinutes(10));
+		Mockito.when(resetTokenService.getResetToken(token)).thenReturn(mockResetToken);
 
     mockMvc.perform(MockMvcRequestBuilders.post("/resetPassword")
             .session(session)
@@ -408,19 +408,20 @@ class AccountControllerTest {
     Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
   }
 
-  @Test
-  public void ResetPasswordPostRequest_InvalidPasswordsDontMatch_HasFieldErrors() throws Exception {
-    resetPasswordForm.setNewPassword("Password!1");
-    resetPasswordForm.setRetypePassword("Password!2");
-    String token = "my_token";
+	@Test
+	public void ResetPasswordPostRequest_InvalidPasswordsDontMatch_HasFieldErrors()
+		throws Exception {
+		resetPasswordForm.setNewPassword("Password!1");
+		resetPasswordForm.setRetypePassword("Password!2");
+		String token = "my_token";
 
-    MockHttpSession session = new MockHttpSession();
-    session.setAttribute("resetToken", token);
+		MockHttpSession session = new MockHttpSession();
+		session.setAttribute("resetToken", token);
 
-    ResetToken mockResetToken = new ResetToken();
-    mockResetToken.setToken(token);
-    mockResetToken.setExpiryDate(LocalDateTime.now().plusMinutes(10));
-    Mockito.when(resetTokenService.getResetToken(token)).thenReturn(mockResetToken);
+		ResetToken mockResetToken = new ResetToken();
+		mockResetToken.setToken(token);
+		mockResetToken.setExpiryDate(LocalDateTime.now().plusMinutes(10));
+		Mockito.when(resetTokenService.getResetToken(token)).thenReturn(mockResetToken);
 
     mockMvc.perform(MockMvcRequestBuilders.post("/resetPassword")
             .session(session)
@@ -436,39 +437,39 @@ class AccountControllerTest {
     Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
   }
 
-  @Test
-  public void ResetPasswordPostRequest_InvalidTokenNotInRepo_RedirectsToLogin() throws Exception {
-    resetPasswordForm.setNewPassword("");
-    String token = "my_token";
+	@Test
+	public void ResetPasswordPostRequest_InvalidTokenNotInRepo_RedirectsToLogin() throws Exception {
+		resetPasswordForm.setNewPassword("");
+		String token = "my_token";
 
-    mockMvc.perform(MockMvcRequestBuilders.post("/resetPassword")
-            .param("token", token)
-            .with(csrf())
-            .flashAttr("resetPasswordForm", resetPasswordForm))
-        .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-        .andExpect(redirectedUrl("/login"));
+		mockMvc.perform(MockMvcRequestBuilders.post("/resetPassword")
+				.param("token", token)
+				.with(csrf())
+				.flashAttr("resetPasswordForm", resetPasswordForm))
+			.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+			.andExpect(redirectedUrl("/login"));
 
     Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
     Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
   }
 
-  @Test
-  public void ResetPasswordPostRequest_InvalidTokenExpired_RedirectsToLogin() throws Exception {
-    resetPasswordForm.setNewPassword("");
-    String token = "my_token";
-    MockHttpSession session = new MockHttpSession();
-    session.setAttribute("resetToken", token);
-    ResetToken mockResetToken = new ResetToken();
-    mockResetToken.setToken(token);
-    mockResetToken.setExpiryDate(LocalDateTime.now().minusMinutes(5));
-    Mockito.when(resetTokenService.getResetToken(token)).thenReturn(mockResetToken);
+	@Test
+	public void ResetPasswordPostRequest_InvalidTokenExpired_RedirectsToLogin() throws Exception {
+		resetPasswordForm.setNewPassword("");
+		String token = "my_token";
+		MockHttpSession session = new MockHttpSession();
+		session.setAttribute("resetToken", token);
+		ResetToken mockResetToken = new ResetToken();
+		mockResetToken.setToken(token);
+		mockResetToken.setExpiryDate(LocalDateTime.now().minusMinutes(5));
+		Mockito.when(resetTokenService.getResetToken(token)).thenReturn(mockResetToken);
 
-    mockMvc.perform(MockMvcRequestBuilders.post("/resetPassword")
-            .param("token", token)
-            .with(csrf())
-            .flashAttr("resetPasswordForm", resetPasswordForm))
-        .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-        .andExpect(redirectedUrl("/login"));
+		mockMvc.perform(MockMvcRequestBuilders.post("/resetPassword")
+				.param("token", token)
+				.with(csrf())
+				.flashAttr("resetPasswordForm", resetPasswordForm))
+			.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+			.andExpect(redirectedUrl("/login"));
 
     Mockito.verify(userService, Mockito.never()).updateUserByEmail(Mockito.any(), Mockito.any());
     Mockito.verify(userService, Mockito.never()).authenticateUser(Mockito.any(), Mockito.any(), Mockito.any());
@@ -478,10 +479,10 @@ class AccountControllerTest {
   public void VerificationGetRequest_ValidToken_Successful() throws Exception {
     Mockito.when(verificationTokenService.getVerificationTokenByUserId(Mockito.any())).thenReturn(verificationTokenMock);
 
-    mockMvc.perform(MockMvcRequestBuilders.get("/register/verification").with(csrf())
-            .flashAttr("verificationTokenForm", verificationTokenForm))
-        .andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
-  }
+		mockMvc.perform(MockMvcRequestBuilders.get("/register/verification").with(csrf())
+				.flashAttr("verificationTokenForm", verificationTokenForm))
+			.andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
+	}
 
   @Test
   public void VerificationPostRequest_Valid_Redirection() throws Exception {

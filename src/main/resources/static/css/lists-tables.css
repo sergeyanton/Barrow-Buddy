@@ -135,6 +135,11 @@ td {
     word-wrap: break-word;
 }
 
+td.button-cell {
+    white-space: nowrap;
+    width: 10%;
+}
+
 p {
     max-width: 100%;
     overflow-wrap: break-word;

@@ -69,7 +69,7 @@ public class WeatherService {
             }
             return persistWeather(persistedWeatherList);
         }
-		return persistedWeatherList;
+        return persistedWeatherList;
     }
 
     /**
@@ -163,13 +163,13 @@ public class WeatherService {
             List<String> hourlyTime = (ArrayList) ((Map<String, Object>) weather.get("hourly")).get("time");
             List<LocalDateTime> hourlyTimeParsed = new ArrayList<>();
 
-			for (String s : hourlyTime) {
-				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
-				LocalDateTime localDateTime = LocalDateTime.parse(s, formatter);
-				hourlyTimeParsed.add(localDateTime);
-			}
+            for (String s : hourlyTime) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+                LocalDateTime localDateTime = LocalDateTime.parse(s, formatter);
+                hourlyTimeParsed.add(localDateTime);
+            }
 
-			List<Double> dailyTemps = new ArrayList<>(hourlyTemps);
+            List<Double> dailyTemps = new ArrayList<>(hourlyTemps);
             List<Integer> dailyHumidity = new ArrayList<>(hourlyHumidity);
 
             List<Weather> weatherList = new ArrayList<>();

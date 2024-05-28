@@ -11,12 +11,12 @@ import org.springframework.validation.BindingResult;
  * Entity used to parse and store the data sent through a search friend GET request
  */
 public class SearchForm {
-	protected String email;
-	public String getEmail() {
-		return email;
+	protected String emailSearch;
+	public String getEmailSearch() {
+		return emailSearch;
 	}
-	public void setEmail(String email) {
-		this.email = email;
+	public void setEmailSearch(String emailSearch) {
+		this.emailSearch = emailSearch;
 	}
 
 	/**
@@ -29,13 +29,13 @@ public class SearchForm {
 		ErrorAdder errors = new ErrorAdder(bindingResult, "searchForm");
 
 		// validate email
-		if (checkBlank(searchForm.getEmail()) || checkEmailIsInvalid(searchForm.getEmail())) {
-			errors.add("email", "Email address must be in the form ‘jane@doe.nz’",
-				searchForm.getEmail());
-		} else if (checkOverMaxLength(searchForm.getEmail(), MAX_DB_STR_LEN)) {
-			errors.add("email",
+		if (checkBlank(searchForm.getEmailSearch()) || checkEmailIsInvalid(searchForm.getEmailSearch())) {
+			errors.add("emailSearch", "Email address must be in the form ‘jane@doe.nz’",
+				searchForm.getEmailSearch());
+		} else if (checkOverMaxLength(searchForm.getEmailSearch(), MAX_DB_STR_LEN)) {
+			errors.add("emailSearch",
 				"Email address must be " + MAX_DB_STR_LEN + " characters long or less",
-				searchForm.getEmail());
+				searchForm.getEmailSearch());
 		}
 	}
 }
