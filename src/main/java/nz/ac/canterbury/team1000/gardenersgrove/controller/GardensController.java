@@ -1,6 +1,7 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
 import java.io.IOException;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -255,8 +256,26 @@ public class GardensController {
         // Stephen has a plan for the previous day's weather so pls talk to him abt that if u are doing that task
         List<Weather> weather = weatherService.getCurrentWeatherByGardenId(gardenId);
 		List<Weather> futureWeather = weatherService.getFutureWeatherByGardenId(gardenId);
+
+		Weather currentWeather = weather.get(0);
+		Weather nextWeather = futureWeather.get(1);
+		LocalTime currentHour = LocalTime.now();
+
+		boolean isClearWeatherAtNight = currentWeather.getType().getText().equals("Clear") && (currentHour.isAfter(
+			LocalTime.parse(nextWeather.sunSet)) || currentHour.isBefore(LocalTime.parse(nextWeather.sunRise)));
+
+		String currentWeatherIconPath;
+		if (isClearWeatherAtNight) {
+			currentWeatherIconPath = "/images/weather/moon.png";
+		} else {
+			currentWeatherIconPath = currentWeather.getType().getPicturePath();
+		}
+
+		futureWeather.remove(0);
+
         model.addAttribute("weather", weather);
 		model.addAttribute("futureWeather", futureWeather);
+		model.addAttribute("currentWeatherIconPath", currentWeatherIconPath);
         model.addAttribute("garden", garden);
         model.addAttribute("plants", plantService.getPlantsByGardenId(garden.getId()));
         return "pages/gardenProfilePage";

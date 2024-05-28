@@ -41,6 +41,12 @@ public class Weather {
     @Column
     public Double maxTemperature;
 
+    @Column
+    public String sunSet;
+
+    @Column
+    public String sunRise;
+
     /**
      * The period of time in minutes that the weather is valid for, after this time, the weather
      * should be updated via Open-Meteo.
@@ -73,7 +79,7 @@ public class Weather {
     }
 
     public Weather(Long gardenId, WeatherType type, Double minTemperature, Double maxTemperature,
-            Integer precipitation, String dayOfTheWeek)
+            Integer precipitation, String dayOfTheWeek, String sunSet, String sunRise)
     {
         this.gardenId = gardenId;
         this.type = type;
@@ -81,6 +87,8 @@ public class Weather {
         this.maxTemperature = maxTemperature;
         this.precipitation = precipitation;
         this.dayOfTheWeek = dayOfTheWeek;
+        this.sunSet = sunSet;
+        this.sunRise = sunRise;
         updateExpiry();
     }
 

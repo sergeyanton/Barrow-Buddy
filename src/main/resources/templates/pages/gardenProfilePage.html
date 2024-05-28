@@ -50,17 +50,18 @@
 
               <h5 th:if="${weather == null || weather.size() == 0}" th:text="'Location not found, please update your location to see the weather.'"></h5>
 
-              <div th:if="${weather != null && weather.size() > 0}">
+              <div th:if="${weather != null && weather.size() > 1}">
                 <div style="align-content: center; display: inline">
-                  <h3 th:text="'Today is ' + ${weather[0].dayOfTheWeek} + ', ' + ${weather[0].dateTime.toLocalDate}"></h3>
+                  <h3 th:text="'Today is ' + ${weather[1].dayOfTheWeek} + ', ' + ${weather[1].dateTime.toLocalDate}"></h3>
                 </div>
                 <br>
                 <h3>My Location</h3>
                 <h3 style="font-weight: normal;" th:text="${garden.getCity()} + ', ' + ${garden.getCountry()}"></h3>
-                <img th:src="@{${weather[0].type.getPicturePath()}}" alt="Weather Image" width="150" height="150">
-                <h3 th:text="${weather[0].temperature} + '°C'"></h3>
-                <h3 th:text="${weather[0].type.getText()}"></h3>
-                <h3 th:text="'Humidity ' + ${weather[0].humidity} + '%'" style="color: dimgrey"></h3>
+<!--                <img th:src="@{${weather[0].type.getPicturePath()}}" alt="Weather Image" width="150" height="150">-->
+                <img th:src="@{${currentWeatherIconPath}}" alt="Weather Image" width="150" height="150">
+                <h3 th:text="${weather[1].temperature} + '°C'"></h3>
+                <h3 th:text="${weather[1].type.getText()}"></h3>
+                <h3 th:text="'Humidity ' + ${weather[1].humidity} + '%'" style="color: dimgrey"></h3>
                 <br>
                 <hr>
                 <br>

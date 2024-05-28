@@ -15,6 +15,7 @@ import nz.ac.canterbury.team1000.gardenersgrove.service.GardenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -37,8 +38,8 @@ public class WeatherService {
         "https://api.open-meteo.com/v1/forecast?hourly=temperature_2m,relative_humidity_2m,weather_code&start_date="
             + dateTwoDaysAgo + "&end_date=" + dateTomorrow;
 
-    private final String FUTURE_URL = "https://api.open-meteo.com/v1/forecast?daily=weather_code,temperature_2m_max,"
-        + "temperature_2m_min,precipitation_probability_max&start_date=" + dateTomorrow + "&end_date=" + dateThreeDaysLater;
+    private final String FUTURE_URL = "https://api.open-meteo.com/v1/forecast?daily=sunrise,sunset,weather_code,temperature_2m_max,"
+        + "temperature_2m_min,precipitation_probability_max&start_date=" + LocalDate.now() + "&end_date=" + dateThreeDaysLater;
 
     @Autowired
     public WeatherService(WeatherRepository weatherRepository, RestTemplate restTemplate,
@@ -87,6 +88,8 @@ public class WeatherService {
     public List<Weather> getCurrentWeatherByGardenId(Long gardenId) {
         List<Weather> beforeAndAfterWeather = new ArrayList<>();
         List<Weather> weathers = getWeather(gardenId, CURRENT_URL);
+        List<Weather> futureWeathers = getWeatherFuture(gardenId, FUTURE_URL);
+
         for (int i = 0; i < weathers.size(); i++) {
             LocalDateTime weatherDateTime = weathers.get(i).getDateTime();
             LocalDateTime nextWeatherHour = weatherDateTime.plusHours(1);
@@ -127,20 +130,6 @@ public class WeatherService {
     }
 
     /**
-     * Persists a list of Weather entities into the database
-     * @param weatherList The list of weather entities to persist
-     * @return The list of weather entities that are being persisted
-     */
-    private List<Weather> persistWeather(List<Weather> weatherList) {
-        logger.info("...Persisting...");
-
-        for (Weather weather : weatherList) {
-            weatherRepository.save(weather);
-        }
-        return weatherList;
-    }
-
-    /**
      * Retrieves the weather data for a specified garden by its ID, including weather codes, temperatures,
      * humidity, and timestamps. The weather data is fetched from an API and parsed into a list of
      * Weather objects.
@@ -169,6 +158,7 @@ public class WeatherService {
             List<Double> hourlyTemps = (ArrayList) ((Map<String, Object>) weather.get("hourly")).get("temperature_2m");
             List<Integer> hourlyHumidity = (ArrayList) ((Map<String, Object>) weather.get("hourly")).get("relative_humidity_2m");
             List<String> hourlyTime = (ArrayList) ((Map<String, Object>) weather.get("hourly")).get("time");
+
             List<LocalDateTime> hourlyTimeParsed = new ArrayList<>();
 
             for (String s : hourlyTime) {
@@ -186,9 +176,6 @@ public class WeatherService {
                     dailyTemps.get(i), dailyHumidity.get(i), hourlyTimeParsed.get(i).getDayOfWeek().toString()));
             }
 
-            for (Weather w : weatherList) {
-                logger.info(w.toString());
-            }
             return weatherList;
 
         } catch (Exception e) {
@@ -197,7 +184,14 @@ public class WeatherService {
         }
     }
 
-
+    /**
+     * A method that retrieves the weather data for the future 3 days for a specified garden by its ID.
+     * The weather data is fetched from an API and parsed into a list of Weather objects.
+     *
+     * @param gardenId the ID of the garden for which to retrieve the weather data
+     * @param url the URL of the API to fetch the weather data from
+     * @return a list of Weather objects containing the weather data for the garden for the future 3 days
+     */
     public List<Weather> getWeatherFuture(Long gardenId, String url) {
 
         Garden garden = gardenService.getGardenById(gardenId);
@@ -214,6 +208,9 @@ public class WeatherService {
             List<Double> minTempFuture = (ArrayList) ((Map<String, Object>) weather.get("daily")).get("temperature_2m_min");
             List<Integer> precipitationFuture = (ArrayList) ((Map<String, Object>) weather.get("daily")).get("precipitation_probability_max");
             List<String> futureDate = (ArrayList) ((Map<String, Object>) weather.get("daily")).get("time");
+            List<String> sunRise = (ArrayList) ((Map<String, Object>) weather.get("daily")).get("sunrise");
+            List<String> sunSet = (ArrayList) ((Map<String, Object>) weather.get("daily")).get("sunset");
+
 
             List<String> dailyTimeParsed = new ArrayList<>();
 
@@ -224,15 +221,6 @@ public class WeatherService {
             }
 
             List<Weather> weatherListFuture = new ArrayList<>();
-            String x = dailyTimeParsed.getFirst();
-            Weather y = new Weather(
-                gardenId,
-                WeatherType.getByCode(weatherCodesFuture.get(1)),
-                minTempFuture.get(1),
-                maxTempFuture.get(1),
-                precipitationFuture.get(1),
-                dailyTimeParsed.get(1));
-
 
             for (int i = 0; i < weatherCodesFuture.size(); i++) {
                 weatherListFuture.add(new Weather(
@@ -241,16 +229,12 @@ public class WeatherService {
                     minTempFuture.get(i),
                     maxTempFuture.get(i),
                     precipitationFuture.get(i),
-                    dailyTimeParsed.get(i)));
+                    dailyTimeParsed.get(i),
+                    sunSet.get(i),
+                    sunRise.get(i)));
+
             }
-
-
-            for (Weather w : weatherListFuture) {
-                logger.info(w.toString());
-            }
-
             return weatherListFuture;
-
 
         } catch (Exception e) {
             logger.error(e.getMessage());
