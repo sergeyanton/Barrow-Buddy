@@ -1,8 +1,11 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controllers;
 
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import nz.ac.canterbury.team1000.gardenersgrove.controller.FriendsController;
 import nz.ac.canterbury.team1000.gardenersgrove.controller.GlobalModelAttributeProvider;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.FriendRelationship;
@@ -59,18 +62,26 @@ public class FriendsControllerTest {
 	@Mock
 	private User userMock;
 
+	private User loggedInUser;
+
+	private User friendUser;
+
+	private User otherUser;
+
 	private SearchForm searchForm;
 
 	@BeforeEach
 	public void BeforeEach() {
 		userMock = Mockito.mock(User.class);
 		Mockito.when(userMock.getEmail()).thenReturn("johnsmith@gmail.com");
+//		Mockito.when(userMock.getId()).thenReturn(1L);
 
 		searchForm = new SearchForm();
 		searchForm.setEmailSearch(userMock.getEmail());
 
 		Mockito.when(userService.getLoggedInUser()).thenReturn(userMock);
 		Mockito.when(userService.checkEmail(Mockito.any())).thenReturn(true);
+
 	}
 
 	@Test
