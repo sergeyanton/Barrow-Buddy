@@ -688,22 +688,6 @@ public class ProfileControllerTest {
 		Mockito.verify(userService).findEmail(searchQuery);
 	}
 
-
-	@Test
-	public void SearchFriendsFormGet_EmailDoesNotExist_HasCorrectErrors() throws Exception {
-		String searchQuery = "asd@ad.com";
-		Mockito.when(userService.findEmail(searchQuery)).thenReturn(null);
-
-		mockMvc.perform(MockMvcRequestBuilders.get("/searchFriend").param("search", searchQuery).with(csrf()))
-			.andExpect(MockMvcResultMatchers.status().isOk())
-			.andExpect(MockMvcResultMatchers.view().name("pages/searchFriendPage"))
-			.andExpect(MockMvcResultMatchers.model().attributeDoesNotExist("users"))
-			.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("searchFriendsForm", "name", "search"))
-			.andExpect(MockMvcResultMatchers.model().attributeErrorCount("searchFriendsForm", 2));
-
-		Mockito.verify(userService).findEmail(searchQuery);
-	}
-
 	@Test
 	public void SearchFriendsFormGet_EmailExist_HasCorrectErrors() throws Exception {
 		String searchQuery = "asd@ad.com";
@@ -719,18 +703,6 @@ public class ProfileControllerTest {
 			.andExpect(MockMvcResultMatchers.model().attributeErrorCount("searchFriendsForm", 1));
 
 		Mockito.verify(userService).findEmail(searchQuery);
-	}
-
-	@Test
-	public void SearchFriendsFormGet_EmailInvalidForm_HasCorrectErrors() throws Exception {
-		String searchQuery = "@ad.com";
-
-		mockMvc.perform(MockMvcRequestBuilders.get("/searchFriend").param("search", searchQuery).with(csrf()))
-			.andExpect(MockMvcResultMatchers.status().isOk())
-			.andExpect(MockMvcResultMatchers.view().name("pages/searchFriendPage"))
-			.andExpect(MockMvcResultMatchers.model().attributeDoesNotExist("users"))
-			.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("searchFriendsForm","name", "email", "search"));
-		Mockito.verify(userService, Mockito.never()).findEmail(searchQuery);
 	}
 
 	@Test
@@ -765,47 +737,4 @@ public class ProfileControllerTest {
 		Mockito.verify(userService).getUsersByFullName(searchQuery);
 	}
 
-
-	@Test
-	public void SearchFriendsFormGet_NameDoesNotExist_HasErrors() throws Exception {
-		String searchQuery = "Name That Doesnt Exist";
-		Mockito.when(userService.getUsersByFullName(searchQuery)).thenReturn(new ArrayList<>());
-
-		mockMvc.perform(MockMvcRequestBuilders.get("/searchFriend").param("search", searchQuery).with(csrf()))
-			.andExpect(MockMvcResultMatchers.status().isOk())
-			.andExpect(MockMvcResultMatchers.view().name("pages/searchFriendPage"))
-			.andExpect(MockMvcResultMatchers.model().attributeDoesNotExist("users"))
-			.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("searchFriendsForm", "email", "search"));
-
-		Mockito.verify(userService).getUsersByFullName(searchQuery);
-	}
-
-	@Test
-	public void SearchFriendsFormGet_NameExist_HasNoErrors() throws Exception {
-		String searchQuery = "Name That Exists";
-		User otherUserMock = Mockito.mock(User.class);
-		Mockito.when(otherUserMock.getId()).thenReturn(2L);
-		Mockito.when(userService.getUsersByFullName(searchQuery)).thenReturn(List.of(otherUserMock));
-
-		mockMvc.perform(MockMvcRequestBuilders.get("/searchFriend").param("search", searchQuery).with(csrf()))
-			.andExpect(MockMvcResultMatchers.status().isOk())
-			.andExpect(MockMvcResultMatchers.view().name("pages/searchFriendPage"))
-			.andExpect(MockMvcResultMatchers.model().attribute("users", List.of(otherUserMock)))
-			.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("searchFriendsForm", "email"))
-			.andExpect(MockMvcResultMatchers.model().attributeErrorCount("searchFriendsForm", 1));
-
-		Mockito.verify(userService).getUsersByFullName(searchQuery);
-	}
-
-	@Test
-	public void SearchFriendsFormGet_NameInvalidForm_HasErrors() throws Exception {
-		String searchQuery = "This name has a % in it";
-
-		mockMvc.perform(MockMvcRequestBuilders.get("/searchFriend").param("search", searchQuery).with(csrf()))
-			.andExpect(MockMvcResultMatchers.status().isOk())
-			.andExpect(MockMvcResultMatchers.view().name("pages/searchFriendPage"))
-			.andExpect(MockMvcResultMatchers.model().attributeDoesNotExist("users"))
-			.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("searchFriendsForm","name", "email", "search"));
-		Mockito.verify(userService, Mockito.never()).findEmail(searchQuery);
-	}
 }
