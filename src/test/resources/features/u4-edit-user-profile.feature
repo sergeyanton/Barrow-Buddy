@@ -1,14 +1,18 @@
 Feature: U4 - As Sarah, I want to edit my user profile so that I can keep my details accurate.
-#TODO AC12
 
   Background:
-    Given I am logged in with the name "Steve" "", email "steve@gmail.com", and date of birth "12/12/2000"
+    Given I am logged in with the name "John" "", email "johndoe@gmail.com", and date of birth "12/12/2000"
 
   Scenario: AC1 & AC2 - Going to the edit profile form and seeing my prefilled details
     Given I am on the user profile page
-    When I click the Edit button on my user profile page
-    Then I see my details prefilled on the Edit Profile form, "Steve", "", "steve@gmail.com", & "12/12/2000"
+    When I click the edit button on my user profile page
+    Then I see my details prefilled on the Edit Profile form, "John", "", "johndoe@gmail.com", & "12/12/2000"
     And I see the checkbox for having no last name is checked
+
+  Scenario: AC12 - Cancel takes me back to my profile page and no changes have been made
+    Given I am on the edit user profile form
+    When I click the cancel button on my edit user profile form
+    Then I am taken back to my profile page and my details are still "John" "", "johndoe@gmail.com", and "12/12/2000"
 
   Scenario Outline: AC3 - Editing my profile with valid details
     Given I am on the edit user profile form
@@ -86,7 +90,7 @@ Feature: U4 - As Sarah, I want to edit my user profile so that I can keep my det
     And I enter details "John", "Doe", "ben@gmail.com", and "12/12/2000" on the edit user profile form
     And I do not tick the checkbox for no last name on the edit user profile form
     When I click the edit profile button
-    Then I am shown the error message "Email already in use" on the edit user profile form
+    Then I am shown the error message "Email address is already in use" on the edit user profile form
 
   Scenario Outline: AC9 - Editing my profile with invalid date format
     Given I am on the edit user profile form
@@ -135,8 +139,3 @@ Feature: U4 - As Sarah, I want to edit my user profile so that I can keep my det
     And I change my date of birth to mean that I turn 121 years old in 0 days on the edit user profile form
     When I click the edit profile button
     Then I am shown the error message "The maximum age allowed is 120 years" on the edit user profile form
-
-  Scenario: AC12 - Cancel takes me back to my profile page and no changes have been made
-    Given I am on the edit user profile form
-    When I click the Cancel button on my edit user profile form
-    Then I am taken back to my profile page and my details are still "Steve" "", "steve@gmail.com", and "12/12/2000"

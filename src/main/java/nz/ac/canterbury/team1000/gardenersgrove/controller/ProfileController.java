@@ -174,12 +174,14 @@ public class ProfileController {
                               @ModelAttribute("editUserForm") EditUserForm editUserForm,
                               BindingResult bindingResult) throws IOException {
         logger.info("POST /editProfile");
+        System.out.println("HELLO IM HERE");
         User currentUser = userService.getLoggedInUser();
         String oldEmail = currentUser.getEmail();
 
         EditUserForm.validate(editUserForm, bindingResult, currentUser);
 
         if (!bindingResult.hasFieldErrors("email") && !editUserForm.getEmail().equals(oldEmail) && userService.checkEmail(editUserForm.getEmail())) {
+            System.out.println("EMAIL TAKEN ERROR");
             bindingResult.addError(new FieldError("editUserForm", "email", editUserForm.getEmail(), false, null, null, "Email address is already in use"));
         }
 
@@ -199,6 +201,7 @@ public class ProfileController {
 
         if (bindingResult.hasErrors()) {
             if (bindingResult.hasFieldErrors("pictureFile")) editUserForm.setPicturePath(currentUser.getPicturePath());
+            System.out.println("OTHER ERROR");
             return "pages/editProfilePage";
         }
 
