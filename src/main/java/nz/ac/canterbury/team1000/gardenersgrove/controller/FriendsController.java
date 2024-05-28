@@ -6,7 +6,6 @@ import static nz.ac.canterbury.team1000.gardenersgrove.util.Status.PENDING;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.FriendRelationship;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.SearchFriendsForm;
@@ -113,25 +112,20 @@ public class FriendsController {
 		for (User user : userResults) {
 			FriendRelationship receivedRelationship = friendRelationshipService.getFriendRelationship(user.getId(), currentUser.getId());
 			FriendRelationship sentRelationship = friendRelationshipService.getFriendRelationship(currentUser.getId(), user.getId());
-			logger.info("Adding user " + user);
 
 			if (receivedRelationship == null && sentRelationship == null) {
-				logger.info("None");
 				friendStatus.add(Pair.of("None", ""));
 				continue;
 			}
 
 			if (receivedRelationship != null) {
-				logger.info("Recv");
 				friendStatus.add(Pair.of("Recv", receivedRelationship.getStatus().name()));
 			}
 
 			if (sentRelationship != null) {
-				logger.info("Sent");
 				friendStatus.add(Pair.of("Sent", sentRelationship.getStatus().name()));
 			}
 		}
-
 		model.addAttribute("friendStatus", friendStatus);
 		model.addAttribute("users", userResults);
 
@@ -139,8 +133,10 @@ public class FriendsController {
 	}
 
 	/**
-	 * Gets the thymeleaf page representing the /friends page.
-	 * @return thymeleaf viewFriendsPage
+	 * Gets the Thymeleaf page representing the /friends page.
+	 *
+	 * @param model the object to add attributes to be accessed in the view.
+	 * @return the name of the view template to render.
 	 */
 	@GetMapping("/friends")
 	public String getFriendsPage(Model model) {
@@ -187,68 +183,12 @@ public class FriendsController {
 		return "pages/viewFriendsPage";
 	}
 
-//	public String getSearchByEmail( @ModelAttribute("searchForm") SearchForm searchForm,
-//		@RequestParam(required = false, defaultValue = "") String emailSearch,
-//		BindingResult bindingResult,Model model) {
-//		String relationshipStatus = null;
-//		String receiverSentPendingRequest = "false";
-//
-//		if (!emailSearch.isBlank()) {
-//			SearchForm.validate(searchForm, bindingResult);
-//			userResult =  userService.findEmail(emailSearch);
-//
-//			if (!bindingResult.hasErrors()) {
-//				if (userResult == null) {
-//					// No user found
-//					bindingResult.addError(new FieldError("searchForm", "emailSearch", searchForm.getEmailSearch(), false, null, null, "There is nobody with that email in Gardener’s Grove"));
-//				} else if (Objects.equals(currentUser.getEmail(), emailSearch)) {
-//					// User searched for themselves
-//					bindingResult.addError(new FieldError("searchForm", "emailSearch", searchForm.getEmailSearch(), false, null, null, "You've searched for your own email. Now, let's find some friends!"));
-//				} else {
-//					// User search is valid
-//					// First check if they have received a relationship
-//					FriendRelationship receivedRelationship = friendRelationshipService.getFriendRelationship(userResult.getId(), currentUser.getId());
-//					if (receivedRelationship != null) {
-//						// If they already have a relationship
-//						relationshipStatus = receivedRelationship.getStatus().name();
-//						if (relationshipStatus.equals("PENDING")) {
-//							receiverSentPendingRequest = "true";
-//						}
-//					} else {
-//						// If not, check if they have initiated a relationship
-//						FriendRelationship sentRelationship = friendRelationshipService.getFriendRelationship(currentUser.getId(), userResult.getId());
-//						if (sentRelationship != null) {
-//							// If they already have a relationship
-//							relationshipStatus = sentRelationship.getStatus().name();
-//						}
-//					}
-//
-//				}
-//			}
-//
-//			if (bindingResult.hasErrors()) {
-//				return "pages/searchByEmailPage";
-//			}
-//		} else {
-//			userResult = null;
-//		}
-//		model.addAttribute("emailSearch", emailSearch);
-//		model.addAttribute("searchForm", searchForm);
-//		model.addAttribute("userResult", userResult);
-//		model.addAttribute("relationshipStatus", relationshipStatus);
-//		model.addAttribute("receiverSentPendingRequest", receiverSentPendingRequest);
-//
-//		return "pages/searchByEmailPage";
-//	}
-
 	/**
-	 * Handles POST requests to the /addFriend endpoint.
-	 * This adds a new 'pending' relationship to the database between the logged-in user and search result user.
+	 * Handles POST requests to send a friend request.
 	 *
-	 * @param receiver      Email address of the searched user to be sent a friend request
-	 * @param searchForm    The search form input to be persisted
-	 * @param model         Used to pass through attributes to the view
-	 * @return              The same search by email page with the attributes persisted
+	 * @param receiver the email address of the user to be sent a friend request.
+	 * @param back the URL to redirect back to after sending the friend request.
+	 * @return the redirection URL.
 	 */
 	@PostMapping("/addFriend")
 	public String postFriendRequest(@RequestParam("receiver") String receiver, @RequestParam("back") String back) {
@@ -275,6 +215,13 @@ public class FriendsController {
 		return "redirect:" + back;
 	}
 
+	/**
+	 * Handles POST requests to decline a friend request.
+	 *
+	 * @param senderUserId the ID of the user whose friend request is to be declined.
+	 * @param model the Model object to add attributes to be accessed in the view.
+	 * @return the redirection URL to the friends page.
+	 */
 	@PostMapping("/declineFriend")
 	public String postDeclineFriend(@RequestParam("senderUserId") Long senderUserId,
 		Model model) {
@@ -324,6 +271,13 @@ public class FriendsController {
 		return "redirect:/friends";
 	}
 
+	/**
+	 * Handles POST requests to accept a friend request.
+	 *
+	 * @param senderUserId the ID of the user whose friend request is to be accepted.
+	 * @param model the Model object to add attributes to be accessed in the view.
+	 * @return the redirection URL to the friends page.
+	 */
 	@PostMapping("/acceptFriend")
 	public String postAcceptFriend(@RequestParam("senderUserId") Long senderUserId,
 		Model model) {
