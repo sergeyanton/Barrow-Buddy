@@ -44,10 +44,26 @@ public class GlobalModelAttributeProvider {
      * @return the current url without the page number or base url
      */
     @ModelAttribute("paginationPath")
-    private String getCurrentPathNoPage(HttpServletRequest request) {
-        // make sure to strip the base url off the start
-        String path = request.getServletPath();
-        return this.getCurrentPath(request).replaceAll("(&|\\?)page=\\d+", "").replaceFirst(path, "");
+    public String getPaginationPath(HttpServletRequest request) {
+        String currentPath = request.getRequestURI();
+        String baseUrl = request.getContextPath(); // Get the base URL, e.g., /test
+        String queryString = request.getQueryString();
+
+        // Remove the base URL from the path
+        if (currentPath.startsWith(baseUrl)) {
+            currentPath = currentPath.substring(baseUrl.length());
+        }
+
+        if (queryString != null) {
+            currentPath += "?" + queryString.replaceAll("(^|&)page=\\d", "");
+        }
+
+        // Remove floating question mark (this happens when page is the only query parameter left)
+        if (currentPath.endsWith("?")) {
+            currentPath = currentPath.substring(0, currentPath.length() - 1);
+        }
+
+        return currentPath;
     }
 
 
