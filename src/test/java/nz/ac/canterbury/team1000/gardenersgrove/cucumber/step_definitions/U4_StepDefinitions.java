@@ -1,5 +1,8 @@
 package nz.ac.canterbury.team1000.gardenersgrove.cucumber.step_definitions;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -7,40 +10,100 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
+import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.EditUserForm;
+import nz.ac.canterbury.team1000.gardenersgrove.form.LoginForm;
+import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
 import org.junit.jupiter.api.Assertions;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.mockito.Spy;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 public class U4_StepDefinitions {
+	@Autowired
+	UserService userService;
+	@Autowired
+	private MockMvc mockMvc;
+	@Autowired
+	PasswordEncoder passwordEncoder;
+	LoginForm loginForm = new LoginForm();
 	EditUserForm editUserForm = new EditUserForm();
 	BindingResult bindingResult;
 	ArgumentCaptor<FieldError> fieldErrorCaptor = ArgumentCaptor.forClass(FieldError.class);
+	private User testUser;
+	private final String PASSWORD = "Password1234!";
 
-	@Given("I am on the edit user profile form and enter first name {string} and last name {string}")
-	public void iAmOnTheEditUserProfileFormAndEnterFirstNameFirstNameAndLastNameLastName(String firstName, String lastName) {
-		editUserForm.setFirstName(firstName);
-		editUserForm.setLastName(lastName);
-		editUserForm.setNoSurnameCheckBox(lastName.isBlank());
-		editUserForm.setPicturePath("/images/default_pic.jpg");
+	@Given("I am logged in with the name {string} {string}, email {string}, and date of birth {string}")
+	public void iAmLoggedInWithTheNameEmailAndDateOfBirth(String fName, String lName, String email,
+		String dob) throws Exception {
+		if (userService.checkEmail(email)) {
+			testUser = userService.findEmail(email);
+			return;
+		}
+		testUser = new User(fName, lName, email, passwordEncoder.encode(PASSWORD), LocalDate.parse(dob, DateTimeFormatter.ofPattern("dd/MM/uuuu")), "/images/default_pic.jpg");
+		testUser.grantAuthority("ROLE_USER");
+		userService.registerUser(testUser);
+
+		loginForm.setEmail(testUser.getEmail());
+		loginForm.setPassword(PASSWORD);
+
+		mockMvc.perform(MockMvcRequestBuilders.post("/login").with(csrf())
+				.flashAttr("loginForm", loginForm))
+			.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+			.andExpect(MockMvcResultMatchers.redirectedUrl("/home"));
+	}
+
+	@Given("I am on the user profile page")
+	public void iAmOnTheUserProfilePage() throws Exception {
+		mockMvc.perform(MockMvcRequestBuilders.get("/profile").with(csrf()))
+			.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+			.andExpect(MockMvcResultMatchers.view().name("pages/profilePage"));
+	}
+
+	@When("I click the Edit button on my user profile page")
+	public void iClickTheEditButtonOnMyUserProfilePage() throws Exception {
+		editUserForm = (EditUserForm) mockMvc.perform(
+				MockMvcRequestBuilders.get("/editProfile").with(csrf()))
+			.andExpect(MockMvcResultMatchers.status().isOk())
+			.andReturn()
+			.getModelAndView().getModel().get("editUserForm");
+	}
+
+	@Then("I see my details prefilled on the Edit Profile form, {string}, {string}, {string}, & {string}")
+	public void iSeeMyDetailsPrefilledOnTheEditProfileForm(String fName, String lName, String email,
+		String dob) {
+		assertEquals(fName, editUserForm.getFirstName());
+		assertEquals(lName, editUserForm.getLastName());
+		assertEquals(email, editUserForm.getEmail());
+		assertEquals(dob, editUserForm.getDob());
+	}
+
+	@Given("I am on the edit user profile form")
+	public void iAmOnTheEditUserProfileForm() {
 		editUserForm.setPictureFile(new MockMultipartFile("pictureFile", new byte[0]));
 	}
 
-	@Given("I am on the edit user profile form and enter a first name {int} characters long and a last name {int} characters long")
-	public void iAmOnTheEditUserProfileFormAndEnterAFirstNameCharactersLongAndALastNameCharactersLong(
-		int firstNameLength, int lastNameLength) {
+	@And("I enter details {string}, {string}, {string}, and {string} on the edit user profile form")
+	public void iEnterDetailsFirstNameLastNameEmailAndDobOnTheEditUserProfileForm(String fName, String lName, String email, String dob) {
+		editUserForm.setFirstName(fName);
+		editUserForm.setLastName(lName);
+		editUserForm.setEmail(email);
+		editUserForm.setDob(dob);
+	}
+
+	@And("I enter a first name {int} characters long and a last name {int} characters long")
+	public void iEnterAFirstNameCharactersLongAndALastNameCharactersLong(int firstNameLength, int lastNameLength) {
 		editUserForm.setFirstName("F".repeat(firstNameLength));
 		editUserForm.setLastName("L".repeat(lastNameLength));
-		editUserForm.setNoSurnameCheckBox(lastNameLength == 0);
-		editUserForm.setPicturePath("/images/default_pic.jpg");
-		editUserForm.setPictureFile(new MockMultipartFile("pictureFile", new byte[0]));
-	}
-
-	@And("I enter email {string} on the edit user profile form")
-	public void iEnterEmailEmailOnTheEditUserProfileForm(String email) {
-		editUserForm.setEmail(email);
 	}
 
 	@And("I tick the checkbox for no last name on the edit user profile form")
@@ -53,20 +116,17 @@ public class U4_StepDefinitions {
 		editUserForm.setNoSurnameCheckBox(false);
 	}
 
-	@And("I enter date of birth {string} on the edit user profile form")
-	public void iEnterDateOfBirthDobOnTheEditUserProfileForm(String dob) {
-		editUserForm.setDob(dob);
-	}
-
-	@And("I enter a date of birth that means I turn {int} years old in {int} days on the edit user profile form")
+	@And("I change my date of birth to mean that I turn {int} years old in {int} days on the edit user profile form")
 	public void iEnterADateOfBirthThatMeansITurnYearsOldInDaysOnTheEditUserProfileForm(int age, int numDays) {
 		editUserForm.setDob(LocalDate.now().minusYears(age).plusDays(numDays).format(DateTimeFormatter.ofPattern("dd/MM/uuuu")));
 	}
 
+	// Do not have the current level of knowledge to test this exactly how we want.
 	@When("I click the edit profile button")
-	public void iClickTheEditProfileButton() {
+	public void iClickTheEditProfileButton(){
 		bindingResult = Mockito.mock(BindingResult.class);
 		EditUserForm.validate(editUserForm, bindingResult, null);
+
 	}
 
 	@Then("My new details are saved")
