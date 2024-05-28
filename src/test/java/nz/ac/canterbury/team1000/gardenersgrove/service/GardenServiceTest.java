@@ -18,6 +18,8 @@ import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 
 // Got this working with help from tutorial from src: https://www.baeldung.com/spring-beans-integration-test-override
@@ -94,9 +96,9 @@ public class GardenServiceTest {
             true
         );
         Garden savedGarden = gardenService.addGarden(publicGarden);
-        List<Garden> searchResults = gardenService.getPublicGardens();
+        Page<Garden> searchResults = gardenService.getPublicGardens(Pageable.unpaged());
         Assertions.assertNotNull(savedGarden.getId());
-        Assertions.assertTrue(searchResults.contains(publicGarden));
+        Assertions.assertTrue(searchResults.getContent().contains(publicGarden));
     }
 
     @Test
@@ -116,10 +118,10 @@ public class GardenServiceTest {
             false
         );
         Garden savedGarden = gardenService.addGarden(privateGarden);
-        List<Garden> searchResults = gardenService.getPublicGardens();
+        Page<Garden> searchResults = gardenService.getPublicGardens(Pageable.unpaged());
 
         Assertions.assertNotNull(savedGarden.getId());
-        Assertions.assertFalse(searchResults.contains(privateGarden));
+        Assertions.assertFalse(searchResults.getContent().contains(privateGarden));
     }
 
     @Test
@@ -138,9 +140,9 @@ public class GardenServiceTest {
             testUser,
             true
         );Garden savedGarden = gardenService.addGarden(publicGarden);
-        List<Garden> searchResults = gardenService.searchGardens("Public");
+        Page<Garden> searchResults = gardenService.searchGardens("Public", Pageable.unpaged());
         Assertions.assertNotNull(savedGarden.getId());
-        Assertions.assertTrue(searchResults.contains(publicGarden));
+        Assertions.assertTrue(searchResults.getContent().contains(publicGarden));
     }
 
     @Test
@@ -160,9 +162,9 @@ public class GardenServiceTest {
             false
         );
         Garden savedGarden = gardenService.addGarden(privateGarden);
-        List<Garden> searchResults = gardenService.searchGardens("Private");
+        Page<Garden> searchResults = gardenService.searchGardens("Private", Pageable.unpaged());
         Assertions.assertNotNull(savedGarden.getId());
-        Assertions.assertFalse(searchResults.contains(privateGarden));
+        Assertions.assertFalse(searchResults.getContent().contains(privateGarden));
     }
 
     @Test
@@ -194,9 +196,9 @@ public class GardenServiceTest {
         plantRepository.save(testPlant);
 
         Garden savedGarden = gardenService.addGarden(publicGarden);
-        List<Garden> searchResults = gardenService.searchGardens("Cactus");
+        Page<Garden> searchResults = gardenService.searchGardens("Cactus", Pageable.unpaged());
         Assertions.assertNotNull(savedGarden.getId());
-        Assertions.assertTrue(searchResults.contains(publicGarden));
+        Assertions.assertTrue(searchResults.getContent().contains(publicGarden));
     }
 
     @Test
@@ -228,9 +230,9 @@ public class GardenServiceTest {
         plantRepository.save(testPlant);
 
         Garden savedGarden = gardenService.addGarden(privateGarden);
-        List<Garden> searchResults = gardenService.searchGardens("Cactus");
+        Page<Garden> searchResults = gardenService.searchGardens("Cactus", Pageable.unpaged());
         Assertions.assertNotNull(savedGarden.getId());
-        Assertions.assertFalse(searchResults.contains(privateGarden));
+        Assertions.assertFalse(searchResults.getContent().contains(privateGarden));
     }
 
 

@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import nz.ac.canterbury.team1000.gardenersgrove.form.GardenForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PlantForm;
@@ -24,6 +25,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -100,14 +103,15 @@ public class GardenControllerTest {
         + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
         + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 
-	private List<Garden> publicGardens;
+	private Page<Garden> publicGardens;
 	private List<Garden> allGardens;
 
 	@BeforeEach
     public void BeforeEach() {
         loggedInUser = Mockito.mock(User.class);
         Mockito.when(userService.getLoggedInUser()).thenReturn(loggedInUser);
-        Mockito.when(loggedInUser.getId()).thenReturn(1L);
+        Mockito.when(loggedInUser
+            .getId()).thenReturn(1L);
 
         gardenMock = Mockito.mock(Garden.class);
 		Mockito.when(gardenMock.getId()).thenReturn(1L);
@@ -159,8 +163,7 @@ public class GardenControllerTest {
 		publicGardenForm.setPublicity(publicGardenMock.getIsPublic());
 
 		// array list of public gardens and all gardens
-		publicGardens = new ArrayList<>();
-		publicGardens.add(publicGardenMock);
+		publicGardens = new PageImpl<>(List.of(publicGardenMock));
 
 		allGardens = new ArrayList<>();
 		allGardens.add(publicGardenMock);
@@ -181,7 +184,7 @@ public class GardenControllerTest {
 
         Mockito.when(gardenService.getGardenById(1L)).thenReturn(gardenMock);
 
-        Mockito.when(gardenService.getPublicGardens()).thenReturn(publicGardens);
+        Mockito.when(gardenService.getPublicGardens(Mockito.any())).thenReturn(publicGardens);
     }
 
     @Test
@@ -783,46 +786,46 @@ public class GardenControllerTest {
             .andExpect(MockMvcResultMatchers.view().name("pages/browseGardensPage"))
             .andExpect(MockMvcResultMatchers.model().attributeExists("gardens"))
             .andExpect(MockMvcResultMatchers.model().attribute("gardens", publicGardens));
-        verify(gardenService).getPublicGardens();
+        verify(gardenService).getPublicGardens(Mockito.any());
     }
 
     @Test
     public void BrowseGardensGet_WithQueryWithMatch_ReturnsPageWithQuerySearch() throws Exception {
         String publicGardenQuery = "Public Garden";
-        when(gardenService.searchGardens(publicGardenQuery)).thenReturn(publicGardens);
+        when(gardenService.searchGardens(Mockito.eq(publicGardenQuery), Mockito.any())).thenReturn(publicGardens);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/browseGardens").param("query", publicGardenQuery).with(csrf()))
             .andExpect(MockMvcResultMatchers.status().isOk())
             .andExpect(MockMvcResultMatchers.view().name("pages/browseGardensPage"))
             .andExpect(MockMvcResultMatchers.model().attributeExists("gardens"))
             .andExpect(MockMvcResultMatchers.model().attribute("gardens", publicGardens));
-        verify(gardenService).searchGardens(publicGardenQuery);
+        verify(gardenService).searchGardens(Mockito.eq(publicGardenQuery), Mockito.any());
     }
 
     @Test
     public void BrowseGardensGet_WithQueryWithNoMatch_ReturnsPageWithEmptyResults() throws Exception {
         String query = "No match";
-        when(gardenService.searchGardens(query)).thenReturn(new ArrayList<>());
+        when(gardenService.searchGardens(Mockito.eq(query), Mockito.any())).thenReturn(new PageImpl<Garden>(List.of()));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/browseGardens").param("query", query).with(csrf()))
             .andExpect(MockMvcResultMatchers.status().isOk())
             .andExpect(MockMvcResultMatchers.view().name("pages/browseGardensPage"))
             .andExpect(MockMvcResultMatchers.model().attributeExists("gardens"))
-            .andExpect(MockMvcResultMatchers.model().attribute("gardens", Matchers.empty()));
-        verify(gardenService).searchGardens(query);
+            .andExpect(MockMvcResultMatchers.model().attribute("gardens", Matchers.equalTo(new PageImpl<Garden>(List.of()))));
+        verify(gardenService).searchGardens(Mockito.eq(query), Mockito.any());
     }
 
     @Test
     public void BrowseGardensGet_WithPrivateGardenQuery_ReturnsPageWithEmptyResults() throws Exception {
         String privateGardenQuery = "Hamilton";
-        when(gardenService.searchGardens(privateGardenQuery)).thenReturn(new ArrayList<>());
+        when(gardenService.searchGardens(Mockito.eq(privateGardenQuery), Mockito.any())).thenReturn(new PageImpl<Garden>(List.of()));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/browseGardens").param("query", privateGardenQuery).with(csrf()))
             .andExpect(MockMvcResultMatchers.status().isOk())
             .andExpect(MockMvcResultMatchers.view().name("pages/browseGardensPage"))
             .andExpect(MockMvcResultMatchers.model().attributeExists("gardens"))
-            .andExpect(MockMvcResultMatchers.model().attribute("gardens", Matchers.empty()));
-        verify(gardenService).searchGardens(privateGardenQuery);
+            .andExpect(MockMvcResultMatchers.model().attribute("gardens", Matchers.equalTo(new PageImpl<Garden>(List.of()))));
+        verify(gardenService).searchGardens(Mockito.eq(privateGardenQuery), Mockito.any());
     }
 
 }
