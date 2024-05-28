@@ -6,6 +6,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import java.time.LocalDate;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PlantForm;
+import nz.ac.canterbury.team1000.gardenersgrove.service.FriendRelationshipService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.ModerationService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.WeatherService;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,6 +57,9 @@ public class GardenControllerAuthTest {
 
     @MockBean
     private VerificationTokenService verificationTokenService;
+
+    @MockBean
+    private FriendRelationshipService friendRelationshipService;
 
     @Mock
     private Garden privateGardenMock;
