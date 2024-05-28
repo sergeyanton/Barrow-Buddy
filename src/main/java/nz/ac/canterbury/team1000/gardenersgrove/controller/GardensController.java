@@ -7,12 +7,15 @@ import java.util.Objects;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import nz.ac.canterbury.team1000.gardenersgrove.entity.FriendRelationship;
+import nz.ac.canterbury.team1000.gardenersgrove.service.FriendRelationshipService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.ModerationService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.WeatherService;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Weather;
 import nz.ac.canterbury.team1000.gardenersgrove.form.GardenForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PictureForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PlantForm;
+import nz.ac.canterbury.team1000.gardenersgrove.util.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
@@ -51,18 +54,22 @@ public class GardensController {
 	private final WeatherService weatherService;
 	private final ModerationService moderationService;
 
+	private final FriendRelationshipService friendRelationshipService;
+
 	//TODO make a controller dedicated to uploading files.
 	private final static String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/uploads";
 
 
 	public GardensController(GardenService gardenService, PlantService plantService,
 		UserService userService, WeatherService weatherService,
-		ModerationService moderationService) {
+		ModerationService moderationService,
+		FriendRelationshipService friendRelationshipService) {
 		this.gardenService = gardenService;
 		this.plantService = plantService;
 		this.userService = userService;
 		this.weatherService = weatherService;
 		this.moderationService = moderationService;
+		this.friendRelationshipService = friendRelationshipService;
 	}
 
 	/**
@@ -76,6 +83,7 @@ public class GardensController {
 	 */
 	private Garden tryToAccessGarden(Long gardenId) throws ResponseStatusException {
 		Garden garden;
+		User loggedInUser = userService.getLoggedInUser();
 		// Make sure the garden exists
 		try {
 			garden = gardenService.getGardenById(gardenId);
@@ -87,13 +95,15 @@ public class GardensController {
 		}
 
         // Garden must be public for any user to view it
-        // If private, user must own the garden to view it
+        // If private, user must own the garden or be friends with owner to view it
+		// Check if they are friends - sent or received
+		boolean areFriends = areUsersFriends(loggedInUser.getId(), garden.getOwner().getId());
         boolean gardenIsPrivate = !garden.getIsPublic();
         boolean userOwnsGarden = doesUserOwnGarden(garden);
-        if (gardenIsPrivate && !userOwnsGarden) {
+        if (gardenIsPrivate && !userOwnsGarden && !areFriends) {
             throw new ResponseStatusException(
                 HttpStatus.FORBIDDEN,
-                "This garden is private. Only the owner can view it."
+				"You do not have permission to view this garden."
             );
         }
 
@@ -132,6 +142,7 @@ public class GardensController {
         return garden;
     }
 
+
     /**
      * Gets the plant with the given id, if the plant can be accessed.
      * Otherwise, throws an HTTP response exception like 403 or 404
@@ -162,6 +173,42 @@ public class GardensController {
         }
         return plant;
     }
+
+	/**
+	 * Helper method to check if two users are friends.
+	 * @param userId
+	 * @param otherUserId
+	 * @return
+	 */
+	public boolean areUsersFriends(Long userId, Long otherUserId) {
+		FriendRelationship sentRelationship = friendRelationshipService.getFriendRelationship(userId, otherUserId);
+		FriendRelationship receivedRelationship = friendRelationshipService.getFriendRelationship(otherUserId, userId);
+		boolean sentFriends = (sentRelationship != null && sentRelationship.getStatus().equals(
+			Status.APPROVED));
+		boolean receivedFriends = (receivedRelationship != null && receivedRelationship.getStatus().equals(
+			Status.APPROVED));
+		return sentFriends || receivedFriends;
+	}
+
+	private List<Garden> tryToViewGardensList(Long ownerId) throws ResponseStatusException {
+		try {
+			User owner = userService.getUserById(ownerId);
+		} catch (IllegalArgumentException exception) {
+			throw new ResponseStatusException(
+				HttpStatus.NOT_FOUND,
+				"User not found"
+			);
+		}
+
+		boolean areFriends = areUsersFriends(userService.getLoggedInUser().getId(), ownerId);
+		if (!areFriends) {
+			throw new ResponseStatusException(
+				HttpStatus.FORBIDDEN,
+				"You can only view your own or your friends' gardens"
+			);
+		}
+		return gardenService.getUserGardens(ownerId);
+	}
 
     /**
      * Helper method to check if the logged-in user owns the given garden.
@@ -230,6 +277,29 @@ public class GardensController {
         model.addAttribute("gardens", gardenService.getUserGardens(loggedInUser.getId()));
         return "pages/gardensPage";
     }
+
+	/**
+	 * Handles GET requests from the /gardens/{userId} endpoint.
+	 * Displays all gardens owned by the specified user.
+	 *
+	 * @param userId the ID of the user whose gardens are to be displayed
+	 * @param model  (map-like) representation of results to be used by Thymeleaf
+	 * @return thymeleaf pages/gardensPage
+	 */
+	@GetMapping("/user/{userId}/gardens")
+	public String viewUserGardens(@PathVariable Long userId, Model model) {
+		logger.info("GET /gardens/{}", userId);
+
+		if (Objects.equals(userId, userService.getLoggedInUser().getId())) {
+			return "redirect:/gardens";
+		}
+		// if not friends, show error page
+		List<Garden> gardens = tryToViewGardensList(userId);
+		// If own id, redirect to /gardens
+
+		model.addAttribute("gardens", gardens);
+		return "pages/gardensPage";
+	}
 
     /**
      * Handles GET requests from the /gardens/{gardenId} endpoint.

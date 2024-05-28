@@ -14,10 +14,10 @@
             </div>
 
             <form th:action="@{/profile}" th:object="${profilePictureForm}" method="post" enctype="multipart/form-data">
-                <label id="pictureFileLabel" class="file-upload-label" th:for="pictureFile">Edit Profile Picture</label>
-                <input type="file" th:field="*{pictureFile}" onchange="validateImage(this)" accept="image/png, image/jpeg, image/svg+xml">
-                <button type="button" id="cancelButton" class="cancel" style="display: none;" th:attr="onclick='cancelUpload(\'' + ${picturePath} + '\')'">Undo</button>
-                <button type="submit" id="submitButton" style="display: none;">Save Profile Picture</button>
+                <label id="pictureFileLabel" th:if="${(id == loggedInUserId)}" class="file-upload-label" th:for="pictureFile">Edit Profile Picture</label>
+                <input th:if="${(id == loggedInUserId)}" type="file" th:field="*{pictureFile}" onchange="validateImage(this)" accept="image/png, image/jpeg, image/svg+xml">
+                <button th:if="${(id == loggedInUserId)}" type="button" id="cancelButton" class="cancel" style="display: none;" th:attr="onclick='cancelUpload(\'' + ${picturePath} + '\')'">Undo</button>
+                <button th:if="${(id == loggedInUserId)}" type="submit" id="submitButton" style="display: none;">Save Profile Picture</button>
                 <span id="clientSideErrorMessage" class="error"></span>
             </form>
             <br />
@@ -25,8 +25,8 @@
             <p th:text="${email}" style="font-size: 18px;"></p>
             <p th:if="${dob != null}" th:text="'Date of birth: ' + ${dob}" style="font-size: 18px;"></p>
             <br />
-            <a class="submit" th:href="@{editProfile}">Edit profile</a>
-            <a th:href="@{logout}" class="cancel">Log out</a>
+            <a th:if="${(id == loggedInUserId)}" class="submit" th:href="@{editProfile}">Edit profile</a>
+            <a th:if="${(id == loggedInUserId)}" th:href="@{logout}" class="cancel">Log out</a>
         </div>
     </main>
     <script>

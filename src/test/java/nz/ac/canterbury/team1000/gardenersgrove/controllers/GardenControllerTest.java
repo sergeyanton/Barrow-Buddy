@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import nz.ac.canterbury.team1000.gardenersgrove.form.GardenForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PlantForm;
+import nz.ac.canterbury.team1000.gardenersgrove.service.FriendRelationshipService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.ModerationService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.WeatherService;
 import org.hamcrest.Matchers;
@@ -70,6 +71,9 @@ public class GardenControllerTest {
 
     @MockBean
     private VerificationTokenService verificationTokenService;
+
+    @MockBean
+    private FriendRelationshipService friendRelationshipService;
 
     @Mock
     private Garden gardenMock;

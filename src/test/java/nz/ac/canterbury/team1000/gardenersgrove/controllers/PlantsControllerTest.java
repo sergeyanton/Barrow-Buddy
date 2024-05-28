@@ -3,6 +3,7 @@ package nz.ac.canterbury.team1000.gardenersgrove.controllers;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PictureForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PlantForm;
+import nz.ac.canterbury.team1000.gardenersgrove.service.FriendRelationshipService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.ModerationService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.WeatherService;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,6 +62,9 @@ public class PlantsControllerTest {
 
     @MockBean
     private ModerationService moderationService;
+
+    @MockBean
+    private FriendRelationshipService friendRelationshipService;
 
     @Mock
     private Plant plantMock;

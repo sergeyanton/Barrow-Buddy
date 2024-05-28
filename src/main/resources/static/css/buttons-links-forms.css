@@ -81,6 +81,27 @@ button:hover, .submit:hover {
     cursor: pointer;
 }
 
+.button-cell {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.button-cell form {
+    display: inline-block;
+    align-content: end;
+}
+
+.decline-button {
+    padding: 10px 10px;
+    font-size: 16px;
+    border-radius: 10px;
+    background-color: darkred;
+    color: #FAF9F6;
+    border: none;
+    cursor: pointer;
+}
+
 .invite-button:hover {
     background-color: rgba(4, 65, 42, 0.71);
 }
