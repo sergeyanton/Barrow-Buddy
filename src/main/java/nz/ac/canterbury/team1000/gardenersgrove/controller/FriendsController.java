@@ -9,13 +9,14 @@ import java.util.List;
 import java.util.Objects;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.FriendRelationship;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
-import nz.ac.canterbury.team1000.gardenersgrove.form.SearchForm;
+import nz.ac.canterbury.team1000.gardenersgrove.form.SearchFriendsForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.FriendRelationshipService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
 import nz.ac.canterbury.team1000.gardenersgrove.util.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -41,6 +42,100 @@ public class FriendsController {
 	public FriendsController(UserService userService, FriendRelationshipService friendRelationshipService) {
 		this.userService = userService;
 		this.friendRelationshipService = friendRelationshipService;
+	}
+
+	/**
+	 * Handles GET requests for searching users by email.
+	 *
+	 * @param searchFriendsForm    the SearchFriendsForm object containing the search parameters
+	 * @param search        the user input that they are searching for, which is optional and defaults to an empty string if not provided
+	 * @param bindingResult the BindingResult object for validation errors
+	 * @param model         the Model object to add attributes to be accessed in the view
+	 * @return the name of the view template to render
+	 */
+	@GetMapping("/searchFriend")
+	public String searchFriend( @ModelAttribute("searchFriendsForm") SearchFriendsForm searchFriendsForm,
+		@RequestParam(required = false, defaultValue = "") String search,
+		BindingResult bindingResult, Model model) {
+		logger.info("GET /searchFriend");
+		String templateString = "pages/searchFriendPage";
+
+		List<User> userResults = new ArrayList<>();
+		User currentUser = userService.getLoggedInUser();
+
+		model.addAttribute("search", search);
+
+		if (search.isBlank()) {
+			return templateString;
+		}
+
+		SearchFriendsForm.validate(searchFriendsForm, bindingResult);
+
+		Boolean searchingByEmail = !bindingResult.hasFieldErrors("email");
+		Boolean searchingByName = !bindingResult.hasFieldErrors("name");
+		if (!searchingByEmail && !searchingByName) {
+			bindingResult.addError(new FieldError("searchFriendsForm", "search", searchFriendsForm.getSearch(), false, null, null, "Please enter a valid name or email"));
+			return templateString;
+		}
+
+		if (searchingByName) {
+			userResults = userService.getUsersByFullName(search);
+		} else if (searchingByEmail) {
+			User userResult = userService.findEmail(search);
+
+			if (userResult != null) {
+				userResults = List.of(userResult);
+			}
+		}
+
+		Boolean noResults = userResults.isEmpty();
+		if (noResults && searchingByName) {
+			// there are no results and the search was for a name
+			bindingResult.addError(new FieldError("searchFriendsForm", "search", searchFriendsForm.getSearch(), false, null, null, "There is nobody with that name in Gardener’s Grove"));
+		} else if (noResults && searchingByEmail) {
+			bindingResult.addError(new FieldError("searchFriendsForm", "search", searchFriendsForm.getSearch(), false, null, null, "There is nobody with that email in Gardener’s Grove"));
+		}
+
+		Boolean iAmOnlyResult = userResults.size() == 1 && userResults.contains(currentUser);
+		if (iAmOnlyResult && searchingByName) {
+			bindingResult.addError(new FieldError("searchFriendsForm", "search", searchFriendsForm.getSearch(), false, null, null, "There is nobody else with that name in Gardener’s Grove"));
+		} else if (iAmOnlyResult && searchingByEmail) {
+			bindingResult.addError(new FieldError("searchFriendsForm", "search", searchFriendsForm.getSearch(), false, null, null, "You've searched for your own email. Now, let's find some friends!"));
+		}
+
+		if (iAmOnlyResult) {
+			return templateString;
+		}
+
+		// List of Pair, the string can be "None", "Send" or "Recv"
+		List<Pair<String, String>> friendStatus = new ArrayList<>();
+
+		for (User user : userResults) {
+			FriendRelationship receivedRelationship = friendRelationshipService.getFriendRelationship(user.getId(), currentUser.getId());
+			FriendRelationship sentRelationship = friendRelationshipService.getFriendRelationship(currentUser.getId(), user.getId());
+			logger.info("Adding user " + user);
+
+			if (receivedRelationship == null && sentRelationship == null) {
+				logger.info("None");
+				friendStatus.add(Pair.of("None", ""));
+				continue;
+			}
+
+			if (receivedRelationship != null) {
+				logger.info("Recv");
+				friendStatus.add(Pair.of("Recv", receivedRelationship.getStatus().name()));
+			}
+
+			if (sentRelationship != null) {
+				logger.info("Sent");
+				friendStatus.add(Pair.of("Sent", sentRelationship.getStatus().name()));
+			}
+		}
+
+		model.addAttribute("friendStatus", friendStatus);
+		model.addAttribute("users", userResults);
+
+		return "pages/searchFriendPage";
 	}
 
 	/**
@@ -92,72 +187,59 @@ public class FriendsController {
 		return "pages/viewFriendsPage";
 	}
 
-	/**
-	 * Handles GET requests for searching users by email.
-	 *
-	 * @param searchForm    the SearchForm object containing the search parameters
-	 * @param emailSearch   the email address to search for, which is optional and defaults to an empty string if not provided
-	 * @param bindingResult the BindingResult object for validation errors
-	 * @param model         the Model object to add attributes to be accessed in the view
-	 * @return the name of the view template to render
-	 */
-	@GetMapping("/searchByEmail")
-	public String getSearchByEmail( @ModelAttribute("searchForm") SearchForm searchForm,
-		@RequestParam(required = false, defaultValue = "") String emailSearch,
-		BindingResult bindingResult,Model model) {
-		logger.info("GET /searchByEmail");
-		User userResult;
-		User currentUser = userService.getLoggedInUser();
-		String relationshipStatus = null;
-		String receiverSentPendingRequest = "false";
-
-		if (!emailSearch.isBlank()) {
-			SearchForm.validate(searchForm, bindingResult);
-			userResult =  userService.findEmail(emailSearch);
-
-			if (!bindingResult.hasErrors()) {
-				if (userResult == null) {
-					// No user found
-					bindingResult.addError(new FieldError("searchForm", "emailSearch", searchForm.getEmailSearch(), false, null, null, "There is nobody with that email in Gardener’s Grove"));
-				} else if (Objects.equals(currentUser.getEmail(), emailSearch)) {
-					// User searched for themselves
-					bindingResult.addError(new FieldError("searchForm", "emailSearch", searchForm.getEmailSearch(), false, null, null, "You've searched for your own email. Now, let's find some friends!"));
-				} else {
-					// User search is valid
-					// First check if they have received a relationship
-					FriendRelationship receivedRelationship = friendRelationshipService.getFriendRelationship(userResult.getId(), currentUser.getId());
-					if (receivedRelationship != null) {
-						// If they already have a relationship
-						relationshipStatus = receivedRelationship.getStatus().name();
-						if (relationshipStatus.equals("PENDING")) {
-							receiverSentPendingRequest = "true";
-						}
-					} else {
-						// If not, check if they have initiated a relationship
-						FriendRelationship sentRelationship = friendRelationshipService.getFriendRelationship(currentUser.getId(), userResult.getId());
-						if (sentRelationship != null) {
-							// If they already have a relationship
-							relationshipStatus = sentRelationship.getStatus().name();
-						}
-					}
-
-				}
-			}
-
-			if (bindingResult.hasErrors()) {
-				return "pages/searchByEmailPage";
-			}
-		} else {
-			userResult = null;
-		}
-		model.addAttribute("emailSearch", emailSearch);
-		model.addAttribute("searchForm", searchForm);
-		model.addAttribute("userResult", userResult);
-		model.addAttribute("relationshipStatus", relationshipStatus);
-		model.addAttribute("receiverSentPendingRequest", receiverSentPendingRequest);
-
-		return "pages/searchByEmailPage";
-	}
+//	public String getSearchByEmail( @ModelAttribute("searchForm") SearchForm searchForm,
+//		@RequestParam(required = false, defaultValue = "") String emailSearch,
+//		BindingResult bindingResult,Model model) {
+//		String relationshipStatus = null;
+//		String receiverSentPendingRequest = "false";
+//
+//		if (!emailSearch.isBlank()) {
+//			SearchForm.validate(searchForm, bindingResult);
+//			userResult =  userService.findEmail(emailSearch);
+//
+//			if (!bindingResult.hasErrors()) {
+//				if (userResult == null) {
+//					// No user found
+//					bindingResult.addError(new FieldError("searchForm", "emailSearch", searchForm.getEmailSearch(), false, null, null, "There is nobody with that email in Gardener’s Grove"));
+//				} else if (Objects.equals(currentUser.getEmail(), emailSearch)) {
+//					// User searched for themselves
+//					bindingResult.addError(new FieldError("searchForm", "emailSearch", searchForm.getEmailSearch(), false, null, null, "You've searched for your own email. Now, let's find some friends!"));
+//				} else {
+//					// User search is valid
+//					// First check if they have received a relationship
+//					FriendRelationship receivedRelationship = friendRelationshipService.getFriendRelationship(userResult.getId(), currentUser.getId());
+//					if (receivedRelationship != null) {
+//						// If they already have a relationship
+//						relationshipStatus = receivedRelationship.getStatus().name();
+//						if (relationshipStatus.equals("PENDING")) {
+//							receiverSentPendingRequest = "true";
+//						}
+//					} else {
+//						// If not, check if they have initiated a relationship
+//						FriendRelationship sentRelationship = friendRelationshipService.getFriendRelationship(currentUser.getId(), userResult.getId());
+//						if (sentRelationship != null) {
+//							// If they already have a relationship
+//							relationshipStatus = sentRelationship.getStatus().name();
+//						}
+//					}
+//
+//				}
+//			}
+//
+//			if (bindingResult.hasErrors()) {
+//				return "pages/searchByEmailPage";
+//			}
+//		} else {
+//			userResult = null;
+//		}
+//		model.addAttribute("emailSearch", emailSearch);
+//		model.addAttribute("searchForm", searchForm);
+//		model.addAttribute("userResult", userResult);
+//		model.addAttribute("relationshipStatus", relationshipStatus);
+//		model.addAttribute("receiverSentPendingRequest", receiverSentPendingRequest);
+//
+//		return "pages/searchByEmailPage";
+//	}
 
 	/**
 	 * Handles POST requests to the /addFriend endpoint.
@@ -169,30 +251,28 @@ public class FriendsController {
 	 * @return              The same search by email page with the attributes persisted
 	 */
 	@PostMapping("/addFriend")
-	public String postFriendRequest(@RequestParam("receiver") String receiver,
-									@RequestParam("emailSearch") String emailSearch,
-									@ModelAttribute("searchForm") SearchForm searchForm,
-									@RequestParam("relationshipStatus") String relationshipStatus,
-									@RequestParam("receiverSentPendingRequest") String receiverSentPendingRequest,
-									Model model) {
+	public String postFriendRequest(@RequestParam("receiver") String receiver, @RequestParam("back") String back) {
 		logger.info("POST /addFriend " + receiver);
+
+		User currentUser = userService.getLoggedInUser();
 
 		// User email taken from the successful search
 		User receiverUser = userService.findEmail(receiver);
 
-		FriendRelationship request = new FriendRelationship(userService.getLoggedInUser(), receiverUser, PENDING);
-		friendRelationshipService.addFriendRelationship(request);
+		logger.info("adding friend " + receiverUser.getEmail());
+		FriendRelationship existing = friendRelationshipService.getFriendRelationship(currentUser.getId(), receiverUser.getId());
+		Boolean notExisting = existing == null;
 
-		// Get the current state of their relationship and pass it back
-		FriendRelationship existingRelationship = friendRelationshipService.getFriendRelationship(userService.getLoggedInUser().getId(), receiverUser.getId());
+		if (notExisting) {
+			logger.info("Adding new");
+			FriendRelationship newRequest = new FriendRelationship(currentUser, receiverUser, PENDING);
 
-		model.addAttribute("emailSearch", searchForm.getEmailSearch());
-		model.addAttribute("userResult", receiverUser);
-		model.addAttribute("searchForm", searchForm);
-		model.addAttribute("relationshipStatus", existingRelationship.getStatus().name());
-		model.addAttribute("receiverSentPendingRequest", receiverSentPendingRequest);
+			friendRelationshipService.addFriendRelationship(newRequest);
+		} else {
+			logger.info("Found existing");
+		}
 
-		return "pages/searchByEmailPage";
+		return "redirect:" + back;
 	}
 
 	@PostMapping("/declineFriend")

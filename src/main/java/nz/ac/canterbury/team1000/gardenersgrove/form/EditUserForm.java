@@ -100,7 +100,7 @@ public class EditUserForm {
         // Validate first name
         if (checkBlank(editUserForm.getFirstName())) {
             errors.add("firstName", "First name cannot be empty", editUserForm.getFirstName());
-        } else if (checkOverMaxLength(editUserForm.getFirstName(), 64)) {
+        } else if (checkOverMaxLength(editUserForm.getFirstName(), MAX_USER_NAME_LEN)) {
             errors.add("firstName", "First name must be 64 characters long or less", editUserForm.getFirstName());
         } else if (!checkOnlyHasLettersMacronsSpacesHyphensApostrophes(editUserForm.getFirstName())) {
             errors.add("firstName", "First name must only include letters, spaces, hyphens or apostrophes", editUserForm.getFirstName());
@@ -110,7 +110,7 @@ public class EditUserForm {
         if (!editUserForm.getNoSurnameCheckBox()) {
             if (checkBlank(editUserForm.getLastName())) {
                 errors.add("lastName", "Last name cannot be empty", editUserForm.getLastName());
-            } else if (checkOverMaxLength(editUserForm.getLastName(), 64)) {
+            } else if (checkOverMaxLength(editUserForm.getLastName(), MAX_USER_NAME_LEN)) {
                 errors.add("lastName", "Last name must be 64 characters long or less", editUserForm.getLastName());
             } else if (!checkOnlyHasLettersMacronsSpacesHyphensApostrophes(editUserForm.getLastName())) {
                 errors.add("lastName", "Last name must only include letters, spaces, hyphens or apostrophes", editUserForm.getLastName());

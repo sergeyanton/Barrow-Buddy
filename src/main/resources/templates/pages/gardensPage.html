@@ -20,7 +20,7 @@
                 </thead>
                 <tbody>
                     <tr th:if="${gardens.empty}">
-                        <td colspan="3"> No gardens have been made yet</td>
+                        <td colspan="4"> No gardens have been made yet</td>
                     </tr>
                     <tr th:each="garden : ${gardens}">
                         <td><a th:href="@{/gardens/{id}(id=${garden.id})}" th:text="${garden.name}"> Name </a></td>

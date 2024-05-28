@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<head th:replace="~{fragments/head :: head(title='Gardener\'s Grove - Search By Email')}"></head>
+
+
+<body>
+  <div th:replace="~{fragments/header :: header}"></div>
+    <main>
+      <div class="basic">
+        <h1>Search Friend</h1>
+        <form th:action="@{/searchFriend}" method="get" th:object="${searchFriendsForm}">
+          <div class="search-bar">
+            <input th:replace="~{fragments/formElement :: formElementField(fieldName='search', label='', placeholder='jane@doe.nz')}" />
+            <button type="submit">Search</button>
+          </div>
+        </form>
+
+        <br />
+          <table>
+            <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Friend Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user, iterStat : ${users}">
+              <td th:text="${user.fname} + (${user.lname} ? ' ' + ${user.lname} : '')"></td>
+              <td th:text="${user.email}"></td>
+              <td th:with="statusPair = ${friendStatus[iterStat.index]}">
+
+                <div th:if="${statusPair.first == 'None'}">
+                  <form th:action="@{/addFriend}" method="post">
+                    <input type="hidden" th:name="receiver" th:value="${user.email}" />
+                    <input type="hidden" th:name="back" th:value="${currentUrl}" />
+
+                    <button class="invite-button" type="submit">Invite as Friend</button>
+                  </form>
+                </div>
+                <a th:if="${statusPair.first != 'None'}" th:href="@{/friends}" class="link">
+                  <span  th:if="${statusPair.second == 'APPROVED'}">You are friends</span>
+                  <span th:if="${statusPair.second == 'PENDING' && statusPair.first == 'Recv'}">Pending request</span>
+                  <span th:if="${statusPair.second == 'PENDING' && statusPair.first == 'Sent'}">Request sent</span>
+                  <span th:if="${statusPair.second == 'DECLINED' && statusPair.first == 'Recv'}">Declined request</span>
+                  <span th:if="${statusPair.second == 'DECLINED' && statusPair.first == 'Sent'}">Request declined</span>
+                </a>
+              </td>
+            </tr>
+            </tbody>
+            <tbody>
+
+            </tbody>
+          </table>
+          <a class="cancel" th:href="@{friends}">Back</a>
+      </div>
+    </main>
+</body>
+</html>

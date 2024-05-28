@@ -1,6 +1,7 @@
 package nz.ac.canterbury.team1000.gardenersgrove.service;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.List;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,11 @@ public class UserService {
     public User getUserById(Long userId) {
         Optional<User> user = userRepository.findById(userId);
         return user.orElse(null);
+    }
+
+    public List<User> getUsersByFullName(String fullName) {
+        List<User> allUsers = userRepository.findAll();
+        return allUsers.stream().filter(user -> user.getFullName().equalsIgnoreCase(fullName)).toList();
     }
 
     /**

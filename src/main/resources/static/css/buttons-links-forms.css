@@ -59,6 +59,11 @@ button, .cancel, .submit {
     text-decoration: none;
 }
 
+.link {
+    color: darkblue;
+    text-decoration: underline;
+}
+
 button:hover, .submit:hover {
     background-color: rgba(4, 65, 42, 0.71);
 }

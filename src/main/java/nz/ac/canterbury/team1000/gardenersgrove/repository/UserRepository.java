@@ -1,5 +1,7 @@
 package nz.ac.canterbury.team1000.gardenersgrove.repository;
 
+import java.util.List;
+import nz.ac.canterbury.team1000.gardenersgrove.entity.Garden;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
@@ -13,6 +15,8 @@ import java.util.Optional;
  */
 @Repository
 public interface UserRepository extends CrudRepository<User, Long> {
+    List<User> findAll();
+
     Optional<User> findByEmailAndPassword(String email, String password);
 
     Optional<User> findByEmail(String email);
