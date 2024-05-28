@@ -37,6 +37,35 @@ public class GlobalModelAttributeProvider {
         return request.getRequestURI() + "?" + request.getQueryString();
     }
 
+    /**
+     * Provide the paginationPath, this is the current url without the page number or base url,
+     * So /test and /prod get stripped from /test?page=1 and /prod?page=2
+     * @param request the current request
+     * @return the current url without the page number or base url
+     */
+    @ModelAttribute("paginationPath")
+    public String getPaginationPath(HttpServletRequest request) {
+        String currentPath = request.getRequestURI();
+        String baseUrl = request.getContextPath(); // Get the base URL, e.g., /test
+        String queryString = request.getQueryString();
+
+        // Remove the base URL from the path
+        if (currentPath.startsWith(baseUrl)) {
+            currentPath = currentPath.substring(baseUrl.length());
+        }
+
+        if (queryString != null) {
+            currentPath += "?" + queryString.replaceAll("(^|&)page=\\d", "");
+        }
+
+        // Remove floating question mark (this happens when page is the only query parameter left)
+        if (currentPath.endsWith("?")) {
+            currentPath = currentPath.substring(0, currentPath.length() - 1);
+        }
+
+        return currentPath;
+    }
+
 
     /**
      * Necessary for being able to display each garden in the nav bar

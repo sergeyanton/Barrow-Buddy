@@ -19,6 +19,7 @@ import org.mockito.Mock;
 import org.springframework.web.client.RestTemplate;
 
 public class WeatherServiceTest {
+
 	private WeatherService weatherService;
 	@Mock
 	private WeatherRepository weatherRepository;
@@ -44,6 +45,7 @@ public class WeatherServiceTest {
 
 	/**
 	 * Helper function to make testing smoother regarding mocking the API.
+	 *
 	 * @param codes int array of weather codes
 	 * @param temps double array of hourly temperature codes
 	 * @return JSON string with the given values, essentially mocking the Open-Meteo API call
