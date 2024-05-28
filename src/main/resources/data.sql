@@ -9,7 +9,7 @@ INSERT INTO tab_user(date_of_birth, email, fName, lName, password, picture_path)
 
 
 -- Create a garden the Hamilton Garden (id = 1)
-INSERT INTO garden (name, address, suburb, city, postcode, country, latitude, longitude, size, description, owner_id, is_public) VALUES ('The Hamilton Gardens', '21 Hungerford Crescent', 'Hamilton East', 'Hamilton', '3216', 'New Zealand', 37.8057, 175.3049, 72000, 'Very cool garden', 1, true);
+INSERT INTO garden (name, address, suburb, city, postcode, country, latitude, longitude, size, description, owner_id, is_public) VALUES ('The Hamilton Gardens', '21 Hungerford Crescent', 'Hamilton East', 'Hamilton', '3216', 'New Zealand', -37.8057, 175.3049, 72000, 'Very cool garden', 1, true);
 -- add some plants to the Hamilton Garden
 INSERT INTO plant (name, plant_count, description, planted_on_date, picture_path, garden_id) VALUES ('Rose Bush', 200, 'Fragrant, colorful garden flower.', null, '/images/defaultPlantPic.png', 1),
                                                                                                     ('Lavender', 50, 'Aromatic purple herb.', null, '/images/defaultPlantPic.png', 1),

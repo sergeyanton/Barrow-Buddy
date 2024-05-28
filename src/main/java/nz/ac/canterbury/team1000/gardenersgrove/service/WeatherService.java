@@ -234,6 +234,7 @@ public class WeatherService {
                     sunRise.get(i)));
 
             }
+
             return weatherListFuture;
 
         } catch (Exception e) {

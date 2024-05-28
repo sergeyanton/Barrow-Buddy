@@ -261,8 +261,12 @@ public class GardensController {
 		Weather nextWeather = futureWeather.get(1);
 		LocalTime currentHour = LocalTime.now();
 
-		boolean isClearWeatherAtNight = currentWeather.getType().getText().equals("Clear") && (currentHour.isAfter(
-			LocalTime.parse(nextWeather.sunSet)) || currentHour.isBefore(LocalTime.parse(nextWeather.sunRise)));
+		String sunSetTime = nextWeather.sunSet.split("T")[1];
+		String sunRiseTime = nextWeather.sunRise.split("T")[1];
+
+		boolean isClearWeatherAtNight = currentWeather.getType().getText().equals("Clear")
+			&& (currentHour.isAfter(LocalTime.parse(sunSetTime))
+			|| currentHour.isBefore(LocalTime.parse(sunRiseTime)));
 
 		String currentWeatherIconPath;
 		if (isClearWeatherAtNight) {
