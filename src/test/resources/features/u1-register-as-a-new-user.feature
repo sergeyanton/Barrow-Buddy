@@ -76,12 +76,14 @@ Feature: U1 - As Sarah, I want to register on Gardener’s Grove so that I can u
       | "abc@123"               |
       | "bad"                   |
       | "email@email@email.com" |
+      | ""                      |
 
   Scenario: AC7 - Cannot register with an existing email
     Given I am on the registration form
     And A user exists with email "benten@gmail.com" on the register form
     And I enter details "Ben", "Ten", a unique email "benten@gmail.com", and "12/12/2000" on the register form
     And I do not tick the checkbox for no last name on the register form
+    And I enter password "Password!123" and retype password "Password!123" on the register form
     When I click the sign-up button
     Then I am shown the error message "Email address is already in use" on the register form
 
@@ -161,3 +163,8 @@ Feature: U1 - As Sarah, I want to register on Gardener’s Grove so that I can u
       | "missing_uppercase1&" |
       | "missingSpecial1"     |
       | "MISSING_LOWERCASE1$" |
+
+  Scenario: AC12 - Cancel takes me back to my profile page and no changes have been made
+    Given I am on the registration form
+    When I click the cancel button on the register form
+    Then I am taken back to the system’s home page

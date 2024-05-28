@@ -2,20 +2,17 @@ package nz.ac.canterbury.team1000.gardenersgrove.cucumber.step_definitions;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
-import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import io.cucumber.spring.CucumberContextConfiguration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.RegistrationForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
 import org.junit.jupiter.api.Assertions;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
@@ -32,8 +29,9 @@ public class U1_StepDefinitions {
   private MockMvc mockMvc;
   @Autowired
   PasswordEncoder passwordEncoder;
-  private MvcResult mvcResult;
   RegistrationForm registrationForm = new RegistrationForm();
+  private MvcResult mvcResult;
+
   @Given("I am on the registration form")
   public void iAmOnTheRegistrationForm() throws Exception {
     mockMvc.perform(MockMvcRequestBuilders.get("/register").with(csrf()))
@@ -48,17 +46,9 @@ public class U1_StepDefinitions {
           LocalDate.of(2000, 1, 1), "/images/default_pic.jpg");
       userWithGivenEmail.grantAuthority("ROLE_USER");
       userService.registerUser(userWithGivenEmail);
+      System.out.println("registered user");
     }
   }
-//  @Given("A user exists with email {string}")
-//  public void emailIsTaken(String email) {
-//    if (!userService.checkEmail(email)) {
-//      User userWithGivenEmail = new User("FirstName", "LastName", email, passwordEncoder.encode(PASSWORD),
-//          LocalDate.of(2000, 1, 1), "/images/default_pic.jpg");
-//      userWithGivenEmail.grantAuthority("ROLE_USER");
-//      userService.registerUser(userWithGivenEmail);
-//    }
-//  }
 
   @And("I enter details {string}, {string}, a unique email {string}, and {string} on the register form")
   public void iEnterDetailsOnTheRegisterForm(String fName, String lName, String email, String dob) {
@@ -103,6 +93,11 @@ public class U1_StepDefinitions {
         .flashAttr("registrationForm", registrationForm)).andReturn();
   }
 
+  @When("I click the cancel button on the register form")
+  public void iClickTheCancelButtonOnTheRegisterForm() throws Exception {
+    mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/").with(csrf())).andReturn();
+  }
+
   @Then("I am successfully registered")
   public void iAmSuccessfullyRegistered() throws Exception{
     MockMvcResultMatchers.status().is3xxRedirection().match(mvcResult);
@@ -114,15 +109,16 @@ public class U1_StepDefinitions {
     MockMvcResultMatchers.status().isOk().match(mvcResult);
     MockMvcResultMatchers.view().name("pages/registrationPage").match(mvcResult);
 
-    BindingResult bindingResult = (BindingResult) mvcResult.getModelAndView().getModel().get(BindingResult.MODEL_KEY_PREFIX + "registrationForm");
+    List<FieldError> fieldErrors = ((BindingResult) mvcResult.getModelAndView().getModel().get(BindingResult.MODEL_KEY_PREFIX + "registrationForm")).getFieldErrors();
 
-    boolean errorMessageShown = false;
-    for (FieldError fieldError : bindingResult.getFieldErrors()) {
-      if (errorMessage.equals(fieldError.getDefaultMessage())) {
-        errorMessageShown = true;
-      }
-    }
+    Assertions.assertTrue(fieldErrors.stream()
+        .map(fieldError -> fieldError.getDefaultMessage())
+        .anyMatch(defaultMessage -> errorMessage.equals(defaultMessage)));
+  }
 
-    Assertions.assertTrue(errorMessageShown);
+  @Then("I am taken back to the system’s home page")
+  public void iAmTakenBackToTheSystemSHomePage() throws Exception {
+    MockMvcResultMatchers.status().isOk().match(mvcResult);
+    MockMvcResultMatchers.view().name("pages/landingPage").match(mvcResult);
   }
 }
