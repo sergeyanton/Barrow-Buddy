@@ -81,10 +81,15 @@ button:hover, .submit:hover {
     cursor: pointer;
 }
 
-.button-cell {
+.button-cell-friends .button-wrapper {
     display: flex;
-    gap: 10px;
     justify-content: flex-end;
+    width: 100%;
+}
+
+.status-header {
+    text-align: right;
+    padding-right: 20px;
 }
 
 .button-cell form {
