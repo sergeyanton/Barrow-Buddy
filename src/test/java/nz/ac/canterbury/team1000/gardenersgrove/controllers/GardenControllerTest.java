@@ -110,7 +110,8 @@ public class GardenControllerTest {
     public void BeforeEach() {
         loggedInUser = Mockito.mock(User.class);
         Mockito.when(userService.getLoggedInUser()).thenReturn(loggedInUser);
-        Mockito.when(loggedInUser.getId()).thenReturn(1L);
+        Mockito.when(loggedInUser
+            .getId()).thenReturn(1L);
 
         gardenMock = Mockito.mock(Garden.class);
 		Mockito.when(gardenMock.getId()).thenReturn(1L);
