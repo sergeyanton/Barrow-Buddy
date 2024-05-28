@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Assertions;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.test.web.servlet.MockMvc;
@@ -24,63 +25,71 @@ public class U2_StepDefinitions {
 	UserService userService;
 	@Autowired
 	private MockMvc mockMvc;
+	@Autowired
+	PasswordEncoder passwordEncoder;
 	LoginForm loginForm = new LoginForm();
 	BindingResult bindingResult;
 	ArgumentCaptor<FieldError> fieldErrorCaptor = ArgumentCaptor.forClass(FieldError.class);
 
+	private User testUser;
+	private String testPassword;
+
 	@Given("A user exists with email {string} and password {string}")
 	public void a_user_exists_with_the_email_and_password(String email, String password) {
-		if (userService.getUserByEmailAndPassword(email, password) != null) return;
-		User newUser = new User("fname", "lname", email, password, null, "");
+		if (email.isEmpty() || userService.checkEmail(email)) {
+			this.testUser = userService.findEmail(email);
+			return;
+		}
+		this.testUser = new User("fname", "lname", email, passwordEncoder.encode(password), null, "/images/default_pic.jpg");
 
-		newUser.grantAuthority("ROLE_USER");
-		userService.registerUser(newUser);
+		testUser.grantAuthority("ROLE_USER");
+		userService.registerUser(testUser);
+		testPassword = password;
 	}
 
-	@Given("I am on the log in form and enter the email {string} and password {string}")
-	public void i_am_on_the_log_in_form_and_enter_the_email_and_password(String email,
-		String password) {
+	@Given("I am on the log in page")
+	public void i_am_on_the_log_in_page() throws Exception {
+		mockMvc.perform(MockMvcRequestBuilders.get("/login").with(csrf()))
+			.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+			.andExpect(MockMvcResultMatchers.view().name("pages/loginPage"));
+	}
+
+	@When("I log in with a valid user with email {string} and password {string}")
+	public void i_log_in_with_a_valid_user_with_the_email_and_password(String email, String password) throws Exception {
 		loginForm.setEmail(email);
 		loginForm.setPassword(password);
+
+		mockMvc.perform(MockMvcRequestBuilders.post("/login").with(csrf())
+				.flashAttr("loginForm", loginForm))
+			.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+			.andExpect(MockMvcResultMatchers.redirectedUrl("/home"));
 	}
 
-	@When("I click the Sign In button")
-	public void i_click_the_sign_in_button() {
-		bindingResult = Mockito.mock(BindingResult.class);
-		LoginForm.validate(loginForm, bindingResult);
+	@When("I log in with an invalid user with the email {string} and password {string}")
+	public void i_log_in_with_an_invalid_user_with_the_email_and_password(String email, String password) throws Exception {
+		loginForm.setEmail(email);
+		loginForm.setPassword(password);
+
+		mockMvc.perform(MockMvcRequestBuilders.post("/login").with(csrf())
+			.flashAttr("loginForm", loginForm))
+			.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+			.andExpect(MockMvcResultMatchers.view().name("pages/loginPage"));
 	}
 
 	@Then("I successfully log in")
 	public void i_successfully_log_in() throws Exception {
-		Mockito.verify(bindingResult, Mockito.never()).addError(Mockito.any());
-		Assertions.assertFalse(bindingResult.hasErrors());
+		mockMvc.perform(MockMvcRequestBuilders.get("/").with(csrf()))
+			.andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+			.andExpect(MockMvcResultMatchers.view().name("pages/homePage"));
+	}
 
+	@Then("I remain on the log in page and I get an error message in the field {string}")
+	public void getting_user_by_email_and_password_returns_null(String fieldName) throws Exception {
 		mockMvc.perform(MockMvcRequestBuilders.post("/login").with(csrf())
 			.flashAttr("loginForm", loginForm))
 			.andExpect(MockMvcResultMatchers.status().isOk())
-		    .andExpect(MockMvcResultMatchers.view().name("pages/homePage"));
-
-	}
-
-	@Then("Getting user by email and password returns null")
-	public void getting_user_by_email_and_password_returns_null() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.post("/login").with(csrf())
-			.flashAttr("loginForm", loginForm))
-			.andExpect(MockMvcResultMatchers.status().isOk())
-			.andExpect(MockMvcResultMatchers.view().name("pages/loginPage"));
-	}
-
-	@Then("I am shown the error message {string} and I am not logged in")
-	public void i_am_shown_the_error_message_and_i_am_not_logged_in(String errorMessage)
-		throws Exception {
-		Mockito.verify(bindingResult).addError(fieldErrorCaptor.capture());
-		FieldError fieldError = fieldErrorCaptor.getValue();
-		Assertions.assertEquals(errorMessage, fieldError.getDefaultMessage());
-
-		mockMvc.perform(MockMvcRequestBuilders.post("/login").with(csrf())
-				.flashAttr("loginForm", loginForm))
-			.andExpect(MockMvcResultMatchers.status().isOk())
-			.andExpect(MockMvcResultMatchers.view().name("pages/loginPage"));
+			.andExpect(MockMvcResultMatchers.view().name("pages/loginPage"))
+			.andExpect(MockMvcResultMatchers.model().attributeHasFieldErrors("loginForm", fieldName));
 	}
 
 	@After
