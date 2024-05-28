@@ -102,3 +102,11 @@ h2 {
 .first-item {
   border-left: none;
 }
+
+.min-temp {
+  color: #0000bb;
+}
+
+.max-temp {
+  color: #d20000;
+}
