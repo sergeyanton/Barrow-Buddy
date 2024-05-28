@@ -1,7 +1,10 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
+import static nz.ac.canterbury.team1000.gardenersgrove.util.Status.APPROVED;
 import static nz.ac.canterbury.team1000.gardenersgrove.util.Status.PENDING;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.FriendRelationship;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
@@ -40,6 +43,42 @@ public class FriendsController {
 	}
 
 	/**
+	 * Gets the thymeleaf page representing the /friends page.
+	 * @return thymeleaf viewFriendsPage
+	 */
+	@GetMapping("/friends")
+	public String getFriendsPage(Model model) {
+		// query the database for pending requests
+
+		// add the list of requests to the model
+		User loggedInUser = userService.getLoggedInUser();
+		List<FriendRelationship> requests = friendRelationshipService.getRelationshipsByReceiverIdAndStatus(loggedInUser.getId(), PENDING);
+		List<User> requestingUsers = new ArrayList<>();
+
+		for (FriendRelationship request : requests) {
+			requestingUsers.add(userService.getUserById(request.getSender().getId()));
+		}
+
+//		List<FriendRelationship> friends = friendRelationshipService.getRelationshipsByReceiverIdAndStatus(loggedInUser.getId(), APPROVED);
+
+		List<FriendRelationship> receivedFriends = friendRelationshipService.getRelationshipsByReceiverIdAndStatus(loggedInUser.getId(), Status.APPROVED);
+		List<FriendRelationship> sentFriends = friendRelationshipService.getRelationshipsBySenderIdAndStatus(loggedInUser.getId(), Status.APPROVED);
+
+		List<User> newFriends = new ArrayList<>();
+		for (FriendRelationship receivedRequest : receivedFriends) {
+			newFriends.add(userService.getUserById(receivedRequest.getSender().getId()));
+		}
+		for (FriendRelationship sentRequest : sentFriends) {
+			newFriends.add(userService.getUserById(sentRequest.getReceiver().getId()));
+		}
+
+		model.addAttribute("friends", newFriends);
+		model.addAttribute("requestingUsers", requestingUsers);
+		logger.info("GET /friends");
+		return "pages/viewFriendsPage";
+	}
+
+	/**
 	 * Handles POST requests to the /addFriend endpoint.
 	 * This adds a new 'pending' relationship to the database between the logged-in user and search result user.
 	 *
@@ -73,6 +112,74 @@ public class FriendsController {
 		model.addAttribute("receiverSentPendingRequest", receiverSentPendingRequest);
 
 		return "pages/searchByEmailPage";
+	}
+
+	@PostMapping("/declineFriend")
+	public String postDeclineFriend(@RequestParam("senderUser") Long senderUserId,
+		Model model) {
+		logger.info("POST /declineFriend " + senderUserId);
+
+		User loggedInUser = userService.getLoggedInUser();
+
+		friendRelationshipService.updateFriendRelationship(senderUserId, loggedInUser.getId(), Status.DECLINED);
+
+		List<FriendRelationship> requests = friendRelationshipService.getRelationshipsByReceiverIdAndStatus(loggedInUser.getId(), PENDING);
+		List<User> requestingUsers = new ArrayList<>();
+
+		for (FriendRelationship request : requests) {
+			requestingUsers.add(userService.getUserById(request.getSender().getId()));
+		}
+
+		List<FriendRelationship> receivedFriends = friendRelationshipService.getRelationshipsByReceiverIdAndStatus(loggedInUser.getId(), Status.APPROVED);
+		List<FriendRelationship> sentFriends = friendRelationshipService.getRelationshipsBySenderIdAndStatus(loggedInUser.getId(), Status.APPROVED);
+
+		List<User> newFriends = new ArrayList<>();
+		for (FriendRelationship receivedRequest : receivedFriends) {
+			newFriends.add(userService.getUserById(receivedRequest.getSender().getId()));
+		}
+		for (FriendRelationship sentRequest : sentFriends) {
+			newFriends.add(userService.getUserById(sentRequest.getReceiver().getId()));
+		}
+
+		model.addAttribute("friends", newFriends);
+		model.addAttribute("requestingUsers", requestingUsers);
+		logger.info("GET /friends");
+		return "pages/viewFriendsPage";
+	}
+
+	@PostMapping("/acceptFriend")
+	public String postAcceptFriend(@RequestParam("senderUserId") Long senderUserId,
+		Model model) {
+		logger.info("POST /acceptFriend " + senderUserId);
+
+		User loggedInUser = userService.getLoggedInUser();
+
+		friendRelationshipService.updateFriendRelationship(senderUserId, loggedInUser.getId(), Status.APPROVED);
+
+		// Get pending requests
+		List<FriendRelationship> requests = friendRelationshipService.getRelationshipsByReceiverIdAndStatus(loggedInUser.getId(), PENDING);
+		List<User> requestingUsers = new ArrayList<>();
+
+		for (FriendRelationship request : requests) {
+			requestingUsers.add(userService.getUserById(request.getSender().getId()));
+		}
+
+		// Get current list of friends
+		List<FriendRelationship> receivedFriends = friendRelationshipService.getRelationshipsByReceiverIdAndStatus(loggedInUser.getId(), Status.APPROVED);
+		List<FriendRelationship> sentFriends = friendRelationshipService.getRelationshipsBySenderIdAndStatus(loggedInUser.getId(), Status.APPROVED);
+
+		List<User> newFriends = new ArrayList<>();
+		for (FriendRelationship receivedRequest : receivedFriends) {
+			newFriends.add(userService.getUserById(receivedRequest.getSender().getId()));
+		}
+		for (FriendRelationship sentRequest : sentFriends) {
+			newFriends.add(userService.getUserById(sentRequest.getReceiver().getId()));
+		}
+
+		model.addAttribute("friends", newFriends);
+		model.addAttribute("requestingUsers", requestingUsers);
+		logger.info("GET /friends");
+		return "pages/viewFriendsPage";
 	}
 
 	/**

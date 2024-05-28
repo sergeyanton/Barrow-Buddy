@@ -21,10 +21,42 @@
       </tr>
       </thead>
         <tbody>
-          <tr >
+          <tr  th:if="${friends.empty}">
             <td colspan="2"> You don't have any friends yet</td>
           </tr>
+        <tr th:each="friend : ${friends}">
+          <td><a th:text="${friend.fname + ' ' + (friend.lname != null ? friend.lname : '')}"> Name </a></td>
+        </tr>
         </tbody>
+    </table>
+    <br>
+    <h2>Pending Requests</h2>
+
+    <table>
+      <thead>
+      <tr>
+        <th>Name</th>
+        <th>Accept/Decline</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:if="${requestingUsers.empty}">
+        <td> You don't have any friend requests yet</td>
+      </tr>
+      <tr th:each="user : ${requestingUsers}">
+        <td><a th:text="${user.fname + ' ' + (user.lname != null ? user.lname : '')}"> Name </a></td>
+        <td class="button-cell">
+          <form th:action="@{/acceptFriend}" method="post">
+            <input type="hidden" th:name="senderUserId" th:value="${user.id}" />
+            <button class="invite-button" type="submit">Accept</button>
+          </form>
+          <form th:action="@{/declineFriend}" method="post">
+            <input type="hidden" th:name="senderUserId" th:value="${user.id}" />
+            <button class="invite-button" type="submit">Decline</button>
+          </form>
+        </td>
+      </tr>
+      </tbody>
     </table>
   </div>
 
