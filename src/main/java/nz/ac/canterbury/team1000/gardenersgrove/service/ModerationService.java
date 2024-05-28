@@ -4,6 +4,7 @@ import com.theokanning.openai.moderation.ModerationRequest;
 import com.theokanning.openai.service.OpenAiService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
@@ -18,9 +19,8 @@ public class ModerationService {
 	 * Constructs a new ModerationService and initializes the OpenAiService with the API key
 	 * from the environment variable.
 	 */
-	public ModerationService() {
-		final String key = System.getenv("OPENAI_API_KEY");
-		service = new OpenAiService(key);
+	public ModerationService(@Value("${gardeners-grove.openai.token}") String apiKey) {
+		service = new OpenAiService(apiKey);
 	}
 
 	/**
