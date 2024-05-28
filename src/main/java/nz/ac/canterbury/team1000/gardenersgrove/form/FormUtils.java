@@ -161,7 +161,7 @@ public class FormUtils {
      * @return true if the string contains only valid characters, false otherwise
      */
     public static boolean checkOnlyHasLettersMacronsSpacesHyphensApostrophes(String string) {
-        return !checkNotMatchesRegex(string, "^[\\p{L}’'-]+(?:\\s[\\p{L}’'-]+)*$");
+        return !checkNotMatchesRegex(string, "^[\\p{L}\\p{M}]+(?:[-']?[\\p{L}\\p{M}])*([ ]?[\\p{L}\\p{M}]+(?:[-']?[\\p{L}\\p{M}])*)*'?$");
     }
 
     /**
@@ -299,7 +299,13 @@ public class FormUtils {
      * @return true if the email address is invalid, false otherwise
      */
     public static boolean checkEmailIsInvalid(String string) {
-        return checkNotMatchesRegex(string, "^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$");
+        // Copied regex is from emailregex.com
+        return checkNotMatchesRegex(string, "(?:[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&'*+/=?^_`"
+            + "{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c"
+            + "\\x0e-\\x7f])*\")@(?:(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z"
+            + "0-9])?|\\\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|["
+            + "a-zA-Z0-9-]*[a-zA-Z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b"
+            + "\\x0c\\x0e-\\x7f])+)\\\\])$");
     }
 
     /**

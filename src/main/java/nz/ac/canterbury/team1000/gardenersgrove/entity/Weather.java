@@ -23,13 +23,15 @@ public class Weather {
     @Column(nullable = false)
     private Long gardenId;
     @Column(nullable = false)
-    public LocalDate date;
+    public LocalDateTime dateTime;
+    @Column(nullable = false)
+    public String dayOfTheWeek;
     @Column(nullable = false)
     public WeatherType type;
     @Column(nullable = false)
     public Double temperature;
     @Column(nullable = false)
-    public Double humidity;
+    public Integer humidity;
     @Column(nullable = false)
     public LocalDateTime expiry;
 
@@ -48,34 +50,50 @@ public class Weather {
     /**
      * Creates a new Weather object
      * @param gardenId    ID of the garden where this Weather is relevant
-     * @param date        date that this Weather is relevant for
+     * @param dateTime        date and time that this Weather is relevant for
      * @param type        type of Weather, e.g. CLEAR, OVERCAST, RAIN
      * @param temperature the temperature for the relevant day
      * @param humidity    the humidity for the relevant day
      */
-    public Weather(Long gardenId, LocalDate date, WeatherType type, Double temperature, Double humidity) {
+    public Weather(Long gardenId, LocalDateTime dateTime, WeatherType type, Double temperature,
+            Integer humidity, String dayOfTheWeek)
+    {
         this.gardenId = gardenId;
-        this.date = date;
+        this.dateTime = dateTime;
+        this.dayOfTheWeek = dayOfTheWeek;
         this.type = type;
         this.temperature = temperature;
         this.humidity = humidity;
         updateExpiry();
     }
 
-  public LocalDate getDate() {
-      return date;
+  public LocalDateTime getDateTime() {
+      return dateTime;
     }
 
     public WeatherType getType() {
       return type;
     }
 
+    public void setType(WeatherType weatherType) {
+        this.type = weatherType;
+    }
+
     public Double getTemperature() {
       return temperature;
     }
 
-    public Double getHumidity() {
+    public Integer getHumidity() {
       return humidity;
+    }
+
+    /**
+     * Returns the day of the week with the first letter capitalized and the rest in lowercase.
+     *
+     * @return a string representing the day of the week with proper capitalization
+     */
+    public String getDayOfTheWeek() {
+        return dayOfTheWeek.substring(0, 1).toUpperCase() + dayOfTheWeek.substring(1).toLowerCase();
     }
 
     public LocalDateTime getExpiry() {
@@ -89,9 +107,10 @@ public class Weather {
    * @param newWeather the Weather object that you want to replace this Weather entity with
    */
   public void setTo(Weather newWeather) {
-        this.date = newWeather.getDate();
+        this.dateTime = newWeather.getDateTime();
         this.type = newWeather.getType();
         this.temperature = newWeather.getTemperature();
+        this.dayOfTheWeek = newWeather.getDayOfTheWeek();
         this.humidity = newWeather.getHumidity();
         updateExpiry();
     }
@@ -108,10 +127,11 @@ public class Weather {
         return "Weather{" +
             "id=" + id +
             ", gardenId=" + gardenId +
-            ", date=" + date +
+            ", dateTime=" + dateTime.toString() +
             ", type=" + type +
             ", temperature=" + temperature +
             ", humidity=" + humidity +
+            ", dayOfTheWeek=" + dayOfTheWeek +
             ", expiry=" + expiry +
             '}';
     }

@@ -40,33 +40,34 @@ dependencies {
 	testImplementation 'io.cucumber:cucumber-junit-platform-engine:7.15.0'
 	testImplementation 'org.junit.platform:junit-platform-suite:1.10.2'
 
+    implementation 'com.theokanning.openai-gpt3-java:service:0.18.2'
 }
 
 jacocoTestReport {
-	dependsOn test
+    dependsOn test
 
-	reports {
-		xml.required = true
-		xml.destination = file("$buildDir/jacoco/test-report.xml")
-		csv.required = false
-		html.destination = file("$buildDir/jacoco/html")
-	}
+    reports {
+        xml.required = true
+        xml.destination = file("$buildDir/jacoco/test-report.xml")
+        csv.required = false
+        html.destination = file("$buildDir/jacoco/html")
+    }
 }
 
 sonar {
-	properties {
-		property "sonar.projectKey", "seng302-2024-team1000"
-			property "sonar.projectName", "seng302-2024-teamX"
-			property "sonar.sourceEncoding", "UTF-8"
-		property "sonar.host.url", "https://sonarqube.csse.canterbury.ac.nz"
-			property "sonar.login", "$System.env.SONARQUBE_TOKEN"
-	}
+    properties {
+        property "sonar.projectKey", "seng302-2024-team1000"
+        property "sonar.projectName", "seng302-2024-teamX"
+        property "sonar.sourceEncoding", "UTF-8"
+        property "sonar.host.url", "https://sonarqube.csse.canterbury.ac.nz"
+        property "sonar.login", "$System.env.SONARQUBE_TOKEN"
+    }
 }
 
 // Code taken from ATDD workshop
 tasks.register("cucumber", Test) {
 	testLogging.showStandardStreams = true
-	systemProperty "spring.config.additional-location", "classpath:/cucumber.properties"
+	systemProperty "spring.config.additional-location", "classpath:/application-cucumber.properties"
 	useJUnitPlatform()
 	filter {
 		// Ensure this lines up with the package your cucumber tests are located in

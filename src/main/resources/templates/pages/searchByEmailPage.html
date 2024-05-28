@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<head th:replace="~{fragments/head :: head(title='Gardener\'s Grove - Search By Email')}"></head>
+
+
+<body>
+  <div th:replace="~{fragments/header :: header}"></div>
+    <main clas="centred">
+      <div class="basic">
+        <h1>Search By Email</h1>
+        <form th:action="@{/searchByEmail}" method="get" th:object="${searchForm}">
+          <div th:if="${errorMessage}" class="error-message">
+            <p th:text="${errorMessage}"></p>
+          </div>
+
+          <input th:replace="~{fragments/formElement :: formElementField(fieldName='emailSearch', label='Email: ', placeholder='jane@doe.nz')}" />
+          <button type="submit">Search</button>
+          <br />
+        </form>
+          <table>
+            <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Friend Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${userResult != null}">
+              <td th:text="${userResult.fname} + (${userResult.lname} ? ' ' + ${userResult.lname} : '')"></td>
+              <td th:text="${userResult.email}"></td>
+              <td class="button-cell">
+                <span th:if="${relationshipStatus == null}">
+                  <form th:action="@{/addFriend}" method="post">
+                    <input type="hidden" th:name="receiver" th:value="${userResult.email}" />
+                    <input type="hidden" th:name="emailSearch" th:value="${emailSearch}" />
+                    <input type="hidden" th:name="relationshipStatus" th:value="${relationshipStatus}" />
+                    <input type="hidden" th:name="receiverSentPendingRequest" th:value="${receiverSentPendingRequest}" />
+
+                    <button class="invite-button" type="submit">Invite as Friend</button>
+                  </form>
+                </span>
+                <span th:if="${relationshipStatus != 'null'}">
+                  <span th:if="${receiverSentPendingRequest == 'true'}">User has sent you a request.</span>
+                  <span th:if="${receiverSentPendingRequest != 'true'}">
+                    <span th:if="${relationshipStatus == 'PENDING'}">Pending</span>
+                    <span th:if="${relationshipStatus == 'APPROVED'}">Friends</span>
+                    <span th:if="${relationshipStatus == 'DECLINED'}">Declined</span>
+                  </span>
+
+                </span>
+              </td>
+
+            </tr>
+            </tbody>
+          </table>
+
+          <a class="cancel" th:href="@{friends}">Back</a>
+
+      </div>
+    </main>
+</body>
+</html>
