@@ -10,7 +10,8 @@
          * For example staging that runs on /test, will have a baseURL of /test.
          * It will never end in a slash. So it can be used as `${baseURL}/api/...`
          */
-        var baseURL = (/*[[ @{/} ]]*/ '').replace(/\/$/, '');
+        var baseURL = /*[[@{/}]]*/ '';
+        baseURL = baseURL.replace(/\/$/, '');
         /*]]>*/
     </script>
     <script>
