@@ -123,7 +123,7 @@ public class WeatherService {
     }
 
     public List<Weather> getFutureWeatherByGardenId(Long gardenId) {
-        return getWeather(gardenId, FUTURE_URL);
+        return getWeatherFuture(gardenId, FUTURE_URL);
     }
 
     /**
@@ -162,8 +162,8 @@ public class WeatherService {
             String latitude = garden.getLatitude().toString();
             String longitude = garden.getLongitude().toString();
 
-            String url = URL + "&latitude=" + latitude + "&longitude=" + longitude + "&timezone=Pacific/Auckland";
-            String jsonResponse = restTemplate.getForObject(url, String.class);
+            String newUrl = url + "&latitude=" + latitude + "&longitude=" + longitude + "&timezone=Pacific/Auckland";
+            String jsonResponse = restTemplate.getForObject(newUrl, String.class);
             Map<String, Object> weather = objectMapper.readValue(jsonResponse, Map.class);
             List<Integer> weatherCodes = (ArrayList) ((Map<String, Object>) weather.get("hourly")).get("weather_code");
             List<Double> hourlyTemps = (ArrayList) ((Map<String, Object>) weather.get("hourly")).get("temperature_2m");
@@ -190,6 +190,67 @@ public class WeatherService {
                 logger.info(w.toString());
             }
             return weatherList;
+
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
+
+    public List<Weather> getWeatherFuture(Long gardenId, String url) {
+
+        Garden garden = gardenService.getGardenById(gardenId);
+        try {
+            String latitude = garden.getLatitude().toString();
+            String longitude = garden.getLongitude().toString();
+
+            String newUrl = url + "&latitude=" + latitude + "&longitude=" + longitude + "&timezone=Pacific/Auckland";
+            String jsonResponse = restTemplate.getForObject(newUrl, String.class);
+            Map<String, Object> weather = objectMapper.readValue(jsonResponse, Map.class);
+
+            List<Integer> weatherCodesFuture = (ArrayList) ((Map<String, Object>) weather.get("daily")).get("weather_code");
+            List<Double> maxTempFuture = (ArrayList) ((Map<String, Object>) weather.get("daily")).get("temperature_2m_max");
+            List<Double> minTempFuture = (ArrayList) ((Map<String, Object>) weather.get("daily")).get("temperature_2m_min");
+            List<Integer> precipitationFuture = (ArrayList) ((Map<String, Object>) weather.get("daily")).get("precipitation_probability_max");
+            List<String> futureDate = (ArrayList) ((Map<String, Object>) weather.get("daily")).get("time");
+
+            List<String> dailyTimeParsed = new ArrayList<>();
+
+            for (String s : futureDate) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDate localDateTime = LocalDate.parse(s, formatter);
+                dailyTimeParsed.add(localDateTime.getDayOfWeek().toString());
+            }
+
+            List<Weather> weatherListFuture = new ArrayList<>();
+            String x = dailyTimeParsed.getFirst();
+            Weather y = new Weather(
+                gardenId,
+                WeatherType.getByCode(weatherCodesFuture.get(1)),
+                minTempFuture.get(1),
+                maxTempFuture.get(1),
+                precipitationFuture.get(1),
+                dailyTimeParsed.get(1));
+
+
+            for (int i = 0; i < weatherCodesFuture.size(); i++) {
+                weatherListFuture.add(new Weather(
+                    gardenId,
+                    WeatherType.getByCode(weatherCodesFuture.get(i)),
+                    minTempFuture.get(i),
+                    maxTempFuture.get(i),
+                    precipitationFuture.get(i),
+                    dailyTimeParsed.get(i)));
+            }
+
+
+            for (Weather w : weatherListFuture) {
+                logger.info(w.toString());
+            }
+
+            return weatherListFuture;
+
 
         } catch (Exception e) {
             logger.error(e.getMessage());

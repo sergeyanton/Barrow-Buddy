@@ -24,7 +24,7 @@ INSERT INTO plant (name, plant_count, description, planted_on_date, picture_path
 
 
 -- Create a garden called the Christchurch Botanic Gardens (id = 2)
-INSERT INTO garden (name, address, suburb, city, postcode, country, latitude, longitude, size, description, owner_id, is_public) VALUES ('The Christchurch Botanic Gardens', 'Rolleston Avenue', 'Christchurch Central', 'Christchurch', '8013', 'New Zealand', 43.5307, 172.6232, 7000, '', 1, false);
+INSERT INTO garden (name, address, suburb, city, postcode, country, latitude, longitude, size, description, owner_id, is_public) VALUES ('The Christchurch Botanic Gardens', 'Rolleston Avenue', 'Christchurch Central', 'Christchurch', '8013', 'New Zealand', -43.5307, 172.6232, 7000, '', 1, false);
 -- add some plants to the Christchurch Botanic Gardens (all the plants in this garden ar very stinky! They are also terribly disorganized and have no plant counts)
 INSERT INTO plant (name, description, picture_path, garden_id) VALUES ('Corpse Flower', 'The worlds smelliest flower.', '/images/defaultPlantPic.png', 2),
                                                                       ('Durian', 'The worlds smelliest fruit.', '/images/defaultPlantPic.png', 2),
@@ -33,7 +33,7 @@ INSERT INTO plant (name, description, picture_path, garden_id) VALUES ('Corpse F
                                                                       ('Skunk Cabbage', 'The worlds smelliest cabbage.', '/images/defaultPlantPic.png', 2);
 
 -- Create a garden called the Jack Erskine Foyer Garden Set (id = 3) this garden has no size
-INSERT INTO garden (name, address, suburb, city, postcode, country, latitude, longitude, description, owner_id, is_public) VALUES ('The Jack Erskine Foyer Garden Set', 'University of Canterbury', 'Ilam', 'Christchurch', '8041', 'New Zealand', 43.5225, 172.5794, 'A cool garden', 1, false);
+INSERT INTO garden (name, address, suburb, city, postcode, country, latitude, longitude, description, owner_id, is_public) VALUES ('The Jack Erskine Foyer Garden Set', 'University of Canterbury', 'Ilam', 'Christchurch', '8041', 'New Zealand', -43.5225, 172.5794, 'A cool garden', 1, false);
 -- add some plants to the Jack Erskine Foyer Garden Set these are all house plants and there is at lease 3 of each kind
 INSERT INTO plant (name, plant_count, description, picture_path, garden_id) VALUES ('Spider Plant', 3, 'A hardy house plant with long, thin leaves.', '/images/defaultPlantPic.png', 3),
                                                                                    ('Peace Lily', 3, 'A hardy house plant with large, white flowers.', '/images/defaultPlantPic.png', 3),

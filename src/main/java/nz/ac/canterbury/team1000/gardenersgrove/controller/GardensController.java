@@ -253,10 +253,10 @@ public class GardensController {
         // TODO: also for the purpose of the spike, the parsing was somewhat rushed, i didn't actually parse the humidity
         // This function is for getting the current and future weather
         // Stephen has a plan for the previous day's weather so pls talk to him abt that if u are doing that task
-//        List<Weather> weather = weatherService.getWeatherByGardenId(gardenId);
         List<Weather> weather = weatherService.getCurrentWeatherByGardenId(gardenId);
+		List<Weather> futureWeather = weatherService.getFutureWeatherByGardenId(gardenId);
         model.addAttribute("weather", weather);
-
+		model.addAttribute("futureWeather", futureWeather);
         model.addAttribute("garden", garden);
         model.addAttribute("plants", plantService.getPlantsByGardenId(garden.getId()));
         return "pages/gardenProfilePage";
@@ -381,6 +381,7 @@ public class GardensController {
         }
 
         gardenService.updateGardenById(garden.getId(), updatedGarden);
+
 
 		logger.info("Garden edited: " + garden);
 		return "redirect:/gardens/" + garden.getId();
