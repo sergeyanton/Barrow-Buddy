@@ -254,6 +254,9 @@ public class GardensController {
         // TODO: also for the purpose of the spike, the parsing was somewhat rushed, i didn't actually parse the humidity
         // This function is for getting the current and future weather
         // Stephen has a plan for the previous day's weather so pls talk to him abt that if u are doing that task
+
+		// Getting the current weather and the future weather to check if
+		// current time is between sunset and sunrise in order to change clear weather icon to clear moon
         List<Weather> weather = weatherService.getCurrentWeatherByGardenId(gardenId);
 		List<Weather> futureWeather = weatherService.getFutureWeatherByGardenId(gardenId);
 
@@ -261,13 +264,16 @@ public class GardensController {
 		Weather nextWeather = futureWeather.get(0);
 		LocalTime currentHour = LocalTime.now();
 
+		// Convert the sunRise and sunSet times from API to LocalTime for comparison
 		String sunSetTime = nextWeather.sunSet.split("T")[1];
 		String sunRiseTime = nextWeather.sunRise.split("T")[1];
 
+		// Check if the current weather is clear and if it is night time
 		boolean isClearWeatherAtNight = currentWeather.getType().getText().equals("Clear")
 			&& (currentHour.isAfter(LocalTime.parse(sunSetTime))
 			|| currentHour.isBefore(LocalTime.parse(sunRiseTime)));
 
+		// Update the current weather icon path to the moon icon if it is clear weather at night
 		String currentWeatherIconPath;
 		if (isClearWeatherAtNight) {
 			currentWeatherIconPath = "/images/weather/moon.png";
@@ -275,6 +281,7 @@ public class GardensController {
 			currentWeatherIconPath = currentWeather.getType().getPicturePath();
 		}
 
+		// Get rid of today's weather as it is already displayed
 		futureWeather.remove(0);
 
         model.addAttribute("weather", weather);
