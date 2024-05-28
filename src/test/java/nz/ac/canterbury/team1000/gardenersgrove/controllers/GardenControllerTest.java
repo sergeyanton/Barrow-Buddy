@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import nz.ac.canterbury.team1000.gardenersgrove.form.GardenForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PlantForm;
+import nz.ac.canterbury.team1000.gardenersgrove.service.ModerationService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.WeatherService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
@@ -60,6 +61,9 @@ public class GardenControllerTest {
 
     @MockBean
     private PlantService plantService;
+
+    @MockBean
+    private ModerationService moderationService;
 
     @MockBean
     private WeatherService weatherService;
@@ -181,7 +185,7 @@ public class GardenControllerTest {
                 });
 
         Mockito.when(gardenService.getGardenById(1L)).thenReturn(gardenMock);
-
+        Mockito.when(moderationService.isAllowed(Mockito.any())).thenReturn(true);
         Mockito.when(gardenService.getPublicGardens(Mockito.any())).thenReturn(publicGardens);
     }
 

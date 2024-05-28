@@ -1,8 +1,10 @@
 package nz.ac.canterbury.team1000.gardenersgrove.cucumber;
 
+import com.theokanning.openai.service.OpenAiService;
 import io.cucumber.junit.platform.engine.Constants;
 import io.cucumber.spring.CucumberContextConfiguration;
 import nz.ac.canterbury.team1000.gardenersgrove.GardenersGroveApplication;
+import nz.ac.canterbury.team1000.gardenersgrove.service.ModerationService;
 import nz.ac.canterbury.team1000.gardenersgrove.auth.SecurityConfiguration;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.VerificationTokenService;
@@ -25,12 +27,15 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @IncludeEngines("cucumber")
 @SelectClasspathResource("features")
 @ConfigurationParameters({
-    @ConfigurationParameter(key = Constants.GLUE_PROPERTY_NAME, value = "nz.ac.canterbury.team1000.gardenersgrove.cucumber"),
-    @ConfigurationParameter(key = Constants.PLUGIN_PROPERTY_NAME, value = "pretty, html:target/cucumber-report/cucumber.html"),
-    @ConfigurationParameter(key = Constants.PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, value = "true")
+	@ConfigurationParameter(key = Constants.GLUE_PROPERTY_NAME, value = "nz.ac.canterbury.team1000.gardenersgrove.cucumber"),
+	@ConfigurationParameter(key = Constants.PLUGIN_PROPERTY_NAME, value = "pretty, html:target/cucumber-report/cucumber.html"),
+	@ConfigurationParameter(key = Constants.PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, value = "true")
 })
 //Mocking external beans which are used in the cucumber tests
 @MockBean(JavaMailSender.class)
+@MockBean(ModerationService.class)
+
+
 @CucumberContextConfiguration
 @WithMockUser
 @ContextConfiguration(classes = {GardenersGroveApplication.class, SecurityConfiguration.class})
