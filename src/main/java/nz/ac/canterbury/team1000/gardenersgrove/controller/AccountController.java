@@ -107,7 +107,6 @@ public class AccountController {
         }
 
         if (bindingResult.hasErrors()) {
-            System.out.println("error: " + bindingResult.getFieldErrors().getFirst());
             return "pages/registrationPage";
         }
 

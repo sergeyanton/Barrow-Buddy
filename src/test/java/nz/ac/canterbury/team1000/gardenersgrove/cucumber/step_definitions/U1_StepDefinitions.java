@@ -46,7 +46,6 @@ public class U1_StepDefinitions {
           LocalDate.of(2000, 1, 1), "/images/default_pic.jpg");
       userWithGivenEmail.grantAuthority("ROLE_USER");
       userService.registerUser(userWithGivenEmail);
-      System.out.println("registered user");
     }
   }
 
