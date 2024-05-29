@@ -1,8 +1,8 @@
 SET MODE MySQL;
 -- Setup a test user with password Password1234!
-INSERT INTO tab_user(date_of_birth, email, fName, lName, password, picture_path) VALUES ('2003-08-19', 'test@example.com', 'Test', 'User', '$2a$10$Ra2OyNaklSi.YcfvGPuN9urUjCT17A9Kmu57zYftXe0ydZpEqbHg.', '/images/default_pic.jpg');
-INSERT INTO tab_user(date_of_birth, email, fName, lName, password, picture_path) VALUES ('2003-08-19', 'user@example.com', 'User', 'Test', '$2a$10$Ra2OyNaklSi.YcfvGPuN9urUjCT17A9Kmu57zYftXe0ydZpEqbHg.', '/images/default_pic.jpg');
-INSERT INTO tab_user(date_of_birth, email, fName, lName, password, picture_path) VALUES ('2003-08-19', 'big@example.com', 'Big', 'User', '$2a$10$Ra2OyNaklSi.YcfvGPuN9urUjCT17A9Kmu57zYftXe0ydZpEqbHg.', '/images/default_pic.jpg');
+INSERT INTO garden_user(date_of_birth, email, fName, lName, password, picture_path) VALUES ('2003-08-19', 'test@example.com', 'Test', 'User', '$2a$10$Ra2OyNaklSi.YcfvGPuN9urUjCT17A9Kmu57zYftXe0ydZpEqbHg.', '/images/default_pic.jpg');
+INSERT INTO garden_user(date_of_birth, email, fName, lName, password, picture_path) VALUES ('2003-08-19', 'user@example.com', 'User', 'Test', '$2a$10$Ra2OyNaklSi.YcfvGPuN9urUjCT17A9Kmu57zYftXe0ydZpEqbHg.', '/images/default_pic.jpg');
+INSERT INTO garden_user(date_of_birth, email, fName, lName, password, picture_path) VALUES ('2003-08-19', 'big@example.com', 'Big', 'User', '$2a$10$Ra2OyNaklSi.YcfvGPuN9urUjCT17A9Kmu57zYftXe0ydZpEqbHg.', '/images/default_pic.jpg');
 
 -- I Hanan Used a LLM to update this file on 30/04/2024 the following inserts were generated
 
