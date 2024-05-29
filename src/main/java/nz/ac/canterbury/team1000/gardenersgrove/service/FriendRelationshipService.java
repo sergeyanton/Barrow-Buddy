@@ -13,8 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * Service class for FriendRelationships, defined by the @link{Service} annotation.
- * This class links automatically with @link{FriendRelationshipRepository}, see the @link{Autowired} annotation below.
+ * Service class for FriendRelationships, defined by the @link{Service} annotation. This class links
+ * automatically with @link{FriendRelationshipRepository}, see the @link{Autowired} annotation
+ * below.
  */
 @Service
 public class FriendRelationshipService {
@@ -47,24 +48,29 @@ public class FriendRelationshipService {
 	}
 
 	/**
-	 * Gets a list of friend relationships from persistence by searching by the receiver id and status.
+	 * Gets a list of friend relationships from persistence by searching by the receiver id and
+	 * status.
 	 *
 	 * @param receiverId id of the user who is the recipient of the relationship request.
-	 * @param status Status enum of the type of relationship.
+	 * @param status     Status enum of the type of relationship.
 	 * @return the list of FriendRelationship objects sent to the user.
 	 */
-	public List<FriendRelationship> getRelationshipsByReceiverIdAndStatus(Long receiverId, Status status) {
-		return friendRelationshipRepository.findByReceiverIdAndStatus(receiverId, status).orElse(null);
+	public List<FriendRelationship> getRelationshipsByReceiverIdAndStatus(Long receiverId,
+		Status status) {
+		return friendRelationshipRepository.findByReceiverIdAndStatus(receiverId, status)
+			.orElse(null);
 	}
 
 	/**
-	 * Gets a list of friend relationships from persistence by searching by the sender id and status.
+	 * Gets a list of friend relationships from persistence by searching by the sender id and
+	 * status.
 	 *
 	 * @param senderId id of the user who sent the relationship request.
-	 * @param status Status enum of the type of relationship.
+	 * @param status   Status enum of the type of relationship.
 	 * @return the list of FriendRelationship objects sent to the user.
 	 */
-	public List<FriendRelationship> getRelationshipsBySenderIdAndStatus(Long senderId, Status status) {
+	public List<FriendRelationship> getRelationshipsBySenderIdAndStatus(Long senderId,
+		Status status) {
 		return friendRelationshipRepository.findBySenderIdAndStatus(senderId, status).orElse(null);
 	}
 
@@ -82,13 +88,15 @@ public class FriendRelationshipService {
 
 	/**
 	 * Updates the relationship of the given sender and receiver to the new status.
-	 * @param senderId id of the user who initiated the relationship.
+	 *
+	 * @param senderId   id of the user who initiated the relationship.
 	 * @param receiverId id of the user who received the relationship request.
-	 * @param status Status object representing the new state of the relationship.
+	 * @param status     Status object representing the new state of the relationship.
 	 */
 	@Transactional
 	public void updateFriendRelationship(Long senderId, Long receiverId, Status status) {
-		Optional<FriendRelationship> currentRelationship = friendRelationshipRepository.findBySenderIdAndReceiverId(senderId, receiverId);
+		Optional<FriendRelationship> currentRelationship = friendRelationshipRepository.findBySenderIdAndReceiverId(
+			senderId, receiverId);
 		currentRelationship.ifPresent(friendRelationship -> {
 			friendRelationship.setStatus(status);
 			friendRelationshipRepository.save(friendRelationship);
@@ -97,12 +105,26 @@ public class FriendRelationshipService {
 
 	/**
 	 * Retrieves the relationship, if any, of a given sender and receiver.
-	 * @param senderId id of the user who initiated the relationship.
+	 *
+	 * @param senderId   id of the user who initiated the relationship.
 	 * @param receiverId id of the user who received the relationship request.
 	 * @return the two user's associated FriendRelationship object if present, or else null.
 	 */
 	public FriendRelationship getFriendRelationship(Long senderId, Long receiverId) {
-		return friendRelationshipRepository.findBySenderIdAndReceiverId(senderId, receiverId).orElse(null);
+		return friendRelationshipRepository.findBySenderIdAndReceiverId(senderId, receiverId)
+			.orElse(null);
 	}
 
+	/**
+	 * Cancels the relationship, if any, of a given sender and receiver.
+	 *
+	 * @param senderId   id of the user who initiated the relationship.
+	 * @param receiverId id of the user who received the relationship request.
+	 * @return the two user's associated FriendRelationship object if present, or else null.
+	 */
+	@Transactional
+	public void cancelFriendRelationship(Long senderId, Long receiverId) {
+		friendRelationshipRepository.deleteBySenderIdAndReceiverId(senderId, receiverId);
+		friendRelationshipRepository.deleteBySenderIdAndReceiverId(receiverId, senderId);
+	}
 }

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.FriendRelationship;
 import nz.ac.canterbury.team1000.gardenersgrove.util.Status;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -24,5 +25,6 @@ public interface FriendRelationshipRepository extends CrudRepository<FriendRelat
 
 	Optional<FriendRelationship> findBySenderIdAndReceiverId(Long senderId, Long receiverId);
 
-
+//	@Query("DELETE FROM FriendRelationship fr WHERE fr. = :senderId AND fr.receiverId = :receiverId")
+	void deleteBySenderIdAndReceiverId(Long senderId, Long receiverId);
 }
