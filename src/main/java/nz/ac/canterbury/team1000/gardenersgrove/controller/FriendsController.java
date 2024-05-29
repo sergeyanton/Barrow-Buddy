@@ -242,7 +242,7 @@ public class FriendsController {
 	}
 
 	/**
-	 * Handles POST requests to cancel an outgoing friend request.
+	 * Handles POST requests to delete an outgoing friend request.
 	 *
 	 * @param receiver the email address of the user to be sent a friend request.
 	 * @return the redirection URL.
