@@ -4,7 +4,12 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Plant;
+import nz.ac.canterbury.team1000.gardenersgrove.entity.Weather;
+import nz.ac.canterbury.team1000.gardenersgrove.entity.WeatherType;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PlantForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.FriendRelationshipService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.ModerationService;
@@ -127,27 +132,44 @@ public class GardenControllerAuthTest {
         Mockito.when(gardenService.getGardenById(2L)).thenReturn(publicGardenMock);
         Mockito.when(plantService.getPlantById(1L)).thenReturn(privatePlantMock);
         Mockito.when(plantService.getPlantById(2L)).thenReturn(publicPlantMock);
+
+        Weather mockWeather = new Weather(
+            1L,
+            WeatherType.RAIN_SHOWER,
+            15.2,
+            22.7,
+            40,
+            "Monday",
+            "2024-05-30T17:03",
+            "2024-05-31T07:03"
+        );
+
+        List<Weather> mockWeatherList = new ArrayList<>();
+        mockWeatherList.add(mockWeather);
+
+        Mockito.when(weatherService.getCurrentWeatherByGardenId(Mockito.anyLong())).thenReturn(mockWeatherList);
+        Mockito.when(weatherService.getFutureWeatherByGardenId(Mockito.anyLong())).thenReturn(mockWeatherList);
     }
 
     @Test
     @WithAnonymousUser
     void testGetGardenCreate_WithUnauthenticatedUser_ReturnsUnauthorizedRequest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/gardens/create"))
-                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
 
     @Test
     @WithMockUser
     void testGetGardenCreate_WithAuthenticatedUser_ReturnsOkRequest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/gardens/create"))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+            .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
     @WithAnonymousUser
     void testGetPrivateGarden_WithUnauthenticatedUser_ReturnsUnauthorizedRequest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/gardens/1"))
-                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
 
     @Test
@@ -164,9 +186,9 @@ public class GardenControllerAuthTest {
         User otherUser = Mockito.mock(User.class);
         Mockito.when(otherUser.getId()).thenReturn(2L);
         Mockito.when(privateGardenMock.getOwner()).thenReturn(otherUser);
-        
+
         mockMvc.perform(MockMvcRequestBuilders.get("/gardens/1"))
-                .andExpect(MockMvcResultMatchers.status().isForbidden());
+            .andExpect(MockMvcResultMatchers.status().isForbidden());
     }
 
     @Test
@@ -180,7 +202,7 @@ public class GardenControllerAuthTest {
     @WithMockUser
     void testGetPrivateGarden_WithAuthenticatedUserThatOwnsGarden_ReturnsOkRequest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/gardens/1"))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+            .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
@@ -194,9 +216,9 @@ public class GardenControllerAuthTest {
     @WithAnonymousUser
     void testEditPrivateGarden_WithUnauthenticatedUser_ReturnsUnauthorizedRequest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/gardens/1/edit"))
-                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf()))
-                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
 
     @Test
@@ -214,11 +236,11 @@ public class GardenControllerAuthTest {
         User otherUser = Mockito.mock(User.class);
         Mockito.when(otherUser.getId()).thenReturn(2L);
         Mockito.when(privateGardenMock.getOwner()).thenReturn(otherUser);
-        
+
         mockMvc.perform(MockMvcRequestBuilders.get("/gardens/1/edit"))
-                .andExpect(MockMvcResultMatchers.status().isForbidden());
+            .andExpect(MockMvcResultMatchers.status().isForbidden());
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/edit").with(csrf()))
-                .andExpect(MockMvcResultMatchers.status().isForbidden());
+            .andExpect(MockMvcResultMatchers.status().isForbidden());
     }
 
     // TODO fix
@@ -239,7 +261,7 @@ public class GardenControllerAuthTest {
     @WithMockUser
     void testEditPrivateGarden_WithAuthenticatedUserThatOwnsGarden_ReturnsOkRequest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/gardens/1/edit"))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+            .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
@@ -322,7 +344,7 @@ public class GardenControllerAuthTest {
         PlantForm plantForm = PlantForm.fromPlant(privatePlantMock);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/gardens/1/plants/1/edit")
-            .with(csrf()).flashAttr("editPlantForm", plantForm))
+                .with(csrf()).flashAttr("editPlantForm", plantForm))
             .andExpect(MockMvcResultMatchers.status().is3xxRedirection());
     }
 
