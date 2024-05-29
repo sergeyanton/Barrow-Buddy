@@ -11,6 +11,7 @@ import nz.ac.canterbury.team1000.gardenersgrove.entity.Plant;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Weather;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.WeatherType;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PlantForm;
+import nz.ac.canterbury.team1000.gardenersgrove.service.FriendRelationshipService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.ModerationService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.WeatherService;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,6 +62,9 @@ public class GardenControllerAuthTest {
 
     @MockBean
     private VerificationTokenService verificationTokenService;
+
+    @MockBean
+    private FriendRelationshipService friendRelationshipService;
 
     @Mock
     private Garden privateGardenMock;

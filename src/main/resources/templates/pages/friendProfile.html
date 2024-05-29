@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head(title='Gardener\'s Grove - User Profile')}"></head>
+
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main>
+  <div class="basic">
+    <div class="profile-picture-wrapper">
+      <img class="profile-picture" id="profileImage" th:src="@{${picturePath}}" alt="Profile Picture">
+    </div>
+    <br />
+    <p th:text="${fName} + (${lName} ? ' ' + ${lName} : '')" style="font-size: 25px; font-weight: bold"></p>
+    <p th:text="${email}" style="font-size: 18px;"></p>
+    <p th:if="${dob != null}" th:text="'Date of birth: ' + ${dob}" style="font-size: 18px;"></p>
+    <br />
+
+    <table>
+      <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Location</th>
+        <th>Size (m&sup2;)</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:if="${gardens.empty}">
+        <td colspan="4"> User has made no gardens yet</td>
+      </tr>
+      <tr th:each="garden : ${gardens}">
+        <td><a th:href="@{/gardens/{id}(id=${garden.id})}" th:text="${garden.name}"> Name </a></td>
+        <td><span th:text="${garden.getDescription}"> Description </span></td>
+        <td><span th:text="${garden.getLocationString}"> Location </span></td>
+        <td><span th:text="${garden.size}"> Size </span></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+<script>
+</script>
+</body>
+</html>
