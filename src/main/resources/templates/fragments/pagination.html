@@ -7,7 +7,7 @@
 <div th:fragment="pagination(items)" class="pagination"
      th:with="
         pageNumber=${items.number + 1},
-        totalPages=${items.totalPages},
+        totalPages=${items.totalPages > 0 ? items.totalPages : 1},
         startPage=${(pageNumber - 2 > 0) ? ((pageNumber + 2 <= totalPages) ? pageNumber - 2 : (totalPages - 4 > 0 ? totalPages - 4 : 1)) : 1},
         endPage=${(startPage + 4 <= totalPages) ? startPage + 4 : totalPages}">
 
@@ -17,13 +17,27 @@
         <a th:replace=" :: paginationPage(label='&laquo;', page=${pageNumber > 1 ? pageNumber - 1 : 1})"></a>
 
         <!-- Page number links -->
-        <th:block th:each="page : ${#numbers.sequence(startPage, endPage)}">
-            <a th:replace=" :: paginationPage(label=${page}, page=${page}, allowActive=${true})"></a>
+        <th:block>
+            <th:block th:each="page : ${#numbers.sequence(startPage, endPage)}">
+                <a th:replace=" :: paginationPage(label=${page}, page=${page}, allowActive=${true})"></a>
+            </th:block>
         </th:block>
 
         <!-- Next page link -->
-        <a th:replace=" :: paginationPage(label='&raquo;', page=${pageNumber < totalPages ? pageNumber + 1 : totalPages})"></a>
+        <a th:replace=" :: paginationPage(label='&raquo;', page=${pageNumber < (totalPages - 1) ? pageNumber + 1 : totalPages})"></a>
         <!-- Last page link -->
         <a th:replace=" :: paginationPage(label='&raquo;&raquo;', page=${totalPages})"></a>  
+</div>
+
+<div th:fragment="paginationLabel(items)" th:with="
+    pageNumber=${items.number + 1},
+    startIndex=${items.size * (pageNumber - 1) + 1},
+    endIndex=${startIndex + items.size - 1 > items.totalElements ? items.totalElements : startIndex + items.size - 1}">
+    <th:block th:if="${items.totalElements > 0}">
+        <span>Showing results <span th:text="${startIndex}"></span> to <span th:text="${endIndex}"></span> of <span th:text="${items.totalElements}"></span></span>
+    </th:block>
+    <th:block th:unless="${items.totalElements > 0}">
+        <span>Showing no results</span>
+    </th:block>
 </div>
 </html>

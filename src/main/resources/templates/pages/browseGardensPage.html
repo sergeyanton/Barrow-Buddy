@@ -17,7 +17,9 @@
                 </div>
             </form>
             <h2 th:if="${query.empty}"> Showing Recent Gardens</h2>
-            <h2 th:unless="${query.empty}"> Showing Search Results</h2>
+            <h2 th:unless="${query.empty}"> 
+                <div th:replace="~{fragments/pagination :: paginationLabel(items = ${gardens})}"></div>
+            </h2>
             <br>
             <table>
                 <thead>
