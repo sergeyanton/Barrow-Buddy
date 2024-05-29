@@ -1,11 +1,11 @@
 SET MODE MySQL;
 -- Setup a test user with password Password1234!
-INSERT INTO tab_user(date_of_birth, email, fName, lName, password, picture_path) VALUES ('2003-08-19', 'test@example.com', 'Test', 'User', '$2a$10$Ra2OyNaklSi.YcfvGPuN9urUjCT17A9Kmu57zYftXe0ydZpEqbHg.', '/images/default_pic.jpg');
-INSERT INTO tab_user(date_of_birth, email, fName, lName, password, picture_path) VALUES ('2003-08-19', 'user@example.com', 'User', 'Test', '$2a$10$Ra2OyNaklSi.YcfvGPuN9urUjCT17A9Kmu57zYftXe0ydZpEqbHg.', '/images/default_pic.jpg');
-INSERT INTO tab_user(date_of_birth, email, fName, lName, password, picture_path) VALUES ('2003-08-19', 'big@example.com', 'Big', 'User', '$2a$10$Ra2OyNaklSi.YcfvGPuN9urUjCT17A9Kmu57zYftXe0ydZpEqbHg.', '/images/default_pic.jpg');
+INSERT INTO garden_user(date_of_birth, email, fName, lName, password, picture_path) VALUES ('2003-08-19', 'test@example.com', 'Test', 'User', '$2a$10$Ra2OyNaklSi.YcfvGPuN9urUjCT17A9Kmu57zYftXe0ydZpEqbHg.', '/images/default_pic.jpg');
+INSERT INTO garden_user(date_of_birth, email, fName, lName, password, picture_path) VALUES ('2003-08-19', 'user@example.com', 'User', 'Test', '$2a$10$Ra2OyNaklSi.YcfvGPuN9urUjCT17A9Kmu57zYftXe0ydZpEqbHg.', '/images/default_pic.jpg');
+INSERT INTO garden_user(date_of_birth, email, fName, lName, password, picture_path) VALUES ('2003-08-19', 'big@example.com', 'Big', 'User', '$2a$10$Ra2OyNaklSi.YcfvGPuN9urUjCT17A9Kmu57zYftXe0ydZpEqbHg.', '/images/default_pic.jpg');
 
 -- Setup fake users all with password Password1234! (ChatGPT assisted because this is otherwise tedious) Alice Smith is repeated to test the search by name function
-INSERT INTO tab_user(date_of_birth, email, fName, lName, password, picture_path) VALUES ('2005-03-15', 'alice.smith@example.com',  'Alice',    'Smith',     '$2a$10$Ra2OyNaklSi.YcfvGPuN9urUjCT17A9Kmu57zYftXe0ydZpEqbHg.', '/images/default_pic.jpg'),
+INSERT INTO garden_user(date_of_birth, email, fName, lName, password, picture_path) VALUES ('2005-03-15', 'alice.smith@example.com',  'Alice',    'Smith',     '$2a$10$Ra2OyNaklSi.YcfvGPuN9urUjCT17A9Kmu57zYftXe0ydZpEqbHg.', '/images/default_pic.jpg'),
                                                                                         ('2005-03-16', 'user2@example.com',  'Alice',    'Smith',     '$2a$10$Ra2OyNaklSi.YcfvGPuN9urUjCT17A9Kmu57zYftXe0ydZpEqbHg.', '/images/default_pic.jpg'),
                                                                                         ('2005-03-17', 'user3@example.com',  'Alice',    'Smith',     '$2a$10$Ra2OyNaklSi.YcfvGPuN9urUjCT17A9Kmu57zYftXe0ydZpEqbHg.', '/images/default_pic.jpg'),
                                                                                         ('2005-03-18', 'user4@example.com',  'Alice',    'Smith',     '$2a$10$Ra2OyNaklSi.YcfvGPuN9urUjCT17A9Kmu57zYftXe0ydZpEqbHg.', '/images/default_pic.jpg'),
