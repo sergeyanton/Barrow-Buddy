@@ -10,6 +10,7 @@ import nz.ac.canterbury.team1000.gardenersgrove.controller.FriendsController;
 import nz.ac.canterbury.team1000.gardenersgrove.controller.GlobalModelAttributeProvider;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.FriendRelationship;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
+import nz.ac.canterbury.team1000.gardenersgrove.form.GardenForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.SearchFriendsForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.EmailService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.FriendRelationshipService;
@@ -221,6 +222,20 @@ public class FriendsControllerTest {
 			.andExpect(MockMvcResultMatchers.model().attributeErrorCount("searchFriendsForm", 2));
 
 		Mockito.verify(userService).getUsersByFullName(searchQuery);
+	}
+
+	@Test
+	public void CancelFriendRequestPost_CancelsSuccessfully() throws Exception {
+		String receiverEmail = "myfriend@example.com";
+		otherUser = new User("Friend", "User", receiverEmail, "Password!456", LocalDate.now(), null);
+		Mockito.when(userService.findEmail(receiverEmail)).thenReturn(otherUser);
+
+		mockMvc.perform(MockMvcRequestBuilders.post("/cancelFriend")
+				.param("receiver", receiverEmail).with(csrf()))
+			.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+			.andExpect(MockMvcResultMatchers.redirectedUrl("/friends"));
+
+		Mockito.verify(friendRelationshipService).cancelFriendRelationship(userMock.getId(), otherUser.getId());
 	}
 
 //	@Test

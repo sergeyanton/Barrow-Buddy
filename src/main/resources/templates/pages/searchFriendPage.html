@@ -33,8 +33,6 @@
                 <div th:if="${statusPair.first == 'None'}">
                   <form th:action="@{/addFriend}" method="post">
                     <input type="hidden" th:name="receiver" th:value="${user.email}" />
-                    <input type="hidden" th:name="back" th:value="${currentUrl}" />
-
                     <button class="invite-button" type="submit">Invite as Friend</button>
                   </form>
                 </div>

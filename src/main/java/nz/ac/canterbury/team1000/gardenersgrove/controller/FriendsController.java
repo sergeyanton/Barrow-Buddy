@@ -187,11 +187,10 @@ public class FriendsController {
 	 * Handles POST requests to send a friend request.
 	 *
 	 * @param receiver the email address of the user to be sent a friend request.
-	 * @param back the URL to redirect back to after sending the friend request.
 	 * @return the redirection URL.
 	 */
 	@PostMapping("/addFriend")
-	public String postFriendRequest(@RequestParam("receiver") String receiver, @RequestParam("back") String back) {
+	public String postFriendRequest(@RequestParam("receiver") String receiver) {
 		logger.info("POST /addFriend " + receiver);
 
 		User currentUser = userService.getLoggedInUser();
@@ -212,29 +211,26 @@ public class FriendsController {
 			logger.info("Found existing");
 		}
 
-		return "redirect:" + back;
+		return "redirect:/searchFriend";
 	}
 
 	/**
 	 * Handles POST requests to cancel an outgoing friend request.
 	 *
 	 * @param receiver the email address of the user to be sent a friend request.
-	 * @param back the URL to redirect back to after sending the friend request.
 	 * @return the redirection URL.
 	 */
 	@PostMapping("/cancelFriend")
-	public String postCancelFriendRequest(@RequestParam("receiver") String receiver, @RequestParam("back") String back) {
-		logger.info("POST /cancelFriend " + receiver + " back: " + back);
+	public String postCancelFriendRequest(@RequestParam("receiver") String receiver) {
+		logger.info("POST /cancelFriend " + receiver);
 
 		User currentUser = userService.getLoggedInUser();
-
-		// User email taken from the successful search
 		User receiverUser = userService.findEmail(receiver);
 
 		logger.info("Cancelling friend request " + receiverUser.getEmail());
 		friendRelationshipService.cancelFriendRelationship(currentUser.getId(), receiverUser.getId());
 
-		return "redirect:" + back;
+		return "redirect:/friends";
 	}
 
 	/**
@@ -352,5 +348,4 @@ public class FriendsController {
 		logger.info("GET /friends");
 		return "redirect:/friends";
 	}
-
 }

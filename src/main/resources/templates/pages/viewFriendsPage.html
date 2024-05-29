@@ -86,7 +86,7 @@
           <td class="text-align-right">
             <form th:action="@{/cancelFriend}" method="post">
               <input type="hidden" th:name="receiver" th:value="${pending.email}" />
-              <input type="hidden" th:name="back" th:value="${currentUrl}" />
+<!--              <input type="hidden" th:name="back" th:value="${currentUrl}" />-->
               <button class="decline-button" type="submit">Cancel</button>
             </form>
           </td>
