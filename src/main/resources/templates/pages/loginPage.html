@@ -17,12 +17,12 @@
                 <br />
                 <div>
                     <p>Not registered? <a th:href="@{register}">Create an account!</a></p>
-                    <button type="button" id="forgotPasswordBtn">Forgot password?</button>
+                    <a type="button" class="submit" th:href="@{/forgotPassword}">Forgot password?</button>
 
                 </div>
                 <div class="cancel-submit-wrapper">
                     <a class="cancel" th:href="@{/}">Cancel</a>
-                    <a type="submit" class="submit" th:href="@{/forgotPassword}">Sign In</a>
+                    <button type="submit">Sign In</button>
                 </div>
             </form>
         </div>
