@@ -14,7 +14,7 @@ import java.util.List;
  * This class represents a user entity in the application.
  */
 @Entity
-@Table(name = "tab_user")
+@Table(name = "garden_user")
 public class User {
 
     @Id

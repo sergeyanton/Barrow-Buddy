@@ -103,7 +103,7 @@ public class AccountController {
         RegistrationForm.validate(registrationForm, bindingResult);
 
         if (!bindingResult.hasFieldErrors("email") && userService.checkEmail(registrationForm.getEmail())) {
-            bindingResult.addError(new FieldError("registrationForm", "email", registrationForm.getEmail(), false, null, null, "Email already in use"));
+            bindingResult.addError(new FieldError("registrationForm", "email", registrationForm.getEmail(), false, null, null, "Email address is already in use"));
         }
 
         if (bindingResult.hasErrors()) {

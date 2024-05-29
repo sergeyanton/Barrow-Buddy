@@ -833,5 +833,4 @@ public class GardenControllerTest {
             .andExpect(MockMvcResultMatchers.model().attribute("gardens", Matchers.equalTo(new PageImpl<Garden>(List.of()))));
         verify(gardenService).searchGardens(Mockito.eq(privateGardenQuery), Mockito.any());
     }
-
 }

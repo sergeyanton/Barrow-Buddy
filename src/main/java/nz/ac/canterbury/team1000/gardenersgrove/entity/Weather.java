@@ -22,19 +22,30 @@ public class Weather {
     private Long id;
     @Column(nullable = false)
     private Long gardenId;
-    @Column(nullable = false)
+    @Column
     public LocalDateTime dateTime;
     @Column(nullable = false)
     public String dayOfTheWeek;
     @Column(nullable = false)
     public WeatherType type;
-    @Column(nullable = false)
+    @Column
     public Double temperature;
-    @Column(nullable = false)
+    @Column
     public Integer humidity;
     @Column(nullable = false)
     public LocalDateTime expiry;
+    @Column
+    public Integer precipitation;
+    @Column
+    public Double minTemperature;
+    @Column
+    public Double maxTemperature;
 
+    @Column
+    public String sunSet;
+
+    @Column
+    public String sunRise;
 
     /**
      * The period of time in minutes that the weather is valid for, after this time, the weather
@@ -64,6 +75,20 @@ public class Weather {
         this.type = type;
         this.temperature = temperature;
         this.humidity = humidity;
+        updateExpiry();
+    }
+
+    public Weather(Long gardenId, WeatherType type, Double minTemperature, Double maxTemperature,
+            Integer precipitation, String dayOfTheWeek, String sunSet, String sunRise)
+    {
+        this.gardenId = gardenId;
+        this.type = type;
+        this.minTemperature = minTemperature;
+        this.maxTemperature = maxTemperature;
+        this.precipitation = precipitation;
+        this.dayOfTheWeek = dayOfTheWeek;
+        this.sunSet = sunSet;
+        this.sunRise = sunRise;
         updateExpiry();
     }
 
@@ -122,17 +147,17 @@ public class Weather {
       this.expiry = LocalDateTime.now().plusMinutes(EXPIRY_INTERVAL);
     }
 
-    @Override
-    public String toString() {
-        return "Weather{" +
-            "id=" + id +
-            ", gardenId=" + gardenId +
-            ", dateTime=" + dateTime.toString() +
-            ", type=" + type +
-            ", temperature=" + temperature +
-            ", humidity=" + humidity +
-            ", dayOfTheWeek=" + dayOfTheWeek +
-            ", expiry=" + expiry +
-            '}';
-    }
+//    @Override
+//    public String toString() {
+//        return "Weather{" +
+//            "id=" + id +
+//            ", gardenId=" + gardenId +
+//            ", type=" + type +
+//            ", dayOfTheWeek=" + dayOfTheWeek +
+//            ", expiry=" + expiry +
+//            ", precipitation=" + precipitation +
+//            ", minTemperature=" + minTemperature +
+//            ", maxTemperature=" + maxTemperature +
+//            '}';
+//    }
 }

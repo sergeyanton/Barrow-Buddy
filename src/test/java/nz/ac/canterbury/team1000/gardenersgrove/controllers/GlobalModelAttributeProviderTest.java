@@ -99,4 +99,15 @@ public class GlobalModelAttributeProviderTest {
 
         assertEquals("/gardens?sort=name&filter=active", paginationPath);
     }
+
+    @Test
+    public void testGardenPaginationPath_withParamsAnd2DigitPage_returnsRouteAndAllParamsExceptPageIncludingAllTheDigits() {
+        when(request.getRequestURI()).thenReturn("/");
+        when(request.getQueryString()).thenReturn("sort=name&page=20&filter=active");
+        when(request.getContextPath()).thenReturn("");
+
+        String paginationPath = globalModelAttributeProvider.getPaginationPath(request);
+
+        assertEquals("/?sort=name&filter=active", paginationPath);
+    }
 }

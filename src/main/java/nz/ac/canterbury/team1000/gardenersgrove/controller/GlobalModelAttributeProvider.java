@@ -55,7 +55,7 @@ public class GlobalModelAttributeProvider {
         }
 
         if (queryString != null) {
-            currentPath += "?" + queryString.replaceAll("(^|&)page=\\d", "");
+            currentPath += "?" + queryString.replaceAll("(^|&)page=\\d+", "");
         }
 
         // Remove floating question mark (this happens when page is the only query parameter left)

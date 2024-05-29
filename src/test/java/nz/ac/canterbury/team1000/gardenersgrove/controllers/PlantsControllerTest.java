@@ -1,6 +1,9 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controllers;
 
+import java.util.ArrayList;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.Garden;
+import nz.ac.canterbury.team1000.gardenersgrove.entity.Weather;
+import nz.ac.canterbury.team1000.gardenersgrove.entity.WeatherType;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PictureForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PlantForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.FriendRelationshipService;
@@ -118,6 +121,23 @@ public class PlantsControllerTest {
             updatedPlant.setId(1L);
             return updatedPlant;
         });
+
+        Weather mockWeather = new Weather(
+            1L,
+            WeatherType.RAIN_SHOWER,
+            15.2,
+            22.7,
+            40,
+            "Monday",
+            "2024-05-30T17:03",
+            "2024-05-31T07:03"
+        );
+
+        List<Weather> mockWeatherList = new ArrayList<>();
+        mockWeatherList.add(mockWeather);
+
+        Mockito.when(weatherService.getCurrentWeatherByGardenId(Mockito.anyLong())).thenReturn(mockWeatherList);
+        Mockito.when(weatherService.getFutureWeatherByGardenId(Mockito.anyLong())).thenReturn(mockWeatherList);
 
         Mockito.when(plantService.getPlantById(1L)).thenReturn(plantMock);
         Mockito.when(gardenService.getGardenById(1L)).thenReturn(gardenMock);
