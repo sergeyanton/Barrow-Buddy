@@ -187,10 +187,11 @@ public class FriendsController {
 	 * Handles POST requests to send a friend request.
 	 *
 	 * @param receiver the email address of the user to be sent a friend request.
+	 * @param back the URL to redirect back to after sending the friend request.
 	 * @return the redirection URL.
 	 */
 	@PostMapping("/addFriend")
-	public String postFriendRequest(@RequestParam("receiver") String receiver) {
+	public String postFriendRequest(@RequestParam("receiver") String receiver, @RequestParam("back") String back) {
 		logger.info("POST /addFriend " + receiver);
 
 		User currentUser = userService.getLoggedInUser();
@@ -211,7 +212,7 @@ public class FriendsController {
 			logger.info("Found existing");
 		}
 
-		return "redirect:/searchFriend";
+		return "redirect:" + back;
 	}
 
 	/**
