@@ -1,6 +1,7 @@
 package nz.ac.canterbury.team1000.gardenersgrove.entity;
 
 import jakarta.persistence.*;
+import java.util.Objects;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -89,6 +90,19 @@ public class User {
         this.userRoles.forEach(
                 authority -> authorities.add(new SimpleGrantedAuthority(authority.getRole())));
         return authorities;
+    }
+
+    /**
+     * Gets the user's full name, with a space between the first name and last name.
+     * If the user has no last name, it returns the first name.
+     *
+     * @return the user's full name
+     */
+    public String getFullName() {
+        if (lname == null) {
+            return fname;
+        }
+        return fname + " " + lname;
     }
 
     public Long getId() {

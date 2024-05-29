@@ -2,12 +2,14 @@ package nz.ac.canterbury.team1000.gardenersgrove.controllers;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
+import java.util.ArrayList;
+import java.util.List;
 import nz.ac.canterbury.team1000.gardenersgrove.controller.GlobalModelAttributeProvider;
 import nz.ac.canterbury.team1000.gardenersgrove.controller.ProfileController;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.EditUserForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PictureForm;
-import nz.ac.canterbury.team1000.gardenersgrove.form.SearchForm;
+import nz.ac.canterbury.team1000.gardenersgrove.form.SearchFriendsForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.UpdatePasswordForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.EmailService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.FriendRelationshipService;
@@ -66,14 +68,16 @@ public class ProfileControllerTest {
 	private PictureForm profilePictureForm;
 
 	private EditUserForm editUserForm;
-	private SearchForm searchForm;
+	private SearchFriendsForm searchFriendsForm;
 	private UpdatePasswordForm updatePasswordForm;
 
 	@BeforeEach
 	public void BeforeEach() {
 		userMock = Mockito.mock(User.class);
+		Mockito.when(userMock.getId()).thenReturn(1L);
 		Mockito.when(userMock.getFname()).thenReturn("John");
 		Mockito.when(userMock.getLname()).thenReturn("Smith");
+		Mockito.when(userMock.getFullName()).thenReturn("John Smith");
 		Mockito.when(userMock.getEmail()).thenReturn("johnsmith@gmail.com");
 		Mockito.when(userMock.getDateOfBirth()).thenReturn(LocalDate.of(1999, 5, 5));
 		Mockito.when(userMock.getDateOfBirthString()).thenReturn("05/05/1999");
@@ -98,8 +102,8 @@ public class ProfileControllerTest {
 		updatePasswordForm.setNewPassword("Pass123$");
 		updatePasswordForm.setRetypeNewPassword("Pass123$");
 
-		searchForm = new SearchForm();
-		searchForm.setEmailSearch(userMock.getEmail());
+		searchFriendsForm = new SearchFriendsForm();
+		searchFriendsForm.setSearch(userMock.getEmail());
 
 		Mockito.when(userService.getLoggedInUser()).thenReturn(userMock);
 		Mockito.when(userService.checkEmail(Mockito.any())).thenReturn(true);
@@ -657,5 +661,4 @@ public class ProfileControllerTest {
 		Mockito.verify(userService, Mockito.never())
 			.updateUserByEmail(Mockito.any(), Mockito.any());
 	}
-
 }

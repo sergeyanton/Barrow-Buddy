@@ -1,25 +1,27 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
+import java.util.List;
 import java.util.Objects;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.FriendRelationship;
+import nz.ac.canterbury.team1000.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.EditUserForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PictureForm;
-import nz.ac.canterbury.team1000.gardenersgrove.form.SearchForm;
+import nz.ac.canterbury.team1000.gardenersgrove.form.SearchFriendsForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.UpdatePasswordForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.EmailService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.FriendRelationshipService;
+import nz.ac.canterbury.team1000.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
 
-import nz.ac.canterbury.team1000.gardenersgrove.service.VerificationTokenService;
 import nz.ac.canterbury.team1000.gardenersgrove.util.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,7 +36,7 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.server.ResponseStatusException;
 
 @Controller
 public class ProfileController {
@@ -43,11 +45,15 @@ public class ProfileController {
 
     private final FriendRelationshipService friendRelationshipService;
 
+    private final GardenService gardenService;
+
     @Autowired
-    public ProfileController(UserService userService, EmailService emailService, FriendRelationshipService friendRelationshipService) {
+    public ProfileController(UserService userService, EmailService emailService, FriendRelationshipService friendRelationshipService,
+        GardenService gardenService) {
         this.userService = userService;
         this.emailService = emailService;
         this.friendRelationshipService = friendRelationshipService;
+        this.gardenService = gardenService;
     }
 
     @Autowired
@@ -58,6 +64,49 @@ public class ProfileController {
 
     private final static String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/uploads";
     final Logger logger = LoggerFactory.getLogger(ProfileController.class);
+
+    /**
+     * Helper method to check if two users are friends.
+     * @param userId
+     * @param otherUserId
+     * @return
+     */
+    public boolean areUsersFriends(Long userId, Long otherUserId) {
+        FriendRelationship sentRelationship = friendRelationshipService.getFriendRelationship(userId, otherUserId);
+        FriendRelationship receivedRelationship = friendRelationshipService.getFriendRelationship(otherUserId, userId);
+        boolean sentFriends = (sentRelationship != null && sentRelationship.getStatus().equals(
+            Status.APPROVED));
+        boolean receivedFriends = (receivedRelationship != null && receivedRelationship.getStatus().equals(
+            Status.APPROVED));
+        return sentFriends || receivedFriends;
+    }
+
+    /**
+     * Tries to access a given user's profile if the logged in user is allowed.
+     * Must be friends or that user's profile.
+     * @param userId
+     * @return
+     * @throws ResponseStatusException
+     */
+    private User tryToViewUserProfile(Long userId) throws ResponseStatusException {
+        try {
+            User owner = userService.getUserById(userId);
+        } catch (IllegalArgumentException exception) {
+            throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "User not found"
+            );
+        }
+
+        boolean areFriends = areUsersFriends(userService.getLoggedInUser().getId(), userId);
+        if (!areFriends) {
+            throw new ResponseStatusException(
+                HttpStatus.FORBIDDEN,
+                "You can only view your own or your friends' gardens"
+            );
+        }
+        return userService.getUserById(userId);
+    }
 
     /**
      * Gets the thymeleaf page representing the /profile page, displaying the currently logged-in
@@ -77,8 +126,44 @@ public class ProfileController {
             model.addAttribute("dob", currentUser.getDateOfBirthString());
         }
         model.addAttribute("picturePath", currentUser.getPicturePath());
+        model.addAttribute("loggedInUserId", currentUser.getId());
+        model.addAttribute("id", currentUser.getId());
 
         return "pages/profilePage";
+    }
+
+    /**
+     * Gets the thymeleaf page representing the profile page of the given user id, displaying that
+     * user's account details. Will only work logged in as that user or as that user's friend.
+     *
+     * @return thymeleaf profilePage
+     */
+    @GetMapping("/user/{id}/profile")
+    public String getProfilePage(Model model, @PathVariable("id") Long id, @ModelAttribute("profilePictureForm") PictureForm profilePictureForm) {
+        logger.info("GET /profile");
+        User loggedInUser = userService.getLoggedInUser();
+
+        if (id.equals(loggedInUser.getId())) {
+            return "redirect:/profile";
+        }
+
+        User currentUser = tryToViewUserProfile(id);
+
+        model.addAttribute("fName", currentUser.getFname());
+        model.addAttribute("lName", currentUser.getLname());
+        model.addAttribute("email", currentUser.getEmail());
+        if (currentUser.getDateOfBirth() != null) {
+            model.addAttribute("dob", currentUser.getDateOfBirthString());
+        }
+
+        List<Garden> gardensList = gardenService.getUserGardens(currentUser.getId());
+
+        model.addAttribute("picturePath", currentUser.getPicturePath());
+        model.addAttribute("loggedInUserId", loggedInUser.getId());
+        model.addAttribute("id", id);
+        model.addAttribute("gardens", gardensList);
+
+        return "pages/friendProfile";
     }
 
     /**
@@ -280,6 +365,4 @@ public class ProfileController {
 
         return ResponseEntity.ok().body(resource);
     }
-
-
 }

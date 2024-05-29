@@ -1,6 +1,7 @@
 package nz.ac.canterbury.team1000.gardenersgrove.service;
 
 import jakarta.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.FriendRelationship;
@@ -44,6 +45,29 @@ public class FriendRelationshipService {
 	public List<FriendRelationship> getRelationshipsByReceiverId(Long receiverId) {
 		return friendRelationshipRepository.findByReceiverId(receiverId).orElse(null);
 	}
+
+	/**
+	 * Gets a list of friend relationships from persistence by searching by the receiver id and status.
+	 *
+	 * @param receiverId id of the user who is the recipient of the relationship request.
+	 * @param status Status enum of the type of relationship.
+	 * @return the list of FriendRelationship objects sent to the user.
+	 */
+	public List<FriendRelationship> getRelationshipsByReceiverIdAndStatus(Long receiverId, Status status) {
+		return friendRelationshipRepository.findByReceiverIdAndStatus(receiverId, status).orElse(null);
+	}
+
+	/**
+	 * Gets a list of friend relationships from persistence by searching by the sender id and status.
+	 *
+	 * @param senderId id of the user who sent the relationship request.
+	 * @param status Status enum of the type of relationship.
+	 * @return the list of FriendRelationship objects sent to the user.
+	 */
+	public List<FriendRelationship> getRelationshipsBySenderIdAndStatus(Long senderId, Status status) {
+		return friendRelationshipRepository.findBySenderIdAndStatus(senderId, status).orElse(null);
+	}
+
 
 	/**
 	 * Adds a new FriendRelationship to persistence

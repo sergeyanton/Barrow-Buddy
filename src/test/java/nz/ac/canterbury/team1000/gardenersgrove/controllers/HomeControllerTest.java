@@ -1,6 +1,7 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controllers;
 
 import nz.ac.canterbury.team1000.gardenersgrove.controller.GardensController;
+import nz.ac.canterbury.team1000.gardenersgrove.service.FriendRelationshipService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.ModerationService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.PlantService;
@@ -49,6 +50,9 @@ class HomeControllerTest {
 
     @MockBean
     private VerificationTokenService verificationTokenService;
+
+    @MockBean
+    private FriendRelationshipService friendRelationshipService;
 
     @Autowired
     private MockMvc mockMvc;
