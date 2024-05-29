@@ -66,6 +66,14 @@ public class FormUtils {
      */
     public static final int MAX_DB_STR_LEN = 255;
 
+    /**
+     * The maximum length of a first name or last name
+     */
+    public static final int MAX_USER_NAME_LEN = 64;
+
+    /**
+     * The maximum plant count, the number comes fom the fact there is no one plant species that has a population higher
+     */
     public static final int MAX_PLANT_COUNT = 268000;
     /**
      * The default maximum garden size.
