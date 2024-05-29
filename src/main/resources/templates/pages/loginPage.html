@@ -22,7 +22,7 @@
                 </div>
                 <div class="cancel-submit-wrapper">
                     <a class="cancel" th:href="@{/}">Cancel</a>
-                    <button type="submit">Sign In</button>
+                    <a type="submit" class="submit" th:href="@{/forgotPassword}">Sign In</a>
                 </div>
             </form>
         </div>
@@ -33,10 +33,6 @@
             if (event.keyCode === 13) {
                 event.preventDefault();
             }
-        });
-
-        document.getElementById('forgotPasswordBtn').addEventListener('click', function() {
-            window.location.href = '/forgotPassword';
         });
     </script>
 </body>
