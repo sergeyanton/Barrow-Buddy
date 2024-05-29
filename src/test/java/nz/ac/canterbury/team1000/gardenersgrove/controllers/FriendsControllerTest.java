@@ -16,6 +16,7 @@ import nz.ac.canterbury.team1000.gardenersgrove.service.FriendRelationshipServic
 import nz.ac.canterbury.team1000.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
 import nz.ac.canterbury.team1000.gardenersgrove.util.Status;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -61,11 +62,14 @@ public class FriendsControllerTest {
 	@Mock
 	private User userMock;
 
+	@Mock
+	private User otherUserMock;
+
 	private User loggedInUser;
 
 	private User friendUser;
 
-	private User otherUser;
+//	private User otherUser;
 
 	private SearchFriendsForm searchFriendsForm;
 
@@ -75,6 +79,11 @@ public class FriendsControllerTest {
 		Mockito.when(userMock.getEmail()).thenReturn("johnsmith@gmail.com");
 		Mockito.when(userMock.getFullName()).thenReturn("John Smith");
 		Mockito.when(userMock.getId()).thenReturn(1L);
+
+		otherUserMock = Mockito.mock(User.class);
+		Mockito.when(otherUserMock.getEmail()).thenReturn("janedoe@gmail.com");
+		Mockito.when(otherUserMock.getFullName()).thenReturn("Jane Doe");
+		Mockito.when(otherUserMock.getId()).thenReturn(2L);
 
 		searchFriendsForm = new SearchFriendsForm();
 
@@ -212,7 +221,8 @@ public class FriendsControllerTest {
 		String searchQuery = userMock.getFullName();
 		Mockito.when(userService.getUsersByFullName(searchQuery)).thenReturn(List.of(userMock));
 
-		mockMvc.perform(MockMvcRequestBuilders.get("/searchFriend").param("search", searchQuery).with(csrf()))
+		mockMvc.perform(MockMvcRequestBuilders.get("/searchFriend")
+				.param("search", searchQuery).with(csrf()))
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andExpect(MockMvcResultMatchers.view().name("pages/searchFriendPage"))
 			.andExpect(MockMvcResultMatchers.model().attributeExists("search"))
@@ -223,89 +233,96 @@ public class FriendsControllerTest {
 		Mockito.verify(userService).getUsersByFullName(searchQuery);
 	}
 
-//	@Test
-//	public void SearchFormGet_NoFriendRequestSent_DisplaysNoRelationship() throws Exception {
+	@Test
+	public void SearchFormGet_NoFriendRequestSent_DisplaysNoRelationship() throws Exception {
 //		String searchQuery = "friend@example.com";
 //		User otherUser = new User("Friend", "User", searchQuery, "Password!456", LocalDate.now(), null);
+		String searchQuery = otherUserMock.getEmail();
+//		User otherUserMock = Mockito.mock(User.class);
+//		Mockito.when(otherUserMock.getId()).thenReturn(2L);
+		Mockito.when(userService.findEmail(searchQuery)).thenReturn(otherUserMock);
+
+
 //		Mockito.when(userService.findEmail(searchQuery)).thenReturn(otherUser);
-//		Mockito.when(friendRelationshipService.getFriendRelationship(userMock.getId(), otherUser.getId())).thenReturn(null);
-//		Mockito.when(friendRelationshipService.getFriendRelationship(otherUser.getId(), userMock.getId())).thenReturn(null);
-//
-//		mockMvc.perform(MockMvcRequestBuilders.get("/searchByEmail").param("emailSearch", searchQuery).with(csrf()))
-//			.andExpect(MockMvcResultMatchers.status().isOk())
-//			.andExpect(MockMvcResultMatchers.view().name("pages/searchByEmailPage"))
-//			.andExpect(MockMvcResultMatchers.model().attribute("userResult", otherUser))
-//			.andExpect(MockMvcResultMatchers.model().attribute("relationshipStatus", Matchers.nullValue()));
-//	}
-//
-//	@Test
-//	public void SearchFormGet_FriendRequestAlreadySent_DisplaysRelationshipPending() throws Exception {
-//		String searchQuery = "friend@example.com";
-//		User otherUser = new User("Friend", "User", searchQuery, "Password!456", LocalDate.now(), null);
-//		FriendRelationship requestPending = new FriendRelationship(userMock, otherUser, Status.PENDING);
-//		Mockito.when(userService.findEmail(searchQuery)).thenReturn(otherUser);
-//		Mockito.when(friendRelationshipService.getFriendRelationship(userMock.getId(), otherUser.getId())).thenReturn(requestPending);
-//
-//		mockMvc.perform(MockMvcRequestBuilders.get("/searchByEmail").param("emailSearch", searchQuery).with(csrf()))
-//			.andExpect(MockMvcResultMatchers.status().isOk())
-//			.andExpect(MockMvcResultMatchers.view().name("pages/searchByEmailPage"))
-//			.andExpect(MockMvcResultMatchers.model().attribute("userResult", otherUser))
-//			.andExpect(MockMvcResultMatchers.model().attribute("relationshipStatus", "PENDING"))
-//			.andExpect(MockMvcResultMatchers.model().attribute("receiverSentPendingRequest", "false"));
-//	}
-//
-//	@Test
-//	public void SearchFormGet_AlreadyFriendsUserSent_DisplaysRelationshipFriends() throws Exception {
-//		String searchQuery = "friend@example.com";
-//		User friendUser = new User("Friend", "User", searchQuery, "Password!456", LocalDate.now(), null);
-//		FriendRelationship friendship = new FriendRelationship(userMock, friendUser, Status.APPROVED);
-//		Mockito.when(userService.findEmail(searchQuery)).thenReturn(friendUser);
-//		Mockito.when(friendRelationshipService.getFriendRelationship(userMock.getId(), friendUser.getId())).thenReturn(friendship);
-//
-//		mockMvc.perform(MockMvcRequestBuilders.get("/searchFriend").param("search", searchQuery).with(csrf()))
-//			.andExpect(MockMvcResultMatchers.status().isOk())
-//			.andExpect(MockMvcResultMatchers.view().name("pages/searchFriendPage"));
-//	}
-//
-//	@Test
-//	public void SearchFormGet_AlreadyFriendsUserReceived_DisplaysRelationshipFriends() throws Exception {
-//		String searchQuery = "friend@example.com";
-//		User friendUser = new User("Friend", "User", searchQuery, "Password!456", LocalDate.now(), null);
-//		FriendRelationship friendship = new FriendRelationship(friendUser, userMock, Status.APPROVED);
-//		Mockito.when(userService.findEmail(searchQuery)).thenReturn(friendUser);
-//		Mockito.when(friendRelationshipService.getFriendRelationship(friendUser.getId(), userMock.getId())).thenReturn(friendship);
-//
-//		mockMvc.perform(MockMvcRequestBuilders.get("/searchByEmail").param("emailSearch", searchQuery).with(csrf()))
-//			.andExpect(MockMvcResultMatchers.status().isOk())
-//			.andExpect(MockMvcResultMatchers.view().name("pages/searchByEmailPage"))
-//			.andExpect(MockMvcResultMatchers.model().attribute("userResult", friendUser))
-//			.andExpect(MockMvcResultMatchers.model().attribute("relationshipStatus", "APPROVED"))
-//			.andExpect(MockMvcResultMatchers.model().attribute("receiverSentPendingRequest", "false"));
-//	}
-//
-//	@Test
-//	public void FriendRequestPost_SendsFriendRequestSuccessfully() throws Exception {
-//		String receiverEmail = "friend@example.com";
-//		User otherUser = new User("Friend", "User", receiverEmail, "Password!456", LocalDate.now(), null);
-//		FriendRelationship newFriendRequest = new FriendRelationship(userMock, otherUser, Status.PENDING);
-//		newFriendRequest.setId(1L);
-//		Mockito.when(userService.findEmail(receiverEmail)).thenReturn(otherUser);
-//		Mockito.when(friendRelationshipService.addFriendRelationship(Mockito.any(FriendRelationship.class)))
-//			.thenReturn(newFriendRequest);
-//		Mockito.when(friendRelationshipService.getFriendRelationship(userMock.getId(), otherUser.getId()))
-//			.thenReturn(newFriendRequest);
-//
-//		mockMvc.perform(MockMvcRequestBuilders.post("/addFriend")
-//				.param("receiver", receiverEmail)
-//				.param("emailSearch", receiverEmail)
-//				.param("relationshipStatus", "")
-//				.param("receiverSentPendingRequest", "false").with(csrf()))
-//			.andExpect(MockMvcResultMatchers.status().isOk())
-//			.andExpect(MockMvcResultMatchers.view().name("pages/searchByEmailPage"))
-//			.andExpect(MockMvcResultMatchers.model().attribute("userResult", otherUser))
-//			.andExpect(MockMvcResultMatchers.model().attribute("relationshipStatus", "PENDING"))
-//			.andExpect(MockMvcResultMatchers.model().attribute("receiverSentPendingRequest", "false"));
-//		Mockito.verify(friendRelationshipService).addFriendRelationship(Mockito.any(FriendRelationship.class));
-//	}
+		Mockito.when(friendRelationshipService.getFriendRelationship(userMock.getId(), otherUserMock.getId())).thenReturn(null);
+		Mockito.when(friendRelationshipService.getFriendRelationship(otherUserMock.getId(), userMock.getId())).thenReturn(null);
+
+		mockMvc.perform(MockMvcRequestBuilders.get("/searchFriend")
+				.param("search", searchQuery).with(csrf()))
+			.andExpect(MockMvcResultMatchers.status().isOk())
+			.andExpect(MockMvcResultMatchers.view().name("pages/searchFriendPage"))
+			.andExpect(MockMvcResultMatchers.model().attribute("userResult", otherUserMock))
+			.andExpect(MockMvcResultMatchers.model().attribute("relationshipStatus", Matchers.nullValue()));
+	}
+
+	@Test
+	public void SearchFormGet_FriendRequestAlreadySent_DisplaysRelationshipPending() throws Exception {
+		String searchQuery = "friend@example.com";
+		User otherUser = new User("Friend", "User", searchQuery, "Password!456", LocalDate.now(), null);
+		FriendRelationship requestPending = new FriendRelationship(userMock, otherUser, Status.PENDING);
+		Mockito.when(userService.findEmail(searchQuery)).thenReturn(otherUser);
+		Mockito.when(friendRelationshipService.getFriendRelationship(userMock.getId(), otherUser.getId())).thenReturn(requestPending);
+
+		mockMvc.perform(MockMvcRequestBuilders.get("/searchFriend").param("search", searchQuery).with(csrf()))
+			.andExpect(MockMvcResultMatchers.status().isOk())
+			.andExpect(MockMvcResultMatchers.view().name("pages/searchByEmailPage"))
+			.andExpect(MockMvcResultMatchers.model().attribute("userResult", otherUser))
+			.andExpect(MockMvcResultMatchers.model().attribute("relationshipStatus", "PENDING"))
+			.andExpect(MockMvcResultMatchers.model().attribute("receiverSentPendingRequest", "false"));
+	}
+
+	@Test
+	public void SearchFormGet_AlreadyFriendsUserSent_DisplaysRelationshipFriends() throws Exception {
+		String searchQuery = "friend@example.com";
+		User friendUser = new User("Friend", "User", searchQuery, "Password!456", LocalDate.now(), null);
+		FriendRelationship friendship = new FriendRelationship(userMock, friendUser, Status.APPROVED);
+		Mockito.when(userService.findEmail(searchQuery)).thenReturn(friendUser);
+		Mockito.when(friendRelationshipService.getFriendRelationship(userMock.getId(), friendUser.getId())).thenReturn(friendship);
+
+		mockMvc.perform(MockMvcRequestBuilders.get("/searchFriend").param("search", searchQuery).with(csrf()))
+			.andExpect(MockMvcResultMatchers.status().isOk())
+			.andExpect(MockMvcResultMatchers.view().name("pages/searchFriendPage"));
+	}
+
+	@Test
+	public void SearchFormGet_AlreadyFriendsUserReceived_DisplaysRelationshipFriends() throws Exception {
+		String searchQuery = "friend@example.com";
+		User friendUser = new User("Friend", "User", searchQuery, "Password!456", LocalDate.now(), null);
+		FriendRelationship friendship = new FriendRelationship(friendUser, userMock, Status.APPROVED);
+		Mockito.when(userService.findEmail(searchQuery)).thenReturn(friendUser);
+		Mockito.when(friendRelationshipService.getFriendRelationship(friendUser.getId(), userMock.getId())).thenReturn(friendship);
+
+		mockMvc.perform(MockMvcRequestBuilders.get("/searchFriend").param("search", searchQuery).with(csrf()))
+			.andExpect(MockMvcResultMatchers.status().isOk())
+			.andExpect(MockMvcResultMatchers.view().name("pages/searchFriendPage"))
+			.andExpect(MockMvcResultMatchers.model().attribute("userResult", friendUser))
+			.andExpect(MockMvcResultMatchers.model().attribute("relationshipStatus", "APPROVED"))
+			.andExpect(MockMvcResultMatchers.model().attribute("receiverSentPendingRequest", "false"));
+	}
+
+	@Test
+	public void FriendRequestPost_SendsFriendRequestSuccessfully() throws Exception {
+		String receiverEmail = "friend@example.com";
+		User otherUser = new User("Friend", "User", receiverEmail, "Password!456", LocalDate.now(), null);
+		FriendRelationship newFriendRequest = new FriendRelationship(userMock, otherUser, Status.PENDING);
+		newFriendRequest.setId(1L);
+		Mockito.when(userService.findEmail(receiverEmail)).thenReturn(otherUser);
+		Mockito.when(friendRelationshipService.addFriendRelationship(Mockito.any(FriendRelationship.class)))
+			.thenReturn(newFriendRequest);
+		Mockito.when(friendRelationshipService.getFriendRelationship(userMock.getId(), otherUser.getId()))
+			.thenReturn(newFriendRequest);
+
+		mockMvc.perform(MockMvcRequestBuilders.post("/addFriend")
+				.param("receiver", receiverEmail)
+				.param("search", receiverEmail)
+				.param("relationshipStatus", "")
+				.param("receiverSentPendingRequest", "false").with(csrf()))
+			.andExpect(MockMvcResultMatchers.status().isOk())
+			.andExpect(MockMvcResultMatchers.view().name("pages/searchFriendPage"))
+			.andExpect(MockMvcResultMatchers.model().attribute("userResult", otherUser))
+			.andExpect(MockMvcResultMatchers.model().attribute("relationshipStatus", "PENDING"))
+			.andExpect(MockMvcResultMatchers.model().attribute("receiverSentPendingRequest", "false"));
+		Mockito.verify(friendRelationshipService).addFriendRelationship(Mockito.any(FriendRelationship.class));
+	}
 
 }
