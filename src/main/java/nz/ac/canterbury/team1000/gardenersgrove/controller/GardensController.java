@@ -1,6 +1,7 @@
 package nz.ac.canterbury.team1000.gardenersgrove.controller;
 
 import java.io.IOException;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -253,12 +254,42 @@ public class GardensController {
         // TODO: also for the purpose of the spike, the parsing was somewhat rushed, i didn't actually parse the humidity
         // This function is for getting the current and future weather
         // Stephen has a plan for the previous day's weather so pls talk to him abt that if u are doing that task
-//        List<Weather> weather = weatherService.getWeatherByGardenId(gardenId);
-        List<Weather> weather = weatherService.getCurrentWeatherByGardenId(gardenId);
-        model.addAttribute("weather", weather);
 
+		// Getting the current weather and the future weather to check if
+		// current time is between sunset and sunrise in order to change clear weather icon to clear moon
+        List<Weather> weather = weatherService.getCurrentWeatherByGardenId(gardenId);
+		List<Weather> futureWeather = weatherService.getFutureWeatherByGardenId(gardenId);
+
+		Weather currentWeather = weather.get(0);
+		Weather nextWeather = futureWeather.get(0);
+		LocalTime currentHour = LocalTime.now();
+
+		// Convert the sunRise and sunSet times from API to LocalTime for comparison
+		String sunSetTime = nextWeather.sunSet.split("T")[1];
+		String sunRiseTime = nextWeather.sunRise.split("T")[1];
+
+		// Check if the current weather is clear and if it is night time
+		boolean isClearWeatherAtNight = currentWeather.getType().getText().equals("Clear")
+			&& (currentHour.isAfter(LocalTime.parse(sunSetTime))
+			|| currentHour.isBefore(LocalTime.parse(sunRiseTime)));
+
+		// Update the current weather icon path to the moon icon if it is clear weather at night
+		String currentWeatherIconPath;
+		if (isClearWeatherAtNight) {
+			currentWeatherIconPath = "/images/weather/moon.png";
+		} else {
+			currentWeatherIconPath = currentWeather.getType().getPicturePath();
+		}
+
+		// Get rid of today's weather as it is already displayed
+		futureWeather.remove(0);
+
+        model.addAttribute("weather", weather);
+		model.addAttribute("futureWeather", futureWeather);
+		model.addAttribute("currentWeatherIconPath", currentWeatherIconPath);
         model.addAttribute("garden", garden);
         model.addAttribute("plants", plantService.getPlantsByGardenId(garden.getId()));
+
         return "pages/gardenProfilePage";
     }
 
@@ -381,6 +412,7 @@ public class GardensController {
         }
 
         gardenService.updateGardenById(garden.getId(), updatedGarden);
+
 
 		logger.info("Garden edited: " + garden);
 		return "redirect:/gardens/" + garden.getId();
