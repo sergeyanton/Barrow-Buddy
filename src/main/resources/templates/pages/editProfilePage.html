@@ -37,7 +37,7 @@
                 <br />
                 <input th:replace="~{fragments/formElement :: formElementField(fieldName='dob', label='Date of Birth ', placeholder='DD/MM/YYYY')}" />
                 <br />
-                <a th:href="@{editProfile/updatePassword}">Update Password</a>
+                <a class="submit" th:href="@{editProfile/updatePassword}" style="margin-left: auto; margin-right: auto;">Update Password</a>
                 <div class="cancel-submit-wrapper">
                     <a class="cancel button" th:href="@{profile}">Cancel</a>
                     <button type="submit">Update Profile</button>
