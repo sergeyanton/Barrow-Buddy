@@ -2,8 +2,7 @@
 
 nav {
     background-color: #023020;
-    color: #fff;
-}
+    color: #fff;}
 
 nav ul {
     display: flex;
@@ -28,6 +27,7 @@ nav ul li a {
     padding: 10px 20px;
     color: #fff;
     font-size: 25px;
+    text-decoration: none;
 }
 
 nav ul li a.active {
