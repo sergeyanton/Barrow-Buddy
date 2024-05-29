@@ -330,33 +330,37 @@ public class GardensController {
         List<Weather> weather = weatherService.getCurrentWeatherByGardenId(gardenId);
 		List<Weather> futureWeather = weatherService.getFutureWeatherByGardenId(gardenId);
 
-		Weather currentWeather = weather.get(0);
-		Weather nextWeather = futureWeather.get(0);
-		LocalTime currentHour = LocalTime.now();
+		Weather currentWeather = weather.size() > 0 ? weather.get(0) : null;
+		Weather nextWeather = futureWeather.size() > 0 ? futureWeather.get(0) : null;
 
-		// Convert the sunRise and sunSet times from API to LocalTime for comparison
-		String sunSetTime = nextWeather.sunSet.split("T")[1];
-		String sunRiseTime = nextWeather.sunRise.split("T")[1];
+		if (currentWeather != null && nextWeather != null) {
 
-		// Check if the current weather is clear and if it is night time
-		boolean isClearWeatherAtNight = currentWeather.getType().getText().equals("Clear")
+			LocalTime currentHour = LocalTime.now();
+			
+			// Convert the sunRise and sunSet times from API to LocalTime for comparison
+			String sunSetTime = nextWeather.sunSet.split("T")[1];
+			String sunRiseTime = nextWeather.sunRise.split("T")[1];
+			
+			// Check if the current weather is clear and if it is night time
+			boolean isClearWeatherAtNight = currentWeather.getType().getText().equals("Clear")
 			&& (currentHour.isAfter(LocalTime.parse(sunSetTime))
 			|| currentHour.isBefore(LocalTime.parse(sunRiseTime)));
-
-		// Update the current weather icon path to the moon icon if it is clear weather at night
-		String currentWeatherIconPath;
-		if (isClearWeatherAtNight) {
-			currentWeatherIconPath = "/images/weather/moon.png";
-		} else {
-			currentWeatherIconPath = currentWeather.getType().getPicturePath();
+			
+			// Update the current weather icon path to the moon icon if it is clear weather at night
+			String currentWeatherIconPath;
+			if (isClearWeatherAtNight) {
+				currentWeatherIconPath = "/images/weather/moon.png";
+			} else {
+				currentWeatherIconPath = currentWeather.getType().getPicturePath();
+			}
+			
+			// Get rid of today's weather as it is already displayed
+			futureWeather.remove(0);
+			
+			model.addAttribute("weather", weather);
+			model.addAttribute("futureWeather", futureWeather);
+			model.addAttribute("currentWeatherIconPath", currentWeatherIconPath);
 		}
-
-		// Get rid of today's weather as it is already displayed
-		futureWeather.remove(0);
-
-        model.addAttribute("weather", weather);
-		model.addAttribute("futureWeather", futureWeather);
-		model.addAttribute("currentWeatherIconPath", currentWeatherIconPath);
         model.addAttribute("garden", garden);
         model.addAttribute("plants", plantService.getPlantsByGardenId(garden.getId()));
 
