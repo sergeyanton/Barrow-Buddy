@@ -24,5 +24,5 @@ public interface FriendRelationshipRepository extends CrudRepository<FriendRelat
 
 	Optional<FriendRelationship> findBySenderIdAndReceiverId(Long senderId, Long receiverId);
 
-
+	void deleteBySenderIdAndReceiverId(Long senderId, Long receiverId);
 }

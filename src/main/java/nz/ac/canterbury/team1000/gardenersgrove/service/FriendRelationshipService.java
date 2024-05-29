@@ -105,4 +105,13 @@ public class FriendRelationshipService {
 		return friendRelationshipRepository.findBySenderIdAndReceiverId(senderId, receiverId).orElse(null);
 	}
 
+	/**
+	 * Cancels the relationship, if any, of a given sender and receiver.
+	 * @param senderId id of the user who initiated the relationship.
+	 * @param receiverId id of the user who received the relationship request.
+	 * @return the two user's associated FriendRelationship object if present, or else null.
+	 */
+	public void cancelFriendRelationship(Long senderId, Long receiverId) {
+		friendRelationshipRepository.deleteBySenderIdAndReceiverId(senderId, receiverId);
+	}
 }

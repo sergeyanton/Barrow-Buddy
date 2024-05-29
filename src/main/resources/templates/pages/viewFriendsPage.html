@@ -31,13 +31,9 @@
           </div></td>
           <td><a th:href="@{/user/{id}/profile(id=${friend.id})}" th:text="${friend.fname + ' ' + (friend.lname != null ? friend.lname : '')}"> User </a></td>
           <td><a th:href="@{/user/{id}/gardens(id=${friend.id})}" th:text="'View Gardens'"> Gardens </a></td>
-
         </tr>
         </tbody>
     </table>
-
-    <br>
-    <h2>Requests</h2>
 
     <div class="requests-container">
       <table class="incoming-requests">
@@ -71,30 +67,40 @@
         <thead>
         <tr>
           <th>Outgoing Requests</th>
-          <th>Status</th>
+          <th colspan="2">Status</th>
         </tr>
         </thead>
         <tbody>
         <tr th:if="${pendingRequests.empty && declinedRequests.empty}">
-          <td colspan="2"> You haven't sent any friend requests yet</td>
+          <td colspan="3"> You haven't sent any friend requests yet</td>
         </tr>
         <tr th:each="pending : ${pendingRequests}">
           <td><a th:text="${pending.fname + ' ' + (pending.lname != null ? pending.lname : '')}"> Name </a></td>
           <td>Pending</td>
+          <td class="text-align-right">
+            <form th:action="@{/cancelFriend}" method="post">
+              <input type="hidden" th:name="receiver" th:value="${pending.email}" />
+              <input type="hidden" th:name="back" th:value="${currentUrl}" />
+              <button class="invite-button" type="submit">Invite as Friend</button>
+            </form>
+            <form th:action="@{/cancelFriend}" method="post">
+              <input type="hidden" th:name="reciever" th:value="5" />
+              <button class="decline-button" type="submit">Cancel</button>
+            </form>
+          </td>
+
+
+<!--          <td class="text-align-right"><a class="cancel" th:href="@{cancelFriend}">Cancel</a></td>-->
         </tr>
         <tr th:each="declined : ${declinedRequests}">
           <td><a th:text="${declined.fname + ' ' + (declined.lname != null ? declined.lname : '')}"> Name </a></td>
           <td>Declined</td>
-
+          <td></td>
         </tr>
         </tbody>
       </table>
-
     </div>
-
   </div>
-
-
 </main>
 </body>
 </html>

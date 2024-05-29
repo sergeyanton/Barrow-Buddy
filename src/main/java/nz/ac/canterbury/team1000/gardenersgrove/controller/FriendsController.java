@@ -167,12 +167,12 @@ public class FriendsController {
 
 		List<User> pendingRequests = new ArrayList<>();
 		for (FriendRelationship request : outgoingPendingRequests) {
-			pendingRequests.add(userService.getUserById(request.getSender().getId()));
+			pendingRequests.add(userService.getUserById(request.getReceiver().getId()));
 		}
 
 		List<User> declinedRequests = new ArrayList<>();
 		for (FriendRelationship request : outgoingDeclinedRequests) {
-			declinedRequests.add(userService.getUserById(request.getSender().getId()));
+			declinedRequests.add(userService.getUserById(request.getReceiver().getId()));
 		}
 
 		model.addAttribute("declinedRequests", declinedRequests);
@@ -211,6 +211,28 @@ public class FriendsController {
 		} else {
 			logger.info("Found existing");
 		}
+
+		return "redirect:" + back;
+	}
+
+	/**
+	 * Handles POST requests to cancel an outgoing friend request.
+	 *
+	 * @param receiver the email address of the user to be sent a friend request.
+	 * @param back the URL to redirect back to after sending the friend request.
+	 * @return the redirection URL.
+	 */
+	@PostMapping("/cancelFriend")
+	public String postCancelFriendRequest(@RequestParam("receiver") String receiver, @RequestParam("back") String back) {
+		logger.info("POST /cancelFriend " + receiver);
+
+		User currentUser = userService.getLoggedInUser();
+
+		// User email taken from the successful search
+		User receiverUser = userService.findEmail(receiver);
+
+		logger.info("Cancelling friend request " + receiverUser.getEmail());
+		friendRelationshipService.cancelFriendRelationship(currentUser.getId(), receiverUser.getId());
 
 		return "redirect:" + back;
 	}
