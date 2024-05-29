@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Objects;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.FriendRelationship;
+import nz.ac.canterbury.team1000.gardenersgrove.entity.Garden;
 import nz.ac.canterbury.team1000.gardenersgrove.entity.User;
 import nz.ac.canterbury.team1000.gardenersgrove.form.EditUserForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.PictureForm;
@@ -11,6 +12,7 @@ import nz.ac.canterbury.team1000.gardenersgrove.form.SearchFriendsForm;
 import nz.ac.canterbury.team1000.gardenersgrove.form.UpdatePasswordForm;
 import nz.ac.canterbury.team1000.gardenersgrove.service.EmailService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.FriendRelationshipService;
+import nz.ac.canterbury.team1000.gardenersgrove.service.GardenService;
 import nz.ac.canterbury.team1000.gardenersgrove.service.UserService;
 
 import nz.ac.canterbury.team1000.gardenersgrove.util.Status;
@@ -43,11 +45,15 @@ public class ProfileController {
 
     private final FriendRelationshipService friendRelationshipService;
 
+    private final GardenService gardenService;
+
     @Autowired
-    public ProfileController(UserService userService, EmailService emailService, FriendRelationshipService friendRelationshipService) {
+    public ProfileController(UserService userService, EmailService emailService, FriendRelationshipService friendRelationshipService,
+        GardenService gardenService) {
         this.userService = userService;
         this.emailService = emailService;
         this.friendRelationshipService = friendRelationshipService;
+        this.gardenService = gardenService;
     }
 
     @Autowired
@@ -75,6 +81,13 @@ public class ProfileController {
         return sentFriends || receivedFriends;
     }
 
+    /**
+     * Tries to access a given user's profile if the logged in user is allowed.
+     * Must be friends or that user's profile.
+     * @param userId
+     * @return
+     * @throws ResponseStatusException
+     */
     private User tryToViewUserProfile(Long userId) throws ResponseStatusException {
         try {
             User owner = userService.getUserById(userId);
@@ -142,11 +155,15 @@ public class ProfileController {
         if (currentUser.getDateOfBirth() != null) {
             model.addAttribute("dob", currentUser.getDateOfBirthString());
         }
+
+        List<Garden> gardensList = gardenService.getUserGardens(currentUser.getId());
+
         model.addAttribute("picturePath", currentUser.getPicturePath());
         model.addAttribute("loggedInUserId", loggedInUser.getId());
         model.addAttribute("id", id);
+        model.addAttribute("gardens", gardensList);
 
-        return "pages/profilePage";
+        return "pages/friendProfile";
     }
 
     /**
