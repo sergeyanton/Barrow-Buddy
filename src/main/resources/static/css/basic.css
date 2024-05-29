@@ -94,3 +94,27 @@ h2 {
   background-color: #b2e0af;
   color: #023020;
 }
+
+.grid-container {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  padding: 10px;
+}
+
+.grid-item {
+  padding: 20px;
+  text-align: center;
+  border-left: 2px solid #000000;
+}
+
+.first-item {
+  border-left: none;
+}
+
+.min-temp {
+  color: #0000bb;
+}
+
+.max-temp {
+  color: #d20000;
+}

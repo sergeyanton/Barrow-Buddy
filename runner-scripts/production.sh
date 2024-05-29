@@ -5,4 +5,5 @@ source production/.env
 java -jar production/libs/gardeners-grove-0.0.2-SNAPSHOT.jar \
     --server.port=10500 \
     --server.servlet.contextPath=/prod \
-    --spring.application.name=gardeners-grove
+    --spring.application.name=gardeners-grove \
+    --spring.profiles.active=production
