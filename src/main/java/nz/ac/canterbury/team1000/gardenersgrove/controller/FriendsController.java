@@ -224,7 +224,7 @@ public class FriendsController {
 	 */
 	@PostMapping("/cancelFriend")
 	public String postCancelFriendRequest(@RequestParam("receiver") String receiver, @RequestParam("back") String back) {
-		logger.info("POST /cancelFriend " + receiver);
+		logger.info("POST /cancelFriend " + receiver + " back: " + back);
 
 		User currentUser = userService.getLoggedInUser();
 

@@ -111,6 +111,7 @@ public class FriendRelationshipService {
 	 * @param receiverId id of the user who received the relationship request.
 	 * @return the two user's associated FriendRelationship object if present, or else null.
 	 */
+	@Transactional
 	public void cancelFriendRelationship(Long senderId, Long receiverId) {
 		friendRelationshipRepository.deleteBySenderIdAndReceiverId(senderId, receiverId);
 	}

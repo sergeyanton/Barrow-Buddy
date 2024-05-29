@@ -42,6 +42,10 @@ h2 {
   text-align: right;
 }
 
+.text-align-left {
+  text-align: left;
+}
+
 .basic {
   padding: 25px;
   margin: auto;
